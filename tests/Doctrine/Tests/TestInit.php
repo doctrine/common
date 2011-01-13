@@ -6,7 +6,18 @@ namespace Doctrine\Tests;
 
 error_reporting(E_ALL | E_STRICT);
 
-require_once 'PHPUnit/Framework.php';
+
+/**
+ * Include PHPUnit dependencies
+ */
+require_once 'PHPUnit/Runner/Version.php';
+
+if (version_compare(\PHPUnit_Runner_Version::id(), '3.5.0', '>=')) {
+    require_once 'PHPUnit/Autoload.php'; // >= PHPUnit 3.5.0
+} else {
+    require_once 'PHPUnit/Framework.php'; // < PHPUnit 3.5.0
+}
+
 require_once 'PHPUnit/TextUI/TestRunner.php';
 require_once __DIR__ . '/../../../lib/Doctrine/Common/ClassLoader.php';
 

@@ -30,8 +30,6 @@ namespace Doctrine\Common\Cache;
  */
 abstract class AbstractCache implements Cache
 {
-    /** @var string The cache id to store the index of cache ids under */
-    private $_cacheIdsIndexId = 'doctrine_cache_ids';
 
     /** @var string The namespace to prefix all cache ids with */
     private $_namespace = null;
@@ -174,7 +172,7 @@ abstract class AbstractCache implements Cache
      * @param string $id  The id to namespace
      * @return string $id The namespaced id
      */
-    private function _getNamespacedId($id)
+    protected function _getNamespacedId($id)
     {
         if ( ! $this->_namespace || strpos($id, $this->_namespace) === 0) {
             return $id;
