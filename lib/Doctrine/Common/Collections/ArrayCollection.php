@@ -36,7 +36,7 @@ class ArrayCollection implements Collection
      *
      * @var array
      */
-    private $_elements;
+    protected $_elements;
 
     /**
      * Initializes a new ArrayCollection.
