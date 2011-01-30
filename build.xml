@@ -6,7 +6,6 @@
 
 <project name="Doctrine2" default="build" basedir=".">
     <taskdef classname="phing.tasks.ext.d51PearPkg2Task" name="d51pearpkg2" />
-    <taskdef classname="NativePhpunitTask" classpath="./tests/" name="nativephpunit" />
 
     <property file="build.properties" />
     
@@ -135,9 +134,8 @@
         <exec command="grep '${version}-DEV' ${project.basedir}/lib/Doctrine/Common/Version.php" checkreturn="true"/>
         <exec command="sed 's/${version}-DEV/${version}/' ${project.basedir}/lib/Doctrine/Common/Version.php > ${project.basedir}/lib/Doctrine/Common/Version2.php" passthru="true" />
         <exec command="mv ${project.basedir}/lib/Doctrine/Common/Version2.php ${project.basedir}/lib/Doctrine/Common/Version.php" passthru="true" />
-        <exec command="git commit -a -m 'Release {$version}'" />
-        <exec command="git tag -a ${version}" passthru="true" />
-        <exec command="git push origin ${version}" passthru="true" />
+        <exec command="git commit -a -m 'Release ${version}'" />
+        <exec command="git tag -m 'Tag ${version}' -a ${version}" passthru="true" />
     </target>
 
     <target name="pirum-release">
@@ -156,7 +154,6 @@
         <exec command="mv ${project.basedir}/lib/Doctrine/Common/Version2.php ${project.basedir}/lib/Doctrine/Common/Version.php" passthru="true" />
         <exec command="git add ${project.basedir}/lib/Doctrine/Common/Version.php" passthru="true" />
         <exec command="git commit -m 'Bump Dev Version to ${next_version}'" passthru="true" />
-        <exec command="git push origin master" passthru="true" />
     </target>
 
     <target name="release" depends="git-tag,build-packages,distribute-download,pirum-release,update-dev-version" />
