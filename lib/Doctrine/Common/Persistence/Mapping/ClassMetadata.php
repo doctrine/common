@@ -37,14 +37,14 @@ interface ClassMetadata
      *
      * @return mixed
      */
-    public function getIdentifier();
+    function getIdentifier();
 
     /**
      * Gets the ReflectionClass instance for this mapped class.
      *
      * @return ReflectionClass
      */
-    public function getReflectionClass();
+    function getReflectionClass();
 
     /**
      * Checks if the given field name is a mapped identifier for this class.
@@ -52,7 +52,7 @@ interface ClassMetadata
      * @param string $fieldName
      * @return boolean
      */
-    public function isIdentifier($fieldName);
+    function isIdentifier($fieldName);
 
     /**
      * Checks if the given field is a mapped property for this class.
@@ -60,7 +60,7 @@ interface ClassMetadata
      * @param string $fieldName 
      * @return boolean
      */
-    public function hasField($fieldName);
+    function hasField($fieldName);
 
     /**
      * Checks if the given field is a mapped association for this class.
@@ -68,7 +68,7 @@ interface ClassMetadata
      * @param string $fieldName
      * @return boolean
      */
-    public function hasAssociation($fieldName);
+    function hasAssociation($fieldName);
 
     /**
      * Checks if the given field is a mapped single valued association for this class.
@@ -76,7 +76,7 @@ interface ClassMetadata
      * @param string $fieldName
      * @return boolean
      */
-    public function isSingleValuedAssociation($fieldName);
+    function isSingleValuedAssociation($fieldName);
 
     /**
      * Checks if the given field is a mapped collection valued association for this class.
@@ -84,5 +84,5 @@ interface ClassMetadata
      * @param string $fieldName
      * @return boolean
      */
-    public function isCollectionValuedAssociation($fieldName);
+    function isCollectionValuedAssociation($fieldName);
 }

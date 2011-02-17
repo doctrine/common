@@ -38,14 +38,14 @@ interface ObjectRepository
      * @param $id The identifier.
      * @return object The object.
      */
-    public function find($id);
+    function find($id);
 
     /**
      * Finds all objects in the repository.
      *
      * @return mixed The objects.
      */
-    public function findAll();
+    function findAll();
 
     /**
      * Finds objects by a set of criteria.
@@ -53,7 +53,7 @@ interface ObjectRepository
      * @param array $criteria
      * @return mixed The objects.
      */
-    public function findBy(array $criteria);
+    function findBy(array $criteria);
 
     /**
      * Finds a single object by a set of criteria.
@@ -61,5 +61,5 @@ interface ObjectRepository
      * @param array $criteria
      * @return object The object.
      */
-    public function findOneBy(array $criteria);
+    function findOneBy(array $criteria);
 }
