@@ -99,7 +99,7 @@ class Parser
 
     /**
      * Gets the lexer used by this parser.
-     * 
+     *
      * @return Lexer The lexer.
      */
     public function getLexer()
@@ -198,7 +198,10 @@ class Parser
         $input = str_replace(self::$strippedTags, '', $docBlockString);
 
         // Cut of the beginning of the input until the first '@'.
-        $input = substr($input, strpos($input, '@'));
+        if (!preg_match('/^\s*\*\s*(@.*)/ms', $input, $match)) {
+            return array();
+        }
+        $input = $match[1];
 
         $this->lexer->reset();
         $this->lexer->setInput(trim($input, '* /'));
