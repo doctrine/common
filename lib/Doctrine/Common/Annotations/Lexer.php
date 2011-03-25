@@ -148,7 +148,7 @@ class Lexer extends \Doctrine\Common\Lexer
 
         // Checking for valid numeric numbers: 1.234, -1.234e-2
         if (is_numeric($value)) {
-            if(strpos($value, '.') !== false || stripos($value, 'e') !== false){
+            if (strpos($value, '.') !== false || stripos($value, 'e') !== false) {
                 return (float) $value;
             } else {
                 return (int) $value;
