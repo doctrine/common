@@ -92,16 +92,51 @@ class AnnotationReader
         $this->preParser->setIgnoreNotImportedAnnotations(true);
     }
 
+    /**
+     * Sets the default namespace that the AnnotationReader should assume for annotations
+     * with not fully qualified names.
+     *
+     * @param string $defaultNamespace
+     * @deprecated use the @import annotation, or addGlobalImport instead
+     */
+    public function setDefaultAnnotationNamespace($defaultNamespace)
+    {
+        $this->addGlobalImport($defaultNamespace.'*');
+    }
+
+    /**
+     * Sets the global imports for this reader.
+     *
+     * @param array $imports
+     */
     public function setGlobalImports(array $imports)
     {
         $this->globalImports = $imports;
     }
 
+    /**
+     * Adds a namespace to the global import map.
+     *
+     * Allowed values are either
+     * - an entire namespace "MyNamespace\Annotation\*"
+     * - or a single annotation class "MyNamespace\Annotation\Foo"
+     *
+     * NOTE: Generally, it is recommend that you add imports on the class-level
+     *       using the @import annotation.
+     *
+     * @param string $namespace
+     * @param string $alias
+     */
     public function addGlobalImport($namespace, $alias = null)
     {
         $this->globalImports[$namespace] = $alias;
     }
 
+    /**
+     * Returns an array of global imports that are used by this reader
+     *
+     * @return array
+     */
     public function getGlobalImports()
     {
         return $this->globalImports;
@@ -124,16 +159,50 @@ class AnnotationReader
         $this->parser->setAnnotationCreationFunction($func);
     }
 
+    /**
+     * Sets an alias for an annotation namespace.
+     *
+     * @param string $namespace
+     * @param string $alias
+     * @deprecated use the @import annotation, or addGlobalImport instead
+     */
+    public function setAnnotationNamespaceAlias($namespace, $alias)
+    {
+        $this->addGlobalImport($namespace.'*', $alias);
+    }
+
+    /**
+     * Sets a flag whether to auto-load annotation classes or not.
+     *
+     * NOTE: It is recommend to turn auto-loading on if your auto-loader support
+     *       silent failing. For this reason, setting this to TRUE renders the
+     *       parser incompatible with {@link ClassLoader}.
+     *
+     * @param boolean $bool Boolean flag.
+     */
     public function setAutoloadAnnotations($bool)
     {
         $this->parser->setAutoloadAnnotations($bool);
     }
 
+    /**
+     * Gets a flag whether to try to autoload annotation classes.
+     *
+     * @see setAutoloadAnnotations
+     * @return boolean
+     */
     public function getAutoloadAnnotations()
     {
         return $this->parser->getAutoloadAnnotations();
     }
 
+    /**
+     * Whether annotations which have not been explicitly imported should be
+     * ignored. Turning this off, will throw an exception if an annotation that
+     * is used inside the class is not imported.
+     *
+     * @param boolean $bool
+     */
     public function setIgnoreNotImportedAnnotations($bool)
     {
         $this->parser->setIgnoreNotImportedAnnotations($bool);
