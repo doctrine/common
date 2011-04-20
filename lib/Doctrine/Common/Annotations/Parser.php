@@ -127,6 +127,44 @@ class Parser
     }
 
     /**
+     * Sets a flag whether to auto-load annotation classes or not.
+     *
+     * NOTE: It is recommend to turn auto-loading on if your auto-loader support
+     *       silent failing. For this reason, setting this to TRUE renders the
+     *       parser incompatible with {@link ClassLoader}.
+     *
+     * @param boolean $bool Boolean flag.
+     */
+    public function setAutoloadAnnotations($bool)
+    {
+        $this->autoloadAnnotations = $bool;
+    }
+
+    /**
+     * Sets the default namespace that is assumed for an annotation that does not
+     * define a namespace prefix.
+     *
+     * @param string $defaultNamespace
+     * @deprecated use setImports instead
+     */
+    public function setDefaultAnnotationNamespace($defaultNamespace)
+    {
+        $this->imports[$defaultNamespace.'*'] = null;
+    }
+
+    /**
+     * Sets an alias for an annotation namespace.
+     *
+     * @param string $namespace
+     * @param string $alias
+     * @deprecated use setImports instead
+     */
+    public function setAnnotationNamespaceAlias($namespace, $alias)
+    {
+        $this->imports[$namespace.'*'] = $alias;
+    }
+
+    /**
      * Sets the custom function to use for creating new annotations.
      *
      * The function is supplied two arguments. The first argument is the name
@@ -145,11 +183,12 @@ class Parser
         $this->annotationCreationFunction = $func;
     }
 
-    public function setAutoloadAnnotations($bool)
-    {
-        $this->autoloadAnnotations = (Boolean) $bool;
-    }
-
+    /**
+     * Gets a flag whether to try to autoload annotation classes.
+     *
+     * @see setAutoloadAnnotations
+     * @return boolean
+     */
     public function getAutoloadAnnotations()
     {
         return $this->autoloadAnnotations;
@@ -336,7 +375,7 @@ class Parser
         }
 
         // only process names which are not fully qualified, yet
-        if (false === strpos($name, '\\')) {
+        if (false === strpos($name, '\\') || strpos($name, ':')) {
             $alias = null;
 
             // check if it has an alias
@@ -348,6 +387,7 @@ class Parser
             $foundFqcn = array();
             // check if annotation has been imported
             foreach (array_keys($this->imports, $alias, true) as $namespace) {
+
                 // entire sub-namespace has been imported
                 if ('*' === substr($namespace, -1)) {
                     $fqcn = substr($namespace, 0, -1).$name;

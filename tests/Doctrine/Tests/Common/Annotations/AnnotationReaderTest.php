@@ -11,7 +11,7 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
     public function testAnnotations()
     {
         $reader = new AnnotationReader(new \Doctrine\Common\Cache\ArrayCache);
-        $reader->addGlobalImport('Doctrine\Tests\Common\Annotations\*');
+        $reader->setDefaultAnnotationNamespace('Doctrine\Tests\Common\Annotations\\');
 
         $this->assertFalse($reader->getAutoloadAnnotations());
         $reader->setAutoloadAnnotations(true);
@@ -114,7 +114,6 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
     public function testMultipleAnnotationsOnSameLine()
     {
         $reader = $this->createAnnotationReader();
-        $reader->setIgnoreNotImportedAnnotations(true);
         $class = new ReflectionClass('\Doctrine\Tests\Common\Annotations\DummyClass2');
         $annotations = $reader->getPropertyAnnotations($class->getProperty('id'));
         $this->assertEquals(3, count($annotations));
@@ -123,7 +122,6 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
     public function testCustomAnnotationCreationFunction()
     {
         $reader = $this->createAnnotationReader();
-        $reader->setIgnoreNotImportedAnnotations(true);
         $reader->setAnnotationCreationFunction(function($name, $values) {
             if ($name == 'Doctrine\Tests\Common\Annotations\DummyAnnotation') {
                 $a = new CustomDummyAnnotationClass;
@@ -142,8 +140,7 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
     public function testNonAnnotationProblem()
     {
         $reader = new AnnotationReader(new \Doctrine\Common\Cache\ArrayCache);
-        $reader->addGlobalImport('Doctrine\Tests\Common\Annotations\*');
-        $reader->setIgnoreNotImportedAnnotations(true);
+        $reader->setDefaultAnnotationNamespace('Doctrine\Tests\Common\Annotations\\');
 
         $class = new ReflectionClass('Doctrine\Tests\Common\Annotations\DummyClassNonAnnotationProblem');
         $annotations = $reader->getPropertyAnnotations($class->getProperty('foo'));
@@ -157,7 +154,7 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
     public function createAnnotationReader()
     {
         $reader = new AnnotationReader(new \Doctrine\Common\Cache\ArrayCache);
-        $reader->addGlobalImport('Doctrine\Tests\Common\Annotations\*');
+        $reader->setDefaultAnnotationNamespace('Doctrine\Tests\Common\Annotations\\');
         return $reader;
     }
 

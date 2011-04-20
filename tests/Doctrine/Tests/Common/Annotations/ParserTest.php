@@ -12,7 +12,7 @@ class ParserTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $parser = $this->createTestParser();
 
-        $parser->setAutoloadAnnotations(false);
+        $this->assertFalse($parser->getAutoloadAnnotations());
 
         // Marker annotation
         $result = $parser->parse("@Name");
@@ -121,8 +121,6 @@ DOCBLOCK;
     {
         $parser = $this->createTestParser();
 
-        $parser->setAutoloadAnnotations(false);
-
         $docblock = <<<DOCBLOCK
 /**
  * Some nifty method.
@@ -184,11 +182,24 @@ DOCBLOCK;
     public function testNamespaceAliasedAnnotations()
     {
         $parser = new Parser;
-        $parser->setImports(array(
-            'Doctrine\Tests\Common\Annotations\*' => 'alias',
-        ));
+        $parser->setAnnotationNamespaceAlias('Doctrine\Tests\Common\Annotations\\', 'alias');
 
         $result = $parser->parse('@alias:Name(foo="bar")');
+        $this->assertEquals(1, count($result));
+        $annot = $result['Doctrine\Tests\Common\Annotations\Name'];
+        $this->assertTrue($annot instanceof Name);
+        $this->assertEquals('bar', $annot->foo);
+    }
+
+    /**
+     * @group DCOM-4
+     */
+    public function testNamespaceAliasAnnotationWithSeparator()
+    {
+        $parser = new Parser;
+        $parser->setAnnotationNamespaceAlias('Doctrine\Tests\Common\\', 'alias');
+
+        $result = $parser->parse('@alias:Annotations\Name(foo="bar")');
         $this->assertEquals(1, count($result));
         $annot = $result['Doctrine\Tests\Common\Annotations\Name'];
         $this->assertTrue($annot instanceof Name);
@@ -244,9 +255,7 @@ DOCBLOCK;
     public function testAnnotationNamespaceAlias()
     {
         $parser = $this->createTestParser();
-        $parser->setImports(array(
-            'Doctrine\Tests\Common\Annotations\*' => 'alias',
-        ));
+        $parser->setAnnotationNamespaceAlias('Doctrine\Tests\Common\Annotations\\', 'alias');
         $docblock = <<<DOCBLOCK
 /**
  * Some nifty class.
@@ -266,9 +275,7 @@ DOCBLOCK;
     public function createTestParser()
     {
         $parser = new Parser();
-        $parser->setImports(array(
-            'Doctrine\Tests\Common\Annotations\*' => null,
-        ));
+        $parser->setDefaultAnnotationNamespace('Doctrine\Tests\Common\Annotations\\');
         return $parser;
     }
 
@@ -306,7 +313,6 @@ DOCBLOCK;
 
         try {
             $parser = $this->createTestParser();
-            $parser->setAutoloadAnnotations(false);
             $result = $parser->parse($docblock);
         } catch (Exception $e) {
             $this->fail($e->getMessage());
@@ -376,9 +382,7 @@ DOCBLOCK;
     {
         $parser = new Parser;
         $parser->setIgnoreNotImportedAnnotations(false);
-        $parser->setImports(array(
-            'Doctrine\Tests\Common\Annotations\*' => 'common',
-        ));
+        $parser->setAnnotationNamespaceAlias('Doctrine\Tests\Common\Annotations\\', 'common');
 
         $this->setExpectedException(
             "Doctrine\Common\Annotations\AnnotationException",
