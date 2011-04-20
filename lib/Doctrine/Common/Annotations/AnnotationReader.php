@@ -97,7 +97,7 @@ class AnnotationReader
         $this->globalImports = $imports;
     }
 
-    public function setGlobalImport($namespace, $alias = null)
+    public function addGlobalImport($namespace, $alias = null)
     {
         $this->globalImports[$namespace] = $alias;
     }
@@ -122,6 +122,21 @@ class AnnotationReader
     public function setAnnotationCreationFunction(Closure $func)
     {
         $this->parser->setAnnotationCreationFunction($func);
+    }
+
+    public function setAutoloadAnnotations($bool)
+    {
+        $this->parser->setAutoloadAnnotations($bool);
+    }
+
+    public function getAutoloadAnnotations()
+    {
+        return $this->parser->getAutoloadAnnotations();
+    }
+
+    public function setIgnoreNotImportedAnnotations($bool)
+    {
+        $this->parser->setIgnoreNotImportedAnnotations($bool);
     }
 
     /**

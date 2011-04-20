@@ -11,34 +11,34 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
     public function testAnnotations()
     {
         $reader = new AnnotationReader(new \Doctrine\Common\Cache\ArrayCache);
-        $reader->setDefaultAnnotationNamespace('Doctrine\Tests\Common\Annotations\\');
-        
+        $reader->addGlobalImport('Doctrine\Tests\Common\Annotations\*');
+
         $this->assertFalse($reader->getAutoloadAnnotations());
         $reader->setAutoloadAnnotations(true);
         $this->assertTrue($reader->getAutoloadAnnotations());
         $reader->setAutoloadAnnotations(false);
         $this->assertFalse($reader->getAutoloadAnnotations());
-    
+
         $class = new ReflectionClass('Doctrine\Tests\Common\Annotations\DummyClass');
         $classAnnots = $reader->getClassAnnotations($class);
-        
+
         $annotName = 'Doctrine\Tests\Common\Annotations\DummyAnnotation';
         $this->assertEquals(1, count($classAnnots));
         $this->assertTrue($classAnnots[$annotName] instanceof DummyAnnotation);
         $this->assertEquals("hello", $classAnnots[$annotName]->dummyValue);
-        
+
         $field1Prop = $class->getProperty('field1');
         $propAnnots = $reader->getPropertyAnnotations($field1Prop);
         $this->assertEquals(1, count($propAnnots));
         $this->assertTrue($propAnnots[$annotName] instanceof DummyAnnotation);
         $this->assertEquals("fieldHello", $propAnnots[$annotName]->dummyValue);
-        
+
         $getField1Method = $class->getMethod('getField1');
         $methodAnnots = $reader->getMethodAnnotations($getField1Method);
         $this->assertEquals(1, count($methodAnnots));
         $this->assertTrue($methodAnnots[$annotName] instanceof DummyAnnotation);
         $this->assertEquals(array(1, 2, "three"), $methodAnnots[$annotName]->value);
-        
+
         $field2Prop = $class->getProperty('field2');
         $propAnnots = $reader->getPropertyAnnotations($field2Prop);
         $this->assertEquals(1, count($propAnnots));
@@ -114,6 +114,7 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
     public function testMultipleAnnotationsOnSameLine()
     {
         $reader = $this->createAnnotationReader();
+        $reader->setIgnoreNotImportedAnnotations(true);
         $class = new ReflectionClass('\Doctrine\Tests\Common\Annotations\DummyClass2');
         $annotations = $reader->getPropertyAnnotations($class->getProperty('id'));
         $this->assertEquals(3, count($annotations));
@@ -122,6 +123,7 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
     public function testCustomAnnotationCreationFunction()
     {
         $reader = $this->createAnnotationReader();
+        $reader->setIgnoreNotImportedAnnotations(true);
         $reader->setAnnotationCreationFunction(function($name, $values) {
             if ($name == 'Doctrine\Tests\Common\Annotations\DummyAnnotation') {
                 $a = new CustomDummyAnnotationClass;
@@ -140,7 +142,8 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
     public function testNonAnnotationProblem()
     {
         $reader = new AnnotationReader(new \Doctrine\Common\Cache\ArrayCache);
-        $reader->setDefaultAnnotationNamespace('Doctrine\Tests\Common\Annotations\\');
+        $reader->addGlobalImport('Doctrine\Tests\Common\Annotations\*');
+        $reader->setIgnoreNotImportedAnnotations(true);
 
         $class = new ReflectionClass('Doctrine\Tests\Common\Annotations\DummyClassNonAnnotationProblem');
         $annotations = $reader->getPropertyAnnotations($class->getProperty('foo'));
@@ -154,7 +157,7 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
     public function createAnnotationReader()
     {
         $reader = new AnnotationReader(new \Doctrine\Common\Cache\ArrayCache);
-        $reader->setDefaultAnnotationNamespace('Doctrine\Tests\Common\Annotations\\');
+        $reader->addGlobalImport('Doctrine\Tests\Common\Annotations\*');
         return $reader;
     }
 
@@ -183,7 +186,7 @@ class CustomDummyAnnotationClass {
 
 /**
  * A description of this class.
- * 
+ *
  * @author robo
  * @since 2.0
  * @DummyAnnotation(dummyValue="hello")
@@ -191,12 +194,12 @@ class CustomDummyAnnotationClass {
 class DummyClass {
     /**
      * A nice property.
-     * 
+     *
      * @var mixed
      * @DummyAnnotation(dummyValue="fieldHello")
      */
     private $field1;
-    
+
     /**
      * @DummyJoinTable(name="join_table",
      *      joinColumns={
@@ -207,7 +210,7 @@ class DummyClass {
      *      })
      */
     private $field2;
-    
+
     /**
      * Gets the value of field1.
      *
@@ -249,7 +252,7 @@ class DummyJoinTable extends \Doctrine\Common\Annotations\Annotation {
  */
 class DummyClassSyntaxError
 {
-    
+
 }
 
 class DummyClassMethodSyntaxError
@@ -259,7 +262,7 @@ class DummyClassMethodSyntaxError
      */
     public function foo()
     {
-        
+
     }
 }
 

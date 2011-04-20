@@ -12,7 +12,7 @@ class ParserTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $parser = $this->createTestParser();
 
-        $this->assertFalse($parser->getAutoloadAnnotations());
+        $parser->setAutoloadAnnotations(false);
 
         // Marker annotation
         $result = $parser->parse("@Name");
@@ -121,6 +121,8 @@ DOCBLOCK;
     {
         $parser = $this->createTestParser();
 
+        $parser->setAutoloadAnnotations(false);
+
         $docblock = <<<DOCBLOCK
 /**
  * Some nifty method.
@@ -182,24 +184,11 @@ DOCBLOCK;
     public function testNamespaceAliasedAnnotations()
     {
         $parser = new Parser;
-        $parser->setAnnotationNamespaceAlias('Doctrine\Tests\Common\Annotations\\', 'alias');
+        $parser->setImports(array(
+            'Doctrine\Tests\Common\Annotations\*' => 'alias',
+        ));
 
         $result = $parser->parse('@alias:Name(foo="bar")');
-        $this->assertEquals(1, count($result));
-        $annot = $result['Doctrine\Tests\Common\Annotations\Name'];
-        $this->assertTrue($annot instanceof Name);
-        $this->assertEquals('bar', $annot->foo);
-    }
-
-    /**
-     * @group DCOM-4
-     */
-    public function testNamespaceAliasAnnotationWithSeparator()
-    {
-        $parser = new Parser;
-        $parser->setAnnotationNamespaceAlias('Doctrine\Tests\Common\\', 'alias');
-
-        $result = $parser->parse('@alias:Annotations\Name(foo="bar")');
         $this->assertEquals(1, count($result));
         $annot = $result['Doctrine\Tests\Common\Annotations\Name'];
         $this->assertTrue($annot instanceof Name);
@@ -255,7 +244,9 @@ DOCBLOCK;
     public function testAnnotationNamespaceAlias()
     {
         $parser = $this->createTestParser();
-        $parser->setAnnotationNamespaceAlias('Doctrine\Tests\Common\Annotations\\', 'alias');
+        $parser->setImports(array(
+            'Doctrine\Tests\Common\Annotations\*' => 'alias',
+        ));
         $docblock = <<<DOCBLOCK
 /**
  * Some nifty class.
@@ -275,7 +266,9 @@ DOCBLOCK;
     public function createTestParser()
     {
         $parser = new Parser();
-        $parser->setDefaultAnnotationNamespace('Doctrine\Tests\Common\Annotations\\');
+        $parser->setImports(array(
+            'Doctrine\Tests\Common\Annotations\*' => null,
+        ));
         return $parser;
     }
 
@@ -313,6 +306,7 @@ DOCBLOCK;
 
         try {
             $parser = $this->createTestParser();
+            $parser->setAutoloadAnnotations(false);
             $result = $parser->parse($docblock);
         } catch (Exception $e) {
             $this->fail($e->getMessage());
@@ -381,11 +375,14 @@ DOCBLOCK;
     public function testNonexistantAliasedAnnotation()
     {
         $parser = new Parser;
-        $parser->setAnnotationNamespaceAlias('Doctrine\Tests\Common\Annotations\\', 'common');
+        $parser->setIgnoreNotImportedAnnotations(false);
+        $parser->setImports(array(
+            'Doctrine\Tests\Common\Annotations\*' => 'common',
+        ));
 
         $this->setExpectedException(
             "Doctrine\Common\Annotations\AnnotationException",
-            "[Semantical Error] Annotation class \"Doctrine\Tests\Common\Annotations\Foo\" does not exist."
+            "[Semantical Error] The annotation \"Foo\" was never imported."
         );
         $result = $parser->parse('@common:Foo');
     }
