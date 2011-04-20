@@ -2,12 +2,18 @@
 
 namespace Doctrine\Tests\Common\Annotations;
 
+use Doctrine\Common\Annotations\Import;
 use ReflectionClass, Doctrine\Common\Annotations\AnnotationReader;
 
 require_once __DIR__ . '/../../TestInit.php';
 
 class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
 {
+    public static function setUpBeforeClass()
+    {
+        new Import(array('value' => 'namespace'));
+    }
+
     public function testAnnotations()
     {
         $reader = new AnnotationReader(new \Doctrine\Common\Cache\ArrayCache);
@@ -151,10 +157,14 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
     /**
      * @return AnnotationReader
      */
-    public function createAnnotationReader()
+    public function createAnnotationReader($addDefaultNamespace = true)
     {
         $reader = new AnnotationReader(new \Doctrine\Common\Cache\ArrayCache);
-        $reader->setDefaultAnnotationNamespace('Doctrine\Tests\Common\Annotations\\');
+
+        if ($addDefaultNamespace) {
+            $reader->setDefaultAnnotationNamespace('Doctrine\Tests\Common\Annotations\\');
+        }
+
         return $reader;
     }
 
@@ -167,6 +177,48 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
         $reader->setAutoloadAnnotations(true);
         $this->assertTrue($reader->getAutoloadAnnotations());
     }
+
+    public function testImportWithEntireSubNamespace()
+    {
+        $reader = $this->createAnnotationReader(false);
+        $reader->setIndexByClass(false);
+        $property = new \ReflectionProperty('Doctrine\Tests\Common\Annotations\TestImportWithEntireSubNamespace', 'field');
+        $annotations = $reader->getPropertyAnnotations($property);
+        $this->assertEquals(1, count($annotations));
+        $this->assertInstanceOf('Doctrine\Tests\Common\Annotations\DummyAnnotation', $annotations[0]);
+    }
+
+    public function testImportWithConcreteAnnotation()
+    {
+        $reader = $this->createAnnotationReader(false);
+        $reader->setIndexByClass(false);
+        $property = new \ReflectionProperty('Doctrine\Tests\Common\Annotations\TestImportWithConcreteAnnotation', 'field');
+        $annotations = $reader->getPropertyAnnotations($property);
+        $this->assertEquals(1, count($annotations));
+        $this->assertInstanceOf('Doctrine\Tests\Common\Annotations\DummyAnnotation', $annotations[0]);
+    }
+}
+
+/**
+ * @import("Doctrine\Tests\Common\Annotations\DummyAnnotation")
+ */
+class TestImportWithConcreteAnnotation
+{
+    /**
+     * @DummyAnnotation(dummyValue = "bar")
+     */
+    private $field;
+}
+
+/**
+ * @import("Doctrine\Tests\Common\Annotations\*")
+ */
+class TestImportWithEntireSubNamespace
+{
+    /**
+     * @DummyAnnotation(dummyValue = "foo")
+     */
+    private $field;
 }
 
 class CustomDummyAnnotationClass {

@@ -2,12 +2,18 @@
 
 namespace Doctrine\Tests\Common\Annotations;
 
+use Doctrine\Common\Annotations\Import;
 use Doctrine\Common\Annotations\Parser;
 
 require_once __DIR__ . '/../../TestInit.php';
 
 class ParserTest extends \Doctrine\Tests\DoctrineTestCase
 {
+    public static function setUpBeforeClass()
+    {
+        new Import(array('value' => 'namespace'));
+    }
+
     public function testBasicAnnotations()
     {
         $parser = $this->createTestParser();

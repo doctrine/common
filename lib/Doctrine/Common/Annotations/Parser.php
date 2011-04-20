@@ -398,7 +398,7 @@ class Parser
                 }
                 // a specific annotation has been imported
                 else if ((false !== $pos = strrpos($namespace, '\\'))
-                         && substr($namespace, $pos+1) === $name) {
+                         && strtolower(substr($namespace, $pos+1)) === strtolower($name)) {
                     if (!$this->classExists($namespace)) {
                         throw new \RuntimeException(sprintf(
                             'The imported annotation "%s" does not exist.', $namespace

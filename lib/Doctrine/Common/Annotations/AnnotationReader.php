@@ -88,6 +88,9 @@ class AnnotationReader
         $this->cache = $cache ?: new \Doctrine\Common\Cache\ArrayCache;
 
         $this->preParser = new Parser();
+        $this->preParser->setImports(array(
+            'Doctrine\Common\Annotations\Import' => null,
+        ));
         $this->preParser->setIndexByClass(false);
         $this->preParser->setIgnoreNotImportedAnnotations(true);
     }
@@ -206,6 +209,19 @@ class AnnotationReader
     public function setIgnoreNotImportedAnnotations($bool)
     {
         $this->parser->setIgnoreNotImportedAnnotations($bool);
+    }
+
+    /**
+     * Whether annotations should be index by class name (the default).
+     *
+     * NOTE: If you leave this turned on, then you cannot have annotations with
+     *       the same class on top-level.
+     *
+     * @param boolean $bool
+     */
+    public function setIndexByClass($bool)
+    {
+        $this->parser->setIndexByClass($bool);
     }
 
     /**
