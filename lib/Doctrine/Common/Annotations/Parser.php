@@ -375,11 +375,11 @@ class Parser
         }
 
         // only process names which are not fully qualified, yet
-        if (false === strpos($name, '\\') || strpos($name, ':')) {
+        if ((false !== $pos = strpos($name, ':')) || false === strpos($name, '\\')) {
             $alias = null;
 
             // check if it has an alias
-            if (false !== $pos = strpos($name, ':')) {
+            if (false !== $pos) {
                 $alias = substr($name, 0, $pos);
                 $name  = substr($name, $pos+1);
             }
@@ -387,7 +387,6 @@ class Parser
             $foundFqcn = array();
             // check if annotation has been imported
             foreach (array_keys($this->imports, $alias, true) as $namespace) {
-
                 // entire sub-namespace has been imported
                 if ('*' === substr($namespace, -1)) {
                     $fqcn = substr($namespace, 0, -1).$name;
@@ -400,8 +399,8 @@ class Parser
                 else if ((false !== $pos = strrpos($namespace, '\\'))
                          && strtolower(substr($namespace, $pos+1)) === strtolower($name)) {
                     if (!$this->classExists($namespace)) {
-                        throw new \RuntimeException(sprintf(
-                            'The imported annotation "%s" does not exist.', $namespace
+                        throw AnnotationException::semanticalError(sprintf(
+                            'The imported annotation class "%s" does not exist.', $namespace
                         ));
                     }
 
@@ -415,16 +414,16 @@ class Parser
                     return false;
                 }
 
-                throw AnnotationException::semanticalError(sprintf('The annotation "%s" was never imported.', $name));
+                throw AnnotationException::semanticalError(sprintf('The annotation "@%s" was never imported.', $name));
             }
 
             if (count($foundFqcn = array_unique($foundFqcn)) > 1) {
-                throw new \RuntimeException(sprintf('The annotation "%s" was found in several imports: %s', $name, implode(', ', $foundFqcn)));
+                throw AnnotationException::semanticalError(sprintf('The annotation "@%s" was found in several imports: %s', $name, implode(', ', $foundFqcn)));
             }
 
             $name = reset($foundFqcn);
         } else if (!$this->classExists($name)) {
-            throw new \RuntimeException(sprintf('The annotation "%s" does not exist, or could not be auto-loaded.', $name));
+            throw AnnotationException::semanticalError(sprintf('The annotation "@%s" does not exist, or could not be auto-loaded.', $name));
         }
 
         // at this point, $name contains the fully qualified class name of the

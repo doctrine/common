@@ -392,7 +392,7 @@ DOCBLOCK;
 
         $this->setExpectedException(
             "Doctrine\Common\Annotations\AnnotationException",
-            "[Semantical Error] The annotation \"Foo\" was never imported."
+            "[Semantical Error] The annotation \"@Foo\" was never imported."
         );
         $result = $parser->parse('@common:Foo');
     }

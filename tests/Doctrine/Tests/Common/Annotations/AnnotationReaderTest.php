@@ -2,6 +2,8 @@
 
 namespace Doctrine\Tests\Common\Annotations;
 
+use Doctrine\Common\Annotations\AnnotationException;
+
 use Doctrine\Common\Annotations\Import;
 use ReflectionClass, Doctrine\Common\Annotations\AnnotationReader;
 
@@ -197,6 +199,133 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals(1, count($annotations));
         $this->assertInstanceOf('Doctrine\Tests\Common\Annotations\DummyAnnotation', $annotations[0]);
     }
+
+    public function testImportWithInheritance()
+    {
+        $reader = $this->createAnnotationReader(false);
+        $reader->setIndexByClass(false);
+
+        $class = new TestParentClass();
+        $ref = new \ReflectionClass($class);
+
+        $childAnnotations = $reader->getPropertyAnnotations($ref->getProperty('child'));
+        $this->assertEquals(1, count($childAnnotations));
+        $this->assertInstanceOf('Doctrine\Tests\Common\Annotations\Foo\Name', $childAnnotations[0]);
+
+        $parentAnnotations = $reader->getPropertyAnnotations($ref->getProperty('parent'));
+        $this->assertEquals(1, count($parentAnnotations));
+        $this->assertInstanceOf('Doctrine\Tests\Common\Annotations\Bar\Name', $parentAnnotations[0]);
+    }
+
+    public function testImportDetectsConflict()
+    {
+        $reader = $this->createAnnotationReader(false);
+
+        try {
+            $reader->getPropertyAnnotations(new \ReflectionProperty('Doctrine\Tests\Common\Annotations\TestConflictClass', 'field'));
+            $this->fail('import conflict was not detected.');
+        } catch (AnnotationException $ex) {
+            $this->assertEquals('[Semantical Error] The annotation "@Name" was found in several imports: Doctrine\Tests\Common\Annotations\Foo\Name, Doctrine\Tests\Common\Annotations\Bar\Name', $ex->getMessage());
+        }
+    }
+
+    public function testImportDetectsNotImportedAnnotation()
+    {
+        $reader = $this->createAnnotationReader(false);
+        $reader->setIgnoreNotImportedAnnotations(false);
+
+        try {
+            $reader->getPropertyAnnotations(new \ReflectionProperty('Doctrine\Tests\Common\Annotations\TestAnnotationNotImportedClass', 'field'));
+            $this->fail('not imported annotation was not detected.');
+        } catch (AnnotationException $ex) {
+            $this->assertEquals('[Semantical Error] The annotation "@Name" was never imported.', $ex->getMessage());
+        }
+    }
+
+    public function testImportDetectsNonExistentAnnotation()
+    {
+        $reader = $this->createAnnotationReader(false);
+
+        try {
+            $reader->getPropertyAnnotations(new \ReflectionProperty('Doctrine\Tests\Common\Annotations\TestNonExistentAnnotationClass', 'field'));
+            $this->fail('non-existent annotation was not detected.');
+        } catch (AnnotationException $ex) {
+            $this->assertEquals('[Semantical Error] The annotation "@Foo\Bar\Name" does not exist, or could not be auto-loaded.', $ex->getMessage());
+        }
+    }
+
+    public function testImportDetectsNonExistentImportedAnnotation()
+    {
+        $reader = $this->createAnnotationReader(false);
+
+        try {
+            $reader->getPropertyAnnotations(new \ReflectionProperty('Doctrine\Tests\Common\Annotations\TestNonExistentImportedAnnotationClass', 'field'));
+            $this->fail('non-existent, imported annotation was not detected.');
+        } catch (AnnotationException $ex) {
+            $this->assertEquals('[Semantical Error] The imported annotation class "Foo\Bar\Name" does not exist.', $ex->getMessage());
+        }
+    }
+}
+
+/**
+ * @import("Foo\Bar\Name")
+ */
+class TestNonExistentImportedAnnotationClass
+{
+    /**
+     * @Name
+     */
+    private $field;
+}
+
+class TestNonExistentAnnotationClass
+{
+    /**
+     * @Foo\Bar\Name
+     */
+    private $field;
+}
+
+class TestAnnotationNotImportedClass
+{
+    /**
+     * @Name
+     */
+    private $field;
+}
+
+/**
+ * @import("Doctrine\Tests\Common\Annotations\Foo\*")
+ * @import("Doctrine\Tests\Common\Annotations\Bar\Name")
+ */
+class TestConflictClass
+{
+    /**
+     * @Name(name = "foo")
+     */
+    private $field;
+}
+
+/**
+ * @import("Doctrine\Tests\Common\Annotations\Foo\*")
+ */
+class TestChildClass
+{
+    /**
+     * @Name(name = "foo")
+     */
+    protected $child;
+}
+
+/**
+ * @import("Doctrine\Tests\Common\Annotations\Bar\*")
+ */
+class TestParentClass extends TestChildClass
+{
+    /**
+     * @Name(name = "bar")
+     */
+    private $parent;
 }
 
 /**
@@ -331,4 +460,18 @@ class DummyClassNonAnnotationProblem
      * @var \Test
      */
     public $foo;
+}
+
+namespace Doctrine\Tests\Common\Annotations\Foo;
+
+class Name extends \Doctrine\Common\Annotations\Annotation
+{
+    public $name;
+}
+
+namespace Doctrine\Tests\Common\Annotations\Bar;
+
+class Name extends \Doctrine\Common\Annotations\Annotation
+{
+    public $name;
 }
