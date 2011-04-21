@@ -363,10 +363,12 @@ class Parser
 
             // this will trigger an exception
             $this->match(Lexer::T_IDENTIFIER);
+        } else if ($this->lexer->isNextToken(Lexer::T_IDENTIFIER)) {
+            $this->lexer->moveNext();
+            $name = $this->lexer->token['value'];
+        } else {
+            $name = '';
         }
-
-        $this->lexer->moveNext();
-        $name = $this->lexer->token['value'];
 
         while ($this->lexer->isNextToken(Lexer::T_NAMESPACE_SEPARATOR)) {
             $this->match(Lexer::T_NAMESPACE_SEPARATOR);

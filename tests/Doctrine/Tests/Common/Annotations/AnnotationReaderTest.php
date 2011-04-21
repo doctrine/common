@@ -8,11 +8,13 @@ use Doctrine\Common\Annotations\Import;
 use ReflectionClass, Doctrine\Common\Annotations\AnnotationReader;
 
 require_once __DIR__ . '/../../TestInit.php';
+require_once __DIR__ . '/TopLevelAnnotation.php';
 
 class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
 {
     public static function setUpBeforeClass()
     {
+        // causes the annotation to be auto-loaded
         new Import(array('value' => 'namespace'));
     }
 
@@ -265,6 +267,23 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
             $this->assertEquals('[Semantical Error] The imported annotation class "Foo\Bar\Name" does not exist.', $ex->getMessage());
         }
     }
+
+    public function testTopLevelAnnotation()
+    {
+        $reader = $this->createAnnotationReader(false);
+        $annotations = $reader->getPropertyAnnotations(new \ReflectionProperty('Doctrine\Tests\Common\Annotations\TestTopLevelAnnotationClass', 'field'));
+
+        $this->assertEquals(1, count($annotations));
+        $this->assertInstanceOf('\TopLevelAnnotation', $annotations['TopLevelAnnotation']);
+    }
+}
+
+class TestTopLevelAnnotationClass
+{
+    /**
+     * @\TopLevelAnnotation
+     */
+    private $field;
 }
 
 /**
@@ -475,3 +494,4 @@ class Name extends \Doctrine\Common\Annotations\Annotation
 {
     public $name;
 }
+
