@@ -2,8 +2,9 @@
 
 namespace Doctrine\Tests\Common\Annotations;
 
+use Doctrine\Common\Annotations\IgnoreAnnotation;
+use Doctrine\Common\Annotations\IgnorePhpDocumentorAnnotations;
 use Doctrine\Common\Annotations\AnnotationException;
-
 use Doctrine\Common\Annotations\Import;
 use ReflectionClass, Doctrine\Common\Annotations\AnnotationReader;
 
@@ -16,6 +17,8 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
     {
         // causes the annotation to be auto-loaded
         new Import(array('value' => 'namespace'));
+        new IgnorePhpDocumentorAnnotations();
+        new IgnoreAnnotation(array('value' => 'foo'));
     }
 
     public function testAnnotations()
@@ -275,6 +278,34 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
 
         $this->assertEquals(1, count($annotations));
         $this->assertInstanceOf('\TopLevelAnnotation', $annotations['TopLevelAnnotation']);
+    }
+
+    public function testIgnoresPhpDocumentorAnnotations()
+    {
+        $reader = $this->createAnnotationReader(false);
+        $reader->setIgnoreNotImportedAnnotations(false);
+
+        $annotations = $reader->getMethodAnnotations(new \ReflectionMethod('Doctrine\Tests\Common\Annotations\TestIgnorePhpDocumentorAnnotationsClass', 'test'));
+        $this->assertEquals(1, count($annotations));
+    }
+}
+
+/**
+ * @import("Doctrine\Tests\Common\Annotations\*")
+ * @ignorePhpDocumentorAnnotations
+ * @author Johannes M. Schmitt <schmittjoh@gmail.com>
+ */
+class TestIgnorePhpDocumentorAnnotationsClass
+{
+    /**
+     * @DummyAnnotation(dummyValue = "foo")
+     * @param string $foo
+     * @param string $bar
+     * @return array
+     */
+    public function test($foo, $bar)
+    {
+        return array();
     }
 }
 

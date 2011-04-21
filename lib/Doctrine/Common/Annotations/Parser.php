@@ -94,6 +94,16 @@ class Parser
     private $ignoreNotImportedAnnotations = true;
 
     /**
+     * A list with annotations that are to be ignored during the parsing process.
+     *
+     * The names must be the raw names as used in the class, not the fully qualified
+     * class names.
+     *
+     * @var array
+     */
+    private $ignoredAnnotationNames = array();
+
+    /**
      * @var string
      */
     private $context = '';
@@ -124,6 +134,19 @@ class Parser
     public function getLexer()
     {
         return $this->lexer;
+    }
+
+    /**
+     * Sets the annotation names that are ignored during the parsing process.
+     *
+     * The names are supposed to be the raw names as used in the class, not the
+     * fully qualified class names.
+     *
+     * @param array $names
+     */
+    public function setIgnoredAnnotationNames(array $names)
+    {
+        $this->ignoredAnnotationNames = $names;
     }
 
     /**
@@ -374,6 +397,12 @@ class Parser
             $this->match(Lexer::T_NAMESPACE_SEPARATOR);
             $this->match(Lexer::T_IDENTIFIER);
             $name .= '\\'.$this->lexer->token['value'];
+        }
+
+        // check if name is supposed to be ignored
+        if (in_array($name, $this->ignoredAnnotationNames, true)) {
+            $this->lexer->skipUntil(Lexer::T_AT);
+            return false;
         }
 
         // only process names which are not fully qualified, yet
