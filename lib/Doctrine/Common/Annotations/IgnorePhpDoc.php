@@ -8,7 +8,7 @@ namespace Doctrine\Common\Annotations;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class IgnorePhpDocumentorAnnotations implements IgnoreAnnotationsInterface
+class IgnorePhpDoc implements IgnoreAnnotationsInterface
 {
     public function getNames()
     {

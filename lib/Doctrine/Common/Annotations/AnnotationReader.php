@@ -54,6 +54,13 @@ class AnnotationReader
     private $parser;
 
     /**
+     * Annotations Parser used to collect parsing metadata
+     *
+     * @var Doctrine\Common\Annotations\Parser
+     */
+    private $preParser;
+
+    /**
      * Cache mechanism to store processed Annotations
      *
      * @var Doctrine\Common\Cache\Cache
@@ -68,7 +75,7 @@ class AnnotationReader
     private $globalImports = array(
         'Doctrine\Common\Annotations\Import' => null,
         'Doctrine\Common\Annotations\IgnoreAnnotation' => null,
-        'Doctrine\Common\Annotations\IgnorePhpDocumentorAnnotations' => null,
+        'Doctrine\Common\Annotations\IgnorePhpDoc' => null,
     );
 
     /**
@@ -127,12 +134,12 @@ class AnnotationReader
     /**
      * Adds a namespace to the global import map.
      *
-     * Allowed values are either
+     * Allowed namespace values are either
      * - an entire namespace "MyNamespace\Annotation\*"
      * - or a single annotation class "MyNamespace\Annotation\Foo"
      *
-     * NOTE: Generally, it is recommend that you add imports on the class-level
-     *       using the @import annotation.
+     * NOTE: Generally, it is recommended that you add imports on the
+     *       class-level using the @import annotation.
      *
      * @param string $namespace
      * @param string $alias
@@ -184,9 +191,9 @@ class AnnotationReader
     /**
      * Sets a flag whether to auto-load annotation classes or not.
      *
-     * NOTE: It is recommend to turn auto-loading on if your auto-loader support
-     *       silent failing. For this reason, setting this to TRUE renders the
-     *       parser incompatible with {@link ClassLoader}.
+     * NOTE: It is recommended to turn auto-loading on if your auto-loader
+     *       supports silent failing. For this reason, setting this to TRUE
+     *       renders the parser incompatible with {@link ClassLoader}.
      *
      * @param boolean $bool Boolean flag.
      */
@@ -219,7 +226,7 @@ class AnnotationReader
     }
 
     /**
-     * Whether annotations should be index by class name (the default).
+     * Whether annotations should be indexed by class name (the default).
      *
      * NOTE: If you leave this turned on, then you cannot have annotations with
      *       the same class on top-level.

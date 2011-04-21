@@ -3,7 +3,7 @@
 namespace Doctrine\Tests\Common\Annotations;
 
 use Doctrine\Common\Annotations\IgnoreAnnotation;
-use Doctrine\Common\Annotations\IgnorePhpDocumentorAnnotations;
+use Doctrine\Common\Annotations\IgnorePhpDoc;
 use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\Import;
 use ReflectionClass, Doctrine\Common\Annotations\AnnotationReader;
@@ -17,7 +17,7 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
     {
         // causes the annotation to be auto-loaded
         new Import(array('value' => 'namespace'));
-        new IgnorePhpDocumentorAnnotations();
+        new IgnorePhpDoc();
         new IgnoreAnnotation(array('value' => 'foo'));
     }
 
@@ -292,7 +292,7 @@ class AnnotationReaderTest extends \Doctrine\Tests\DoctrineTestCase
 
 /**
  * @import("Doctrine\Tests\Common\Annotations\*")
- * @ignorePhpDocumentorAnnotations
+ * @ignorePhpDoc
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class TestIgnorePhpDocumentorAnnotationsClass
