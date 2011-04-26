@@ -2,12 +2,18 @@
 
 namespace Doctrine\Tests\Common\Annotations;
 
+use Doctrine\Common\Annotations\Import;
 use Doctrine\Common\Annotations\Parser;
 
 require_once __DIR__ . '/../../TestInit.php';
 
 class ParserTest extends \Doctrine\Tests\DoctrineTestCase
 {
+    public static function setUpBeforeClass()
+    {
+        new Import(array('value' => 'namespace'));
+    }
+
     public function testBasicAnnotations()
     {
         $parser = $this->createTestParser();
@@ -381,11 +387,12 @@ DOCBLOCK;
     public function testNonexistantAliasedAnnotation()
     {
         $parser = new Parser;
+        $parser->setIgnoreNotImportedAnnotations(false);
         $parser->setAnnotationNamespaceAlias('Doctrine\Tests\Common\Annotations\\', 'common');
 
         $this->setExpectedException(
             "Doctrine\Common\Annotations\AnnotationException",
-            "[Semantical Error] Annotation class \"Doctrine\Tests\Common\Annotations\Foo\" does not exist."
+            "[Semantical Error] The annotation \"@Foo\" was never imported."
         );
         $result = $parser->parse('@common:Foo');
     }
