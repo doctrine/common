@@ -85,8 +85,7 @@ class Lexer extends \Doctrine\Common\Lexer
         if ($newVal !== false) {
             $value = $newVal;
             
-            return (strpos($value, '.') !== false || stripos($value, 'e') !== false)
-                ? self::T_FLOAT : self::T_INTEGER;
+            return is_integer($value) ? self::T_INTEGER : self::T_FLOAT;
         }
         
         if ($value[0] === '"') {
@@ -153,7 +152,11 @@ class Lexer extends \Doctrine\Common\Lexer
 
         // Checking for valid numeric numbers: 1.234, -1.234e-2
         if (is_numeric($value)) {
-            return $value;
+            if (strpos($value, '.') !== false || stripos($value, 'e') !== false) {
+                return (float) $value;
+            } else {
+                return (int) $value;
+            }
         }
 
         return false;
