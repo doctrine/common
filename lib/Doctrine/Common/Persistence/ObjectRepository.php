@@ -75,5 +75,5 @@ interface ObjectRepository
      * @param array $ids of identifiers
      * @return array of object instances
      */
-    public function findMany(array $ids);
+    public function findByIds(array $ids);
 }
