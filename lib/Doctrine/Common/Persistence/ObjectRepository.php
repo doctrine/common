@@ -70,7 +70,7 @@ interface ObjectRepository
     public function findOneBy(array $criteria);
 
     /**
-     * Find Many documents of the given repositories type by id.
+     * Find objects by a set of identifiers.
      *
      * @param array $ids of identifiers
      * @return array of object instances
