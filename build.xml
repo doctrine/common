@@ -134,8 +134,8 @@
         <exec command="grep '${version}-DEV' ${project.basedir}/lib/Doctrine/Common/Version.php" checkreturn="true"/>
         <exec command="sed 's/${version}-DEV/${version}/' ${project.basedir}/lib/Doctrine/Common/Version.php > ${project.basedir}/lib/Doctrine/Common/Version2.php" passthru="true" />
         <exec command="mv ${project.basedir}/lib/Doctrine/Common/Version2.php ${project.basedir}/lib/Doctrine/Common/Version.php" passthru="true" />
-        <exec command="git commit -a -m 'Release {$version}'" />
-        <exec command="git tag -a ${version}" passthru="true" />
+        <exec command="git commit -a -m 'Release ${version}'" />
+        <exec command="git tag -m 'Tag ${version}' -a ${version}" passthru="true" />
     </target>
 
     <target name="pirum-release">
