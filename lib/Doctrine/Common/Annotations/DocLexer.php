@@ -19,21 +19,18 @@
 
 namespace Doctrine\Common\Annotations;
 
+use Doctrine\Common\Lexer;
+
 /**
  * Simple lexer for docblock annotations.
  *
- * This Lexer can be subclassed to customize certain aspects of the annotation
- * lexing (token recognition) process. Note though that currently no special care
- * is taken to maintain full backwards compatibility for subclasses. Implementation
- * details of the default Lexer can change without explicit notice.
- *
- * @since   2.0
- * @author  Benjamin Eberlei <kontakt@beberlei.de>
- * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author  Jonathan Wage <jonwage@gmail.com>
- * @author  Roman Borschel <roman@code-factory.org>
+ * @author Benjamin Eberlei <kontakt@beberlei.de>
+ * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
+ * @author Jonathan Wage <jonwage@gmail.com>
+ * @author Roman Borschel <roman@code-factory.org>
+ * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class Lexer extends \Doctrine\Common\Lexer
+final class DocLexer extends Lexer
 {
     const T_NONE                = 1;
     const T_IDENTIFIER          = 2;
@@ -62,7 +59,6 @@ class Lexer extends \Doctrine\Common\Lexer
             '[a-z_][a-z0-9_:]*',
             '(?:[0-9]+(?:[\.][0-9]+)*)(?:e[+-]?[0-9]+)?',
             '"(?:[^"]|"")*"',
-            "'(?:[^']|'')*'",
         );
     }
 
@@ -89,10 +85,6 @@ class Lexer extends \Doctrine\Common\Lexer
 
         if ($value[0] === '"') {
             $value = str_replace('""', '"', substr($value, 1, strlen($value) - 2));
-
-            return self::T_STRING;
-        } else if ($value[0] === "'") {
-            $value = str_replace("''", "'", substr($value, 1, strlen($value) - 2));
 
             return self::T_STRING;
         } else {
