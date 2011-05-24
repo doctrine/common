@@ -31,6 +31,13 @@ namespace Doctrine\Common\Persistence\Mapping;
 interface ClassMetadata
 {
     /**
+     * Get fully-qualified class name of this persistent class.
+     * 
+     * @return string
+     */
+    public function getName();
+    
+    /**
      * Gets the mapped identifier field name.
      * 
      * The returned structure is an array of the identifier field names.
