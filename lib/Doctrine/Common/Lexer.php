@@ -102,11 +102,15 @@ abstract class Lexer
     /**
      * Checks whether a given token matches the current lookahead.
      *
-     * @param integer|string $token
+     * @param integer|string|array $token
      * @return boolean
      */
     public function isNextToken($token)
     {
+        if (is_array($token)) {
+            return in_array($this->lookahead['type'], $token, true);
+        }
+
         return $this->lookahead['type'] === $token;
     }
 
