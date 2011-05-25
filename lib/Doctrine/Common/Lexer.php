@@ -16,7 +16,7 @@
  * and is licensed under the LGPL. For more information, see
  * <http://www.doctrine-project.org>.
  */
- 
+
 namespace Doctrine\Common;
 
 /**
@@ -54,7 +54,7 @@ abstract class Lexer
      * @var array The last matched/seen token.
      */
     public $token;
-    
+
     /**
      * Sets the input data to be tokenized.
      *
@@ -69,7 +69,7 @@ abstract class Lexer
         $this->reset();
         $this->scan($input);
     }
-    
+
     /**
      * Resets the lexer.
      */
@@ -98,7 +98,7 @@ abstract class Lexer
     {
         $this->position = $position;
     }
-    
+
     /**
      * Checks whether a given token matches the current lookahead.
      *
@@ -107,7 +107,18 @@ abstract class Lexer
      */
     public function isNextToken($token)
     {
-        return $this->lookahead['type'] === $token;
+        return null !== $this->lookahead && $this->lookahead['type'] === $token;
+    }
+
+    /**
+     * Checks whether any of the given tokens matches the current lookahead
+     *
+     * @param array $tokens
+     * @return boolean
+     */
+    public function isNextTokenAny(array $tokens)
+    {
+        return null !== $this->lookahead && in_array($this->lookahead['type'], $tokens, true);
     }
 
     /**
@@ -127,13 +138,13 @@ abstract class Lexer
         $this->token = $this->lookahead;
         $this->lookahead = (isset($this->tokens[$this->position]))
             ? $this->tokens[$this->position++] : null;
-        
+
         return $this->lookahead !== null;
     }
-    
+
     /**
      * Tells the lexer to skip input tokens until it sees a token with the given value.
-     * 
+     *
      * @param $type The token type to skip until.
      */
     public function skipUntil($type)
@@ -142,7 +153,7 @@ abstract class Lexer
             $this->moveNext();
         }
     }
-    
+
     /**
      * Checks if given value is identical to the given token
      *
@@ -180,7 +191,7 @@ abstract class Lexer
         $this->peek = 0;
         return $peek;
     }
-    
+
     /**
      * Scans the input string for tokens.
      *
@@ -191,7 +202,7 @@ abstract class Lexer
         static $regex;
 
         if ( ! isset($regex)) {
-            $regex = '/(' . implode(')|(', $this->getCatchablePatterns()) . ')|' 
+            $regex = '/(' . implode(')|(', $this->getCatchablePatterns()) . ')|'
                    . implode('|', $this->getNonCatchablePatterns()) . '/i';
         }
 
@@ -201,7 +212,7 @@ abstract class Lexer
         foreach ($matches as $match) {
             // Must remain before 'value' assignment since it can change content
             $type = $this->getType($match[0]);
-            
+
             $this->tokens[] = array(
                 'value' => $match[0],
                 'type'  => $type,
@@ -209,7 +220,7 @@ abstract class Lexer
             );
         }
     }
-    
+
     /**
      * Gets the literal for a given token.
      *
@@ -221,30 +232,30 @@ abstract class Lexer
         $className = get_class($this);
         $reflClass = new \ReflectionClass($className);
         $constants = $reflClass->getConstants();
-        
+
         foreach ($constants as $name => $value) {
             if ($value === $token) {
                 return $className . '::' . $name;
             }
         }
-        
+
         return $token;
     }
-    
+
     /**
      * Lexical catchable patterns.
      *
      * @return array
      */
     abstract protected function getCatchablePatterns();
-    
+
     /**
      * Lexical non-catchable patterns.
      *
      * @return array
      */
     abstract protected function getNonCatchablePatterns();
-    
+
     /**
      * Retrieve token type. Also processes the token value if necessary.
      *
