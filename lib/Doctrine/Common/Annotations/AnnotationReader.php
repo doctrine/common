@@ -43,6 +43,9 @@ final class AnnotationReader implements Reader
      */
     private static $globalImports = array(
         'ignoreannotation' => 'Doctrine\Common\Annotations\Annotation\IgnoreAnnotation',
+        'var'              => 'Doctrine\Common\Annotations\Annotation\Type',
+        'author'           => 'Doctrine\Common\Annotations\Annotation\Author',
+        'since'            => 'Doctrine\Common\Annotations\Annotation\Since',
     );
 
     /**
@@ -110,9 +113,7 @@ final class AnnotationReader implements Reader
     private $ignoredAnnotationNames = array();
 
     /**
-     * Constructor. Initializes a new AnnotationReader that uses the given Cache provider.
-     *
-     * @param DocParser $parser The parser to use. If none is provided, the default parser is used.
+     * Constructor. Initializes a new AnnotationReader.
      */
     public function __construct()
     {
@@ -307,8 +308,8 @@ final class AnnotationReader implements Reader
 
         $name = $class->getName();
         $this->imports[$name] = array_merge(
-            self::$globalImports,
             $this->phpParser->parseClass($class),
+            self::$globalImports,
             array('__NAMESPACE__' => $class->getNamespaceName())
         );
         $this->ignoredAnnotationNames[$name] = $ignoredAnnotationNames;

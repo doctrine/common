@@ -16,13 +16,13 @@ abstract class AbstractReaderTest extends \PHPUnit_Framework_TestCase
         $reader = $this->getReader();
 
         $class = new ReflectionClass('Doctrine\Tests\Common\Annotations\DummyClass');
-        $this->assertEquals(1, count($reader->getClassAnnotations($class)));
+        $this->assertEquals(4, count($reader->getClassAnnotations($class)));
         $this->assertInstanceOf($annotName = 'Doctrine\Tests\Common\Annotations\DummyAnnotation', $annot = $reader->getClassAnnotation($class, $annotName));
         $this->assertEquals("hello", $annot->dummyValue);
 
         $field1Prop = $class->getProperty('field1');
         $propAnnots = $reader->getPropertyAnnotations($field1Prop);
-        $this->assertEquals(1, count($propAnnots));
+        $this->assertEquals(2, count($propAnnots));
         $this->assertInstanceOf($annotName, $annot = $reader->getPropertyAnnotation($field1Prop, $annotName));
         $this->assertEquals("fieldHello", $annot->dummyValue);
 
@@ -93,7 +93,7 @@ abstract class AbstractReaderTest extends \PHPUnit_Framework_TestCase
     {
         $reader = $this->getReader();
         $annots = $reader->getPropertyAnnotations(new \ReflectionProperty('Doctrine\Tests\Common\Annotations\DummyClass2', 'id'));
-        $this->assertEquals(3, count($annots));
+        $this->assertEquals(4, count($annots));
     }
 
     public function testNonAnnotationProblem()

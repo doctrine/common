@@ -2,6 +2,8 @@
 
 namespace Doctrine\Tests\Common\Annotations;
 
+use Doctrine\Common\Annotations\Annotation\Author;
+
 use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\Route;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
@@ -45,6 +47,7 @@ class CachedReaderTest extends AbstractReaderTest
         $reader = new CachedReader(new AnnotationReader(), $cache, true);
         $this->assertEquals(array(
             new Route(array('value' => '/someprefix')),
+            new Author(array('value' => 'Johannes M. Schmitt <schmittjoh@gmail.com>'))
         ), $reader->getClassAnnotations(new \ReflectionClass($name)));
     }
 

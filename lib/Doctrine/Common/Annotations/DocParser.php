@@ -274,20 +274,11 @@ final class DocParser
                 continue;
             }
 
-            // make sure the @ is preceded by non-catchable pattern
-            if (null !== $this->lexer->token && $this->lexer->lookahead['position'] === $this->lexer->token['position'] + strlen($this->lexer->token['value'])) {
+            if (!$this->isAtMarkingAnnotation()) {
                 $this->lexer->moveNext();
                 continue;
             }
 
-            // make sure the @ is followed by either a namespace separator, or
-            // an identifier token
-            if ((null === $peek = $this->lexer->glimpse())
-                || (DocLexer::T_NAMESPACE_SEPARATOR !== $peek['type'] && !in_array($peek['type'], self::$classIdentifiers, true))
-                || $peek['position'] !== $this->lexer->lookahead['position'] + 1) {
-                $this->lexer->moveNext();
-                continue;
-            }
 
             $this->isNestedAnnotation = false;
             if (false !== $annot = $this->Annotation()) {
@@ -298,8 +289,26 @@ final class DocParser
         return $annotations;
     }
 
+    private function isAtMarkingAnnotation()
+    {
+        // make sure the @ is preceded by non-catchable pattern
+        if (null !== $this->lexer->token && $this->lexer->lookahead['position'] === $this->lexer->token['position'] + strlen($this->lexer->token['value'])) {
+            return false;
+        }
+
+        // make sure the @ is followed by either a namespace separator, or
+        // an identifier token
+        if ((null === $peek = $this->lexer->glimpse())
+            || (DocLexer::T_NAMESPACE_SEPARATOR !== $peek['type'] && !in_array($peek['type'], self::$classIdentifiers, true))
+            || $peek['position'] !== $this->lexer->lookahead['position'] + 1) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
-     * Annotation     ::= "@" AnnotationName ["(" [Values] ")"]
+     * Annotation     ::= "@" AnnotationName ( ["(" [Values] ")"] | { ¬ @ }* )
      * AnnotationName ::= QualifiedName | SimpleName
      * QualifiedName  ::= NameSpacePart "\" {NameSpacePart "\"}* SimpleName
      * NameSpacePart  ::= identifier | null | false | true
@@ -357,17 +366,40 @@ final class DocParser
         // that it is loaded
 
         // Next will be nested
-        $this->isNestedAnnotation = true;
 
         $values = array();
         if ($this->lexer->isNextToken(DocLexer::T_OPEN_PARENTHESIS)) {
             $this->match(DocLexer::T_OPEN_PARENTHESIS);
 
+            $this->isNestedAnnotation = true;
             if ( ! $this->lexer->isNextToken(DocLexer::T_CLOSE_PARENTHESIS)) {
                 $values = $this->Values();
             }
 
             $this->match(DocLexer::T_CLOSE_PARENTHESIS);
+        } else if (!$this->isNestedAnnotation) {
+            // take everything until the next @
+            $value = '';
+            while (null !== $this->lexer->lookahead
+                   && (DocLexer::T_AT !== $this->lexer->lookahead['type'] || !$this->isAtMarkingAnnotation())) {
+                $this->lexer->moveNext();
+
+                if (DocLexer::T_STRING === $this->lexer->token['type']) {
+                    $value .= '"'.$this->lexer->token['value'].'"';
+
+                    if ($this->lexer->lookahead['position'] - 2 !== $this->lexer->token['position'] + strlen($this->lexer->token['value'])) {
+                        $value .= ' ';
+                    }
+                } else {
+                    $value .= $this->lexer->token['value'];
+
+                    if ($this->lexer->lookahead['position'] !== $this->lexer->token['position'] + strlen($this->lexer->token['value'])) {
+                        $value .= ' ';
+                    }
+                }
+            }
+
+            $values['value'] = '' === $value ? null : trim($value);
         }
 
         return new $name($values);
