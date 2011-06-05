@@ -102,7 +102,7 @@ final class DocParser
     /**
      * @var boolean
      */
-    private $autoloadAnnotations = false;
+    private $autoloadAnnotations = true;
     
     /**
      * @var Closure
