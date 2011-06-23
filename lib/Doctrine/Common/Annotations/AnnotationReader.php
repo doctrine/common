@@ -126,9 +126,14 @@ final class AnnotationReader implements Reader
      *
      * @param DocParser $parser The parser to use. If none is provided, the default parser is used.
      */
-    public function __construct()
+    public function __construct(DocParser $parser = null)
     {
-        $this->parser = new DocParser;
+        $this->parser = $parser;
+        
+        if(null === $this->parser) {
+            
+            $this->parser = new DocParser;
+        }
 
         $this->preParser = new DocParser;
         $this->preParser->setImports(self::$globalImports);
