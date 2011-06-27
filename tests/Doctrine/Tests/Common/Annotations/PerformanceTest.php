@@ -12,6 +12,8 @@ use Doctrine\Common\Annotations\AnnotationReader;
 require_once __DIR__ . '/Fixtures/Annotation/Route.php';
 require_once __DIR__ . '/Fixtures/Annotation/Template.php';
 require_once __DIR__ . '/Fixtures/Annotation/Secure.php';
+require_once __DIR__ . '/Fixtures/Annotation/TemplateInterface.php';
+require_once __DIR__ . '/Fixtures/Annotation/RouteInterface.php';
 
 class PerformanceTest extends \PHPUnit_Framework_TestCase
 {
@@ -90,6 +92,7 @@ class PerformanceTest extends \PHPUnit_Framework_TestCase
             'subpackage', 'name', 'global', 'param', 'return', 'staticvar',
             'static', 'var', 'throws', 'inheritdoc',
         );
+        $ignored['author'] = true;
 
         $parser = new DocParser();
         $method = $this->getMethod();
@@ -131,9 +134,73 @@ class PerformanceTest extends \PHPUnit_Framework_TestCase
         $this->printResults('doc-lexer', $time, $c);
     }
 
+    /**
+     * @group performance
+     */
+    public function testCachedReadPerformanceWithInMemoryWithInterface()
+    {
+        $reader = new CachedReader(new AnnotationReader(), new ArrayCache());
+        $method = $this->getMethodWithInterfaceAnnotation();
+
+        $time = microtime(true);
+        for ($i=0,$c=500; $i<$c; $i++) {
+            $reader->getMethodAnnotations($method);
+        }
+        $time = microtime(true) - $time;
+
+        $this->printResults('cached reader with interface (in-memory)', $time, $c);
+    }
+
+    /**
+     * @group performance
+     */
+    public function testCachedReadPerformanceWithFileCacheWithInterface()
+    {
+        $method = $this->getMethodWithInterfaceAnnotation();
+
+        // prime cache
+        $reader = new FileCacheReader(new AnnotationReader(), sys_get_temp_dir());
+        $reader->getMethodAnnotations($method);
+
+        $time = microtime(true);
+        for ($i=0,$c=500; $i<$c; $i++) {
+            $reader = new FileCacheReader(new AnnotationReader(), sys_get_temp_dir());
+            $reader->getMethodAnnotations($method);
+            clearstatcache();
+        }
+        $time = microtime(true) - $time;
+
+        $this->printResults('cached reader with interface (file)', $time, $c);
+    }
+
+    /**
+     * @group performance
+     */
+    public function testReadPerformanceWithInterface()
+    {
+        $reader = new AnnotationReader();
+        $method = $this->getMethodWithInterfaceAnnotation();
+
+        $time = microtime(true);
+        for ($i=0,$c=150; $i<$c; $i++) {
+            $reader = new AnnotationReader();
+            $reader->getMethodAnnotations($method);
+        }
+        $time = microtime(true) - $time;
+
+        $this->printResults('reader with interface', $time, $c);
+    }
+    
+
     private function getMethod()
     {
         return new \ReflectionMethod('Doctrine\Tests\Common\Annotations\Fixtures\Controller', 'helloAction');
+    }
+    
+    
+    private function getMethodWithInterfaceAnnotation()
+    {
+        return new \ReflectionMethod('Doctrine\Tests\Common\Annotations\Fixtures\Controller', 'helloActionWithInterfaceAnnotation');
     }
 
     private function printResults($test, $time, $iterations)

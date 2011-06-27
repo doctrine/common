@@ -96,6 +96,87 @@ DOCBLOCK;
         $this->assertEquals("bar", $annot->foo);
         $this->assertNull($annot->value);
    }
+   
+   
+    /**
+     * @group interface
+     */
+    public function testBasicAnnotationsInterface()
+    {
+        $parser = $this->createTestParser();
+
+        // annotation
+        $result = $parser->parse("@InterfaceAnnotation");
+        $annot  = $result[0];
+        $this->assertTrue($annot instanceof InterfaceAnnotation);
+        $this->assertNull($annot->name());
+        $this->assertNull($annot->data());
+        
+        // Associative arrays
+        $result = $parser->parse('@InterfaceAnnotation(value={"key1" = "value1"})');
+        $annot  = $result[0];
+        
+        $this->assertNull($annot->data());
+        $this->assertTrue(in_array('value1', $annot->name()));
+        
+        
+        // Numerical arrays
+        $result = $parser->parse('@InterfaceAnnotation({2="foo", 4="bar"})');
+        $annot  = $result[0];
+        $value  = $annot->name();
+        $this->assertTrue(is_array($value));
+        $this->assertEquals('foo', $value[2]);
+        $this->assertEquals('bar', $value[4]);
+        $this->assertFalse(isset($value[0]));
+        $this->assertFalse(isset($value[1]));
+        $this->assertFalse(isset($value[3]));
+        
+        
+        // Multiple values
+        $result = $parser->parse('@InterfaceAnnotation(name=@InterfaceAnnotation, data=@InterfaceAnnotation)');
+        $annot  = $result[0];
+        $this->assertTrue($annot instanceof InterfaceAnnotation);
+        $this->assertTrue($annot->data() instanceof InterfaceAnnotation);
+        $this->assertTrue($annot->name() instanceof InterfaceAnnotation);
+        
+        
+        $result = $parser->parse('@InterfaceAnnotation("value1",data="value2")');
+        $annot  = $result[0];
+        $this->assertTrue($annot instanceof InterfaceAnnotation);
+        $this->assertEquals($annot->name(), "value1");
+        $this->assertEquals($annot->data(), "value2");
+
+        
+        
+        // Multiple types as values
+        $result = $parser->parse('@InterfaceAnnotation(@InterfaceAnnotation,data={"key1"="value1", "key2"="value2"})');
+        $annot = $result[0];
+        $this->assertTrue($annot instanceof InterfaceAnnotation);
+        $this->assertTrue($annot->name() instanceof InterfaceAnnotation);
+        $this->assertArrayHasKey('key1', $annot->data());
+        $this->assertArrayHasKey('key2', $annot->data());
+        $this->assertTrue(in_array('value1', $annot->data()));
+        $this->assertTrue(in_array('value2', $annot->data()));
+        
+        
+                // Complete docblock
+        $docblock = <<<DOCBLOCK
+/**
+ * Some nifty class.
+ *
+ * @author Mr.X
+ * @InterfaceAnnotation(value="bar")
+ */
+DOCBLOCK;
+
+        $result = $parser->parse($docblock);
+        $this->assertEquals(1, count($result));
+        $annot = $result[0];
+        $this->assertTrue($annot instanceof InterfaceAnnotation);
+        $this->assertEquals("bar", $annot->name());
+        $this->assertNull($annot->data());
+        
+   }
 
     public function testNamespacedAnnotations()
     {
@@ -364,6 +445,12 @@ class True {}
 class False {}
 
 class Null {}
+
+interface InterfaceAnnotation
+{
+    public function name();
+    public function data();
+}
 
 namespace Doctrine\Tests\Common\Annotations\FooBar;
 
