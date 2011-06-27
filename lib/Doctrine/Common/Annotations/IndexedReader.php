@@ -81,6 +81,15 @@ class IndexedReader implements Reader
     }
     
     /**
+     * @return string The class name.
+     */
+    private function getAnnotationClassName($annot)
+    {
+        $class = get_class($annot);
+        return $class;
+    }
+    
+    /**
      * Proxy all methods to the delegate.
      * 
      * @param type $method

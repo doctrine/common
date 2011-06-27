@@ -71,6 +71,16 @@ final class DocParser
      * @var array
      */
     private $classExists = array();
+    
+    
+    /**
+     * This hashmap is used internally to cache results of class_exists()
+     * look-ups.
+     *
+     * @var array
+     */
+    private $interfaceExists = array();
+    
 
     /**
      * Whether annotations that have not been imported should be ignored.
@@ -108,6 +118,12 @@ final class DocParser
      * @var Closure
      */
     private $creationFn = null;
+    
+    /**
+     * @var array
+     */
+    private $annotationFactories = array();
+    
 
     /**
      * Constructs a new DocParser.
@@ -138,6 +154,27 @@ final class DocParser
     {
         $this->creationFn = $func;
     }
+    
+    /**
+     * @param Factory $factory 
+     */
+    public function setAnnotationFactory(Factory $factory)
+    {
+        $this->annotationFactories[$factory->getClassName()] = $factory;
+    }
+    
+    /**
+     * @param string $className 
+     * @return Factory
+     */
+    public function getAnnotationFactory($className)
+    {
+        if(!isset($this->annotationFactories[$className])){
+            $this->annotationFactories[$className] = new AnnotationFactory(new ReflectionClass($className));
+        }
+        return $this->annotationFactories[$className];
+    }
+
 
     /**
      * Sets a flag whether to auto-load annotation classes or not.
@@ -276,13 +313,55 @@ final class DocParser
      */
     private function classExists($fqcn)
     {
-        if (isset($this->classExists[$fqcn])) {
-            return $this->classExists[$fqcn];
+        if (!isset($this->classExists[$fqcn])) {
+            $this->classExists[$fqcn] = class_exists($fqcn, $this->autoloadAnnotations);
         }
 
-        return $this->classExists[$fqcn] = class_exists($fqcn, $this->autoloadAnnotations);
+        return $this->classExists[$fqcn];
+    }
+    
+    /**
+     * This will prevent going through the auto-loader on each occurence of the
+     * annotation.
+     *
+     * @param string $fqcn
+     * @return boolean
+     */
+    private function interfaceExists($fqcn)
+    {       
+        if (!isset($this->interfaceExists[$fqcn])) {
+            $this->interfaceExists[$fqcn] = interface_exists($fqcn, $this->autoloadAnnotations);
+        }
+
+        return $this->interfaceExists[$fqcn];
+    }
+    
+    /**
+     * This will prevent going through the auto-loader on each occurence of the
+     * annotation.
+     *
+     * @param string $fqcn
+     * @return boolean
+     */
+    private function classOrInterfaceExists($fqcn)
+    {
+        return $this->classExists($fqcn) || $this->interfaceExists($fqcn);
+    }
+    
+    /**
+     * @param   string $className
+     * @return  bool
+     */
+    private function isAnnotation($className)
+    {       
+        if($this->classOrInterfaceExists($className)){
+            return $this->getAnnotationFactory($className)->isAnnotation();
+        }
+        return false;
     }
 
+    
+    
     /**
      * Annotations ::= Annotation {[ "*" ]* [Annotation]}*
      *
@@ -362,7 +441,7 @@ final class DocParser
         }
 
         // only process names which are not fully qualified, yet
-        if ('\\' !== $name[0] && !$this->classExists($name)) {
+        if ('\\' !== $name[0] && !$this->classOrInterfaceExists($name)) {
             $alias = (false === $pos = strpos($name, '\\'))? $name : substr($name, 0, $pos);
 
             if (isset($this->imports[$loweredAlias = strtolower($alias)])) {
@@ -371,9 +450,9 @@ final class DocParser
                 } else {
                     $name = $this->imports[$loweredAlias];
                 }
-            } elseif (isset($this->imports['__DEFAULT__']) && $this->classExists($this->imports['__DEFAULT__'].$name)) {
+            } elseif (isset($this->imports['__DEFAULT__']) && $this->classOrInterfaceExists($this->imports['__DEFAULT__'].$name)) {
                  $name = $this->imports['__DEFAULT__'].$name;
-            } elseif (isset($this->imports['__NAMESPACE__']) && $this->classExists($this->imports['__NAMESPACE__'].'\\'.$name)) {
+            } elseif (isset($this->imports['__NAMESPACE__']) && $this->classOrInterfaceExists($this->imports['__NAMESPACE__'].'\\'.$name)) {
                  $name = $this->imports['__NAMESPACE__'].'\\'.$name;
             } else {
                 if ($this->ignoreNotImportedAnnotations || isset($this->ignoredAnnotationNames[$name])) {
@@ -384,7 +463,7 @@ final class DocParser
             }
         }
 
-        if (!$this->classExists($name)) {
+        if (!$this->isAnnotation($name)){
             throw AnnotationException::semanticalError(sprintf('The annotation "@%s" in %s does not exist, or could not be auto-loaded.', $name, $this->context));
         }
 
@@ -416,7 +495,7 @@ final class DocParser
             return $fn($name, $values);
         }
         
-        return new $name($values);
+        return $this->getAnnotationFactory($name)->newAnnotation($values);
     }
 
     /**

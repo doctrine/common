@@ -5,6 +5,10 @@ namespace Doctrine\Tests\Common\Annotations\Fixtures;
 use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\Template;
 use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\Route;
 
+
+use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\TemplateInterface;
+use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\RouteInterface;
+
 /**
  * @Route("/someprefix")
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
@@ -25,6 +29,16 @@ class Controller
      * @Template()
      */
     public function helloAction($name)
+    {
+        return array('name' => $name);
+    }
+    
+    
+    /**
+     * @RouteInterface("/hello/{name}", name="_demo_hello")
+     * @TemplateInterface()
+     */
+    public function helloActionWithInterfaceAnnotation($name)
     {
         return array('name' => $name);
     }

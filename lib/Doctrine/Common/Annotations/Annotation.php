@@ -19,6 +19,7 @@
 
 namespace Doctrine\Common\Annotations;
 
+use Doctrine\Common\Annotations\Annotation\Annotation as AnnotationInterface;
 /**
  * Annotations class
  *
@@ -27,7 +28,7 @@ namespace Doctrine\Common\Annotations;
  * @author  Jonathan Wage <jonwage@gmail.com>
  * @author  Roman Borschel <roman@code-factory.org>
  */
-class Annotation
+class Annotation implements AnnotationInterface
 {
     /**
      * Value property. Common among all derived classes.
