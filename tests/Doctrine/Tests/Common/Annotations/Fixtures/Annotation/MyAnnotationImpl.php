@@ -18,5 +18,16 @@ class MyAnnotationImpl extends AbstractProxy implements MyAnnotation
     {
         return $this->data;
     }
+    
+    public function __get($name)
+    {
+        if(!isset($this->$name))
+        {
+            throw new \BadMethodCallException(
+                sprintf("Unknown property \'%s\' on annotation \'%s\'.", $name, get_called_class())
+            );
+        }
+        return $this->$name;
+    }
 
 }

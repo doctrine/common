@@ -34,13 +34,15 @@ class ProxyDecoratorTest extends \PHPUnit_Framework_TestCase
         
         $condition  = $decorator->setData($proxy, array("data"=>"Some data"));
         $this->assertEquals($proxy->data(), "Some data");
-        $this->assertEquals($proxy->data(), "Some data");
+        $this->assertEquals($proxy->data(), $proxy->data);
         
         $condition  = $decorator->setData($proxy, array("name"=>"Some name"));
         $this->assertEquals($proxy->name(), "Some name");
+        $this->assertEquals($proxy->name, $proxy->name);
         
         $condition  = $decorator->setData($proxy, array("value"=>"Some name"));
         $this->assertEquals($proxy->name(), "Some name");
+        $this->assertEquals($proxy->name, $proxy->name);
 
         
         $decorator  = new ProxyDecorator($this->fullClassName("MyAnnotationImpl"));
