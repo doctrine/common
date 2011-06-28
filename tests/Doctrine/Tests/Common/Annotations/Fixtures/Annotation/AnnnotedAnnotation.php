@@ -20,7 +20,7 @@ interface AnnnotedAnnotation
     function name();
 
     /**
-     * @DefaultValue("@Target("ALL")")
+     * @DefaultValue(@Target("ALL"))
      * @Type("Doctrine\Common\Annotations\Annotation\Target", nullable = true)
      */
     function target();

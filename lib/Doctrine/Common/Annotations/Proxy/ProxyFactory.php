@@ -207,7 +207,7 @@ class ProxyFactory
         if (!in_array($interface, class_implements($impl)))
         {
             throw new \InvalidArgumentException(
-                    sprintf('class "%s" not implements', $impl, $interface));
+                    sprintf('class "%s" not implements "%s"', $impl, $interface));
         }
         
         if (!in_array(self::PROXY_BASE, class_parents($impl)))
@@ -224,7 +224,7 @@ class ProxyFactory
      */
     public function unregister($interface)
     {
-        if (isset($this->impl[$interface]))
+        if (!isset($this->impl[$interface]))
         {
             throw new \InvalidArgumentException(
                     sprintf('Interface "%s" is not registered', $interface));
