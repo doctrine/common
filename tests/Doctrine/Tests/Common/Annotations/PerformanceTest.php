@@ -81,10 +81,17 @@ class PerformanceTest extends \PHPUnit_Framework_TestCase
             '__NAMESPACE__'    => 'Doctrine\Tests\Common\Annotations\Fixtures',
         );
         $ignored = array(
-            'access', 'author', 'copyright', 'deprecated', 'example', 'ignore',
-            'internal', 'link', 'see', 'since', 'tutorial', 'version', 'package',
-            'subpackage', 'name', 'global', 'param', 'return', 'staticvar',
-            'static', 'var', 'throws', 'inheritdoc',
+            'access' => true, 'author' => true, 'copyright' => true, 'deprecated' => true,
+            'example' => true, 'ignore' => true, 'internal' => true, 'link' => true, 'see' => true,
+            'since' => true, 'tutorial' => true, 'version' => true, 'package' => true,
+            'subpackage' => true, 'name' => true, 'global' => true, 'param' => true,
+            'return' => true, 'staticvar' => true, 'category' => true, 'staticVar' => true,
+            'static' => true, 'var' => true, 'throws' => true, 'inheritdoc' => true,
+            'inheritDoc' => true, 'license' => true, 'todo' => true, 'deprecated' => true,
+            'deprec' => true, 'author' => true, 'property' => true, 'method' => true,
+            'abstract' => true, 'exception' => true, 'magic' => true, 'api' => true,
+            'final' => true, 'filesource' => true, 'throw' => true, 'uses' => true,
+            'usedby' => true, 'private' => true
         );
 
         $parser = new DocParser();
@@ -126,10 +133,73 @@ class PerformanceTest extends \PHPUnit_Framework_TestCase
 
         $this->printResults('doc-lexer', $time, $c);
     }
+    
+    /**
+     * @group performance
+     */
+    public function testCachedReadPerformanceWithInMemoryWithInterface()
+    {
+        $reader = new CachedReader(new AnnotationReader(), new ArrayCache());
+        $method = $this->getMethodWithInterfaceAnnotation();
+
+        $time = microtime(true);
+        for ($i=0,$c=500; $i<$c; $i++) {
+            $reader->getMethodAnnotations($method);
+        }
+        $time = microtime(true) - $time;
+
+        $this->printResults('cached reader with interface (in-memory)', $time, $c);
+    }
+
+    /**
+     * @group performance
+     */
+    public function testCachedReadPerformanceWithFileCacheWithInterface()
+    {
+        $method = $this->getMethodWithInterfaceAnnotation();
+
+        // prime cache
+        $reader = new FileCacheReader(new AnnotationReader(), sys_get_temp_dir());
+        $reader->getMethodAnnotations($method);
+
+        $time = microtime(true);
+        for ($i=0,$c=500; $i<$c; $i++) {
+            $reader = new FileCacheReader(new AnnotationReader(), sys_get_temp_dir());
+            $reader->getMethodAnnotations($method);
+            clearstatcache();
+        }
+        $time = microtime(true) - $time;
+
+        $this->printResults('cached reader with interface (file)', $time, $c);
+    }
+
+    /**
+     * @group performance
+     */
+    public function testReadPerformanceWithInterface()
+    {
+        $reader = new AnnotationReader();
+        $method = $this->getMethodWithInterfaceAnnotation();
+
+        $time = microtime(true);
+        for ($i=0,$c=150; $i<$c; $i++) {
+            $reader = new AnnotationReader();
+            $reader->getMethodAnnotations($method);
+        }
+        $time = microtime(true) - $time;
+
+        $this->printResults('reader with interface', $time, $c);
+    }
+    
 
     private function getMethod()
     {
         return new \ReflectionMethod('Doctrine\Tests\Common\Annotations\Fixtures\Controller', 'helloAction');
+    }
+    
+    private function getMethodWithInterfaceAnnotation()
+    {
+        return new \ReflectionMethod('Doctrine\Tests\Common\Annotations\Fixtures\Controller', 'helloActionWithInterfaceAnnotation');
     }
 
     private function printResults($test, $time, $iterations)
