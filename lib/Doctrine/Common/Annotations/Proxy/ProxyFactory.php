@@ -179,6 +179,15 @@ class ProxyFactory
     {
         return array_key_exists($interface, $this->impl);
     }
+    
+     /**
+     * @param string $class
+     * @return bool 
+     */
+    public function isProxyClass($class)
+    {
+        return in_array($class, $this->impl);
+    }
 
     /**
      * @param string $interface

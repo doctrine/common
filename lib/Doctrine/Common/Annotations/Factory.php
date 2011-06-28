@@ -19,6 +19,7 @@
  */
 
 namespace Doctrine\Common\Annotations;
+use Doctrine\Common\Annotations\Proxy\ProxyFactory;
 
 /**
  * Interface for annotation factory.
@@ -27,11 +28,19 @@ namespace Doctrine\Common\Annotations;
  */
 interface Factory
 {
-    function setAnnotationClass(\ReflectionClass $class);
 
+    /**
+     * @param array $data
+     */
     function newAnnotation(array $data = array());
 
+    /**
+     * @return bool
+     */
     function isAnnotation();
 
+    /**
+     * @return string
+     */
     function getClassName();
 }

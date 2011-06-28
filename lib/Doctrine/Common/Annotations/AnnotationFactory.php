@@ -21,6 +21,7 @@
 namespace Doctrine\Common\Annotations;
 
 use Doctrine\Common\Annotations\Proxy\ProxyFactory;
+use Doctrine\Common\Annotations\Factory;
 use \ReflectionClass;
 
 /**
@@ -28,17 +29,22 @@ use \ReflectionClass;
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-class AnnotationFactory
+class AnnotationFactory implements Factory
 {
 
     /**
      * @var ReflectionClass
      */
     private $class;
+    
+    /**
+     * @var ProxyFactory 
+     */
+    private $proxyFactory;
     /**
      * @var ProxyFactory
      */
-    private static $proxyFactory;
+    private static $defaltProxyFactory;
 
     /**
      * @param ReflectionClass $class
@@ -51,19 +57,19 @@ class AnnotationFactory
     /**
      * @return ProxyFactory 
      */
-    public static function getProxyFactory()
+    public static function defaltProxyFactory()
     {
-        if (self::$proxyFactory == null)
+        if (self::$defaltProxyFactory == null)
         {
-            self::$proxyFactory = new ProxyFactory();
+            self::$defaltProxyFactory = new ProxyFactory();
         }
-        return self::$proxyFactory;
+        return self::$defaltProxyFactory;
     }
 
     /**
      * @param \ReflectionClass $class 
      */
-    function setAnnotationClass(\ReflectionClass $class)
+    public function setAnnotationClass(\ReflectionClass $class)
     {
         $this->class = $class;
 
@@ -74,6 +80,25 @@ class AnnotationFactory
     }
 
     /**
+     * @param ProxyFactory $proxyFactory 
+     */
+    public function setProxyFactory(ProxyFactory $proxyFactory)
+    {
+        $this->proxyFactory = $proxyFactory;
+    }
+    
+    /**
+     * @return ProxyFactory 
+     */
+    public function getProxyFactory()
+    {
+        if ($this->proxyFactory == null){
+            $this->setProxyFactory(self::defaltProxyFactory());
+        }
+        return $this->proxyFactory;
+    }
+
+    /**
      * @return mixed
      */
     public function newAnnotation(array $data = array())
@@ -81,7 +106,7 @@ class AnnotationFactory
         $class = $this->class->getName();
         if ($this->class->isInterface())
         {
-            $class = self::getProxyFactory()->getImplClass($class);
+            $class = self::defaltProxyFactory()->getImplClass($class);
         }
 
         return new $class($data);

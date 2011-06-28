@@ -66,6 +66,21 @@ class ProxyFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($condition);
     }
     
+    /**
+     * @group proxy
+     * @group proxy-factory
+     */
+    public function testIsProxy()
+    {
+        $factory = new ProxyFactory();
+        $factory->register(
+                $this->fullClassName("MyAnnotation"),
+                $this->fullClassName("MyAnnotationImpl"));
+        
+        $condition = $factory->isProxyClass($this->fullClassName("MyAnnotationImpl"));
+        $this->assertTrue($condition);
+    }
+    
        
     
     /**

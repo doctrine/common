@@ -21,6 +21,7 @@ namespace Doctrine\Common\Annotations;
 
 use Closure;
 use ReflectionClass;
+use Doctrine\Common\Annotations\Factory;
 
 /**
  * A parser for docblock annotations.
@@ -79,6 +80,23 @@ final class DocParser
      * @var array
      */
     private $interfaceExists = array();
+    
+    
+    /**
+     * This hashmap is used internally to cache results.
+     *
+     * @var array
+     */
+    private $className = array();
+    
+     /**
+     * Whether to index annotations by their class.
+     *
+     * If set to true, duplicate annotations will override each other.
+     *
+     * @var boolean
+     */
+    private $indexByClass = false;
 
     /**
      * Whether annotations that have not been imported should be ignored.
@@ -155,6 +173,22 @@ final class DocParser
     public function isAutoloadAnnotations()
     {
         return $this->autoloadAnnotations;
+    }
+    
+    /**
+     * @param bool $bool 
+     */
+    public function setIndexByClass($bool)
+    {
+        $this->indexByClass = (Boolean) $bool;
+    }
+
+    /**
+     * @return bool 
+     */
+    public function isIndexByClass()
+    {
+        return $this->indexByClass;
     }
 
     public function setImports(array $imports)
@@ -333,6 +367,20 @@ final class DocParser
     }
 
     /**
+     * @param   mixed $annot
+     * @return  null
+     */
+    private function className($annot)
+    {   
+        $class = get_class($annot);
+        if(isset($this->className[$class])){
+            return $this->className[$class];
+        }
+        return $class;
+    }
+
+    
+    /**
      * Annotations ::= Annotation {[ "*" ]* [Annotation]}*
      *
      * @return array
@@ -364,7 +412,11 @@ final class DocParser
 
             $this->isNestedAnnotation = false;
             if (false !== $annot = $this->Annotation()) {
-                $annotations[] = $annot;
+                if($this->isIndexByClass()){
+                    $annotations[$this->className($annot)] = $annot;
+                }else{
+                    $annotations[] = $annot;
+                }
             }
         }
 
@@ -443,7 +495,16 @@ final class DocParser
             $this->match(DocLexer::T_CLOSE_PARENTHESIS);
         }
 
-        return $this->getAnnotationFactory($name)->newAnnotation($values);
+        if(!$this->classExists($name)){
+            $instance = $this->getAnnotationFactory($name)->newAnnotation($values);
+            $this->className[get_class($instance)] = $name;
+        }
+        else{
+            $instance = $this->getAnnotationFactory($name)->newAnnotation($values);
+            $this->className[$name] = $name;
+        }
+        
+        return $instance;
     }
 
     /**
