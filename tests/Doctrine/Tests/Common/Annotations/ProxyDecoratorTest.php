@@ -20,6 +20,16 @@ class ProxyDecoratorTest extends \PHPUnit_Framework_TestCase
     {
         return "Doctrine\\Tests\\Common\\Annotations\\Fixtures\\Annotation\\".$name;
     }
+    
+    
+    /**
+     * @param   string $name
+     * @return  string
+     */
+    private function getClass($name)
+    {
+        return new \ReflectionClass($this->fullClassName($name));
+    }
 
 
     /**
@@ -28,7 +38,7 @@ class ProxyDecoratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetSingleValue()
     {
-        $decorator  = new ProxyDecorator($this->fullClassName("MyAnnotationImpl"));
+        $decorator  = new ProxyDecorator($this->getClass("MyAnnotationImpl"));
         $proxy      = new MyAnnotationImpl(array());
         
         
@@ -45,7 +55,7 @@ class ProxyDecoratorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($proxy->name(), $proxy->name);
 
         
-        $decorator  = new ProxyDecorator($this->fullClassName("MyAnnotationImpl"));
+        $decorator  = new ProxyDecorator($this->getClass("MyAnnotationImpl"));
         $proxy      = new MyAnnotationImpl(array());
         $condition  = $decorator->setData($proxy, array("value"=>"Some name"));
         $this->assertEquals($proxy->name(), "Some name");
@@ -61,7 +71,7 @@ class ProxyDecoratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetValues()
     {
-        $decorator  = new ProxyDecorator($this->fullClassName("MyAnnotationImpl"));
+        $decorator  = new ProxyDecorator($this->getClass("MyAnnotationImpl"));
         $proxy      = new MyAnnotationImpl(array());
         
         $condition  = $decorator->setData($proxy, array("name"=>"Some name",'data'=>"Some data"));
@@ -80,23 +90,10 @@ class ProxyDecoratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetValuesExeption()
     {
-        $decorator  = new ProxyDecorator($this->fullClassName("MyAnnotationImpl"));
+        $decorator  = new ProxyDecorator($this->getClass("MyAnnotationImpl"));
         $proxy      = new MyAnnotationImpl(array());
         
         $condition  = $decorator->setData($proxy, array("invalidaProperty"=>"Some value"));
     }
-    
-    
-    
-     /**
-     * @group proxy
-     * @group proxy-decorator
-     */
-    public function testSingleton()
-    {
-        $decorator1 = ProxyDecorator::getInstance($this->fullClassName("MyAnnotationImpl"));
-        $decorator2 = ProxyDecorator::getInstance($this->fullClassName("MyAnnotationImpl"));
-        
-        $this->assertEquals($decorator1, $decorator2);
-    }
+
 }

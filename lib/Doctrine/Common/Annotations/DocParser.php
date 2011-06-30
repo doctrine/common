@@ -372,11 +372,7 @@ final class DocParser
      */
     private function className($annot)
     {   
-        $class = get_class($annot);
-        if(isset($this->className[$class])){
-            return $this->className[$class];
-        }
-        return $class;
+        return $this->className[get_class($annot)];
     }
 
     
@@ -495,14 +491,10 @@ final class DocParser
             $this->match(DocLexer::T_CLOSE_PARENTHESIS);
         }
 
-        if(!$this->classExists($name)){
-            $instance = $this->getAnnotationFactory($name)->newAnnotation($values);
-            $this->className[get_class($instance)] = $name;
-        }
-        else{
-            $instance = $this->getAnnotationFactory($name)->newAnnotation($values);
-            $this->className[$name] = $name;
-        }
+        $factory    = $this->getAnnotationFactory($name);
+        $instance   = $factory->newAnnotation($values);
+        $class      = get_class($instance);
+        $this->className[$class]  = $factory->getClassName();
         
         return $instance;
     }

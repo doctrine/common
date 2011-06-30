@@ -2,7 +2,9 @@
 
 namespace Doctrine\Tests\Common\Annotations\Fixtures\Annotation;
 
-interface MyAnnotation
+use Doctrine\Common\Annotations\Annotation\Annotation;
+
+interface MyAnnotation extends Annotation
 {
 
     function name();

@@ -1,14 +1,24 @@
 <?php
 
 namespace Doctrine\Tests\Common\Annotations\Fixtures\Annotation;
-use Doctrine\Common\Annotations\Proxy\AbstractProxy;
 
-class MyAnnotationImpl extends AbstractProxy implements MyAnnotation
+class MyAnnotationImpl implements MyAnnotation
 {
 
     private $name;
     private $data;
 
+    public function __construct($data)
+    {
+        if(isset($data['value'])){
+            $data['name'] = $data['value'];
+            unset ($data['value']);
+        }
+        foreach ($data as $key => $value) {
+            $this->$key = $value;
+        }
+    }
+    
     public function name()
     {
         return $this->name;
@@ -18,13 +28,13 @@ class MyAnnotationImpl extends AbstractProxy implements MyAnnotation
     {
         return $this->data;
     }
-    
+
     public function __get($name)
     {
-        if(!isset($this->$name))
+        if (!isset($this->$name))
         {
             throw new \BadMethodCallException(
-                sprintf("Unknown property \'%s\' on annotation \'%s\'.", $name, get_called_class())
+                    sprintf("Unknown property \'%s\' on annotation \'%s\'.", $name, get_called_class())
             );
         }
         return $this->$name;

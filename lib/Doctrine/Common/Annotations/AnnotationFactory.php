@@ -21,6 +21,7 @@
 namespace Doctrine\Common\Annotations;
 
 use Doctrine\Common\Annotations\Proxy\ProxyFactory;
+use Doctrine\Common\Annotations\Proxy\ProxyDecorator;
 use Doctrine\Common\Annotations\Factory;
 use \ReflectionClass;
 
@@ -36,11 +37,18 @@ class AnnotationFactory implements Factory
      * @var ReflectionClass
      */
     private $class;
-    
     /**
      * @var ProxyFactory 
      */
     private $proxyFactory;
+    /**
+     * @var ProxyDecorator
+     */
+    private $decorator;
+    /**
+     * @var bool
+     */
+    private $isProxy = false;
     /**
      * @var ProxyFactory
      */
@@ -49,7 +57,7 @@ class AnnotationFactory implements Factory
     /**
      * @param ReflectionClass $class
      */
-    public function __construct(ReflectionClass $class)
+    public function __construct(\ReflectionClass $class)
     {
         $this->setAnnotationClass($class);
     }
@@ -71,12 +79,20 @@ class AnnotationFactory implements Factory
      */
     public function setAnnotationClass(\ReflectionClass $class)
     {
-        $this->class = $class;
-
+        $this->class    = $class;
+        $this->isProxy  = $class->isInterface();
+        
         if (!$this->isAnnotation())
         {
-            throw AnnotationException::semanticalError(sprintf('The class "%s" is not an annotation.', $this->getClassName()));
+            throw AnnotationException::semanticalError(sprintf('The class "%s" is not an annotation.', $class->getName()));
         }
+        
+        if ($this->isProxy)
+        {
+            $class = $this->getProxyFactory()->proxy($class);
+        }
+        
+        $this->decorator = new ProxyDecorator($class);
     }
 
     /**
@@ -86,13 +102,14 @@ class AnnotationFactory implements Factory
     {
         $this->proxyFactory = $proxyFactory;
     }
-    
+
     /**
      * @return ProxyFactory 
      */
     public function getProxyFactory()
     {
-        if ($this->proxyFactory == null){
+        if ($this->proxyFactory == null)
+        {
             $this->setProxyFactory(self::defaltProxyFactory());
         }
         return $this->proxyFactory;
@@ -103,13 +120,18 @@ class AnnotationFactory implements Factory
      */
     public function newAnnotation(array $data = array())
     {
-        $class = $this->class->getName();
-        if ($this->class->isInterface())
+        if ($this->isProxy)
         {
-            $class = self::defaltProxyFactory()->getImplClass($class);
+            $class      = $this->getProxyFactory()->proxy($this->class);
+            $annotation = $class->newInstance();
+            $this->decorator->setData($annotation, $data);
+        }
+        else{
+            $class      = $this->getClassName();
+            $annotation = new $class($data);
         }
 
-        return new $class($data);
+        return $annotation;
     }
 
     /**
@@ -117,13 +139,8 @@ class AnnotationFactory implements Factory
      */
     public function isAnnotation()
     {
-        // now all class or interface can be annotation
         return true;
-
-        if (!in_array($this->getClassName(), class_implements(ProxyFactory::ANNOTATION_INTERFACE)))
-        {
-            return true;
-        }
+        return $this->class->implementsInterface(ProxyFactory::ANNOTATION_INTERFACE);
     }
 
     /**

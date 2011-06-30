@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -19,6 +20,8 @@
 
 namespace Doctrine\Common\Annotations\Proxy;
 
+use Doctrine\Common\Annotations\Annotation\Annotation;
+
 /**
  * ProxyDecorator
  *
@@ -26,112 +29,93 @@ namespace Doctrine\Common\Annotations\Proxy;
  */
 class ProxyDecorator
 {
-    
-    /**
-     * @var string 
-     */
-    protected $class;
-    
-    /**
-     * @var \ReflectionClass 
-     */
-    protected $reflectionClass;
-    
-    /**
-     * @var array 
-     */
-    protected $methods = null;
-    
-    /**
-     * @var array 
-     */
-    protected $methodExists = array();
-    
-    /**
-     * @var array 
-     */
-    protected static $instances = array();
-
     /**
      * const
      */
     const DEFAULT_KEY = 'value';
-
     /**
-     * @param   string $class
-     * @return  Decorator 
+     * @var string 
      */
-    public static function getInstance($class)
-    {
-        if (!isset(self::$instances[$class]))
-        {
-            self::$instances[$class] = new self($class);
-        }
-        return self::$instances[$class];
-    }
+    private $class;
+    /**
+     * @var array 
+     */
+    private $properties = null;
+    /**
+     * @var array 
+     */
+    private $hasMethod = array();
+    /**
+     * @var array 
+     */
+    private $hasProperty = array();
 
     /**
      * Constructor
      */
-    public function __construct($class)
+    public function __construct(\ReflectionClass $class)
     {
         $this->class = $class;
-        $this->reflectionClass = new \ReflectionClass($class);
     }
 
     /**
-     * @param AbstractProxy $proxy
+     * @param Annotation $proxy
      * @param array $data 
      */
-    public function setData(AbstractProxy $proxy, array $data)
+    public function setData(Annotation $proxy, array $data)
     {
         if (!empty($data))
         {
-            foreach ($data as $name => $value)
-            {
-                if (!$this->methodExists($name))
+
+            foreach ($data as $name => $value) {
+                if (!$this->hasProperty($name))
                 {
+
                     if ($name == self::DEFAULT_KEY)
                     {
-                        $methods    = $this->getMethods();
+                        $methods    = $this->getProperties();
                         $name       = reset($methods);
+
                         $this->setPropertyValue($proxy, $name, $value);
-                    } 
-                    else
+                    } else
                     {
                         throw new \BadMethodCallException(
-                                sprintf("Unknown property '%s' on annotation '%s'.", $name, get_class($this))
+                                sprintf("Unknown property '%s' on annotation '%s'.", $name, $this->class->getName())
                         );
                     }
+                }else{
+                    $this->setPropertyValue($proxy, $name, $value);   
                 }
-                $this->setPropertyValue($proxy, $name, $value);
             }
         }
     }
 
     /**
-     * @param type $method
-     * @return type 
+     * @param   string $name
+     * @return  bool
      */
-    public function methodExists($method)
+    private function hasProperty($name)
     {
-        if (!isset($this->methodExists[$method]))
+        if (!isset($this->hasProperty[$name]))
         {
-            $this->methodExists[$method] = method_exists($this->class, $method);
+            $this->hasProperty[$name] = $this->class->hasProperty($name);
         }
-        return $this->methodExists[$method];
+        return $this->hasProperty[$name];
     }
 
     /**
-     * @return array 
+     * @return  array
      */
-    public function getMethods()
+    private function getProperties()
     {
-        if (is_null($this->methods))
+        if (empty($this->properties))
         {
-            $this->methods = get_class_methods($this->class);
+            $list = (array)$this->class->getProperties();
+            foreach ($list as $property) {
+                $this->properties[] = $property->getName();
+            }
         }
-        return (array) $this->methods;
+        return $this->properties;
     }
 
     /**
@@ -140,31 +124,18 @@ class ProxyDecorator
      * @param   mixed     $value
      * @return  mixed
      */
-    protected function setPropertyValue($instance, $property, $value)
+    private function setPropertyValue($instance, $property, $value)
     {
-        $reflection = $this->reflectionClass;
-        $setterMethod = 'set' . ucfirst($property);
-        if ($reflection->hasProperty($property))
-        {
-            $propertyObj = $reflection->getProperty($property);
-            if ($propertyObj->isPublic())
-            {
-                $instance->{$property} = $value;
-            } 
-            else if ($reflection->hasMethod($setterMethod))
-            {
-                $instance->{$setterMethod}($value);
-            } 
-            else
-            {
-                $propertyObj->setAccessible(true);
-                $propertyObj->setValue($instance, $value);
-                $propertyObj->setAccessible(false);
-            }
-        } 
-        else if (get_class($instance) == 'stdClass')
+        $prop  = $this->class->getProperty($property);
+
+        if ($prop->isPublic())
         {
             $instance->{$property} = $value;
+        } else
+        {
+            $prop->setAccessible(true);
+            $prop->setValue($instance, $value);
+            $prop->setAccessible(false);
         }
         return $instance;
     }

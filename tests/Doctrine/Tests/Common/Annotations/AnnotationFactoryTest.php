@@ -4,6 +4,7 @@ namespace Doctrine\Tests\Common\Annotations\Proxy;
 
 use Doctrine\Common\Annotations\AnnotationFactory;
 use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MyAnnotation;
+use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MyAnnotationImpl;
 
 
 class AnnotationFactoryTest extends \PHPUnit_Framework_TestCase
@@ -13,9 +14,9 @@ class AnnotationFactoryTest extends \PHPUnit_Framework_TestCase
      * @param   string $name
      * @return  string
      */
-    private function fullClassName($name)
+    private function _class($name)
     {
-        return "Doctrine\\Tests\\Common\\Annotations\\Fixtures\\Annotation\\".$name;
+        return new \ReflectionClass("Doctrine\\Tests\\Common\\Annotations\\Fixtures\\Annotation\\".$name);
     }
 
     
@@ -23,28 +24,34 @@ class AnnotationFactoryTest extends \PHPUnit_Framework_TestCase
      * @group proxy
      * @group factory
      */
-    public function testNewAnnotation()
+    public function testNewAnnotationProxy()
     {
-        $class      = new \ReflectionClass($this->fullClassName("MyAnnotationImpl"));
-        $factory    = new AnnotationFactory($class);
+        $factory    = new AnnotationFactory($this->_class("MyAnnotation"));
         $annot      = $factory->newAnnotation(array("data"=>"Some data"));
         
         $this->assertNotNull($annot);
-        $this->assertInstanceOf($this->fullClassName("MyAnnotation"),$annot);
-        $this->assertInstanceOf($this->fullClassName("MyAnnotationImpl"),$annot);
+        $this->assertTrue($annot instanceof MyAnnotation);
         
         $this->assertNull($annot->name());
         $this->assertNotNull($annot->data());
         $this->assertEquals($annot->data(), "Some data");
-        
-        
-        $class      = new \ReflectionClass($this->fullClassName("MyAnnotation"));
+        $this->assertEquals($annot->data(), $annot->data);
+    }
+    
+     
+    /**
+     * @group proxy
+     * @group factory
+     */
+    public function testNewAnnotation()
+    {
+        $class      = $this->_class("MyAnnotationImpl");
         $factory    = new AnnotationFactory($class);
         $annot      = $factory->newAnnotation(array("data"=>"Some data"));
         
         $this->assertNotNull($annot);
-        $this->assertInstanceOf($this->fullClassName("MyAnnotation"),$annot);
-        
+        $this->assertTrue($annot instanceof MyAnnotation);
+        $this->assertTrue($annot instanceof MyAnnotationImpl);
         $this->assertNull($annot->name());
         $this->assertNotNull($annot->data());
         $this->assertEquals($annot->data(), "Some data");
@@ -56,16 +63,23 @@ class AnnotationFactoryTest extends \PHPUnit_Framework_TestCase
      * @group proxy
      * @group factory
      */
-    public function testClassName()
+    public function testClassNameProxy()
     {
-        $class      = new \ReflectionClass($this->fullClassName("MyAnnotationImpl"));
+        $class      = $this->_class("MyAnnotationImpl");
         $factory    = new AnnotationFactory($class);
         $this->assertEquals($class->getName(), $factory->getClassName());
         
         
-        $class      = new \ReflectionClass($this->fullClassName("MyAnnotation"));
+        $class      = new \ReflectionClass($this->_class("MyAnnotation"));
         $factory    = new AnnotationFactory($class);
         $this->assertEquals($class->getName(), $factory->getClassName());
     }
     
+    
+}
+
+
+class SomeAnnotationClassName implements \Doctrine\Common\Annotations\Annotation\Annotation
+{
+
 }

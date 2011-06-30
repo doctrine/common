@@ -19,6 +19,7 @@
  */
 
 namespace Doctrine\Common\Annotations;
+
 use Doctrine\Common\Annotations\Proxy\ProxyFactory;
 
 /**
@@ -28,7 +29,6 @@ use Doctrine\Common\Annotations\Proxy\ProxyFactory;
  */
 interface Factory
 {
-
     /**
      * @param array $data
      */

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -18,8 +19,7 @@
  */
 
 namespace Doctrine\Common\Annotations\Proxy;
-
-use  Doctrine\Common\Annotations\Proxy\AbstractProxy;
+use \ReflectionClass;
 
 /**
  * FactoryProxy
@@ -28,257 +28,285 @@ use  Doctrine\Common\Annotations\Proxy\AbstractProxy;
  */
 class ProxyFactory
 {
-    const PROXY_BASE            = 'Doctrine\\Common\\Annotations\\Proxy\AbstractProxy';
-    const ANNOTATION_INTERFACE  = 'Doctrine\\Common\\Annotations\\Annotation\\Annotation';
+    const ANNOTATION_INTERFACE = 'Doctrine\\Common\\Annotations\\Annotation\\Annotation';
+
+    const KEY_PROXY = 'proxy';
+    const KEY_CLASS = 'class';
+    
+    /**
+     * @var \ReflectionClass
+     */
+    private static $annotationInterface;
 
     /**
      * @var array 
      */
-    private $impl = array();
-
+    private $_data      = array();
+   
+    /**
+     * @var array 
+     */
+    private $map        = array();
+    
+    
+    /**
+     * @return \ReflectionClass 
+     */
+    private static function getAnnotationInterface()
+    {
+        if(self::$annotationInterface == null)
+        {
+            self::$annotationInterface = new \ReflectionClass(self::ANNOTATION_INTERFACE);
+        }
+        
+        return self::$annotationInterface;
+    }
+    /**
+     * @param   ReflectionClass $class
+     * @return  bool 
+     */
+    public function hasProxy(ReflectionClass $class)
+    {
+        return array_key_exists($class->getName(),$this->map);
+    }
 
     /**
-     * @param   string $interface
+     * @param   ReflectionClass $class
+     * @return  bool 
      */
-    protected function generate($interface)
+    public function isProxy(ReflectionClass $class)
     {
-        if (!interface_exists($interface))
+        return in_array($class->getName(),$this->map);
+    }
+
+    /**
+     * @param ReflectionClass $class
+     * @param ReflectionClass $proxy 
+     */
+    public function register(ReflectionClass $class,ReflectionClass $proxy)
+    {
+        if (!$class->isInterface())
         {
             throw new \InvalidArgumentException(
-                    sprintf('Interface "%s" not found', $interface));
+                    sprintf('Class "%s" is not a interface', $class->getName()));
         }
-        if ($this->isRegistered($interface))
+        
+        if ($this->hasProxy($class))
+        {
+            throw new \InvalidArgumentException(
+                    sprintf('Class "%s" already has a proxy', $class->getName()));
+        }
+
+        if (!$proxy->implementsInterface($class->getName()))
+        {
+            throw new \InvalidArgumentException(
+                    sprintf('Class "%s" not implements "%s"', $proxy->getName(), $class->getName()));
+        }
+
+        $data   = array(
+            self::KEY_PROXY => $proxy,
+            self::KEY_CLASS => $class,
+        );
+        $this->_data[$class->getName()]  = $data;
+        $this->map[$class->getName()]    = $proxy->getName();
+    }
+
+    /**
+     * @param ReflectionClass $class
+     */
+    public function unregister(ReflectionClass $class)
+    {
+        if (!$this->hasProxy($class))
+        {
+            throw new \InvalidArgumentException(
+                    sprintf('Class "%s" is not registered', $class->getName()));
+        }
+        
+        unset($this->_data[$class->getName()]);
+        unset ($this->map[$class->getName()]);
+    }
+
+    /**
+     * @param   ReflectionClass $class
+     * @return  ReflectionClass
+     */
+    public function getProxy(ReflectionClass $class)
+    {
+        if (!$this->hasProxy($class))
+        {
+            throw new \InvalidArgumentException(
+                    sprintf('Class "%s" has no proxy', $class->getName()));
+        }
+
+        return $this->_data[$class->getName()][self::KEY_PROXY];
+    }
+
+    /**
+     * @param   ReflectionClass $proxy
+     * @return  ReflectionClass
+     */
+    public function getClass(ReflectionClass $proxy)
+    {
+        if (!$this->isProxy($proxy))
+        {
+            throw new \InvalidArgumentException(
+                    sprintf('Class "%s" is not a proxy', $proxy->getName()));
+        }
+        
+        $key = array_search($proxy->getName(), $this->map);
+        return $this->_data[$key][self::KEY_CLASS];
+    }
+    
+    
+    
+     /**
+     * @param   ReflectionClass $class
+     * @return  ReflectionClass
+     */
+    public function proxy(ReflectionClass $class)
+    {
+        if (!$this->hasProxy($class))
+        {
+            return $this->generate($class);
+        }
+
+        return $this->_data[$class->getName()][self::KEY_PROXY];
+    }
+
+    /**
+     * @param   ReflectionClass $class
+     * @return  ReflectionClass
+     */
+    private function generate(ReflectionClass $class)
+    {
+        if (!$class->isInterface())
+        {
+            throw new \InvalidArgumentException(
+                    sprintf('Class "%s" is not a interface', $class->getName()));
+        }
+        if ($this->hasProxy($class))
         {
             throw new \RuntimeException(
-                    sprintf('class "%s" is already generated', $interface));
+                    sprintf('Class "%s" is already generated', $class->getName()));
         }
 
-        if ($interface[0] == '\\')
-        {
-            $interface = substr($interface, 1);
-        }
-
-        $class          = $this->generateProxyClassName($interface);
-        $declaration    = $this->generateProxyClassDeclaration($class, $interface);
-        $impl           =  __NAMESPACE__ . "\\" . $class;
+        $proxyName          = $this->generateProxyName($class);
+        $declaration        = $this->generateProxyDeclaration($proxyName, $class);
+        $proxyName          = sprintf($class->getNamespaceName()."\\%s", $proxyName);
         
         eval($declaration);
+
+        if(!class_exists($proxyName)){
+            throw new \RuntimeException(
+                    sprintf('Unable to generate proxy to "%s"', $class->getName()));
+        }
         
-        $this->register($interface, $impl);
+        $proxy = new ReflectionClass($proxyName);
+        
+
+        $this->register($class, $proxy);
+        
+        return $proxy;
     }
 
     /**
-     * @param  string $interface
-     * @return array
-     */
-    protected function generateProxyClassName($class)
-    {
-        $class = $this->getSimpleClassName($class);
-
-        do
-        {
-            $item = substr(md5(microtime()), 0, 8);
-            $class = sprintf("%sProxy%s", $class, $item);
-        } while (class_exists($class, false));
-
-        return $class;
-    }
-
-    /**
-     * @param   string $class
-     * @return  string
-     */
-    private function getSimpleClassName($class)
-    {
-        $name = explode('\\', $class);
-        return $name[count($name)-1];
-    }
-
-    /**
-     * @param  string $class
+     * @param  ReflectionClass $class
      * @return string
      */
-    protected function generateProxyClassDeclaration($class, $interface)
+    private function generateProxyName(ReflectionClass $class)
     {
-        $ref        = new \ReflectionClass($interface);
-        $methods    = $ref->getMethods(\ReflectionMethod::IS_PUBLIC);
-        $interfaces = $ref->getInterfaceNames();
-        $impl       = array();
+        $proxyName      = str_replace($class->getNamespaceName().'\\','', $class->getName());
+        do {
+            $time       = substr(md5(microtime()), 0, 8);
+            $proxyName .= sprintf("Proxy%s",$time);
+        } while (class_exists($proxyName, false));
 
-        foreach ($methods as $method)
-        {
-            if ($method->getParameters())
-            {
-                throw new \RuntimeException(
-                        sprintf('Interface "%s" can not have parameters at function "%s"', $interface,$method->getName()));
-            }
-        }
-        
-        $vars       = (array) $this->generateProxyVars($methods);
-        $methods    = (array) $this->generateProxyMethodsImpl($methods);
-        
-        $vars       = implode(" ", $vars);
-        $methods    = implode(" ", $methods);
-        $interface  = "\\$interface";
-        if(!in_array(self::ANNOTATION_INTERFACE, $interfaces))
-        {
-            $interface = $interface .', \\' . self::ANNOTATION_INTERFACE;
-        }
-        
-        $placeholders = array(
-            '<namespace>', '<className>','<baseClassName>',
-            '<implements>','<methods>', '<vars>'
-        );
-
-        $replacements = array(
-            __NAMESPACE__,$class, self::PROXY_BASE,
-            $interface, $methods, $vars
-        );
-
-        return str_replace($placeholders, $replacements, self::$_proxyClassTemplate);
+        return $proxyName;
     }
+
 
     /**
      * @param  array $methods
-     * @return string
+     * @return array
      */
-    protected function generateProxyMethodsImpl(array $methods)
+    private function generateProxyMethodsImpl(array $methods)
     {
         $impl = array();
-        foreach ($methods as $method)
-        {
-            $name = $method->getName();
-            $body = sprintf('function %s(){return $this->%s;}', $name, $name);
+        foreach ($methods as $method) {
+            $name   = $method->getName();
+            $body   = sprintf('function %s(){return $this->%s;}', $name, $name);
             $impl[] = $body;
         }
 
         return $impl;
     }
 
-    
     /**
      * @param  array $methods
-     * @return string
+     * @return array
      */
-    protected function generateProxyVars(array $methods)
+    private function generateProxyVars(array $methods)
     {
         $vars = array();
-        foreach ($methods as $method)
-        {
+        foreach ($methods as $method) {
             $name   = $method->getName();
-            $vars[] = sprintf('private $'.$name.';', $name);
+            $vars[] = sprintf('private $' . $name . ';', $name);
         }
         return $vars;
     }
 
     /**
-     * @param string $interface
-     * @return bool 
+     * @param  string $proxyName
+     * @return string
      */
-    public function isRegistered($interface)
+    private function generateProxyDeclaration($proxyName, \ReflectionClass $class)
     {
-        return array_key_exists($interface, $this->impl);
-    }
-    
-     /**
-     * @param string $class
-     * @return bool 
-     */
-    public function isProxyClass($class)
-    {
-        return in_array($class, $this->impl);
-    }
+        $methods    = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
 
-    /**
-     * @param string $interface
-     * @param string $impl 
-     */
-    public function register($interface, $impl)
-    {
-        if (isset($this->impl[$interface]))
-        {
-            throw new \InvalidArgumentException(
-                    sprintf('Interface "%s" is already registered', $interface));
+        foreach ($methods as $method) {
+            if ($method->getParameters())
+            {
+                throw new \RuntimeException(
+                        sprintf('Interface "%s" can not have parameters at function "%s"', $class->getName(), $method->getName()));
+            }
         }
 
-        if (!interface_exists($interface))
+        $vars       = (array) $this->generateProxyVars($methods);
+        $methods    = (array) $this->generateProxyMethodsImpl($methods);
+
+        $vars       = implode(" ", $vars);
+        $methods    = implode(" ", $methods);
+        $implements = '\\'.$class->getName();
+        $namespace  = $class->getNamespaceName();
+        if (!$class->implementsInterface(self::getAnnotationInterface()))
         {
-            throw new \InvalidArgumentException(
-                    sprintf('Interface "%s" not found', $interface));
+            $implements = $implements . ', \\' . self::getAnnotationInterface()->getName();
         }
 
-        if (!class_exists($impl))
-        {
-            throw new \InvalidArgumentException(
-                    sprintf('class "%s" not found', $impl));
-        }
+        $placeholders = array(
+            '<namespace>', '<proxyName>',
+            '<implements>', '<methods>', '<vars>'
+        );
 
-        if (!in_array($interface, class_implements($impl)))
-        {
-            throw new \InvalidArgumentException(
-                    sprintf('class "%s" not implements "%s"', $impl, $interface));
-        }
-        
-        if (!in_array(self::PROXY_BASE, class_parents($impl)))
-        {
-            throw new \InvalidArgumentException(
-                    sprintf('class "%s" not extends "%s"', $impl, self::PROXY_BASE));
-        }
-        
-        $this->impl[$interface] = $impl;
-    }
-    
-    /**
-     * @param string $interface
-     */
-    public function unregister($interface)
-    {
-        if (!isset($this->impl[$interface]))
-        {
-            throw new \InvalidArgumentException(
-                    sprintf('Interface "%s" is not registered', $interface));
-        }
-        unset ($this->impl[$interface]);
+        $replacements = array(
+            $namespace, $proxyName,
+            $implements, $methods, $vars
+        );
+
+        return str_replace($placeholders, $replacements, self::$_proxyClassTemplate);
     }
     
     
 
-    /**
-     * @param string $interface
-     * @return strign
-     */
-    public function getImplClass($interface)
-    {
-        if (!$this->isRegistered($interface))
-        {
-            $this->generate($interface);
-        }
-
-        return $this->impl[$interface];
-    }
-    
-    
-    
-    /**
-     * @param string $class
-     * @return strign
-     */
-    public function getInterface($class)
-    {
-        return array_search($class, $this->impl);
-    }
-    
-    
-    
     /** Proxy class code template */
     private static $_proxyClassTemplate =
-'
+            '
 namespace <namespace>;
 
 /**
  * THIS CLASS WAS GENERATED BY THE DOCTRINE.
  */
-class <className> extends \<baseClassName> implements <implements>
+class <proxyName> implements <implements>
 {
     <vars>
     
@@ -295,5 +323,5 @@ class <className> extends \<baseClassName> implements <implements>
         return $this->$name;
     }
 }';
-    
+
 }

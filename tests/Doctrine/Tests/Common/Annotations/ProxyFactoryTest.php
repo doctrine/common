@@ -5,6 +5,7 @@ namespace Doctrine\Tests\Common\Annotations\Proxy;
 use Doctrine\Common\Annotations\Proxy\ProxyFactory;
 use Doctrine\Common\Annotations\Proxy\AbstractProxy;
 use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MyAnnotation;
+use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MyAnnotationImpl;
 
 
 class ProxyFactoryTest extends \PHPUnit_Framework_TestCase
@@ -12,11 +13,11 @@ class ProxyFactoryTest extends \PHPUnit_Framework_TestCase
     
     /**
      * @param   string $name
-     * @return  string
+     * @return  \ReflectionClass
      */
-    private function fullClassName($name)
+    private function _class($name)
     {
-        return "Doctrine\\Tests\\Common\\Annotations\\Fixtures\\Annotation\\".$name;
+        return new \ReflectionClass("Doctrine\\Tests\\Common\\Annotations\\Fixtures\\Annotation\\".$name);
     }
 
     
@@ -28,8 +29,8 @@ class ProxyFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $factory = new ProxyFactory();
         $factory->register(
-                $this->fullClassName("MyAnnotation"),
-                $this->fullClassName("MyAnnotationImpl"));
+                $this->_class("MyAnnotation"),
+                $this->_class("MyAnnotationImpl"));
         
         $this->assertTrue(true);
     }
@@ -43,10 +44,10 @@ class ProxyFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $factory = new ProxyFactory();
         $factory->register(
-                $this->fullClassName("MyAnnotation"),
-                $this->fullClassName("MyAnnotationImpl"));
+                $this->_class("MyAnnotation"),
+                $this->_class("MyAnnotationImpl"));
         
-        $factory->unregister($this->fullClassName("MyAnnotation"));
+        $factory->unregister($this->_class("MyAnnotation"));
         $this->assertTrue(true);
     }
     
@@ -55,15 +56,14 @@ class ProxyFactoryTest extends \PHPUnit_Framework_TestCase
      * @group proxy
      * @group proxy-factory
      */
-    public function testIsRegistered()
+    public function testHasProxy()
     {
         $factory = new ProxyFactory();
         $factory->register(
-                $this->fullClassName("MyAnnotation"),
-                $this->fullClassName("MyAnnotationImpl"));
+                $this->_class("MyAnnotation"),
+                $this->_class("MyAnnotationImpl"));
         
-        $condition = $factory->isRegistered($this->fullClassName("MyAnnotation"));
-        $this->assertTrue($condition);
+        $this->assertTrue($factory->hasProxy($this->_class("MyAnnotation")));
     }
     
     /**
@@ -74,11 +74,10 @@ class ProxyFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $factory = new ProxyFactory();
         $factory->register(
-                $this->fullClassName("MyAnnotation"),
-                $this->fullClassName("MyAnnotationImpl"));
+                $this->_class("MyAnnotation"),
+                $this->_class("MyAnnotationImpl"));
         
-        $condition = $factory->isProxyClass($this->fullClassName("MyAnnotationImpl"));
-        $this->assertTrue($condition);
+        $this->assertTrue($factory->isProxy($this->_class("MyAnnotationImpl")));
     }
     
        
@@ -87,156 +86,101 @@ class ProxyFactoryTest extends \PHPUnit_Framework_TestCase
      * @group proxy
      * @group proxy-factory
      */
-    public function testGetInterface()
+    public function testGetClass()
     {
         $factory = new ProxyFactory();
         $factory->register(
-                $this->fullClassName("MyAnnotation"),
-                $this->fullClassName("MyAnnotationImpl"));
+                $this->_class("MyAnnotation"),
+                $this->_class("MyAnnotationImpl"));
         
-        $interface = $factory->getInterface($this->fullClassName("MyAnnotationImpl"));
+        $class = $factory->getClass($this->_class("MyAnnotationImpl"));
         
-        $this->assertEquals($this->fullClassName("MyAnnotation"), $interface);
+        $this->assertNotNull($class);
+        $this->assertEquals($this->_class("MyAnnotation")->getName(), $class->getName());
     }
     
+    /**
+     * @group proxy
+     * @group proxy-factory
+     */
+    public function testGetProxy()
+    {
+        $factory = new ProxyFactory();
+        $factory->register(
+                $this->_class("MyAnnotation"),
+                $this->_class("MyAnnotationImpl"));
+        
+        $proxy = $factory->getProxy($this->_class("MyAnnotation"));
+        
+        $this->assertNotNull($proxy);
+        $this->assertEquals($this->_class("MyAnnotationImpl")->getName(), $proxy->getName());
+    }
     
     
     /**
      * @group proxy
      * @group proxy-factory
      */
-    public function testGetImplClass()
-    {
-        $factory = new ProxyFactory();
-        $factory->register(
-                $this->fullClassName("MyAnnotation"),
-                $this->fullClassName("MyAnnotationImpl"));
-        
-        $impl = $factory->getImplClass($this->fullClassName("MyAnnotation"));
-        $this->assertEquals($this->fullClassName("MyAnnotationImpl"), $impl);
-        
-        
-        $args       = array();
-        $factory    = new ProxyFactory();
-        $interface  = $this->fullClassName("MyAnnotation");
-        $class      = $factory->getImplClass($interface);
-        
-        $this->assertTrue(in_array($interface, class_implements($class)));
-        $this->assertTrue(in_array(ProxyFactory::PROXY_BASE, class_parents($class)));
-    }
-    
-    
-     /**
-     * @group proxy
-     * @group proxy-factory
-     */
-    public function testProxyValues()
+    public function testProxy()
     {
         $factory    = new ProxyFactory();
-        $interface  = $this->fullClassName("MyAnnotation");
-        $args       = array("name"=>"Some name",'data'=>"Some data");
-        $class      = $factory->getImplClass($interface);
-        
-        $this->assertTrue(in_array($interface, class_implements($class)));
-        $proxy = new $class($args);
-        
-        
-        $this->assertEquals($proxy->name(), "Some name");
-        $this->assertEquals($proxy->data(), "Some data");
-        
-        $this->assertEquals($proxy->name(), $proxy->name);
-        $this->assertEquals($proxy->data(), $proxy->data);
-    }
-    
-    
-    
-    
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Interface "Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MyAnnotation" is already registered
-     */
-    public function testExceptionInterfaceRegistered()
-    {
-        $factory = new ProxyFactory();
-        $factory->register(
-                $this->fullClassName("MyAnnotation"),
-                $this->fullClassName("MyAnnotationImpl"));
-        
-        $factory->register(
-                $this->fullClassName("MyAnnotation"),
-                $this->fullClassName("MyAnnotationImplInvalid"));
-    }
-    
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Interface "Doctrine\Tests\Common\Annotations\Fixtures\Annotation\InvalidAnnotationInterface" not found
-     */
-    public function testExceptionInterfaceNotFound()
-    {
-        $factory = new ProxyFactory();
-        $factory->register(
-                $this->fullClassName("InvalidAnnotationInterface"),
-                $this->fullClassName("MyAnnotationImpl"));
-    }
-    
-     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage class "Doctrine\Tests\Common\Annotations\Fixtures\Annotation\InvalidAnnotationImpl" not found
-     */
-    public function testExceptionImplNotFound()
-    {
-        $factory = new ProxyFactory();
-        $factory->register(
-                $this->fullClassName("MyAnnotation"),
-                $this->fullClassName("InvalidAnnotationImpl"));
+        $interface  = $this->_class("MyAnnotation");
+        $proxy      = $factory->proxy($interface);
+
+        $this->assertNotNull($proxy);
+        $this->assertTrue($proxy->implementsInterface($interface));
     }
     
     
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Interface "Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MyAnnotation" is not registered
+     * @expectedExceptionMessage Class "Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MyAnnotation" already has a proxy
+     */
+    public function testExceptionAlreadyHasProxy()
+    {
+        $factory = new ProxyFactory();
+        $factory->register(
+                $this->_class("MyAnnotation"),
+                $this->_class("MyAnnotationImpl"));
+        
+        $factory->register(
+                $this->_class("MyAnnotation"),
+                new \ReflectionClass(__NAMESPACE__."\\ClassExtendsImpl"));
+    }
+    
+    
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Class "Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MyAnnotation" is not registered
      */
     public function testExceptionUnregister()
     {
         $factory = new ProxyFactory();
-        $factory->unregister($this->fullClassName("MyAnnotation"));
+        $factory->unregister($this->_class("MyAnnotation"));
     }
     
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Doctrine\Tests\Common\Annotations\Proxy\ClassNotImplementsInterface" not implements "Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MyAnnotation"
+     * @expectedExceptionMessage Class "Doctrine\Tests\Common\Annotations\Proxy\ClassNotImplementsInterface" not implements "Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MyAnnotation"
      */
     public function testExceptionImplNotImplements()
     {
         $factory = new ProxyFactory();
         $factory->register(
-                $this->fullClassName("MyAnnotation"),
-                __NAMESPACE__.'\\'.'ClassNotImplementsInterface');
-    }
-    
-    
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage class "Doctrine\Tests\Common\Annotations\Proxy\ClassNotExtendsProxy" not extends "Doctrine\Common\Annotations\Proxy\AbstractProxy"
-     */
-    public function testExceptionImplNotExtendsProxy()
-    {
-        $factory = new ProxyFactory();
-        $factory->register(
-                $this->fullClassName("MyAnnotation"),
-                __NAMESPACE__.'\\'.'ClassNotExtendsProxy');
+                $this->_class("MyAnnotation"),
+                new \ReflectionClass(__NAMESPACE__.'\\'.'ClassNotImplementsInterface'));
     }
     
     
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Interface "Doctrine\Tests\Common\Annotations\Proxy\MyAnnotationWithParams" can not have parameters at function "name"
+     * @expectedExceptionMessage "Doctrine\Tests\Common\Annotations\Proxy\MyAnnotationWithParams" can not have parameters at function "name"
      */
     public function testFunctionWithParamsExeption()
     {
         $factory    = new ProxyFactory();
-        $interface  = "Doctrine\\Tests\\Common\\Annotations\\Proxy\\MyAnnotationWithParams";
-        $factory->getImplClass($interface);
+        $class      = new \ReflectionClass("Doctrine\\Tests\\Common\\Annotations\\Proxy\\MyAnnotationWithParams");
+        $factory->proxy($class);
     }
  
     
@@ -253,8 +197,7 @@ class ClassNotImplementsInterface
 {
 
 }
-class ClassNotExtendsProxy implements MyAnnotation
+class ClassExtendsImpl extends MyAnnotationImpl
 {
-    function name(){}
-    function data(){}
+    
 }
