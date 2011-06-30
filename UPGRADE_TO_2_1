@@ -1,0 +1,19 @@
+This document details all the possible changes that you should investigate when updating
+your project from Doctrine Common 2.0.x to 2.1
+
+## AnnotationReader changes
+
+The annotation reader was heavily refactored between 2.0 and 2.1-RC1. In theory the operation of the new reader should be backwards compatible, but it has to be setup differently to work that way:
+
+    $reader = new \Doctrine\Common\Annotations\AnnotationReader();
+    $reader->setDefaultAnnotationNamespace('Doctrine\ORM\Mapping\\');
+    // new code necessary starting here
+    $reader->setIgnoreNotImportedAnnotations(true);
+    $reader->setEnableParsePhpImports(false);
+    $reader = new \Doctrine\Common\Annotations\CachedReader(
+        new \Doctrine\Common\Annotations\IndexedReader($reader), new ArrayCache()
+    );
+
+## Annotation Base class or @Annotation
+
+Beginning after 2.1-RC2 you have to either extend ``Doctrine\Common\Annotations\Annotation`` or add @Annotation to your annotations class-level docblock, otherwise you will get an exception.
