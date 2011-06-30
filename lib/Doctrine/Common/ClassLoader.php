@@ -143,15 +143,11 @@ class ClassLoader
             return false;
         }
 
-        $file = ($this->includePath !== null ? $this->includePath . DIRECTORY_SEPARATOR : '')
+        require ($this->includePath !== null ? $this->includePath . DIRECTORY_SEPARATOR : '')
                . str_replace($this->namespaceSeparator, DIRECTORY_SEPARATOR, $className)
                . $this->fileExtension;
         
-        if (file_exists($file)) {
-            require $file;
-            return true;
-        }
-        return false;
+        return true;
     }
 
     /**
