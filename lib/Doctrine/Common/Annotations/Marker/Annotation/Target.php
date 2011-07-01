@@ -18,32 +18,20 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Common\Annotations;
-
-use Doctrine\Common\Annotations\AnnotationMarkers;
+namespace Doctrine\Common\Annotations\Marker\Annotation;
 
 /**
- * Interface for annotation factory.
+ * Annotation Marker @Target
  *
- * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-interface Factory
+final class Target extends Marker
 {
-    const ANNOTATION_INTERFACE  = 'Doctrine\Common\Annotations\Annotation\Annotation';
-    const MARKER_INTERFACE      = 'Doctrine\Common\Annotations\Annotation\Marker';
-    
-    /**
-     * @param array $data
-     */
-    function newAnnotation(array $data = array());
+    const TARGET_ALL = 'ALL';
+    const TARGET_CLASS = 'CLASS';
+    const TARGET_METHOD = 'METHOD';
+    const TARGET_PROPERTY = 'PROPERTY';
+    const TARGET_NESTED_ANNOTATION = 'NESTED_ANNOTATION';
 
-    /**
-     * @return bool
-     */
-    function isAnnotation();
-
-    /**
-     * @return string
-     */
-    function getClassName();
+    public $value;
 }

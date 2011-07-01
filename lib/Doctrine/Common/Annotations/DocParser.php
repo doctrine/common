@@ -87,7 +87,7 @@ final class DocParser
      *
      * @var array
      */
-    private $className = array();
+    private $class = array();
     
      /**
      * Whether to index annotations by their class.
@@ -367,12 +367,15 @@ final class DocParser
     }
 
     /**
-     * @param   mixed $annot
-     * @return  null
+     * @param   string $annot
+     * @return  ReflectionClass
      */
-    private function className($annot)
+    public function getClass($name)
     {   
-        return $this->className[get_class($annot)];
+        if(isset($this->class[$name])){
+            return $this->class[$name];
+        }
+        return null;
     }
 
     
@@ -409,7 +412,9 @@ final class DocParser
             $this->isNestedAnnotation = false;
             if (false !== $annot = $this->Annotation()) {
                 if($this->isIndexByClass()){
-                    $annotations[$this->className($annot)] = $annot;
+                    $name  = get_class($annot);
+                    $class = $this->getClass($name);
+                    $annotations[$class->getName()] = $annot;
                 }else{
                     $annotations[] = $annot;
                 }
@@ -464,7 +469,7 @@ final class DocParser
                 if ($this->ignoreNotImportedAnnotations || isset($this->ignoredAnnotationNames[$name])) {
                     return false;
                 }
-
+                
                 throw AnnotationException::semanticalError(sprintf('The annotation "@%s" in %s was never imported.', $name, $this->context));
             }
         }
@@ -494,7 +499,7 @@ final class DocParser
         $factory    = $this->getAnnotationFactory($name);
         $instance   = $factory->newAnnotation($values);
         $class      = get_class($instance);
-        $this->className[$class]  = $factory->getClassName();
+        $this->class[$class]  = new ReflectionClass($factory->getClassName());
         
         return $instance;
     }

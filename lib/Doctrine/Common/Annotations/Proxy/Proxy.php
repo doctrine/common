@@ -1,5 +1,4 @@
 <?php
-
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -18,32 +17,16 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Common\Annotations;
+namespace Doctrine\Common\Annotations\Proxy;
 
-use Doctrine\Common\Annotations\AnnotationMarkers;
+use Doctrine\Common\Annotations\Annotation\Annotation;
 
 /**
- * Interface for annotation factory.
+ * Proxy
  *
- * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-interface Factory
+interface Proxy extends Annotation
 {
-    const ANNOTATION_INTERFACE  = 'Doctrine\Common\Annotations\Annotation\Annotation';
-    const MARKER_INTERFACE      = 'Doctrine\Common\Annotations\Annotation\Marker';
-    
-    /**
-     * @param array $data
-     */
-    function newAnnotation(array $data = array());
 
-    /**
-     * @return bool
-     */
-    function isAnnotation();
-
-    /**
-     * @return string
-     */
-    function getClassName();
 }

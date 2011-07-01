@@ -54,6 +54,48 @@ class AnnotationFactory implements Factory
      */
     private static $defaltProxyFactory;
 
+    
+    /**
+     * @return ProxyFactory 
+     */
+    public static function getDefaltProxyFactory()
+    {
+        if (self::$defaltProxyFactory == null)
+        {
+            self::setDefaltProxyFactory(new ProxyFactory());
+        }
+        return self::$defaltProxyFactory;
+    }
+    
+    /**
+     * @return ProxyFactory 
+     */
+    public static function setDefaltProxyFactory(ProxyFactory $proxyFactory)
+    {
+        self::$defaltProxyFactory = $proxyFactory;
+    }
+    
+     /**
+     * @param ProxyFactory $proxyFactory 
+     */
+    public function setProxyFactory(ProxyFactory $proxyFactory)
+    {
+        $this->proxyFactory = $proxyFactory;
+    }
+    
+    /**
+     * @return ProxyFactory 
+     */
+    public function getProxyFactory()
+    {
+        if ($this->proxyFactory == null)
+        {
+            $this->setProxyFactory(self::getDefaltProxyFactory());
+        }
+        return $this->proxyFactory;
+    }
+    
+    
     /**
      * @param ReflectionClass $class
      */
@@ -62,18 +104,7 @@ class AnnotationFactory implements Factory
         $this->setAnnotationClass($class);
     }
 
-    /**
-     * @return ProxyFactory 
-     */
-    public static function defaltProxyFactory()
-    {
-        if (self::$defaltProxyFactory == null)
-        {
-            self::$defaltProxyFactory = new ProxyFactory();
-        }
-        return self::$defaltProxyFactory;
-    }
-
+    
     /**
      * @param \ReflectionClass $class 
      */
@@ -96,26 +127,6 @@ class AnnotationFactory implements Factory
     }
 
     /**
-     * @param ProxyFactory $proxyFactory 
-     */
-    public function setProxyFactory(ProxyFactory $proxyFactory)
-    {
-        $this->proxyFactory = $proxyFactory;
-    }
-
-    /**
-     * @return ProxyFactory 
-     */
-    public function getProxyFactory()
-    {
-        if ($this->proxyFactory == null)
-        {
-            $this->setProxyFactory(self::defaltProxyFactory());
-        }
-        return $this->proxyFactory;
-    }
-
-    /**
      * @return mixed
      */
     public function newAnnotation(array $data = array())
@@ -130,17 +141,17 @@ class AnnotationFactory implements Factory
             $class      = $this->getClassName();
             $annotation = new $class($data);
         }
-
         return $annotation;
     }
-
+    
     /**
      * @return  bool 
      */
     public function isAnnotation()
     {
+        //TODO - check if all classes can be annotation
         return true;
-        return $this->class->implementsInterface(ProxyFactory::ANNOTATION_INTERFACE);
+        //return $this->class->implementsInterface(Factory::ANNOTATION_INTERFACE);
     }
 
     /**

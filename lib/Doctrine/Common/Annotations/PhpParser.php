@@ -35,11 +35,21 @@ final class PhpParser
      */
     public function parseClass(\ReflectionClass $class)
     {
+        
         if (false === $filename = $class->getFilename()) {
             return array();
         }
-        $src = file_get_contents($filename);
-        $name = $class->getName();
+        
+        if (!file_exists($filename)) {
+            return array();
+        }
+        if (!is_readable($filename)) {
+            return array();
+        }
+        
+        $src    = file_get_contents($filename);
+        $name   = $class->getName();
+
 
         // This is a short-cut for code that follows some conventions:
         // - namespaced

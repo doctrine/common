@@ -57,4 +57,27 @@ class PhpParserTest extends \PHPUnit_Framework_TestCase
             'secure' => 'Doctrine\Tests\Common\Annotations\Fixtures\Annotation\Secure',
         ), $parser->parseClass($class));
     }
+    
+    
+    public function testParseClassWhenAnnotationIsAnnnoted()
+    {
+        $parser     = new PhpParser();
+        $class      = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\Annotation\AnnnotedAnnotation');
+        
+        $defaultvalue   = 'Doctrine\Common\Annotations\Marker\Annotation\DefaultValue';
+        $target         = 'Doctrine\Common\Annotations\Marker\Annotation\Target';
+        $type           = 'Doctrine\Common\Annotations\Marker\Annotation\Type';
+                
+
+        $parsed     = $parser->parseClass($class);
+        
+        
+        $this->assertTrue(array_key_exists('defaultvalue', $parsed));
+        $this->assertTrue(array_key_exists('target', $parsed));
+        $this->assertTrue(array_key_exists('type', $parsed));
+        
+        $this->assertEquals($parsed['defaultvalue'], $defaultvalue);
+        $this->assertEquals($parsed['target'], $target);
+        $this->assertEquals($parsed['type'], $type);
+    }
 }

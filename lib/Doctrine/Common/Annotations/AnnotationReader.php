@@ -163,8 +163,10 @@ final class AnnotationReader implements Reader
     {
         $this->parser->setImports($this->getImports($class));
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
+        
+        $annotations = $this->parser->parse($class->getDocComment(), 'class ' . $class->getName());
 
-        return $this->parser->parse($class->getDocComment(), 'class ' . $class->getName());
+        return $annotations;
     }
 
     /**

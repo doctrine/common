@@ -110,7 +110,7 @@ class ProxyFactoryTest extends \PHPUnit_Framework_TestCase
                 $this->_class("MyAnnotation"),
                 $this->_class("MyAnnotationImpl"));
         
-        $proxy = $factory->getProxy($this->_class("MyAnnotation"));
+        $proxy = $factory->getProxyClass($this->_class("MyAnnotation"));
         
         $this->assertNotNull($proxy);
         $this->assertEquals($this->_class("MyAnnotationImpl")->getName(), $proxy->getName());

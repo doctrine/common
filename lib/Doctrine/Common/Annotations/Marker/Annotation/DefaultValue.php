@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -15,25 +16,17 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information, see
  * <http://www.doctrine-project.org>.
- * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
 
-namespace Doctrine\Common\Annotations\Annotation;
+namespace Doctrine\Common\Annotations\Marker\Annotation;
+
 
 /**
- * @Target("CLASS")
+ * Annotation Marker @Required
+ *
+ * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-interface Target extends Annotation
+final class DefaultValue extends Marker
 {
-    const TARGET_ALL               = 'ALL';
-    const TARGET_CLASS             = 'CLASS';
-    const TARGET_METHOD            = 'METHOD';
-    const TARGET_PROPERTY          = 'PROPERTY';
-    const TARGET_NESTED_ANNOTATION = 'NESTED_ANNOTATION';
-    
-    /**
-     * @Type("string")
-     * @DefaultValue("ALL")
-     */
-    function value();
+    public $value;
 }

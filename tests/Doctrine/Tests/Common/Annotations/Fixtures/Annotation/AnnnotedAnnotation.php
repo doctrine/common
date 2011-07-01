@@ -2,15 +2,15 @@
 
 namespace Doctrine\Tests\Common\Annotations\Fixtures\Annotation;
 
-use Doctrine\Common\Annotations\Annotation\DefaultValue;
 use Doctrine\Common\Annotations\Annotation\Annotation;
-use Doctrine\Common\Annotations\Annotation\Target;
-use Doctrine\Common\Annotations\Annotation\Type;
+use Doctrine\Common\Annotations\Marker\Annotation\DefaultValue;
+use Doctrine\Common\Annotations\Marker\Annotation\Target;
+use Doctrine\Common\Annotations\Marker\Annotation\Type;
 
 /**
- * @Target("CLASS")
+ * @Target("ALL")
  */
-interface AnnnotedAnnotation
+interface AnnnotedAnnotation extends Annotation
 {
     function data();
 

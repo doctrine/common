@@ -16,21 +16,18 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information, see
  * <http://www.doctrine-project.org>.
- * 
- * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
 
-namespace Doctrine\Common\Annotations\Annotation;
+namespace Doctrine\Common\Annotations\Marker\Annotation;
 
 /**
- * @Target("METHOD")
+ * Annotation Marker @Required
+ *
+ * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-interface Required extends Annotation
+final class Required extends Marker
 {
 
-    /**
-     * @Type("bool")
-     * @DefaultValue(false)
-     */
-    function value();
+    public $value;
+
 }

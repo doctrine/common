@@ -19,6 +19,8 @@
  */
 
 namespace Doctrine\Common\Annotations\Proxy;
+use Doctrine\Common\Annotations\Factory;
+use Doctrine\Common\Annotations\Proxy\Proxy;
 use \ReflectionClass;
 
 /**
@@ -28,15 +30,16 @@ use \ReflectionClass;
  */
 class ProxyFactory
 {
-    const ANNOTATION_INTERFACE = 'Doctrine\\Common\\Annotations\\Annotation\\Annotation';
-
     const KEY_PROXY = 'proxy';
     const KEY_CLASS = 'class';
+    
+    const PROXY_INTERFACE = 'Doctrine\Common\Annotations\Proxy\Proxy';
+    
     
     /**
      * @var \ReflectionClass
      */
-    private static $annotationInterface;
+    private static $proxyInterface;
 
     /**
      * @var array 
@@ -52,14 +55,14 @@ class ProxyFactory
     /**
      * @return \ReflectionClass 
      */
-    private static function getAnnotationInterface()
+    private static function getProxyInterface()
     {
-        if(self::$annotationInterface == null)
+        if(self::$proxyInterface == null)
         {
-            self::$annotationInterface = new \ReflectionClass(self::ANNOTATION_INTERFACE);
+            self::$proxyInterface = new \ReflectionClass(self::PROXY_INTERFACE);
         }
         
-        return self::$annotationInterface;
+        return self::$proxyInterface;
     }
     /**
      * @param   ReflectionClass $class
@@ -130,7 +133,7 @@ class ProxyFactory
      * @param   ReflectionClass $class
      * @return  ReflectionClass
      */
-    public function getProxy(ReflectionClass $class)
+    public function getProxyClass(ReflectionClass $class)
     {
         if (!$this->hasProxy($class))
         {
@@ -215,7 +218,7 @@ class ProxyFactory
      */
     private function generateProxyName(ReflectionClass $class)
     {
-        $proxyName      = str_replace($class->getNamespaceName().'\\','', $class->getName());
+        $proxyName      = $class->getShortName();
         do {
             $time       = substr(md5(microtime()), 0, 8);
             $proxyName .= sprintf("Proxy%s",$time);
@@ -267,7 +270,8 @@ class ProxyFactory
             if ($method->getParameters())
             {
                 throw new \RuntimeException(
-                        sprintf('Interface "%s" can not have parameters at function "%s"', $class->getName(), $method->getName()));
+                        sprintf('Interface "%s" can not have parameters at function "%s"', 
+                                $class->getName(), $method->getName()));
             }
         }
 
@@ -278,9 +282,9 @@ class ProxyFactory
         $methods    = implode(" ", $methods);
         $implements = '\\'.$class->getName();
         $namespace  = $class->getNamespaceName();
-        if (!$class->implementsInterface(self::getAnnotationInterface()))
+        if (!$class->implementsInterface(self::getProxyInterface()))
         {
-            $implements = $implements . ', \\' . self::getAnnotationInterface()->getName();
+            $implements = $implements . ', \\' . self::getProxyInterface()->getName();
         }
 
         $placeholders = array(

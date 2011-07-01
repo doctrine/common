@@ -19,12 +19,14 @@
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
 
-namespace Doctrine\Common\Annotations\Annotation;
-
+namespace Doctrine\Common\Annotations\Marker\Annotation;
+use Doctrine\Common\Annotations\Annotation as AnnotationClass;
 /**
- * @Target("METHOD")
+ * base class for Annotations Markers
+ *
+ * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-interface DefaultValue  extends Annotation
+class Marker extends AnnotationClass
 {
-    function value();
+
 }
