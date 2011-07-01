@@ -249,12 +249,13 @@ class ClassLoader
      * @param string $file The file relative path.
      * @return boolean Whether file exists in include_path.
      */
-    private static function fileExistsInIncludePath($file)
+    public static function fileExistsInIncludePath($file)
     {
         foreach (explode(PATH_SEPARATOR, get_include_path()) as $dir) {
             if (file_exists($dir . DIRECTORY_SEPARATOR . $file)) {
                 return true;
             }
         }
+        return false;
     }
 }
