@@ -69,8 +69,8 @@ class ClassMarker
      */
     public function runMarkers(array $annotations, $target)
     {
-        $list = array();
-        $class = $this->getTargeClassName();
+        $list   = array();
+        $class  = $this->getTargeClassName();
         if (!($target instanceof $class))
         {
             throw new \InvalidArgumentException(
@@ -81,7 +81,7 @@ class ClassMarker
             $marker  = $this->getMarker(get_class($annotation));
             $markers = $marker->getMarkers();
             foreach ($markers as $m) {
-                $list[] = $marker->runMarker($annotation, $m);
+                $list[] = $marker->runMarker($annotation, $target, $m);
             }
         }
 

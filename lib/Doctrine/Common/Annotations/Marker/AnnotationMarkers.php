@@ -23,7 +23,7 @@ namespace Doctrine\Common\Annotations\Marker;
 use Doctrine\Common\Annotations\Marker\Annotation\Target;
 use Doctrine\Common\Annotations\Marker\Annotation\Type;
 use Doctrine\Common\Annotations\Marker\Annotation\Marker;
-use Doctrine\Common\Annotations\Marker\MarkerStrategy;
+use Doctrine\Common\Annotations\Marker\Strategy\MarkerStrategy;
 use Doctrine\Common\Annotations\Reader;
 use \ReflectionClass;
 use \ReflectionMethod;
@@ -36,9 +36,6 @@ use \ReflectionProperty;
  */
 class AnnotationMarkers
 {
-    const CLASS_MARKER = 'class';
-    const METHOD_MARKER = 'method';
-    const PROPERTY_MARKER = 'property';
 
     /**
      * @var ReflectionClass
@@ -113,9 +110,9 @@ class AnnotationMarkers
      */
     private function readClassMarkers()
     {
-        $this->classMarkers = array();
-        $this->hasClassMarker = array();
-        $annotations = $this->getReader()->getClassAnnotations($this->class);
+        $this->classMarkers     = array();
+        $this->hasClassMarker   = array();
+        $annotations            = $this->getReader()->getClassAnnotations($this->class);
         foreach ($annotations as $annotation) {
             if ($annotation instanceof Marker)
             {

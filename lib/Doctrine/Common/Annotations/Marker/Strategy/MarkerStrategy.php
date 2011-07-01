@@ -20,9 +20,9 @@
 
 namespace Doctrine\Common\Annotations\Marker\Strategy;
 
-use Doctrine\Common\Annotations\AnnotationMarkers;
-use Doctrine\Common\Annotations\Annotation\Marker;
-use Doctrine\Common\Annotations\Annotation\Target;
+use Doctrine\Common\Annotations\Marker\AnnotationMarkers;
+use Doctrine\Common\Annotations\Marker\Annotation\Marker;
+use Doctrine\Common\Annotations\Marker\Annotation\Target;
 
 /**
  * Abstract class for marker strategy

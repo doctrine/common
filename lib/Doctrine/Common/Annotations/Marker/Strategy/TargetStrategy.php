@@ -21,7 +21,8 @@
 namespace Doctrine\Common\Annotations\Marker\Strategy;
 
 use Doctrine\Common\Annotations\Annotation\Annotation;
-
+use Doctrine\Common\Annotations\Marker\Annotation\Target;
+use Doctrine\Common\Annotations\AnnotationException;
 /**
  * TargetStrategy strategy for annotation @Target
  *
@@ -43,12 +44,36 @@ class TargetStrategy extends MarkerStrategy
         $marker = $this->getMarker();
         
         
-        if($this->getMarkers()->getAnnotationClass())
-        {
-            //$this->getMarkers()->has//
+        $class          = new \ReflectionClass(get_class($target));
+        $type           = (array)$this->getMarker()->value;
+        $annotationName = get_class($annotation);
+        
+        if(!in_array(Target::TARGET_ALL,$type)){
+            
+            if($type != Target::TARGET_CLASS){
+                if($this->getMarkers()->getReader()->getClassAnnotation($class, $annotationName)){
+                    throw new AnnotationException("INVALID");
+                }
+            }
+            
+            if(!in_array(Target::TARGET_METHOD,$type)){
+                foreach ($class->getMethods() as $method) {
+                    if($this->getMarkers()->getReader()->getMethodAnnotation($method, $annotationName)){
+                        throw new AnnotationException("INVALID");
+                    }
+                }
+            }
+
+            if(!in_array(Target::TARGET_PROPERTY,$type)){
+                foreach ($class->getProperties() as $property) {
+                    if($this->getMarkers()->getReader()->getPropertyAnnotation($property, $annotationName)){
+                        throw new AnnotationException("INVALID");
+                    }
+                }
+            }
         }
         
-        echo "\n---------------------\n";
+        
         echo "\n CLASS NAME     :". $class->getName();
         echo "\n ANNOTATION     :". get_class($annotation);
         echo "\n MARKER         :". get_class($marker);

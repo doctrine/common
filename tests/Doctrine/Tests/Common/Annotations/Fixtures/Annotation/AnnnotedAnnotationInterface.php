@@ -8,26 +8,20 @@ use Doctrine\Common\Annotations\Marker\Annotation\Target;
 use Doctrine\Common\Annotations\Marker\Annotation\Type;
 
 /**
- * @Target("CLASS")
+ * @Target("ALL")
  */
-final class AnnnotedAnnotation implements Annotation
+interface AnnnotedAnnotationInterface extends Annotation
 {
+    function data();
 
-    public final function __construct(array $data)
-    {
-        foreach ($data as $key => $value) {
-            $this->$key = $value;
-        }
-    }
-
-    public $data;
     /**
-     * @DefaultValue("Foo Value")
+     *@DefaultValue("Foo Value")
      */
-    public $name;
+    function name();
+
     /**
      * @DefaultValue(@Target("ALL"))
      * @Type("Doctrine\Common\Annotations\Annotation\Target", nullable = true)
      */
-    public $target;
+    function target();
 }
