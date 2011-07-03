@@ -44,20 +44,20 @@ final class PhpParser
      */
     public function parseClass(\ReflectionClass $class)
     {
-		if (false === $filename = $class->getFilename()) {
-			return array();
-		}
-		
+        if (false === $filename = $class->getFilename()) {
+            return array();
+        }
+
         $content = $this->getFileContent($filename, $class->getStartLine());
         $namespace = str_replace('\\', '\\\\', $class->getNamespaceName());
         $content = preg_replace('/^.*?(\bnamespace\s+' . $namespace . '\s*[;|{].*)$/s', '\\1', $content);
         $this->tokens = token_get_all('<?php ' . $content);
-        
+
         $statements = $this->parseUseStatements($class->getNamespaceName());
         $statements = $this->canonicalize($statements);
 
         return $statements;
-	}
+    }
 
     /**
      * Get the list of use statements in an canonical form.
