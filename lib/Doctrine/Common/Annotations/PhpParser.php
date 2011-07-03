@@ -48,13 +48,13 @@ final class PhpParser
             return array();
         }
 
-        $content = $this->getFileContent($filename, $class->getStartLine());
+		$content = $this->getFileContent($filename, $class->getStartLine());
 		$namespace = str_replace('\\', '\\\\', $class->getNamespaceName());
 		$content = preg_replace('/^.*?(\bnamespace\s+' . $namespace . '\s*[;|{].*)$/s', '\\1', $content);
 		$this->tokens = token_get_all('<?php ' . $content);
 
 		$statements = $this->parseUseStatements($class->getNamespaceName());
-        $statements = $this->canonicalize($statements);
+		$statements = $this->canonicalize($statements);
 
 		return $statements;
     }
