@@ -21,7 +21,7 @@
 namespace Doctrine\Common\Annotations\Marker\Annotation;
 
 /**
- * Annotation Marker @Target
+ * Annotation Marker @ Target
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
@@ -33,5 +33,17 @@ final class Target extends Marker
     const TARGET_PROPERTY = 'PROPERTY';
     const TARGET_NESTED_ANNOTATION = 'NESTED_ANNOTATION';
 
-    public $value;
+    /**
+     * @var strign
+     */
+    protected $value;
+
+    /**
+     * @inheritDoc
+     */
+    public function strategyClass()
+    {
+        return 'Doctrine\Common\Annotations\Marker\Strategy\TargetStrategy';
+    }
+
 }

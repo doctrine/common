@@ -21,14 +21,28 @@
 namespace Doctrine\Common\Annotations\Marker\Annotation;
 
 /**
- * Annotation Marker @Type
+ * Annotation Marker @ Type
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
 final class Type extends Marker
 {
 
-    public $value;
-    public $nullable;
+    /**
+     * @var strign
+     */
+    protected $value;
+    /**
+     * @var bool
+     */
+    protected $nullable;
+
+    /**
+     * @inheritDoc
+     */
+    public function strategyClass()
+    {
+        return 'Doctrine\Common\Annotations\Marker\Strategy\TypeStrategy';
+    }
 
 }

@@ -22,6 +22,7 @@ namespace Doctrine\Common\Annotations;
 
 use Doctrine\Common\Annotations\Proxy\ProxyFactory;
 use Doctrine\Common\Annotations\Proxy\ProxyDecorator;
+use Doctrine\Common\Annotations\Proxy\Decorable;
 use Doctrine\Common\Annotations\Factory;
 use \ReflectionClass;
 
@@ -135,12 +136,24 @@ class AnnotationFactory implements Factory
         {
             $class      = $this->getProxyFactory()->proxy($this->class);
             $annotation = $class->newInstance();
-            $this->decorator->setData($annotation, $data);
         }
         else{
             $class      = $this->getClassName();
-            $annotation = new $class($data);
+            
+            if ($this->class->getConstructor())
+            {
+                $annotation = new $class($data);
+                
+            } else
+            {
+                $annotation = new $class();
+            }
         }
+        
+        if($annotation instanceof Decorable){
+            $this->decorator->setData($annotation, $data);
+        }
+        
         return $annotation;
     }
     

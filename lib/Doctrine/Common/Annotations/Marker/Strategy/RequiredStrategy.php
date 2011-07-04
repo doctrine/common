@@ -18,27 +18,28 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Common\Annotations\Marker\Annotation;
+namespace Doctrine\Common\Annotations\Marker\Strategy;
 
+use Doctrine\Common\Annotations\Annotation\Annotation;
+use Doctrine\Common\Annotations\Marker\Annotation\Target;
+use Doctrine\Common\Annotations\AnnotationException;
 /**
- * Annotation Marker @ DefaultValue
+ * RequiredStrategy strategy for annotation @Target
  *
- * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-final class DefaultValue extends Marker
+class RequiredStrategy extends MarkerStrategy
 {
-
-    /**
-     * @var mixed
-     */
-    protected $value;
-
-    /**
-     * @inheritDoc
-     */
-    public function strategyClass()
+    public function run(\ReflectionClass $target,$annotation)
     {
-        return 'Doctrine\Common\Annotations\Marker\Strategy\DefaultValueStrategy';
+        if (!($annotation instanceof Annotation))
+        {
+            throw AnnotationException::semanticalError(sprintf(
+                    'The class "%s" is not an annotation.', get_class($annotation)
+            ));
+        }
+        
+        // TODO - implements this method
     }
 
 }

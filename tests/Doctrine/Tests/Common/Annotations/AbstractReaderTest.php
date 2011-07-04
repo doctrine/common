@@ -6,6 +6,7 @@ use Doctrine\Common\Annotations\DoctrineReader;
 use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
 use Doctrine\Common\Annotations\Annotation\IgnorePhpDoc;
 use ReflectionClass, Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\Marker\Annotation\Target;
 
 require_once __DIR__ . '/TopLevelAnnotation.php';
 require_once __DIR__ . '/Fixtures/Annotation/DummyInterfaces.php';
@@ -110,6 +111,39 @@ abstract class AbstractReaderTest extends \PHPUnit_Framework_TestCase
         $classAnnot = $reader->getClassAnnotation($class, $fullClass('IDummyAnnotation'));
         $this->assertEquals('hello', $classAnnot->dummyValue);
         $this->assertEquals($annot->dummyValue, $annot->dummyValue());
+    }
+    
+    public function testAnnotationsMarkers()
+    {
+        $reader = $this->getReader();
+        
+        $c = function($class){
+            return 'Doctrine\\Tests\\Common\\Annotations\\Fixtures\\'.$class;
+        };
+        
+        $a = function($class){
+            return 'Doctrine\\Tests\\Common\\Annotations\\Fixtures\\Annotation\\'.$class;
+        };
+        
+        $class = new ReflectionClass($c('MarkedClassName'));
+        $this->assertEquals(1, count($reader->getClassAnnotations($class)));
+        $this->assertInstanceOf($annotName = $a('AnnnotedAnnotation'), $annot = $reader->getClassAnnotation($class, $annotName));
+        $this->assertEquals("Some data", $annot->data);
+        
+        $fooProp = $class->getProperty('foo');
+        $propAnnots = $reader->getPropertyAnnotations($fooProp);
+        $this->assertEquals(1, count($propAnnots));
+        $this->assertInstanceOf($a('MarkedAnnotation'), $annot = $reader->getPropertyAnnotation($fooProp, $a('MarkedAnnotation')));
+        $this->assertEquals("Some data", $annot->data);
+        
+        
+        $someMethod = $class->getMethod('someFunction');
+        $methodAnnots = $reader->getMethodAnnotations($someMethod);
+        $this->assertEquals(1, count($methodAnnots));
+        $this->assertInstanceOf($a('MarkedAnnotation'), $annot = $reader->getMethodAnnotation($someMethod, $a('MarkedAnnotation')));
+        
+        $this->assertTrue($annot->target instanceof Target);
+        $this->assertTrue($annot->target->value == Target::TARGET_ALL);
     }
 
     /**

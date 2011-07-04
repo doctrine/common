@@ -18,7 +18,6 @@
  */
 
 namespace Doctrine\Common\Annotations\Proxy;
-
 use Doctrine\Common\Annotations\Annotation\Annotation;
 
 /**
@@ -26,7 +25,7 @@ use Doctrine\Common\Annotations\Annotation\Annotation;
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-interface Proxy extends Annotation
+interface Proxy extends Decorable, Annotation
 {
 
 }

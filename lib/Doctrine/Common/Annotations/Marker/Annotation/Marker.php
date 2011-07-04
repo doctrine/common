@@ -1,4 +1,5 @@
 <?php
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -15,18 +16,98 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information, see
  * <http://www.doctrine-project.org>.
- *
- * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
 
 namespace Doctrine\Common\Annotations\Marker\Annotation;
-use Doctrine\Common\Annotations\Annotation as AnnotationClass;
+
+use Doctrine\Common\Annotations\Proxy\Decorable;
+use Doctrine\Common\Annotations\Annotation\Annotation;
+
 /**
- * base class for Annotations Markers
+ * Base class for Annotations Markers
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-class Marker extends AnnotationClass
+abstract class Marker implements Decorable, Annotation
 {
 
+    /**
+     * @var \ReflectionClass
+     */
+    private $class;
+    /**
+     * @var \ReflectionMethod
+     */
+    private $method;
+    /**
+     * @var \ReflectionProperty
+     */
+    private $property;
+
+    /**
+     * @return \ReflectionClass
+     */
+    public function getClass()
+    {
+        return $this->class;
+    }
+
+    /**
+     * @param \ReflectionClass $class 
+     */
+    public function setClass(\ReflectionClass $class)
+    {
+        $this->class = $class;
+    }
+
+    /**
+     * @return \ReflectionProperty
+     */
+    public function getProperty()
+    {
+        return $this->property;
+    }
+
+    /**
+     * @param \ReflectionProperty $property 
+     */
+    public function setProperty(\ReflectionProperty$property)
+    {
+        $this->property = $property;
+    }
+
+    /**
+     * @return \ReflectionMethod
+     */
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    /**
+     * @param \ReflectionMethod $method 
+     */
+    public function setMethod(\ReflectionMethod $method)
+    {
+        $this->method = $method;
+    }
+
+    /**
+     * Property accessor in Annotation class.
+     *
+     * @param string $name Unknown property name
+     */
+    public function __get($name)
+    {
+        if (!isset($this->$name))
+        {
+            return null;
+        }
+        return $this->$name;
+    }
+
+    /**
+     * @return string the marker strategy class name
+     */
+    public abstract function strategyClass();
 }

@@ -110,6 +110,13 @@ final class AnnotationReader implements Reader
      * @var array
      */
     private $ignoredAnnotationNames = array();
+    
+    /**
+     * In-memory cache mechanism to store class markers
+     *
+     * @var array
+     */
+    private $markers = array();
 
     /**
      * Constructor. Initializes a new AnnotationReader that uses the given Cache provider.
@@ -165,7 +172,7 @@ final class AnnotationReader implements Reader
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
         
         $annotations = $this->parser->parse($class->getDocComment(), 'class ' . $class->getName());
-
+        $this->runMarkers($class, $annotations);
         return $annotations;
     }
 
@@ -204,7 +211,9 @@ final class AnnotationReader implements Reader
         $this->parser->setImports($this->getImports($class));
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
 
-        return $this->parser->parse($property->getDocComment(), $context);
+        $annotations = $this->parser->parse($property->getDocComment(), $context);
+        $this->runMarkers($class, $annotations);
+        return $annotations;
     }
 
     /**
@@ -262,6 +271,32 @@ final class AnnotationReader implements Reader
         }
 
         return null;
+    }
+    
+    /**
+     * Returns the class markers
+     *
+     * @param   ReflectionClass $class
+     * @return  ClassMarker
+     */
+    private function getClassMarker(ReflectionClass $class)
+    {
+        if (!isset($this->markers[$name = $class->getName()])) 
+        {
+            $this->markers[$name] = new ClassMarker($class, $this);
+        }
+        return $this->markers[$name];
+    }
+    
+    /**
+     * Run all annotations class markers
+     *
+     * @param   ReflectionClass $class
+     * @param   array
+     */
+    private function runMarkers(ReflectionClass $class,array $annotations)
+    {
+        $this->getClassMarker($class)->runMarkers($annotations);
     }
 
     /**

@@ -116,6 +116,7 @@ class AnnotationMarkers
         foreach ($annotations as $annotation) {
             if ($annotation instanceof Marker)
             {
+                $annotation->setClass($this->class);
                 $this->addClassMarker($annotation);
             }
         }
@@ -134,6 +135,8 @@ class AnnotationMarkers
             foreach ($annotations as $annotation) {
                 if ($annotation instanceof Marker)
                 {
+                    $annotation->setClass($this->class);
+                    $annotation->setMethod($method);
                     $this->addMethodMarker($annotation, $method->getName());
                 }
             }
@@ -153,6 +156,8 @@ class AnnotationMarkers
             foreach ($annotations as $annotation) {
                 if ($annotation instanceof Marker)
                 {
+                    $annotation->setClass($this->class);
+                    $annotation->setProperty($property);
                     $this->addPropertyMarker($annotation, $property->getName());
                 }
             }
@@ -205,7 +210,7 @@ class AnnotationMarkers
     /**
      * @return array
      */
-    public function getMarkers()
+    public function getAllMarkers()
     {
         return (array) $this->markers;
     }
@@ -222,12 +227,12 @@ class AnnotationMarkers
      * @param   Marker $marker
      * @return  MarkerStrategy
      */
-    public function runMarker($annotation, $target, Marker $marker)
+    public function runMarker($annotation, \ReflectionClass $target, Marker $marker)
     {
         $strategy = MarkerStrategy::factory($this, $marker);
         if ($strategy instanceof MarkerStrategy)
         {
-            $strategy->run($annotation, $target);
+            $strategy->run($target,$annotation);
             return $strategy;
         }
         return null;
@@ -242,30 +247,28 @@ class AnnotationMarkers
     }
 
     /**
-     * @param   ReflectionClass $class
+     * @param   string $name
      * @return  bool
      */
-    public function hasClassMarker(ReflectionClass $class)
+    public function hasClassMarker($name)
     {
-        $className = $class->getName();
-        if (!isset($this->hasClassMarker[$className]))
+        if (!isset($this->hasClassMarker[$name]))
         {
             $markers = $this->getClassMarkers();
-            $hasMarker = $this->hasMarker($className, $markers);
-            $this->hasClassMarker[$className] = $hasMarker;
+            $hasMarker = $this->hasMarker($name, $markers);
+            $this->hasClassMarker[$name] = $hasMarker;
         }
-        return (bool) $this->hasClassMarker[$className];
+        return (bool) $this->hasClassMarker[$name];
     }
 
     /**
-     * @param  ReflectionClass $class
-     * @return Marker 
+     * @param   string $name
+     * @return  Marker 
      */
-    public function getClassMarker(ReflectionClass $class)
+    public function getClassMarker($name)
     {
-        if ($this->hasClassMarker($class))
+        if ($this->hasClassMarker($name))
         {
-            $name = $class->getName();
             $markers = $this->getClassMarkers();
             foreach ($markers as $key => $value) {
                 if ($value instanceof $name)
@@ -300,32 +303,30 @@ class AnnotationMarkers
     }
 
     /**
-     * @param   ReflectionClass $class
+     * @param   string $name
      * @param   string $method
      * @return  bool
      */
-    public function hasMethodMarker(ReflectionClass $class, $method)
+    public function hasMethodMarker($name, $method)
     {
-        $name = $class->getName();
         if (!isset($this->hasMethodMarker[$method][$name]))
         {
-            $markers = $this->getMethodMarkers($method);
-            $hasMarker = $this->hasMarker($class->getName(), $markers);
+            $markers    = $this->getMethodMarkers($method);
+            $hasMarker  = $this->hasMarker($name, $markers);
             $this->hasMethodMarker[$method][$name] = $hasMarker;
         }
         return (bool) $this->hasMethodMarker[$method][$name];
     }
 
     /**
-     * @param  ReflectionClass $class
+     * @param  string $name
      * @param  string $method
      * @return Marker 
      */
-    public function getMethodMarker(ReflectionClass $class, $method)
+    public function getMethodMarker($name, $method)
     {
-        if ($this->hasMethodMarker($class, $method))
+        if ($this->hasMethodMarker($name, $method))
         {
-            $name = $class->getName();
             $markers = $this->getMethodMarkers($method);
             foreach ($markers as $key => $value) {
                 if ($value instanceof $name)
@@ -361,32 +362,30 @@ class AnnotationMarkers
     }
 
     /**
-     * @param   ReflectionClass $class
+     * @param   string $name
      * @param   string $property
      * @return  bool
      */
-    public function hasPropertyMarker(ReflectionClass $class, $property)
+    public function hasPropertyMarker($name, $property)
     {
-        $name = $class->getName();
         if (!isset($this->hasPropertyMarker[$property][$name]))
         {
             $markers    = $this->getPropertyMarkers($property);
-            $hasMarker  = $this->hasMarker($class->getName(), $markers);
+            $hasMarker  = $this->hasMarker($name, $markers);
             $this->hasPropertyMarker[$property][$name] = $hasMarker;
         }
         return (bool) $this->hasPropertyMarker[$property][$name];
     }
 
     /**
-     * @param  ReflectionClass $class
+     * @param  string $name
      * @param  string $property
      * @return Marker 
      */
-    public function getPropertyMarker(ReflectionClass $class, $property)
+    public function getPropertyMarker($name, $property)
     {
-        if ($this->hasMethodMarker($class, $property))
+        if ($this->hasPropertyMarker($name, $property))
         {
-            $name    = $class->getName();
             $markers = $this->getPropertyMarkers($property);
             foreach ($markers as $key => $value) {
                 if ($value instanceof $name)

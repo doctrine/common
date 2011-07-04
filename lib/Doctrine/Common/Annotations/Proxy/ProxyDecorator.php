@@ -41,10 +41,7 @@ class ProxyDecorator
      * @var array 
      */
     private $properties = null;
-    /**
-     * @var array 
-     */
-    private $hasMethod = array();
+
     /**
      * @var array 
      */

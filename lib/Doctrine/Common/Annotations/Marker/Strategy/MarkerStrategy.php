@@ -89,13 +89,19 @@ abstract class MarkerStrategy
     public static function factory(AnnotationMarkers $markers,Marker $marker)
     {
         // TODO - do it better
-        if ($marker instanceof Target)
+        if (class_exists($marker->strategyClass()))
         {
-            return new TargetStrategy($markers,$marker);
+            $class = new \ReflectionClass($marker->strategyClass());
+            if($class->isSubclassOf('Doctrine\Common\Annotations\Marker\Strategy\MarkerStrategy'))
+            {
+                return $class->newInstance($markers,$marker);
+            }
         }
 
-        //throw new \InvalidArgumentException();
+        throw new \InvalidArgumentException(sprintf(
+                'Invalid strategy class "%s" on annotation "%s".', $marker->strategyClass(), get_class($annotation)
+        ));
     }
 
-    abstract function run($annotation,$target);
+    abstract function run(\ReflectionClass $target,$annotation);
 }

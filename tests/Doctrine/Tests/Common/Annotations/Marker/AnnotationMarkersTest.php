@@ -33,11 +33,11 @@ class AnnotationMarkersTest extends \PHPUnit_Framework_TestCase
     
     /**
      * @param   string $name
-     * @return  \ReflectionClass
+     * @return  string
      */
     private function _marker($name)
     {
-        return new \ReflectionClass("Doctrine\\Common\\Annotations\\Marker\\Annotation\\".$name);
+        return "Doctrine\\Common\\Annotations\\Marker\\Annotation\\".$name;
     }
 
     
@@ -48,27 +48,25 @@ class AnnotationMarkersTest extends \PHPUnit_Framework_TestCase
     {
         $class      = $this->_annot("AnnnotedAnnotation");
         $target     = $this->_marker("Target");
-        
-        $annotMarkers   = new AnnotationMarkers($class,new AnnotationReader());
+        $markers    = new AnnotationMarkers($class,new AnnotationReader());
 
         
-        $list    = $annotMarkers->getMarkers();
+        $list    = $markers->getAllMarkers();
         $this->assertEquals(4, sizeof($list));
         
+        $this->assertTrue($markers->hasClassMarker($target));
+        $this->assertFalse($markers->hasClassMarker($this->_marker("Type")));
         
-        $this->assertTrue($annotMarkers->hasClassMarker($target));
-        $this->assertFalse($annotMarkers->hasClassMarker($this->_marker("Type")));
-        
-        $list    = $annotMarkers->getClassMarkers();
+        $list    = $markers->getClassMarkers();
         
         $this->assertEquals(1, sizeof($list));
         $this->assertTrue($list[0] instanceof Marker);
         $this->assertTrue($list[0] instanceof Target);
         
-        $target = $annotMarkers->getClassMarker($this->_marker("Target"));        
+        $target = $markers->getClassMarker($this->_marker("Target"));        
         $this->assertTrue($target instanceof Marker);
         $this->assertTrue($target instanceof Target);
-        $this->assertEquals($target->value, Target::TARGET_ALL);
+        $this->assertEquals($target->value, Target::TARGET_CLASS);
     }
     
      
@@ -76,53 +74,54 @@ class AnnotationMarkersTest extends \PHPUnit_Framework_TestCase
     /**
      * @group Marker
      */
-    public function testMethodMarkers()
+    public function testPropertyMarkers()
     {
         $default    = $this->_marker("DefaultValue");
         $class      = $this->_annot("AnnnotedAnnotation");
-        $metadata   = new AnnotationMarkers($class,new AnnotationReader());
+        $markers    = new AnnotationMarkers($class,new AnnotationReader());
         
-        $markers    = $metadata->getMethodsMarkers();
-        
-        $this->assertEquals(2, sizeof($markers));
-        
-        $this->assertTrue(array_key_exists("name", $markers));
-        $this->assertTrue(array_key_exists("target", $markers));
-        
-        $this->assertTrue($markers['name'][0] instanceof DefaultValue);
-        $this->assertTrue($markers['name'][0] instanceof Marker);
-        
-        $this->assertTrue($markers['target'][0] instanceof DefaultValue);
-        $this->assertTrue($markers['target'][0] instanceof Marker);
-        
-        $this->assertTrue($markers['target'][1] instanceof Type);
-        $this->assertTrue($markers['target'][1] instanceof Marker);
+        $list       = $markers->getPropertiesMarkers();
         
         
+        $this->assertEquals(2, sizeof($list));
         
-        $this->assertTrue($metadata->hasMethodMarker($default,"name"));
-        $this->assertFalse($metadata->hasMethodMarker($this->_marker("Target"),"name"));
+        $this->assertTrue(array_key_exists("name", $list));
+        $this->assertTrue(array_key_exists("target", $list));
         
-        $this->assertTrue($metadata->hasMethodMarker($default,"target"));
-        $this->assertFalse($metadata->hasMethodMarker($this->_marker("Target"),"target"));
+        $this->assertTrue($list['name'][0] instanceof DefaultValue);
+        $this->assertTrue($list['name'][0] instanceof Marker);
         
+        $this->assertTrue($list['target'][0] instanceof DefaultValue);
+        $this->assertTrue($list['target'][0] instanceof Marker);
         
-        $markers = $metadata->getMethodMarkers("name");
-        $this->assertEquals(1, sizeof($markers));
-        $this->assertTrue($markers[0] instanceof DefaultValue);
-        
-        
-        $markers = $metadata->getMethodMarkers("target");
-        $this->assertEquals(2, sizeof($markers));
-        $this->assertTrue($markers[0] instanceof DefaultValue);
-        $this->assertTrue($markers[1] instanceof Type);
+        $this->assertTrue($list['target'][1] instanceof Type);
+        $this->assertTrue($list['target'][1] instanceof Marker);
         
         
-        $defaultValue = $metadata->getMethodMarker($default,'name');
+        
+        $this->assertTrue($markers->hasPropertyMarker($default,"name"));
+        $this->assertFalse($markers->hasPropertyMarker($this->_marker("Target"),"name"));
+        
+        $this->assertTrue($markers->hasPropertyMarker($default,"target"));
+        $this->assertFalse($markers->hasPropertyMarker($this->_marker("Target"),"target"));
+        
+        
+        $list = $markers->getPropertyMarkers("name");
+        $this->assertEquals(1, sizeof($list));
+        $this->assertTrue($list[0] instanceof DefaultValue);
+        
+        
+        $list = $markers->getPropertyMarkers("target");
+        $this->assertEquals(2, sizeof($list));
+        $this->assertTrue($list[0] instanceof DefaultValue);
+        $this->assertTrue($list[1] instanceof Type);
+        
+        
+        $defaultValue = $markers->getPropertyMarker($default,'name');
         $this->assertTrue($defaultValue instanceof DefaultValue);
         $this->assertEquals($defaultValue->value, "Foo Value");
         
-        $defaultValue = $metadata->getMethodMarker($default,'target');
+        $defaultValue = $markers->getPropertyMarker($default,'target');
         $this->assertTrue($defaultValue instanceof DefaultValue);
         $this->assertTrue($defaultValue->value instanceof Target);
         $this->assertEquals($defaultValue->value->value, Target::TARGET_ALL);

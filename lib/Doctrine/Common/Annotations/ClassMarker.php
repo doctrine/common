@@ -46,7 +46,6 @@ class ClassMarker
      * @var Reader 
      */
     private $reader;
-    
     /**
      * @var array
      */
@@ -64,47 +63,29 @@ class ClassMarker
 
     /**
      * @param   array $annotations
-     * @param   mixed $target
      * @return  array
      */
-    public function runMarkers(array $annotations, $target)
+    public function runMarkers(array $annotations)
     {
-        $list   = array();
-        $class  = $this->getTargeClassName();
-        if (!($target instanceof $class))
-        {
-            throw new \InvalidArgumentException(
-                    sprintf('Class "%s" is not instance of', $class));
-        }
-
+        $list = array();
         foreach ($annotations as $annotation) {
-            $marker  = $this->getMarker(get_class($annotation));
-            $markers = $marker->getMarkers();
-            foreach ($markers as $m) {
-                $list[] = $marker->runMarker($annotation, $target, $m);
+            $marker = $this->getMarker(get_class($annotation));
+            foreach ($marker->getAllMarkers() as $m) {
+                $list[] = $marker->runMarker($annotation,$this->class, $m);
             }
         }
-
         return $list;
     }
 
-    /**
-     * @return type 
-     */
-    private function getTargeClassName()
-    {
-        return $this->class->getName();
-    }
-    
     /**
      * @param   string $annotationClass
      * @return  AnnotationMarkers
      */
     private function getMarker($annotationClass)
     {
-        if(!isset($this->markers[$annotationClass]))
+        if (!isset($this->markers[$annotationClass]))
         {
-            $marker  = new AnnotationMarkers(new ReflectionClass($annotationClass), $this->reader);
+            $marker = new AnnotationMarkers(new ReflectionClass($annotationClass), $this->reader);
             $this->markers[$annotationClass] = $marker;
         }
         return $this->markers[$annotationClass];

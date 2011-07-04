@@ -30,7 +30,6 @@ use Doctrine\Common\Annotations\AnnotationMarkers;
 interface Factory
 {
     const ANNOTATION_INTERFACE  = 'Doctrine\Common\Annotations\Annotation\Annotation';
-    const MARKER_INTERFACE      = 'Doctrine\Common\Annotations\Annotation\Marker';
     
     /**
      * @param array $data

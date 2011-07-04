@@ -21,13 +21,24 @@
 namespace Doctrine\Common\Annotations\Marker\Annotation;
 
 /**
- * Annotation Marker @Required
+ * Annotation Marker @ Required
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
 final class Required extends Marker
 {
 
-    public $value;
+    /**
+     * @var bool
+     */
+    protected $value;
+
+    /**
+     * @inheritDoc
+     */
+    public function strategyClass()
+    {
+        return 'Doctrine\Common\Annotations\Marker\Strategy\RequiredStrategy';
+    }
 
 }

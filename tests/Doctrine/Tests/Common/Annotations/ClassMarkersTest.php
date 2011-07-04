@@ -4,7 +4,13 @@ namespace Doctrine\Tests\Common\Annotations\Proxy;
 
 use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\AnnnotedAnnotation;
 use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\AnnnotedAnnotationClass;
+
+use Doctrine\Common\Annotations\Marker\Annotation\Target;
+use Doctrine\Common\Annotations\Marker\Strategy\TypeStrategy;
 use Doctrine\Common\Annotations\Marker\Strategy\TargetStrategy;
+use Doctrine\Common\Annotations\Marker\Strategy\DefaultValueStrategy;
+
+use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\ClassMarker;
 use \ReflectionClass;
@@ -17,31 +23,65 @@ class ClassMarkersTest extends \PHPUnit_Framework_TestCase
      */
     public function testRunMarkers()
     {
-        $this->markTestIncomplete();
-        
-        $class          = new ReflectionClass(__NAMESPACE__.'\ClassNameWithMarkedAnnotations');
         $reader         = new AnnotationReader();
+        
+        $class          = new ReflectionClass(__NAMESPACE__.'\MarkedClassNameWithInvalidProperty');
         $maker          = new ClassMarker($class,$reader);
-        $target         = $class->newInstance();
         $annotations    = $reader->getClassAnnotations($class);
         
+        try {
+            $maker->runMarkers($annotations);
+            $this->fail();
+        } catch (AnnotationException $exc) {
+            $this->assertEquals($exc->getMessage(),'[Semantical Error] Annotation "Doctrine\Tests\Common\Annotations\Fixtures\Annotation\AnnnotedAnnotation" can not be used at property "foo"');
+        }
         
-        $commamnds      = $maker->runMarkers($annotations, $target);
         
+        $class          = new ReflectionClass(__NAMESPACE__.'\MarkedClassNameWithInvalidMethod');
+        $maker          = new ClassMarker($class,$reader);
+        $annotations    = $reader->getMethodAnnotations($class->getMethod('functionName'));
         
-        $this->assertEquals(sizeof($annotations), 1);
+        try {
+            $maker->runMarkers($annotations);
+            $this->fail();
+        } catch (AnnotationException $exc) {
+            $this->assertEquals($exc->getMessage(),'[Semantical Error] Annotation "Doctrine\Tests\Common\Annotations\Fixtures\Annotation\AnnnotedAnnotation" can not be used at method "functionName"');
+        }
+
+
+        
+        $class          = new ReflectionClass(__NAMESPACE__.'\MarkedClassName');
+        $maker          = new ClassMarker($class,$reader);
+        $annotations    = $reader->getClassAnnotations($class);
+
+        $commamnds      = $maker->runMarkers($annotations);
+        
         $this->assertEquals(sizeof($commamnds), 4);
         
-        
+    }
+    
+    
+     /**
+     * @group Marker
+     */
+    public function testMarkersStrategy()
+    {
+        $reader         = new AnnotationReader();
+        $class          = new ReflectionClass(__NAMESPACE__.'\MarkedClassName');
+        $maker          = new ClassMarker($class,$reader);
+        $annotations    = $reader->getClassAnnotations($class);
+
+        $commamnds = $maker->runMarkers($annotations);
         
         $this->assertTrue($commamnds[0] instanceof TargetStrategy);
-        //$this->assertEquals($commamnds[0]->getMarker(), $annotations[0]);
+        $this->assertTrue($commamnds[1] instanceof DefaultValueStrategy);
+        $this->assertTrue($commamnds[2] instanceof DefaultValueStrategy);
+        $this->assertTrue($commamnds[3] instanceof TypeStrategy);
+
         
-        
-        
-        
-        echo sizeof($commamnds) . "\n\n";
-        echo get_class($commamnds[0]) . "\n\n";
+        $this->assertTrue($annotations[0] instanceof AnnnotedAnnotation);
+        $this->assertEquals($annotations[0]->name,"Foo Value");
+        $this->assertEquals($annotations[0]->target->value, Target::TARGET_ALL);
     }
     
    
@@ -50,14 +90,39 @@ class ClassMarkersTest extends \PHPUnit_Framework_TestCase
 
 
 
+
 /**
  * @AnnnotedAnnotation()
  */
-class ClassNameWithMarkedAnnotations
+class MarkedClassName
+{
+}
+
+
+
+/**
+ * @AnnnotedAnnotation()
+ */
+class MarkedClassNameWithInvalidProperty
 {
     
     /**
      * @AnnnotedAnnotation()
      */
-    private $foo;
+    public $foo;
+}
+
+/**
+ * @AnnnotedAnnotation()
+ */
+class MarkedClassNameWithInvalidMethod
+{
+    
+    /**
+     * @AnnnotedAnnotation()
+     */
+    public function functionName($param)
+    {
+        
+    }
 }

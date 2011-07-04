@@ -1,5 +1,4 @@
 <?php
-
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -18,27 +17,14 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Common\Annotations\Marker\Annotation;
+namespace Doctrine\Common\Annotations\Proxy;
 
 /**
- * Annotation Marker @ DefaultValue
+ * Decorable
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-final class DefaultValue extends Marker
+interface Decorable
 {
-
-    /**
-     * @var mixed
-     */
-    protected $value;
-
-    /**
-     * @inheritDoc
-     */
-    public function strategyClass()
-    {
-        return 'Doctrine\Common\Annotations\Marker\Strategy\DefaultValueStrategy';
-    }
 
 }
