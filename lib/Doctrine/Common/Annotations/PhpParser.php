@@ -37,10 +37,24 @@ final class PhpParser
     private $tokens;
 
     /**
+     * The number of tokens.
+     * 
+     * @var int
+     */
+    private $numTokens = 0;
+
+    /**
+     * The current array pointer.
+     * 
+     * @var int
+     */
+    private $pointer = 0;
+
+    /**
      * Parses a class.
      *
      * @param \ReflectionClass $class A <code>ReflectionClass</code> object. 
-     * @return array A list with use statements in the form 
+     * @return array A list with use statements in the form (Alias => FQN).
      */
     public function parseClass(\ReflectionClass $class)
     {
@@ -50,8 +64,9 @@ final class PhpParser
 
         $content = $this->getFileContent($filename, $class->getStartLine());
         $namespace = str_replace('\\', '\\\\', $class->getNamespaceName());
-        $content = preg_replace('/^.*?(\bnamespace\s+' . $namespace . '\s*[;|{].*)$/s', '\\1', $content);
+        $content = preg_replace('/^.*?(\bnamespace\s+' . $namespace . '\s*[;{].*)$/s', '\\1', $content);
         $this->tokens = token_get_all('<?php ' . $content);
+        $this->numTokens = count($this->tokens);
 
         $statements = $this->parseUseStatements($class->getNamespaceName());
         $statements = $this->canonicalize($statements);
@@ -73,11 +88,11 @@ final class PhpParser
      * @param array $statements The list with statements to canonicalize.
      * @return array An array containing canonical use statements in the form (Alias => FQN).
      */
-    public function canonicalize(array $statements)
+    private function canonicalize(array $statements)
     {
         foreach ($statements as $alias => $path) {
             $pos = strpos($path, '\\');
-            $firstPart = lcfirst(substr($path, 0, $pos));
+            $firstPart = substr($path, 0, $pos);
             if (!isset($statements[$firstPart])) {
                 continue;
             }
@@ -119,15 +134,16 @@ final class PhpParser
      */
     private function next()
     {
-        while (($token = array_shift($this->tokens))) {
-            if ($token[0] === T_WHITESPACE ||
-                $token[0] === T_COMMENT ||
-                $token[0] === T_DOC_COMMENT) {
-                
+        for ($i = $this->pointer; $i < $this->numTokens; $i++) {
+            $this->pointer++;
+            if ($this->tokens[$i][0] === T_WHITESPACE ||
+                $this->tokens[$i][0] === T_COMMENT ||
+                $this->tokens[$i][0] === T_DOC_COMMENT) {
+
                 continue;
             }
 
-            return $token;
+            return $this->tokens[$i];
         }
 
         return null;
@@ -140,7 +156,7 @@ final class PhpParser
      * @return array A list with all found use statements.
      */
     private function parseUseStatements($namespaceName)
-    {	
+    {
         $statements = array();
         while (($token = $this->next())) {
             if ($token[0] === T_USE) {
@@ -165,7 +181,7 @@ final class PhpParser
      * @return string The found namespace name.
      */
     private function parseNamespace()
-    {	
+    {
         $namespace = '';
         while (($token = $this->next())){
             if ($token[0] === T_STRING || $token[0] === T_NS_SEPARATOR) {
@@ -184,7 +200,7 @@ final class PhpParser
      * @return array A list with all found class names for a use statement.
      */
     private function parseUseStatement()
-    {   
+    {
         $class = '';
         $alias = '';
         $statements = array();
@@ -200,12 +216,12 @@ final class PhpParser
                 $explicitAlias = true;
                 $alias = '';
             } else if ($token === ',') {
-                $statements[lcfirst($alias)] = $class;
+                $statements[$alias] = $class;
                 $class = '';
                 $alias = '';
                 $explicitAlias = false;
             } else if ($token === ';') {
-                $statements[lcfirst($alias)] = $class;
+                $statements[$alias] = $class;
                 break;
             } else {
                 break;
