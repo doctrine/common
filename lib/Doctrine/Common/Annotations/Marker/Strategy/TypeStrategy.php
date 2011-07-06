@@ -47,7 +47,16 @@ class TypeStrategy extends MarkerStrategy
         if($this->getMarker()->getProperty())
         {
             $item   = $this->getMarker()->getProperty();
-            $value  = $item->getValue($annotation);
+            if($item->isPublic())
+            {
+                $value  = $item->getValue($annotation);
+            }
+            else {
+                $item->setAccessible(true);
+                $value  = $item->getValue($annotation);
+                $item->setAccessible(false);
+            }
+            
         }
         elseif($this->getMarker()->getMethod())
         {
@@ -65,9 +74,9 @@ class TypeStrategy extends MarkerStrategy
         $valType    = gettype($value);
         $valid      = true;
         
-        if(($value === null))
+        if($value == null)
         {
-            if ($nullable === false)
+            if ($nullable == false)
             {
                 throw self::exception($this->getMarker()->getClass(), $item, $type, $value, $target);
             }
@@ -89,7 +98,7 @@ class TypeStrategy extends MarkerStrategy
     }
     
     
-     private static function exception(\ReflectionClass $annot, \ReflectionProperty $property,$type,$value,\Reflector $target)
+     private static function exception(\ReflectionClass $annot, \Reflector $property,$type,$value,\Reflector $target)
     {
         $valType = is_object($value) ? get_class($value) : gettype($value);
         if($target instanceof \ReflectionClass)

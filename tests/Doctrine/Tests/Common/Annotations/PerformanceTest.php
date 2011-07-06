@@ -184,7 +184,7 @@ class PerformanceTest extends \PHPUnit_Framework_TestCase
         $time = microtime(true);
         for ($i=0,$c=150; $i<$c; $i++) {
             $reader = new AnnotationReader();
-            $reader->getMethodAnnotations($method);
+            $items  = $reader->getMethodAnnotations($method);
         }
         $time = microtime(true) - $time;
 
