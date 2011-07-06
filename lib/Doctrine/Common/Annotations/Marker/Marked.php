@@ -18,39 +18,17 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Common\Annotations\Marker\Annotation;
+namespace Doctrine\Common\Annotations\Marker;
+
+use Doctrine\Common\Annotations\Proxy\Decorable;
+use Doctrine\Common\Annotations\Annotation\Annotation;
 
 /**
- * Annotation Marker Type
+ * Interface from Marked annotations
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-final class Type extends Marker
+interface Marked
 {
-
-    /**
-     * @var strign
-     */
-    protected $value;
-    /**
-     * @var bool
-     */
-    protected $nullable;
-
-    /**
-     * @inheritDoc
-     */
-    public function strategyClass()
-    {
-        return 'Doctrine\Common\Annotations\Marker\Strategy\TypeStrategy';
-    }
-    
-    /**
-     * @inheritDoc
-     */
-    public function priority()
-    {
-        return 3;
-    }
 
 }

@@ -480,7 +480,7 @@ class False {}
 
 class Null {}
 
-interface InterfaceAnnotation
+interface InterfaceAnnotation extends \Doctrine\Common\Annotations\Proxy\Proxyable
 {
     public function name();
     public function data();

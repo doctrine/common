@@ -3,6 +3,7 @@
 namespace Doctrine\Tests\Common\Annotations\Fixtures\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Annotation;
+use Doctrine\Common\Annotations\Proxy\Proxyable;
 
 /**
  * A description of this class.
@@ -46,31 +47,31 @@ class DummyClassWithInterface
 
 }
 
-interface IDummyId extends Annotation
+interface IDummyId extends Annotation,Proxyable
 {
     
 }
 
-interface IDummyColumn extends Annotation
+interface IDummyColumn extends  Annotation,Proxyable
 {
 
     function type();
 
 }
 
-interface IDummyGeneratedValue extends Annotation
+interface IDummyGeneratedValue extends  Annotation,Proxyable
 {
     
 }
 
-interface IDummyAnnotation extends Annotation
+interface IDummyAnnotation extends  Annotation,Proxyable
 {
 
     function dummyValue();
 
 }
 
-interface IDummyJoinColumn extends Annotation
+interface IDummyJoinColumn extends  Annotation,Proxyable
 {
 
     function name();
@@ -78,7 +79,7 @@ interface IDummyJoinColumn extends Annotation
 
 }
 
-interface IDummyJoinTable extends Annotation
+interface IDummyJoinTable extends  Annotation,Proxyable
 {
 
     function name();

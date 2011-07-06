@@ -2,9 +2,9 @@
 
 namespace Doctrine\Tests\Common\Annotations\Fixtures\Annotation;
 
-use Doctrine\Common\Annotations\Annotation\Annotation;
+use Doctrine\Common\Annotations\Proxy\Proxyable;
 
-interface MyAnnotation extends Annotation
+interface MyAnnotation extends Proxyable
 {
 
     function name();

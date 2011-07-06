@@ -2,7 +2,7 @@
 
 namespace Doctrine\Tests\Common\Annotations\Fixtures\Annotation;
 
-class MyAnnotationImpl implements MyAnnotation
+class MyAnnotationImpl implements MyAnnotation, \Doctrine\Common\Annotations\Proxy\Decorable
 {
 
     private $name;

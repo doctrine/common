@@ -2,11 +2,12 @@
 
 namespace Doctrine\Tests\Common\Annotations\Fixtures;
 
-use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\AnnnotedAnnotation;
+use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\AnnotationTargetClass;
 use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MarkedAnnotation;
+use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MarkerdAnnotationInterface;
 
 /**
- * @AnnnotedAnnotation("Some data")
+ * @AnnotationTargetClass("Some data")
  */
 class MarkedClassName
 {
@@ -18,7 +19,7 @@ class MarkedClassName
     
     
     /**
-     * @MarkedAnnotation(name="Some name")
+     * @MarkedAnnotation("Some data",name="Some name")
      */
     public $name;
     
@@ -29,5 +30,11 @@ class MarkedClassName
     {
         
     }
+    
+    
+    /**
+     * @MarkerdAnnotationInterface("Some data",name="Some name")
+     */
+    public $interfaceMarked;
 
 }

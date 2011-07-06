@@ -171,6 +171,16 @@ class ProxyFactoryTest extends \PHPUnit_Framework_TestCase
                 new \ReflectionClass(__NAMESPACE__.'\\'.'ClassNotImplementsInterface'));
     }
     
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Class "Doctrine\Tests\Common\Annotations\Proxy\MyAnnotationNotImpementsProxyable" not implements "Doctrine\Common\Annotations\Proxy\Proxyable"
+     */
+    public function testExceptionImplNotImplementsProxyable()
+    {
+        $factory = new ProxyFactory();
+        $factory->proxy(new \ReflectionClass(__NAMESPACE__.'\\'.'MyAnnotationNotImpementsProxyable'));
+    }
+    
     
     /**
      * @expectedException \RuntimeException
@@ -187,7 +197,13 @@ class ProxyFactoryTest extends \PHPUnit_Framework_TestCase
 }
 
 
-interface MyAnnotationWithParams
+interface MyAnnotationWithParams extends \Doctrine\Common\Annotations\Proxy\Proxyable
+{
+    function name($args1);
+    function data();
+}
+
+interface MyAnnotationNotImpementsProxyable
 {
     function name($args1);
     function data();

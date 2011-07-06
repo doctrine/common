@@ -20,7 +20,7 @@
 
 namespace Doctrine\Common\Annotations\Proxy;
 
-use Doctrine\Common\Annotations\Annotation\Annotation;
+use Doctrine\Common\Annotations\Proxy\Decorable;
 
 /**
  * ProxyDecorator
@@ -56,10 +56,10 @@ class ProxyDecorator
     }
 
     /**
-     * @param Annotation $proxy
+     * @param Decorable $object
      * @param array $data 
      */
-    public function setData(Annotation $proxy, array $data)
+    public function setData(Decorable $object, array $data)
     {
         if (!empty($data))
         {
@@ -73,15 +73,15 @@ class ProxyDecorator
                         $methods    = $this->getProperties();
                         $name       = reset($methods);
 
-                        $this->setPropertyValue($proxy, $name, $value);
+                        $this->setPropertyValue($object, $name, $value);
                     } else
                     {
                         throw new \BadMethodCallException(
-                                sprintf("Unknown property '%s' on annotation '%s'.", $name, $this->class->getName())
+                                sprintf("Unknown property '%s' on object '%s'.", $name, $this->class->getName())
                         );
                     }
                 }else{
-                    $this->setPropertyValue($proxy, $name, $value);   
+                    $this->setPropertyValue($object, $name, $value);   
                 }
             }
         }

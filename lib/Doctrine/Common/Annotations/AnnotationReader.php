@@ -20,6 +20,7 @@
 namespace Doctrine\Common\Annotations;
 
 use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
+use Doctrine\Common\Annotations\Marker\AnnotationMarkers;
 use Closure;
 use ReflectionClass;
 use ReflectionMethod;
@@ -172,7 +173,7 @@ final class AnnotationReader implements Reader
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
         
         $annotations = $this->parser->parse($class->getDocComment(), 'class ' . $class->getName());
-        $this->runMarkers($class, $annotations);
+        $this->runAnnotaionMarkers($annotations,$class);
         return $annotations;
     }
 
@@ -212,7 +213,7 @@ final class AnnotationReader implements Reader
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
 
         $annotations = $this->parser->parse($property->getDocComment(), $context);
-        $this->runMarkers($class, $annotations);
+        $this->runAnnotaionMarkers($annotations,$property);
         return $annotations;
     }
 
@@ -250,7 +251,10 @@ final class AnnotationReader implements Reader
         $this->parser->setImports($this->getImports($class));
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
 
-        return $this->parser->parse($method->getDocComment(), $context);
+        
+        $annotations = $this->parser->parse($method->getDocComment(), $context);
+        $this->runAnnotaionMarkers($annotations,$method);
+        return $annotations;
     }
 
     /**
@@ -277,26 +281,31 @@ final class AnnotationReader implements Reader
      * Returns the class markers
      *
      * @param   ReflectionClass $class
-     * @return  ClassMarker
+     * @return  AnnotationMarkers
      */
-    private function getClassMarker(ReflectionClass $class)
+    private function getAnnotationMarkers(ReflectionClass $class)
     {
         if (!isset($this->markers[$name = $class->getName()])) 
         {
-            $this->markers[$name] = new ClassMarker($class, $this);
+            $this->markers[$name] = new AnnotationMarkers($class, $this);
         }
         return $this->markers[$name];
     }
     
     /**
-     * Run all annotations class markers
-     *
-     * @param   ReflectionClass $class
-     * @param   array
+     * @param array $annotations
+     * @param \Reflector $target 
      */
-    private function runMarkers(ReflectionClass $class,array $annotations)
+    private function runAnnotaionMarkers(array $annotations, \Reflector $target)
     {
-        $this->getClassMarker($class)->runMarkers($annotations);
+        foreach ($annotations as $annotation) 
+        {
+            $class = new \ReflectionClass($annotation);
+            if($class->implementsInterface('Doctrine\Common\Annotations\Marker\Marked'))
+            {
+                $this->getAnnotationMarkers($class)->runMarkers($annotation, $target);
+            }
+        }
     }
 
     /**

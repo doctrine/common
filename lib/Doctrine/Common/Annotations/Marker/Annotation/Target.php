@@ -21,7 +21,7 @@
 namespace Doctrine\Common\Annotations\Marker\Annotation;
 
 /**
- * Annotation Marker @ Target
+ * Annotation Marker Target
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
@@ -44,6 +44,14 @@ final class Target extends Marker
     public function strategyClass()
     {
         return 'Doctrine\Common\Annotations\Marker\Strategy\TargetStrategy';
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function priority()
+    {
+        return 2;
     }
 
 }

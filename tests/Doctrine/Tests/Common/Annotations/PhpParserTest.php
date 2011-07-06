@@ -58,11 +58,13 @@ class PhpParserTest extends \PHPUnit_Framework_TestCase
         ), $parser->parseClass($class));
     }
     
-    
-    public function testParseClassWhenAnnotationIsAnnnoted()
+    /**
+     * @group Marker
+     */
+    public function testParseClassWhenAnnotationIsMarked()
     {
         $parser     = new PhpParser();
-        $class      = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\Annotation\AnnnotedAnnotation');
+        $class      = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MarkedAnnotation');
         
         $defaultvalue   = 'Doctrine\Common\Annotations\Marker\Annotation\DefaultValue';
         $target         = 'Doctrine\Common\Annotations\Marker\Annotation\Target';

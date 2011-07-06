@@ -1,6 +1,6 @@
 <?php
 
-namespace Doctrine\Tests\Common\Annotations\Proxy;
+namespace Doctrine\Tests\Common\Annotations\Marker;
 
 
 use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\AnnnotedAnnotation;
@@ -17,10 +17,11 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Proxy\ProxyFactory;
 use Doctrine\Common\Annotations\AnnotationFactory;
 
+use Doctrine\Common\Annotations\AnnotationException;
+
 
 class AnnotationMarkersTest extends \PHPUnit_Framework_TestCase
 {
-    
     
     /**
      * @param   string $name
@@ -46,13 +47,13 @@ class AnnotationMarkersTest extends \PHPUnit_Framework_TestCase
      */
     public function testClassMarkers()
     {
-        $class      = $this->_annot("AnnnotedAnnotation");
+        $annotation = $this->_annot("MarkedAnnotation");
         $target     = $this->_marker("Target");
-        $markers    = new AnnotationMarkers($class,new AnnotationReader());
+        $markers    = new AnnotationMarkers($annotation,new AnnotationReader());
 
         
         $list    = $markers->getAllMarkers();
-        $this->assertEquals(4, sizeof($list));
+        $this->assertEquals(5, sizeof($list));
         
         $this->assertTrue($markers->hasClassMarker($target));
         $this->assertFalse($markers->hasClassMarker($this->_marker("Type")));
@@ -66,10 +67,9 @@ class AnnotationMarkersTest extends \PHPUnit_Framework_TestCase
         $target = $markers->getClassMarker($this->_marker("Target"));        
         $this->assertTrue($target instanceof Marker);
         $this->assertTrue($target instanceof Target);
-        $this->assertEquals($target->value, Target::TARGET_CLASS);
+        $this->assertEquals($target->value, Target::TARGET_ALL);
     }
     
-     
     
     /**
      * @group Marker
@@ -77,13 +77,12 @@ class AnnotationMarkersTest extends \PHPUnit_Framework_TestCase
     public function testPropertyMarkers()
     {
         $default    = $this->_marker("DefaultValue");
-        $class      = $this->_annot("AnnnotedAnnotation");
-        $markers    = new AnnotationMarkers($class,new AnnotationReader());
-        
+        $annotation = $this->_annot("MarkedAnnotation");
+        $markers    = new AnnotationMarkers($annotation,new AnnotationReader());
         $list       = $markers->getPropertiesMarkers();
         
         
-        $this->assertEquals(2, sizeof($list));
+        $this->assertEquals(3, sizeof($list));
         
         $this->assertTrue(array_key_exists("name", $list));
         $this->assertTrue(array_key_exists("target", $list));
@@ -127,4 +126,63 @@ class AnnotationMarkersTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($defaultValue->value->value, Target::TARGET_ALL);
     }
 
+    
+    /**
+     * @group Marker
+     */
+    public function testMethodMarkers()
+    {
+        $default    = $this->_marker("DefaultValue");
+        $annotation = $this->_annot("MarkerdAnnotationInterface");
+        $factory    = new \Doctrine\Common\Annotations\Proxy\ProxyFactory(); 
+        $proxy      = $factory->proxy(new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MarkerdAnnotationInterface'));
+        
+        $markers    = new AnnotationMarkers($proxy,new AnnotationReader());
+        $list       = $markers->getMethodsMarkers();
+        
+        
+        $this->assertEquals(3, sizeof($list));
+        
+        $this->assertTrue(array_key_exists("name", $list));
+        $this->assertTrue(array_key_exists("target", $list));
+        
+        $this->assertTrue($list['name'][0] instanceof DefaultValue);
+        $this->assertTrue($list['name'][0] instanceof Marker);
+        
+        $this->assertTrue($list['target'][0] instanceof DefaultValue);
+        $this->assertTrue($list['target'][0] instanceof Marker);
+        
+        $this->assertTrue($list['target'][1] instanceof Type);
+        $this->assertTrue($list['target'][1] instanceof Marker);
+        
+        
+        
+        $this->assertTrue($markers->hasMethodMarker($default,"name"));
+        $this->assertFalse($markers->hasMethodMarker($this->_marker("Target"),"name"));
+        
+        $this->assertTrue($markers->hasMethodMarker($default,"target"));
+        $this->assertFalse($markers->hasMethodMarker($this->_marker("Target"),"target"));
+        
+        
+        $list = $markers->getMethodMarkers("name");
+        $this->assertEquals(1, sizeof($list));
+        $this->assertTrue($list[0] instanceof DefaultValue);
+        
+        
+        $list = $markers->getMethodMarkers("target");
+        $this->assertEquals(2, sizeof($list));
+        $this->assertTrue($list[0] instanceof DefaultValue);
+        $this->assertTrue($list[1] instanceof Type);
+        
+        
+        $defaultValue = $markers->getMethodMarker($default,'name');
+        $this->assertTrue($defaultValue instanceof DefaultValue);
+        $this->assertEquals($defaultValue->value, "Foo Value");
+        
+        $defaultValue = $markers->getMethodMarker($default,'target');
+        $this->assertTrue($defaultValue instanceof DefaultValue);
+        $this->assertTrue($defaultValue->value instanceof Target);
+        $this->assertEquals($defaultValue->value->value, Target::TARGET_ALL);
+    }
+    
 }

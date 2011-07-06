@@ -113,6 +113,9 @@ abstract class AbstractReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($annot->dummyValue, $annot->dummyValue());
     }
     
+    /**
+     * @group Marker
+     */
     public function testAnnotationsMarkers()
     {
         $reader = $this->getReader();
@@ -126,8 +129,9 @@ abstract class AbstractReaderTest extends \PHPUnit_Framework_TestCase
         };
         
         $class = new ReflectionClass($c('MarkedClassName'));
+
         $this->assertEquals(1, count($reader->getClassAnnotations($class)));
-        $this->assertInstanceOf($annotName = $a('AnnnotedAnnotation'), $annot = $reader->getClassAnnotation($class, $annotName));
+        $this->assertInstanceOf($annotName = $a('AnnotationTargetClass'), $annot = $reader->getClassAnnotation($class, $annotName));
         $this->assertEquals("Some data", $annot->data);
         
         $fooProp = $class->getProperty('foo');
@@ -137,13 +141,38 @@ abstract class AbstractReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("Some data", $annot->data);
         
         
-        $someMethod = $class->getMethod('someFunction');
-        $methodAnnots = $reader->getMethodAnnotations($someMethod);
+        $fooProp = $class->getProperty('interfaceMarked');
+        $propAnnots = $reader->getPropertyAnnotations($fooProp);
+        $this->assertEquals(1, count($propAnnots));
+        $this->assertInstanceOf($a('MarkerdAnnotationInterface'), $annot = $reader->getPropertyAnnotation($fooProp, $a('MarkerdAnnotationInterface')));
+        $this->assertEquals("Some data", $annot->data);
+        
+        
+        $someMethod     = $class->getMethod('someFunction');
+        $methodAnnots   = $reader->getMethodAnnotations($someMethod);
         $this->assertEquals(1, count($methodAnnots));
         $this->assertInstanceOf($a('MarkedAnnotation'), $annot = $reader->getMethodAnnotation($someMethod, $a('MarkedAnnotation')));
         
+        
+        $class = new ReflectionClass($c('MarkedClassNameWithInvalidMethod'));
+        try {
+            $reader->getMethodAnnotations($class->getMethod('functionName'));
+            $this->fail();
+        } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
+            $this->assertNotNull($exc->getMessage());
+        }
+        
+        $class = new ReflectionClass($c('MarkedClassNameWithInvalidProperty'));
+        try {
+            $reader->getPropertyAnnotations($class->getProperty('foo'));
+            $this->fail();
+        } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
+            $this->assertNotNull($exc->getMessage());
+        }
+        
         $this->assertTrue($annot->target instanceof Target);
         $this->assertTrue($annot->target->value == Target::TARGET_ALL);
+        
     }
 
     /**

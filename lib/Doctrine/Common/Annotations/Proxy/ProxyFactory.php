@@ -33,13 +33,9 @@ class ProxyFactory
     const KEY_PROXY = 'proxy';
     const KEY_CLASS = 'class';
     
-    const PROXY_INTERFACE = 'Doctrine\Common\Annotations\Proxy\Proxy';
+    const PROXY_INTERFACE       = 'Doctrine\Common\Annotations\Proxy\Proxy';
+    const PROXYABLE_INTERFACE   = 'Doctrine\Common\Annotations\Proxy\Proxyable';
     
-    
-    /**
-     * @var \ReflectionClass
-     */
-    private static $proxyInterface;
 
     /**
      * @var array 
@@ -51,19 +47,7 @@ class ProxyFactory
      */
     private $map        = array();
     
-    
-    /**
-     * @return \ReflectionClass 
-     */
-    private static function getProxyInterface()
-    {
-        if(self::$proxyInterface == null)
-        {
-            self::$proxyInterface = new \ReflectionClass(self::PROXY_INTERFACE);
-        }
-        
-        return self::$proxyInterface;
-    }
+
     /**
      * @param   ReflectionClass $class
      * @return  bool 
@@ -187,6 +171,11 @@ class ProxyFactory
             throw new \InvalidArgumentException(
                     sprintf('Class "%s" is not a interface', $class->getName()));
         }
+        if (!$class->implementsInterface(self::PROXYABLE_INTERFACE))
+        {
+            throw new \InvalidArgumentException(
+                    sprintf('Class "%s" not implements "%s"', $class->getName(),self::PROXYABLE_INTERFACE));
+        }
         if ($this->hasProxy($class))
         {
             throw new \RuntimeException(
@@ -282,9 +271,9 @@ class ProxyFactory
         $methods    = implode(" ", $methods);
         $implements = '\\'.$class->getName();
         $namespace  = $class->getNamespaceName();
-        if (!$class->implementsInterface(self::getProxyInterface()))
+        if (!$class->implementsInterface(self::PROXY_INTERFACE))
         {
-            $implements = $implements . ', \\' . self::getProxyInterface()->getName();
+            $implements = $implements . ', \\' . self::PROXY_INTERFACE;
         }
 
         $placeholders = array(

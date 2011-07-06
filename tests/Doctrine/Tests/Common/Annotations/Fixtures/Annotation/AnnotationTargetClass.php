@@ -9,11 +9,10 @@ use Doctrine\Common\Annotations\Marker\Annotation\Target;
 use Doctrine\Common\Annotations\Marker\Annotation\Type;
 use Doctrine\Common\Annotations\Marker\Annotation\Required;
 use Doctrine\Common\Annotations\Marker\Marked;
-
 /**
- * @Target("ALL")
+ * @Target("CLASS")
  */
-final class MarkedAnnotation implements Annotation, Decorable, Marked
+final class AnnotationTargetClass implements Annotation, Decorable, Marked
 {
     /**
      * @Required()

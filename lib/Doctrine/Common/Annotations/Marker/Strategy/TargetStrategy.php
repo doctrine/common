@@ -24,7 +24,7 @@ use Doctrine\Common\Annotations\Annotation\Annotation;
 use Doctrine\Common\Annotations\Marker\Annotation\Target;
 use Doctrine\Common\Annotations\AnnotationException;
 /**
- * TargetStrategy strategy for annotation @Target
+ * TargetStrategy strategy for annotation @ Target
  *
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
@@ -37,7 +37,8 @@ class TargetStrategy extends MarkerStrategy
         Target::TARGET_PROPERTY,
         Target::TARGET_NESTED_ANNOTATION,
     );
-    public function run(\ReflectionClass $target,$annotation)
+    
+    public function run(\Reflector $target, $annotation)
     {
         if (!($annotation instanceof Annotation))
         {
@@ -47,106 +48,127 @@ class TargetStrategy extends MarkerStrategy
         }
         
         
-        $types = array(
-            Target::TARGET_ALL,
-            Target::TARGET_CLASS,
-            Target::TARGET_METHOD,
-            Target::TARGET_PROPERTY,
-            Target::TARGET_NESTED_ANNOTATION,
-        );
+        $type = (array)$this->getMarker()->value;
         
-        if (!in_array($this->getMarker()->value, self::$types))
-        {
-            throw AnnotationException::semanticalError(sprintf(
-                    'Invalid target type "%s" at class "%s".', $this->getMarker()->value, $target->getName()
-            ));
+        foreach ($type as $t) {
+            if (!in_array($t, self::$types))
+            {
+                throw AnnotationException::semanticalError(sprintf(
+                        'Invalid target type "%s" at class "%s".', 
+                        $this->getMarker()->value, $this->getMarker()->getClass()->getName()
+                ));
+            }
         }
         
-        
-        $type           = $this->getMarker()->value;
         $annotationName = $this->getMarker()->getClass()->getName();
         
-
-        if(Target::TARGET_ALL != $type){
+        if(!in_array(Target::TARGET_ALL,$type)){
             
-            if(Target::TARGET_CLASS == $type){
-                foreach ($target->getMethods() as $method) {
-                    if($this->getMarkers()->getReader()->getMethodAnnotation($method, $annotationName)){
-                        throw AnnotationException::semanticalError(
-                            sprintf('Annotation "%s" can not be used at method "%s"', $annotationName,$method->getName())
-                        );
-                    }
-                }
-                
-                foreach ($target ->getProperties() as $property) {
-                    if($this->getMarkers()->getReader()->getPropertyAnnotation($property, $annotationName)){
-                        throw AnnotationException::semanticalError(
-                            sprintf('Annotation "%s" can not be used at property "%s"', $annotationName,$property->getName())
-                        );
-                    }
+            if(!in_array(Target::TARGET_CLASS,$type)){
+                if(self::isTargetClass($target))
+                {
+                    throw self::exception($this->getMarker()->getClass(), $type, $target);
                 }
             }
             
-            
-            if(Target::TARGET_METHOD == $type){
-                if($this->getMarkers()->getReader()->getClassAnnotation($target , $annotationName)){
-                    throw AnnotationException::semanticalError(
-                        sprintf('Annotation "%s" can not be used at class "%s"', $annotationName,$target ->getName())
-                    );
-                }
-                
-                foreach ($target ->getProperties() as $property) {
-                    if($this->getMarkers()->getReader()->getPropertyAnnotation($property, $annotationName)){
-                        throw AnnotationException::semanticalError(
-                            sprintf('Annotation "%s" can not be used at property "%s"', $annotationName,$property->getName())
-                        );
-                    }
+            if(!in_array(Target::TARGET_METHOD,$type)){
+                if(self::isTargetMethod($target))
+                {
+                    throw self::exception($this->getMarker()->getClass(), $type, $target);
                 }
             }
             
 
-            if(Target::TARGET_PROPERTY == $type){
-                if($this->getMarkers()->getReader()->getClassAnnotation($target , $annotationName)){
-                    throw AnnotationException::semanticalError(
-                        sprintf('Annotation "%s" can not be used at class "%s"', $annotationName,$target ->getName())
-                    );
-                }
-                foreach ($target ->getMethods() as $method) {
-                    if($this->getMarkers()->getReader()->getMethodAnnotation($method, $annotationName)){
-                        throw AnnotationException::semanticalError(
-                            sprintf('Annotation "%s" can not be used at method "%s"', $annotationName,$method->getName())
-                        );
-                    }
+            if(!in_array(Target::TARGET_PROPERTY,$type)){
+                if(self::isTargetProperty($target))
+                {
+                    throw self::exception($this->getMarker()->getClass(), $type, $target);
                 }
             }
             
             
-            if(Target::TARGET_NESTED_ANNOTATION == $type){
-                if($this->getMarkers()->getReader()->getClassAnnotation($target , $annotationName)){
-                    throw AnnotationException::semanticalError(
-                        sprintf('Annotation "%s" can not be used at class "%s"', $annotationName,$target ->getName())
-                    );
-                }
-                foreach ($target ->getMethods() as $method) {
-                    if($this->getMarkers()->getReader()->getMethodAnnotation($method, $annotationName)){
-                        throw AnnotationException::semanticalError(
-                            sprintf('Annotation "%s" can not be used at method "%s"', $annotationName,$method->getName())
-                        );
-                    }
-                }
-                foreach ($target ->getProperties() as $property) {
-                    if($this->getMarkers()->getReader()->getPropertyAnnotation($property, $annotationName)){
-                        throw AnnotationException::semanticalError(
-                            sprintf('Annotation "%s" can not be used at property "%s"', $annotationName,$property->getName())
-                        );
-                    }
+            if(!in_array(Target::TARGET_NESTED_ANNOTATION,$type)){
+                // TODO - do this better
+                if(!self::isTargetReflecttion($target))
+                {
+                    throw self::exception($this->getMarker()->getClass(), $type, $target);
                 }
             }
-            
             
         }
     }
     
+    
+    
+    
+    private static function exception(\ReflectionClass $annot, array $type,\Reflector $target)
+    {
+        if(self::isTargetClass($target))
+        {
+            return AnnotationException::semanticalError(
+                sprintf('Declaration of "@%s" is not compatible with annotation target [%s], at class "%s".', 
+                        $annot->getShortName(), implode(", ", $type), $target->getName())
+            );
+        }
+        elseif(self::isTargetMethod($target))
+        {
+            return AnnotationException::semanticalError(
+                sprintf('Declaration of "@%s" is not compatible with annotation target [%s], "%s" at method "%s".', 
+                        $annot->getShortName(), implode(", ", $type), $target->getDeclaringClass()->getName(), $target->getName())
+            );
+        }
+        
+        elseif(self::isTargetProperty($target))
+        {
+            return AnnotationException::semanticalError(
+                sprintf('Declaration of "@%s" is not compatible with annotation target [%s], "%s" at property "%s".', 
+                        $annot->getShortName(), implode(", ", $type), $target->getDeclaringClass()->getName(), $target->getName())
+            );
+        }
+        else{
+            return AnnotationException::semanticalError(
+                sprintf('Declaration of "@%s" is not compatible with annotation target [%s].', 
+                        $annot->getShortName(), implode(", ", $type))
+            );
+        }
+    }
+    
+    
+    /**
+     * @param \Reflector $target
+     * @return bool 
+     */
+    private static function isTargetClass(\Reflector $target)
+    {
+        return ($target instanceof \ReflectionClass);
+    }
+    
+    /**
+     * @param \Reflector $target
+     * @return bool 
+     */
+    private static function isTargetProperty(\Reflector $target)
+    {
+        return ($target instanceof \ReflectionProperty);
+    }
+    
+    /**
+     * @param \Reflector $target
+     * @return bool 
+     */
+    private static function isTargetMethod(\Reflector $target)
+    {
+        return ($target instanceof \ReflectionMethod);
+    }
+    
+    /**
+     * @param \Reflector $target
+     * @return bool 
+     */
+    private static function isTargetReflecttion(\Reflector $target)
+    {
+        return self::isTargetClass($target) || self::isTargetMethod($target) || self::isTargetProperty($target);
+    }
     
 
 }

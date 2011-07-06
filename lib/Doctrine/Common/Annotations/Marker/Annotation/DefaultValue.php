@@ -21,7 +21,7 @@
 namespace Doctrine\Common\Annotations\Marker\Annotation;
 
 /**
- * Annotation Marker @ DefaultValue
+ * Annotation Marker DefaultValue
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
@@ -39,6 +39,14 @@ final class DefaultValue extends Marker
     public function strategyClass()
     {
         return 'Doctrine\Common\Annotations\Marker\Strategy\DefaultValueStrategy';
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function priority()
+    {
+        return 0;
     }
 
 }

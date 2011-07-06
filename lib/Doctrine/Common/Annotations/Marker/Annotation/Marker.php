@@ -110,4 +110,10 @@ abstract class Marker implements Decorable, Annotation
      * @return string the marker strategy class name
      */
     public abstract function strategyClass();
+    
+    
+    /**
+     * @return integer the marker priority
+     */
+    public abstract function priority();
 }

@@ -24,37 +24,48 @@ use Doctrine\Common\Annotations\Annotation\Annotation;
 use Doctrine\Common\Annotations\Marker\Annotation\Target;
 use Doctrine\Common\Annotations\AnnotationException;
 /**
- * DefaultValueStrategy strategy for annotation @Target
+ * DefaultValueStrategy strategy for annotation @ Target
  *
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
 class DefaultValueStrategy extends MarkerStrategy
 {
-    public function run(\ReflectionClass $target,$annotation)
+    public function run(\Reflector $target,$annotation)
     {
-        if (!($annotation instanceof Annotation))
+        $marker = $this->getMarker();
+        
+        if($marker->getProperty())
         {
-            throw AnnotationException::semanticalError(sprintf(
-                    'The class "%s" is not an annotation.', get_class($annotation)
-            ));
+            $item   = $marker->getProperty();
+            $value  = $item->getValue($annotation);
+        }
+        elseif($marker->getMethod())
+        {
+            $item   = $marker->getMethod();
+            $value  = $item->invoke($annotation);
+        }
+        else
+        {
+            throw new \InvalidArgumentException('Invalid marker.');
         }
         
-        $property   = $this->getMarker()->getProperty();
-        $value      = $this->getMarker()->value;
-        
-        if($property->getValue($annotation) == null)
+        if($value == null)
         {
-            if($property->isPublic())
+            if(!$item instanceof \ReflectionProperty)
             {
-                $property->setValue($annotation, $value);
+                $item = $marker->getClass()->getProperty($item->getName());
+            }
+            
+            if($item->isPublic())
+            {
+                $item->setValue($annotation, $marker->value);
             }
             else
             {
-                $property->setAccessible(true);
-                $property->setValue($annotation, $value);
-                $property->setAccessible(false);
+                $item->setAccessible(true);
+                $item->setValue($annotation, $marker->value);
+                $item->setAccessible(false);
             }
         }
     }
-
 }

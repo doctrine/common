@@ -30,7 +30,7 @@ use Doctrine\Common\Annotations\AnnotationException;
  */
 class RequiredStrategy extends MarkerStrategy
 {
-    public function run(\ReflectionClass $target,$annotation)
+    public function run(\Reflector $target,$annotation)
     {
         if (!($annotation instanceof Annotation))
         {
@@ -39,7 +39,39 @@ class RequiredStrategy extends MarkerStrategy
             ));
         }
         
-        // TODO - implements this method
+        
+        
+        if($this->getMarker()->getProperty())
+        {
+            $item   = $this->getMarker()->getProperty();
+            $value  = $item->getValue($annotation);
+        }
+        elseif($this->getMarker()->getMethod())
+        {
+            $item   = $this->getMarker()->getMethod();
+            $value  = $item->invoke($annotation);
+        }
+        else
+        {
+            throw new \InvalidArgumentException('Invalid marker.');
+        }
+        
+        
+        
+        $nullable   = $this->getMarker()->value;
+        
+        
+        if(($value === null))
+        {
+            if ($nullable != true)
+            {
+                throw AnnotationException::semanticalError(
+                        sprintf('Property "%s" can not be null on "@%s", "%s" at property "%s"', 
+                                $item->getName(), $this->getMarker()->getClass()->getShortName(),
+                                $target->getName(), $item->getName())
+                );
+            }
+        }
     }
 
 }

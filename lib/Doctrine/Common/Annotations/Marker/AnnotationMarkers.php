@@ -77,9 +77,25 @@ class AnnotationMarkers
     /**
      * @return Reader
      */
-    public function getReader()
+    private function getReader()
     {
         return $this->reader;
+    }
+    
+    /**
+     * @return \ReflectionClass 
+     */
+    private function getClass()
+    {
+        if($this->class->implementsInterface('Doctrine\Common\Annotations\Proxy\Proxy'))
+        {
+            $interface = $this->proxyClass($this->class);
+            if($interface instanceof ReflectionClass)
+            {
+                return $interface;
+            }
+        }
+        return $this->class;
     }
 
     /**
@@ -88,12 +104,47 @@ class AnnotationMarkers
      */
     public function __construct(\ReflectionClass $class, Reader $reader)
     {
+        if($class->isSubclassOf('Doctrine\Common\Annotations\Marker\Annotation\Marker'))
+        {
+            throw new \InvalidArgumentException(
+                sprintf("Annotation '%s' can not be a sub class of Marker.",$class->getName())
+            );
+        }
+        
+        if(!$class->implementsInterface('Doctrine\Common\Annotations\Marker\Marked'))
+        {
+            throw new \InvalidArgumentException(
+                sprintf("Annotation '%s' not implements Marked.",$class->getName())
+            );
+        }
+        
         $this->class = $class;
         $this->reader= $reader;
 
         $this->readMarkers();
     }
 
+    
+    /**
+     * @param \ReflectionClass $class
+     * @return \ReflectionClass
+     */
+    private function proxyClass(\ReflectionClass $class)
+    {
+        if($class->implementsInterface('Doctrine\Common\Annotations\Proxy\Proxy'))
+        {
+            foreach ($class->getInterfaces() as $interface) {
+                if($interface->implementsInterface('Doctrine\Common\Annotations\Proxy\Proxyable'))
+                {
+                    return $interface;
+                }
+            }
+        }
+        return null;
+    }
+
+    
+    
     /**
      * Read annotation markers
      */
@@ -103,6 +154,7 @@ class AnnotationMarkers
         $this->readClassMarkers();
         $this->readMethodMarkers();
         $this->readPropertyMarkers();
+        $this->sortByPriority($this->markers);
     }
 
     /**
@@ -112,7 +164,7 @@ class AnnotationMarkers
     {
         $this->classMarkers     = array();
         $this->hasClassMarker   = array();
-        $annotations            = $this->getReader()->getClassAnnotations($this->class);
+        $annotations            = $this->getReader()->getClassAnnotations($this->getClass());
         foreach ($annotations as $annotation) {
             if ($annotation instanceof Marker)
             {
@@ -120,6 +172,8 @@ class AnnotationMarkers
                 $this->addClassMarker($annotation);
             }
         }
+        
+        $this->sortByPriority($this->classMarkers);
     }
 
     /**
@@ -129,16 +183,20 @@ class AnnotationMarkers
     {
         $this->methodMarkers = array();
         $this->hasMethodMarker = array();
-        $methods = $this->class->getMethods();
+        $methods = $this->getClass()->getMethods();
         foreach ($methods as $method) {
             $annotations = $this->getReader()->getMethodAnnotations($method);
             foreach ($annotations as $annotation) {
                 if ($annotation instanceof Marker)
                 {
                     $annotation->setClass($this->class);
-                    $annotation->setMethod($method);
+                    $annotation->setMethod($this->class->getMethod($method->getName()));
                     $this->addMethodMarker($annotation, $method->getName());
                 }
+            }
+            if(isset($this->methodMarkers[$method->getName()]))
+            {
+                $this->sortByPriority($this->methodMarkers[$method->getName()]);
             }
         }
     }
@@ -150,7 +208,7 @@ class AnnotationMarkers
     {
         $this->propertyMarkers = array();
         $this->hasPropertyMarker = array();
-        $properties = $this->class->getProperties();
+        $properties = $this->getClass()->getProperties();
         foreach ($properties as $property) {
             $annotations = $this->getReader()->getPropertyAnnotations($property);
             foreach ($annotations as $annotation) {
@@ -160,6 +218,10 @@ class AnnotationMarkers
                     $annotation->setProperty($property);
                     $this->addPropertyMarker($annotation, $property->getName());
                 }
+            }
+            if(isset($this->propertyMarkers[$property->getName()]))
+            {
+                $this->sortByPriority($this->propertyMarkers[$property->getName()]);
             }
         }
     }
@@ -206,6 +268,21 @@ class AnnotationMarkers
         }
         return false;
     }
+    
+    /**
+     * @param  array
+     * @return array 
+     */
+    private function sortByPriority(array $markers)
+    {
+        usort($markers, function(Marker $a, Marker$b){
+            if ($a->priority() == $b->priority()) {
+                return 0;
+            }
+            return ($a->priority() < $b->priority()) ? -1 : 1;
+        });
+        return $markers;
+    }
 
     /**
      * @return array
@@ -223,19 +300,47 @@ class AnnotationMarkers
         return $this->class;
     }
 
+    
     /**
+     * @param   mixed $annotation
+     * @param   mixed $target
      * @param   Marker $marker
-     * @return  MarkerStrategy
      */
-    public function runMarker($annotation, \ReflectionClass $target, Marker $marker)
+    public function runMarkers($annotation,\Reflector $target)
     {
+        if(!($annotation instanceof $this->class->name))
+        {
+             throw new \InvalidArgumentException(
+                sprintf('Argument 1 must be an instance of "%s", "%s" given. ',
+                  $this->class->name, is_object($annotation) ? get_class($annotation) : gettext($annotation))
+            );
+        }
+        
+        foreach ($this->getAllMarkers() as $marker) {
+            $this->runMarker($annotation, $target, $marker);
+        }
+    }
+    
+    /**
+     * @param   mixed $annotation
+     * @param   \Reflector $target
+     * @param   Marker $marker
+     */
+    public function runMarker($annotation,\Reflector $target, Marker $marker)
+    {
+        if(!($annotation instanceof $this->class->name))
+        {
+             throw new \InvalidArgumentException(
+                sprintf('Argument 1 must be an instance of "%s", "%s" given. ',
+                  $this->class->name, is_object($annotation) ? get_class($annotation) : gettext($annotation))
+            );
+        }
+        
         $strategy = MarkerStrategy::factory($this, $marker);
         if ($strategy instanceof MarkerStrategy)
         {
             $strategy->run($target,$annotation);
-            return $strategy;
         }
-        return null;
     }
 
     /**
@@ -297,7 +402,8 @@ class AnnotationMarkers
         if (!isset($this->methodMarkers[$method]))
         {
             throw new \InvalidArgumentException(
-                    sprintf("Unknown method '%s' on class '%s'.", $method, $this->class->getName()));
+                sprintf("Unknown method '%s' on class '%s'.", $method, $this->class->getName())
+            );
         }
         return (array) $this->methodMarkers[$method];
     }

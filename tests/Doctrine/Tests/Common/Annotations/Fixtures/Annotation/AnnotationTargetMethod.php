@@ -11,9 +11,9 @@ use Doctrine\Common\Annotations\Marker\Annotation\Required;
 use Doctrine\Common\Annotations\Marker\Marked;
 
 /**
- * @Target("ALL")
+ * @Target("METHOD")
  */
-final class MarkedAnnotation implements Annotation, Decorable, Marked
+final class AnnotationTargetMethod implements Annotation, Decorable, Marked
 {
     /**
      * @Required()

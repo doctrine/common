@@ -7,13 +7,17 @@ use Doctrine\Common\Annotations\Annotation\Annotation;
 use Doctrine\Common\Annotations\Marker\Annotation\DefaultValue;
 use Doctrine\Common\Annotations\Marker\Annotation\Target;
 use Doctrine\Common\Annotations\Marker\Annotation\Type;
+use Doctrine\Common\Annotations\Marker\Annotation\Required;
+use Doctrine\Common\Annotations\Marker\Marked;
 
 /**
- * @Target("CLASS")
+ * @Target({ "METHOD", "PROPERTY" })
  */
-final class AnnnotedAnnotation implements Annotation, Decorable
+final class AnnotationTargetPropertyMethod implements Annotation, Decorable, Marked
 {
-
+    /**
+     * @Required()
+     */
     public $data;
     /**
      * @DefaultValue("Foo Value")
@@ -21,7 +25,7 @@ final class AnnnotedAnnotation implements Annotation, Decorable
     public $name;
     /**
      * @DefaultValue(@Target("ALL"))
-     * @Type("Doctrine\Common\Annotations\Annotation\Target", nullable = true)
+     * @Type("Doctrine\Common\Annotations\Marker\Annotation\Target", nullable = true)
      */
     public $target;
 }

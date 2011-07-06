@@ -42,7 +42,7 @@ abstract class MarkerStrategy
     protected $markers;
 
     /**
-     * @return type 
+     * @return Marker
      */
     public function getMarker()
     {
@@ -99,9 +99,10 @@ abstract class MarkerStrategy
         }
 
         throw new \InvalidArgumentException(sprintf(
-                'Invalid strategy class "%s" on annotation "%s".', $marker->strategyClass(), get_class($annotation)
+                'Invalid strategy class "%s" on annotation "%s".', 
+                $marker->strategyClass(), get_class($annotation)
         ));
     }
 
-    abstract function run(\ReflectionClass $target,$annotation);
+    abstract function run(\Reflector $target,$annotation);
 }
