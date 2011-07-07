@@ -33,6 +33,19 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($cache->contains('test_key1'));
         $this->assertFalse($cache->contains('test_key2'));
     }
+    
+    public function testDeleteAllWithNamespace()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->setNamespace(rand());
+        
+        $cache->save('test_key1', '1');
+        $cache->save('test_key2', '2');
+        $cache->deleteAll();
+
+        $this->assertFalse($cache->contains('test_key1'));
+        $this->assertFalse($cache->contains('test_key2'));
+    }
 
     public function testDeleteByRegex()
     {

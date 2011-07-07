@@ -90,9 +90,30 @@ abstract class AbstractCache implements Cache
     public function deleteAll()
     {
         $ids = $this->getIds();
-
+        $ids = $this->extractDeletableIds($ids);
+        
         foreach ($ids as $id) {
             $this->_doDelete($id);
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Extracts the deletable cacheIds without the namespace.
+     *
+     * @return array $ids  Array of the deletable cache ids
+     */
+    private function extractDeletableIds($ids)
+    {
+        if($this->_namespace != null) {
+            foreach ($ids as $key => &$id) {
+                 if(stristr($id, $this->_namespace)) {
+                     $ids[$key] = str_replace($this->_namespace, '', $ids[$key]);
+                 } else {
+                     unset($ids[$key]);
+                 }
+            }
         }
 
         return $ids;
