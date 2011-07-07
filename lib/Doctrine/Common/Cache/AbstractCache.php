@@ -104,10 +104,10 @@ abstract class AbstractCache implements Cache
      *
      * @return array $ids  Array of the deletable cache ids
      */
-	private function extractDeletableIds($ids)
+    private function extractDeletableIds($ids)
     {
         if($this->_namespace != null) {
-            foreach($ids as $key => &$id) {
+            foreach ($ids as $key => &$id) {
                  if(stristr($id, $this->_namespace)) {
                      $ids[$key] = str_replace($this->_namespace, '', $ids[$key]);
                  }
