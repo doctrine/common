@@ -98,7 +98,7 @@ abstract class AbstractCache implements Cache
 
         return $ids;
     }
-    
+
     /**
      * Extracts the deletable cacheIds without the namespace.
      *
@@ -110,13 +110,12 @@ abstract class AbstractCache implements Cache
             foreach ($ids as $key => &$id) {
                  if(stristr($id, $this->_namespace)) {
                      $ids[$key] = str_replace($this->_namespace, '', $ids[$key]);
-                 }
-                 else {
+                 } else {
                      unset($ids[$key]);
                  }
             }
         }
-         
+
         return $ids;
     }
 
