@@ -90,7 +90,7 @@ abstract class AbstractCache implements Cache
     public function deleteAll()
     {
         $ids = $this->getIds();
-        $ids = $this->extractDeleteableIds($ids);
+        $ids = $this->extractDeletableIds($ids);
         
         foreach ($ids as $id) {
             $this->delete($id);
@@ -100,11 +100,11 @@ abstract class AbstractCache implements Cache
     }
     
     /**
-     * Extracts the deleteable cacheIds without the namespace.
+     * Extracts the deletable cacheIds without the namespace.
      *
-     * @return array $ids  Array of the deleteable cache ids
+     * @return array $ids  Array of the deletable cache ids
      */
-	private function extractDeleteableIds($ids)
+	private function extractDeletableIds($ids)
     {
         if($this->_namespace != null) {
             foreach($ids as $key => &$id) {
