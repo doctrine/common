@@ -2,18 +2,18 @@
 
 namespace Doctrine\Tests\Common\Annotations\Fixtures\Annotation;
 
-use Doctrine\Common\Annotations\Proxy\Decorable;
 use Doctrine\Common\Annotations\Annotation\Annotation;
 use Doctrine\Common\Annotations\Marker\Annotation\DefaultValue;
 use Doctrine\Common\Annotations\Marker\Annotation\Target;
 use Doctrine\Common\Annotations\Marker\Annotation\Type;
 use Doctrine\Common\Annotations\Marker\Annotation\Required;
-use Doctrine\Common\Annotations\Marker\Marked;
+use Doctrine\Common\Annotations\Marker\Annotation\Marked;
 
 /**
+ * @Marked
  * @Target({ "METHOD", "PROPERTY" })
  */
-final class AnnotationTargetPropertyMethod implements Annotation, Decorable, Marked
+final class AnnotationTargetPropertyMethod
 {
     /**
      * @Required()

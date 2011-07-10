@@ -40,14 +40,7 @@ class TargetStrategy extends MarkerStrategy
     
     public function run(\Reflector $target, $annotation)
     {
-        if (!($annotation instanceof Annotation))
-        {
-            throw AnnotationException::semanticalError(sprintf(
-                    'The class "%s" is not an annotation.', get_class($annotation)
-            ));
-        }
-        
-        
+              
         $type = (array)$this->getMarker()->value;
         
         foreach ($type as $t) {

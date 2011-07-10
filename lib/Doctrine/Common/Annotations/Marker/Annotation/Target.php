@@ -39,7 +39,7 @@ final class Target extends Marker
     protected $value;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function strategyClass()
     {
@@ -47,7 +47,7 @@ final class Target extends Marker
     }
     
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function priority()
     {

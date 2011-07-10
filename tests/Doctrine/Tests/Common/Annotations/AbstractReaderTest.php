@@ -9,7 +9,6 @@ use ReflectionClass, Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Marker\Annotation\Target;
 
 require_once __DIR__ . '/TopLevelAnnotation.php';
-require_once __DIR__ . '/Fixtures/Annotation/DummyInterfaces.php';
 
 abstract class AbstractReaderTest extends \PHPUnit_Framework_TestCase
 {
@@ -58,61 +57,7 @@ abstract class AbstractReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('hello', $classAnnot->dummyValue);
     }
     
-     public function testAnnotationsInterface()
-    {
-        $reader = $this->getReader();
-        
-        $fullClass = function($class){
-            return 'Doctrine\\Tests\\Common\\Annotations\\Fixtures\\Annotation\\'.$class;
-        };
-        
-        $class = new ReflectionClass($fullClass('DummyClassWithInterface'));
-        $this->assertEquals(1, count($reader->getClassAnnotations($class)));
-        $this->assertInstanceOf($annotName = $fullClass('IDummyAnnotation'), $annot = $reader->getClassAnnotation($class, $annotName));
-        $this->assertEquals("hello", $annot->dummyValue);
-        $this->assertEquals($annot->dummyValue, $annot->dummyValue());
-
-        
-        $field1Prop = $class->getProperty('field1');
-        $propAnnots = $reader->getPropertyAnnotations($field1Prop);
-        $this->assertEquals(1, count($propAnnots));
-        $this->assertInstanceOf($annotName, $annot = $reader->getPropertyAnnotation($field1Prop, $annotName));
-        $this->assertEquals("fieldHello", $annot->dummyValue);
-        $this->assertEquals($annot->dummyValue, $annot->dummyValue());
-
-        $getField1Method = $class->getMethod('getField1');
-        $methodAnnots = $reader->getMethodAnnotations($getField1Method);
-        $this->assertEquals(1, count($methodAnnots));
-        $this->assertInstanceOf($annotName, $annot = $reader->getMethodAnnotation($getField1Method, $annotName));
-        $this->assertEquals(array(1, 2, "three"), $annot->dummyValue);
-        $this->assertEquals($annot->dummyValue, $annot->dummyValue());
-
-        $field2Prop = $class->getProperty('field2');
-        $propAnnots = $reader->getPropertyAnnotations($field2Prop);
-        $this->assertEquals(1, count($propAnnots));
-        $this->assertInstanceOf($annotName = $fullClass('IDummyJoinTable'), $joinTableAnnot = $reader->getPropertyAnnotation($field2Prop, $annotName));
-        $this->assertEquals(1, count($joinTableAnnot->joinColumns));
-        $this->assertEquals(1, count($joinTableAnnot->inverseJoinColumns));
-        $this->assertTrue($joinTableAnnot->joinColumns[0] instanceof Fixtures\Annotation\IDummyJoinColumn);
-        $this->assertTrue($joinTableAnnot->inverseJoinColumns[0] instanceof Fixtures\Annotation\IDummyJoinColumn);
-        $this->assertEquals('col1', $joinTableAnnot->joinColumns[0]->name);
-        $this->assertEquals('col2', $joinTableAnnot->joinColumns[0]->referencedColumnName);
-        $this->assertEquals('col3', $joinTableAnnot->inverseJoinColumns[0]->name);
-        $this->assertEquals('col4', $joinTableAnnot->inverseJoinColumns[0]->referencedColumnName);
-
-        $dummyAnnot = $reader->getMethodAnnotation($class->getMethod('getField1'), $fullClass('IDummyAnnotation'));
-        $this->assertEquals(array(1, 2, 'three'), $dummyAnnot->dummyValue);
-        $this->assertEquals($annot->dummyValue, $annot->dummyValue());
-
-        $dummyAnnot = $reader->getPropertyAnnotation($class->getProperty('field1'), $fullClass('IDummyAnnotation'));
-        $this->assertEquals('fieldHello', $dummyAnnot->dummyValue);
-        $this->assertEquals($annot->dummyValue, $annot->dummyValue());
-
-        $classAnnot = $reader->getClassAnnotation($class, $fullClass('IDummyAnnotation'));
-        $this->assertEquals('hello', $classAnnot->dummyValue);
-        $this->assertEquals($annot->dummyValue, $annot->dummyValue());
-    }
-    
+   
     /**
      * @group Marker
      */
@@ -138,13 +83,6 @@ abstract class AbstractReaderTest extends \PHPUnit_Framework_TestCase
         $propAnnots = $reader->getPropertyAnnotations($fooProp);
         $this->assertEquals(1, count($propAnnots));
         $this->assertInstanceOf($a('MarkedAnnotation'), $annot = $reader->getPropertyAnnotation($fooProp, $a('MarkedAnnotation')));
-        $this->assertEquals("Some data", $annot->data);
-        
-        
-        $fooProp = $class->getProperty('interfaceMarked');
-        $propAnnots = $reader->getPropertyAnnotations($fooProp);
-        $this->assertEquals(1, count($propAnnots));
-        $this->assertInstanceOf($a('MarkerdAnnotationInterface'), $annot = $reader->getPropertyAnnotation($fooProp, $a('MarkerdAnnotationInterface')));
         $this->assertEquals("Some data", $annot->data);
         
         

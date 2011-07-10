@@ -20,159 +20,245 @@
 
 namespace Doctrine\Common\Annotations;
 
-use Doctrine\Common\Annotations\Proxy\ProxyFactory;
-use Doctrine\Common\Annotations\Proxy\ProxyDecorator;
-use Doctrine\Common\Annotations\Proxy\Decorable;
-use Doctrine\Common\Annotations\Factory;
-use \ReflectionClass;
+use Doctrine\Common\Annotations\AnnotationMarkers;
 
 /**
- * Factory for annotations.
+ * Factory for annotations classes.
  *
- * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-class AnnotationFactory implements Factory
+class AnnotationFactory
 {
+    /**
+     * const
+     */
+    const DEFAULT_KEY = 'value';
 
     /**
-     * @var ReflectionClass
+     * @var array 
      */
-    private $class;
+    private $classes = array();
     /**
-     * @var ProxyFactory 
+     * @var array 
      */
-    private $proxyFactory;
+    private $properties = array();
     /**
-     * @var ProxyDecorator
+     * @var array 
      */
-    private $decorator;
+    private $hasProperty = array();
     /**
-     * @var bool
+     * @var array 
      */
-    private $isProxy = false;
+    private $hasConstructor = array();
     /**
-     * @var ProxyFactory
+     * @var array 
      */
-    private static $defaltProxyFactory;
-
-    
+    private $isValid = array();
     /**
-     * @return ProxyFactory 
+     * @var array 
      */
-    public static function getDefaltProxyFactory()
-    {
-        if (self::$defaltProxyFactory == null)
-        {
-            self::setDefaltProxyFactory(new ProxyFactory());
-        }
-        return self::$defaltProxyFactory;
-    }
-    
-    /**
-     * @return ProxyFactory 
-     */
-    public static function setDefaltProxyFactory(ProxyFactory $proxyFactory)
-    {
-        self::$defaltProxyFactory = $proxyFactory;
-    }
-    
-     /**
-     * @param ProxyFactory $proxyFactory 
-     */
-    public function setProxyFactory(ProxyFactory $proxyFactory)
-    {
-        $this->proxyFactory = $proxyFactory;
-    }
-    
-    /**
-     * @return ProxyFactory 
-     */
-    public function getProxyFactory()
-    {
-        if ($this->proxyFactory == null)
-        {
-            $this->setProxyFactory(self::getDefaltProxyFactory());
-        }
-        return $this->proxyFactory;
-    }
-    
-    
-    /**
-     * @param ReflectionClass $class
-     */
-    public function __construct(\ReflectionClass $class)
-    {
-        $this->setAnnotationClass($class);
-    }
-
-    
-    /**
-     * @param \ReflectionClass $class 
-     */
-    public function setAnnotationClass(\ReflectionClass $class)
-    {
-        $this->class    = $class;
-        $this->isProxy  = $class->isInterface();
-        
-        if (!$this->isAnnotation())
-        {
-            throw AnnotationException::semanticalError(sprintf('The class "%s" is not an annotation.', $class->getName()));
-        }
-        
-        if ($this->isProxy)
-        {
-            $class = $this->getProxyFactory()->proxy($class);
-        }
-        
-        $this->decorator = new ProxyDecorator($class);
-    }
+    private $classExists = array();
 
     /**
-     * @return mixed
+     * @param    string  $className
+     * @param    array   $data
+     * @return   mixed 
      */
-    public function newAnnotation(array $data = array())
+    public function newAnnotation($className, array $data = array())
     {
-        if ($this->isProxy)
+        if (!$this->classExists($className))
         {
-            $class      = $this->getProxyFactory()->proxy($this->class);
-            $annotation = $class->newInstance();
+            throw new \InvalidArgumentException(
+                    sprintf('Class %s does not exist.', $className)
+            );
         }
-        else{
-            $class      = $this->getClassName();
+
+        if (!$this->isValid($className))
+        {
+            throw new \InvalidArgumentException(
+                    sprintf('The constructor of class %s must be public and type of first parameter should be an array.', $className)
+            );
+        }
             
-            if ($this->class->getConstructor())
-            {
-                $annotation = new $class($data);
-                
-            } else
-            {
-                $annotation = new $class();
-            }
+        if ($this->hasConstructor($className))
+        {
+            $annotation = new $className($data);
+        } else
+        {
+            $annotation = new $className();
         }
-        
-        if($annotation instanceof Decorable){
-            $this->decorator->setData($annotation, $data);
-        }
-        
+
+        $this->setData($className, $annotation, $data);
+
         return $annotation;
     }
-    
+
     /**
-     * @return  bool 
+     * @param  string $className
+     * @return bool 
      */
-    public function isAnnotation()
+    private function classExists($className)
     {
-        //TODO - check if all classes can be annotation
-        return true;
-        //return $this->class->implementsInterface(Factory::ANNOTATION_INTERFACE);
+        if (!isset($this->classExists[$className]))
+        {
+            $this->classExists[$className] = class_exists($className);
+        }
+        return $this->classExists[$className];
     }
 
     /**
-     * @return string The class name.
+     * @param  string $className
+     * @return bool 
      */
-    public function getClassName()
+    private function hasConstructor($className)
     {
-        return $this->class->getName();
+        if (!isset($this->hasConstructor[$className]))
+        {
+            $this->hasConstructor[$className] = false;
+            $constructor = $this->getClass($className)->getConstructor();
+            if ($constructor instanceof \ReflectionMethod)
+            {
+                if ($constructor->isPublic())
+                {
+                    $this->hasConstructor[$className] = true;
+                }
+            }
+        }
+        return $this->hasConstructor[$className];
+    }
+
+    /**
+     * @param  string $className
+     * @return bool 
+     */
+    private function isValid($className)
+    {
+        if (!isset($this->isValid[$className]))
+        {
+            $this->isValid[$className] = false;
+            $constructor = $this->getClass($className)->getConstructor();
+            if ($constructor instanceof \ReflectionMethod)
+            {
+                if($constructor->isPublic())
+                {
+                    $required = $constructor->getNumberOfRequiredParameters();
+                    if($required == 0)
+                    {
+                        $this->isValid[$className] = true;
+                    }
+                    if($required == 1)
+                    {
+                        $parameters = $constructor->getParameters();
+                        $parameter  = reset($parameters);
+                        $this->isValid[$className] = $parameter->isArray();
+                    }
+                }
+            }
+            else{
+                $this->isValid[$className] = true;
+            }
+        }
+        return $this->isValid[$className];
+    }
+
+    /**
+     * @param   string $className
+     * @param   string $property
+     * @return  bool
+     */
+    private function hasProperty($className, $property)
+    {
+        if (!isset($this->hasProperty[$className][$property]))
+        {
+            $this->hasProperty[$className][$property] = $this->getClass($className)->hasProperty($property);
+        }
+        return $this->hasProperty[$className][$property];
+    }
+
+    /**
+     * @param   string $className
+     * @return \ReflectionClass
+     */
+    private function getClass($className)
+    {
+        if (!isset($this->classes[$className]))
+        {
+            $this->classes[$className] = new \ReflectionClass($className);
+        }
+        return $this->classes[$className];
+    }
+
+    /**
+     * @param    string $className
+     * @return   bool 
+     */
+    private function getProperties($className)
+    {
+        if (!isset($this->properties[$className]))
+        {
+            $list = (array) $this->getClass($className)->getProperties();
+            $this->properties[$className] = array();
+            foreach ($list as $property)
+            {
+                $this->properties[$className][] = $property->getName();
+            }
+        }
+        return $this->properties[$className];
+    }
+
+    /**
+     * @param string $className
+     * @param mixed $object
+     * @param array $data 
+     */
+    private function setData($className, $object, array $data)
+    {
+        if (!empty($data))
+        {
+
+            foreach ($data as $property => $value)
+            {
+                if (!$this->hasProperty($className, $property))
+                {
+                    if ($property == self::DEFAULT_KEY)
+                    {
+                        $properties = $this->getProperties($className);
+                        $property = reset($properties);
+
+                        $this->setPropertyValue($className, $object, $property, $value);
+                    } else
+                    {
+                        throw new \BadMethodCallException(
+                                sprintf("Unknown property '%s' on object '%s'.", $property, $className)
+                        );
+                    }
+                } else
+                {
+                    $this->setPropertyValue($className, $object, $property, $value);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param   string    $className
+     * @param   mixed     $instance
+     * @param   string    $property
+     * @param   mixed     $value
+     */
+    private function setPropertyValue($className, $instance, $property, $value)
+    {
+        $prop = $this->getClass($className)->getProperty($property);
+
+        if ($prop->isPublic())
+        {
+            $instance->{$property} = $value;
+        } else
+        {
+            $prop->setAccessible(true);
+            $prop->setValue($instance, $value);
+            $prop->setAccessible(false);
+        }
     }
 
 }

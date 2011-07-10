@@ -117,7 +117,15 @@ final class AnnotationReader implements Reader
      *
      * @var array
      */
-    private $markers = array();
+    private static $markers = array();
+    
+    /**
+     * In-memory cache mechanism to store markers execute
+     *
+     * @var array
+     */
+    private static $markersRun = array();
+    
 
     /**
      * Constructor. Initializes a new AnnotationReader that uses the given Cache provider.
@@ -171,9 +179,9 @@ final class AnnotationReader implements Reader
     {
         $this->parser->setImports($this->getImports($class));
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
-        
-        $annotations = $this->parser->parse($class->getDocComment(), 'class ' . $class->getName());
-        $this->runAnnotaionMarkers($annotations,$class);
+        $context = 'class ' . $class->getName();
+        $annotations = $this->parser->parse($class->getDocComment(), 'class ' . $context);
+        $this->runAnnotaionMarkers($annotations,$class,$context);
         return $annotations;
     }
 
@@ -213,7 +221,7 @@ final class AnnotationReader implements Reader
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
 
         $annotations = $this->parser->parse($property->getDocComment(), $context);
-        $this->runAnnotaionMarkers($annotations,$property);
+        $this->runAnnotaionMarkers($annotations,$property,$context);
         return $annotations;
     }
 
@@ -253,7 +261,7 @@ final class AnnotationReader implements Reader
 
         
         $annotations = $this->parser->parse($method->getDocComment(), $context);
-        $this->runAnnotaionMarkers($annotations,$method);
+        $this->runAnnotaionMarkers($annotations,$method,$context);
         return $annotations;
     }
 
@@ -285,23 +293,24 @@ final class AnnotationReader implements Reader
      */
     private function getAnnotationMarkers(ReflectionClass $class)
     {
-        if (!isset($this->markers[$name = $class->getName()])) 
+        if (!isset(self::$markers[$name = $class->getName()])) 
         {
-            $this->markers[$name] = new AnnotationMarkers($class, $this);
+            self::$markers[$name] = new AnnotationMarkers($class, $this);
         }
-        return $this->markers[$name];
+        return self::$markers[$name];
     }
     
     /**
      * @param array $annotations
      * @param \Reflector $target 
+     * @param $context
      */
-    private function runAnnotaionMarkers(array $annotations, \Reflector $target)
+    private function runAnnotaionMarkers(array $annotations, \Reflector $target,$context)
     {
         foreach ($annotations as $annotation) 
         {
             $class = new \ReflectionClass($annotation);
-            if($class->implementsInterface('Doctrine\Common\Annotations\Marker\Marked'))
+            if($this->getClassAnnotation($class,'Doctrine\Common\Annotations\Marker\Annotation\Marked'))
             {
                 $this->getAnnotationMarkers($class)->runMarkers($annotation, $target);
             }

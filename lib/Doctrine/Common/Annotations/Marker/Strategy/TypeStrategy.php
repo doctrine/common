@@ -36,14 +36,7 @@ class TypeStrategy extends MarkerStrategy
      */
     public function run(\Reflector $target,$annotation)
     {
-        if (!($annotation instanceof Annotation))
-        {
-            throw AnnotationException::semanticalError(sprintf(
-                    'The class "%s" is not an annotation.', get_class($annotation)
-            ));
-        }
-        
-        
+               
         if($this->getMarker()->getProperty())
         {
             $item   = $this->getMarker()->getProperty();

@@ -38,7 +38,7 @@ final class Type extends Marker
     protected $nullable;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function strategyClass()
     {
@@ -46,7 +46,7 @@ final class Type extends Marker
     }
     
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function priority()
     {

@@ -56,19 +56,11 @@ class AnnotationMarkers
     /**
      * @var array
      */
-    private $methodMarkers = array();
-    /**
-     * @var array
-     */
     private $propertyMarkers = array();
     /**
      * @var array
      */
     private $hasClassMarker = array();
-    /**
-     * @var array
-     */
-    private $hasMethodMarker = array();
     /**
      * @var array
      */
@@ -82,21 +74,6 @@ class AnnotationMarkers
         return $this->reader;
     }
     
-    /**
-     * @return \ReflectionClass 
-     */
-    private function getClass()
-    {
-        if($this->class->implementsInterface('Doctrine\Common\Annotations\Proxy\Proxy'))
-        {
-            $interface = $this->proxyClass($this->class);
-            if($interface instanceof ReflectionClass)
-            {
-                return $interface;
-            }
-        }
-        return $this->class;
-    }
 
     /**
      * @param \ReflectionClass $class
@@ -111,10 +88,10 @@ class AnnotationMarkers
             );
         }
         
-        if(!$class->implementsInterface('Doctrine\Common\Annotations\Marker\Marked'))
+        if(!$reader->getClassAnnotation($class,'Doctrine\Common\Annotations\Marker\Annotation\Marked'))
         {
             throw new \InvalidArgumentException(
-                sprintf("Annotation '%s' not implements Marked.",$class->getName())
+                sprintf("Class '%s' is not marked with @Marked.",$class->getName())
             );
         }
         
@@ -123,26 +100,6 @@ class AnnotationMarkers
 
         $this->readMarkers();
     }
-
-    
-    /**
-     * @param \ReflectionClass $class
-     * @return \ReflectionClass
-     */
-    private function proxyClass(\ReflectionClass $class)
-    {
-        if($class->implementsInterface('Doctrine\Common\Annotations\Proxy\Proxy'))
-        {
-            foreach ($class->getInterfaces() as $interface) {
-                if($interface->implementsInterface('Doctrine\Common\Annotations\Proxy\Proxyable'))
-                {
-                    return $interface;
-                }
-            }
-        }
-        return null;
-    }
-
     
     
     /**
@@ -152,7 +109,6 @@ class AnnotationMarkers
     {
         $this->markers = array();
         $this->readClassMarkers();
-        $this->readMethodMarkers();
         $this->readPropertyMarkers();
         $this->sortByPriority($this->markers);
     }
@@ -164,7 +120,7 @@ class AnnotationMarkers
     {
         $this->classMarkers     = array();
         $this->hasClassMarker   = array();
-        $annotations            = $this->getReader()->getClassAnnotations($this->getClass());
+        $annotations            = $this->getReader()->getClassAnnotations($this->class);
         foreach ($annotations as $annotation) {
             if ($annotation instanceof Marker)
             {
@@ -176,30 +132,6 @@ class AnnotationMarkers
         $this->sortByPriority($this->classMarkers);
     }
 
-    /**
-     * Read annotation method markers
-     */
-    private function readMethodMarkers()
-    {
-        $this->methodMarkers = array();
-        $this->hasMethodMarker = array();
-        $methods = $this->getClass()->getMethods();
-        foreach ($methods as $method) {
-            $annotations = $this->getReader()->getMethodAnnotations($method);
-            foreach ($annotations as $annotation) {
-                if ($annotation instanceof Marker)
-                {
-                    $annotation->setClass($this->class);
-                    $annotation->setMethod($this->class->getMethod($method->getName()));
-                    $this->addMethodMarker($annotation, $method->getName());
-                }
-            }
-            if(isset($this->methodMarkers[$method->getName()]))
-            {
-                $this->sortByPriority($this->methodMarkers[$method->getName()]);
-            }
-        }
-    }
 
     /**
      * Read annotation property markers
@@ -208,7 +140,7 @@ class AnnotationMarkers
     {
         $this->propertyMarkers = array();
         $this->hasPropertyMarker = array();
-        $properties = $this->getClass()->getProperties();
+        $properties = $this->class->getProperties();
         foreach ($properties as $property) {
             $annotations = $this->getReader()->getPropertyAnnotations($property);
             foreach ($annotations as $annotation) {
@@ -233,15 +165,6 @@ class AnnotationMarkers
     {
         $this->markers[] = $marker;
         $this->classMarkers[] = $marker;
-    }
-
-    /**
-     * @param Marker $marker
-     */
-    private function addMethodMarker(Marker $marker, $method)
-    {
-        $this->markers[] = $marker;
-        $this->methodMarkers[$method][] = $marker;
     }
 
     /**
@@ -336,10 +259,9 @@ class AnnotationMarkers
             );
         }
         
-        $strategy = MarkerStrategy::factory($this, $marker);
-        if ($strategy instanceof MarkerStrategy)
+        if($marker->strategyClass() != null)
         {
-            $strategy->run($target,$annotation);
+            MarkerStrategy::factory($this, $marker)->run($target, $annotation);
         }
     }
 
@@ -384,66 +306,6 @@ class AnnotationMarkers
         }
         return null;
     }
-
-    /**
-     * @return array
-     */
-    public function getMethodsMarkers()
-    {
-        return (array) $this->methodMarkers;
-    }
-
-    /**
-     * @param  string $method
-     * @return array
-     */
-    public function getMethodMarkers($method)
-    {
-        if (!isset($this->methodMarkers[$method]))
-        {
-            throw new \InvalidArgumentException(
-                sprintf("Unknown method '%s' on class '%s'.", $method, $this->class->getName())
-            );
-        }
-        return (array) $this->methodMarkers[$method];
-    }
-
-    /**
-     * @param   string $name
-     * @param   string $method
-     * @return  bool
-     */
-    public function hasMethodMarker($name, $method)
-    {
-        if (!isset($this->hasMethodMarker[$method][$name]))
-        {
-            $markers    = $this->getMethodMarkers($method);
-            $hasMarker  = $this->hasMarker($name, $markers);
-            $this->hasMethodMarker[$method][$name] = $hasMarker;
-        }
-        return (bool) $this->hasMethodMarker[$method][$name];
-    }
-
-    /**
-     * @param  string $name
-     * @param  string $method
-     * @return Marker 
-     */
-    public function getMethodMarker($name, $method)
-    {
-        if ($this->hasMethodMarker($name, $method))
-        {
-            $markers = $this->getMethodMarkers($method);
-            foreach ($markers as $key => $value) {
-                if ($value instanceof $name)
-                {
-                    return $value;
-                }
-            }
-        }
-        return null;
-    }
-    
     
      /**
      * @return array

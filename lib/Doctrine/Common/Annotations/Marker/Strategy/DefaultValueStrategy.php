@@ -30,42 +30,26 @@ use Doctrine\Common\Annotations\AnnotationException;
  */
 class DefaultValueStrategy extends MarkerStrategy
 {
-    public function run(\Reflector $target,$annotation)
+    public function run(\Reflector $target, $annotation)
     {
-        $marker = $this->getMarker();
+        $property       = $this->getMarker()->getProperty();
+        $value          = $property->getValue($annotation);
+        $defaultValue   = $this->getMarker()->value;
         
-        if($marker->getProperty())
-        {
-            $item   = $marker->getProperty();
-            $value  = $item->getValue($annotation);
-        }
-        elseif($marker->getMethod())
-        {
-            $item   = $marker->getMethod();
-            $value  = $item->invoke($annotation);
-        }
-        else
-        {
-            throw new \InvalidArgumentException('Invalid marker.');
-        }
         
         if($value == null)
         {
-            if(!$item instanceof \ReflectionProperty)
+            if($property->isPublic())
             {
-                $item = $marker->getClass()->getProperty($item->getName());
-            }
-            
-            if($item->isPublic())
-            {
-                $item->setValue($annotation, $marker->value);
+                $property->setValue($annotation, $defaultValue);
             }
             else
             {
-                $item->setAccessible(true);
-                $item->setValue($annotation, $marker->value);
-                $item->setAccessible(false);
+                $property->setAccessible(true);
+                $property->setValue($annotation, $defaultValue);
+                $property->setAccessible(false);
             }
         }
+        
     }
 }

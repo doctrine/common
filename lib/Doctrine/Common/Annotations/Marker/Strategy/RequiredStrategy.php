@@ -32,13 +32,15 @@ class RequiredStrategy extends MarkerStrategy
 {
     public function run(\Reflector $target,$annotation)
     {
+        /**
         if (!($annotation instanceof Annotation))
         {
+            print_r($this->getMarkers()->getClassMarkers());
             throw AnnotationException::semanticalError(sprintf(
                     'The class "%s" is not an annotation.', get_class($annotation)
             ));
         }
-        
+        **/
         
         
         if($this->getMarker()->getProperty())

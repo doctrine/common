@@ -30,11 +30,5 @@ class MarkedClassName
     {
         
     }
-    
-    
-    /**
-     * @MarkerdAnnotationInterface("Some data",name="Some name")
-     */
-    public $interfaceMarked;
 
 }

@@ -96,87 +96,6 @@ DOCBLOCK;
         $this->assertNull($annot->value);
    }
    
-   
-   /**
-     * @group interface
-     */
-    public function testBasicAnnotationsInterface()
-    {
-        $parser = $this->createTestParser();
-
-        // annotation
-        $result = $parser->parse("@InterfaceAnnotation");
-        $annot  = $result[0];
-        $this->assertTrue($annot instanceof InterfaceAnnotation);
-        $this->assertNull($annot->name());
-        $this->assertNull($annot->data());
-        
-        // Associative arrays
-        $result = $parser->parse('@InterfaceAnnotation(value={"key1" = "value1"})');
-        $annot  = $result[0];
-        
-        $this->assertNull($annot->data());
-        $this->assertTrue(in_array('value1', $annot->name()));
-        
-        
-        // Numerical arrays
-        $result = $parser->parse('@InterfaceAnnotation({2="foo", 4="bar"})');
-        $annot  = $result[0];
-        $value  = $annot->name();
-        $this->assertTrue(is_array($value));
-        $this->assertEquals('foo', $value[2]);
-        $this->assertEquals('bar', $value[4]);
-        $this->assertFalse(isset($value[0]));
-        $this->assertFalse(isset($value[1]));
-        $this->assertFalse(isset($value[3]));
-        
-        
-        // Multiple values
-        $result = $parser->parse('@InterfaceAnnotation(name=@InterfaceAnnotation, data=@InterfaceAnnotation)');
-        $annot  = $result[0];
-        $this->assertTrue($annot instanceof InterfaceAnnotation);
-        $this->assertTrue($annot->data() instanceof InterfaceAnnotation);
-        $this->assertTrue($annot->name() instanceof InterfaceAnnotation);
-        
-        
-        $result = $parser->parse('@InterfaceAnnotation("value1",data="value2")');
-        $annot  = $result[0];
-        $this->assertTrue($annot instanceof InterfaceAnnotation);
-        $this->assertEquals($annot->name(), "value1");
-        $this->assertEquals($annot->data(), "value2");
-
-        
-        
-        // Multiple types as values
-        $result = $parser->parse('@InterfaceAnnotation(@InterfaceAnnotation,data={"key1"="value1", "key2"="value2"})');
-        $annot = $result[0];
-        $this->assertTrue($annot instanceof InterfaceAnnotation);
-        $this->assertTrue($annot->name() instanceof InterfaceAnnotation);
-        $this->assertArrayHasKey('key1', $annot->data());
-        $this->assertArrayHasKey('key2', $annot->data());
-        $this->assertTrue(in_array('value1', $annot->data()));
-        $this->assertTrue(in_array('value2', $annot->data()));
-        
-        
-                // Complete docblock
-        $docblock = <<<DOCBLOCK
-/**
- * Some nifty class.
- *
- * @author Mr.X
- * @InterfaceAnnotation(value="bar")
- */
-DOCBLOCK;
-
-        $result = $parser->parse($docblock);
-        $this->assertEquals(1, count($result));
-        $annot = $result[0];
-        $this->assertTrue($annot instanceof InterfaceAnnotation);
-        $this->assertEquals("bar", $annot->name());
-        $this->assertNull($annot->data());
-        
-   }
-
 
     public function testNamespacedAnnotations()
     {
@@ -240,7 +159,6 @@ DOCBLOCK;
         $parser->setIndexByClass(true);
         $docblock = <<<DOCBLOCK
 /**
- * @InterfaceAnnotation(name="bar")
  * @Name(foo="bar")
  * @Marker
  */
@@ -249,15 +167,9 @@ DOCBLOCK;
         
         $result = $parser->parse($docblock);
         
-        $this->assertEquals(3, count($result));
-        $this->assertTrue(array_key_exists('Doctrine\Tests\Common\Annotations\InterfaceAnnotation', $result));
+        $this->assertEquals(2, count($result));
         $this->assertTrue(array_key_exists('Doctrine\Tests\Common\Annotations\Marker', $result));
         $this->assertTrue(array_key_exists('Doctrine\Tests\Common\Annotations\Name', $result));
-        
-        $annot = $result['Doctrine\Tests\Common\Annotations\InterfaceAnnotation'];
-        $this->assertInstanceOf('Doctrine\Tests\Common\Annotations\InterfaceAnnotation', $annot);
-        $this->assertEquals($annot->name(), $annot->name);
-        $this->assertEquals("bar", $annot->name);
         
         
         $annot = $result['Doctrine\Tests\Common\Annotations\Name'];
@@ -480,11 +392,6 @@ class False {}
 
 class Null {}
 
-interface InterfaceAnnotation extends \Doctrine\Common\Annotations\Proxy\Proxyable
-{
-    public function name();
-    public function data();
-}
 
 namespace Doctrine\Tests\Common\Annotations\FooBar;
 

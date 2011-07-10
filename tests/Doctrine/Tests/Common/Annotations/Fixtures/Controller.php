@@ -5,8 +5,8 @@ namespace Doctrine\Tests\Common\Annotations\Fixtures;
 use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\Template;
 use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\Route;
 
-use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\TemplateInterface;
-use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\RouteInterface;
+use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MarkedRoute;
+use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MarkedTemplate;
 
 /**
  * @Route("/someprefix")
@@ -34,10 +34,10 @@ class Controller
     
     
     /**
-     * @RouteInterface("/hello/{name}", name="_demo_hello")
-     * @TemplateInterface()
+     * @MarkedRoute("/hello/{name}", name="_demo_hello")
+     * @MarkedTemplate()
      */
-    public function helloActionWithInterfaceAnnotation($name)
+    public function helloActionWithMarkedAnnotation($name)
     {
         return array('name' => $name);
     }

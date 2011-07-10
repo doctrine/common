@@ -20,7 +20,6 @@
 
 namespace Doctrine\Common\Annotations\Marker\Annotation;
 
-use Doctrine\Common\Annotations\Proxy\Decorable;
 use Doctrine\Common\Annotations\Annotation\Annotation;
 
 /**
@@ -28,17 +27,12 @@ use Doctrine\Common\Annotations\Annotation\Annotation;
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-abstract class Marker implements Decorable, Annotation
+abstract class Marker
 {
-
     /**
      * @var \ReflectionClass
      */
     private $class;
-    /**
-     * @var \ReflectionMethod
-     */
-    private $method;
     /**
      * @var \ReflectionProperty
      */
@@ -74,22 +68,6 @@ abstract class Marker implements Decorable, Annotation
     public function setProperty(\ReflectionProperty$property)
     {
         $this->property = $property;
-    }
-
-    /**
-     * @return \ReflectionMethod
-     */
-    public function getMethod()
-    {
-        return $this->method;
-    }
-
-    /**
-     * @param \ReflectionMethod $method 
-     */
-    public function setMethod(\ReflectionMethod $method)
-    {
-        $this->method = $method;
     }
 
     /**

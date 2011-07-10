@@ -26,6 +26,24 @@ class PerformanceTest extends \PHPUnit_Framework_TestCase
         $time = microtime(true) - $time;
 
         $this->printResults('cached reader (in-memory)', $time, $c);
+        
+    }
+    
+    /**
+     * @group performance
+     */
+    public function testCachedReadPerformanceWithInMemoryWithMarkedAnnotation()
+    {
+        $reader = new CachedReader(new AnnotationReader(), new ArrayCache());
+        $method = $this->getMethodWithMarkedAnnotation();
+
+        $time = microtime(true);
+        for ($i=0,$c=500; $i<$c; $i++) {
+            $reader->getMethodAnnotations($method);
+        }
+        $time = microtime(true) - $time;
+
+        $this->printResults('cached reader with markers (in-memory)', $time, $c);
     }
 
     /**
@@ -49,6 +67,30 @@ class PerformanceTest extends \PHPUnit_Framework_TestCase
 
         $this->printResults('cached reader (file)', $time, $c);
     }
+    /**
+     * @group performance
+     */
+    public function testCachedReadPerformanceWithFileCacheWithMarkedAnnotation()
+    {
+        $method = $this->getMethodWithMarkedAnnotation();
+
+        // prime cache
+        $reader = new FileCacheReader(new AnnotationReader(), sys_get_temp_dir());
+        $reader->getMethodAnnotations($method);
+
+        $time = microtime(true);
+        for ($i=0,$c=500; $i<$c; $i++) {
+            $reader = new FileCacheReader(new AnnotationReader(), sys_get_temp_dir());
+            $reader->getMethodAnnotations($method);
+            clearstatcache();
+        }
+        $time = microtime(true) - $time;
+
+        $this->printResults('cached reader with markers (file)', $time, $c);
+    }
+    
+    
+    
 
     /**
      * @group performance
@@ -67,6 +109,28 @@ class PerformanceTest extends \PHPUnit_Framework_TestCase
 
         $this->printResults('reader', $time, $c);
     }
+    
+    
+    /**
+     * @group performance
+     */
+    public function testReadPerformanceWithMarkedAnnotation()
+    {
+        $reader = new AnnotationReader();
+        $method = $this->getMethodWithMarkedAnnotation();
+
+        $time = microtime(true);
+        for ($i=0,$c=150; $i<$c; $i++) {
+            $reader = new AnnotationReader();
+            $items  = $reader->getMethodAnnotations($method);
+        }
+        $time = microtime(true) - $time;
+
+        $this->printResults('reader with markers', $time, $c);
+    }
+    
+    
+    
 
     /**
      * @group performance
@@ -112,6 +176,8 @@ class PerformanceTest extends \PHPUnit_Framework_TestCase
 
         $this->printResults('doc-parser', $time, $c);
     }
+    
+    
 
     /**
      * @group performance
@@ -134,72 +200,19 @@ class PerformanceTest extends \PHPUnit_Framework_TestCase
         $this->printResults('doc-lexer', $time, $c);
     }
     
-    /**
-     * @group performance
-     */
-    public function testCachedReadPerformanceWithInMemoryWithInterface()
-    {
-        $reader = new CachedReader(new AnnotationReader(), new ArrayCache());
-        $method = $this->getMethodWithInterfaceAnnotation();
-
-        $time = microtime(true);
-        for ($i=0,$c=500; $i<$c; $i++) {
-            $reader->getMethodAnnotations($method);
-        }
-        $time = microtime(true) - $time;
-
-        $this->printResults('cached reader with interface (in-memory)', $time, $c);
-    }
-
-    /**
-     * @group performance
-     */
-    public function testCachedReadPerformanceWithFileCacheWithInterface()
-    {
-        $method = $this->getMethodWithInterfaceAnnotation();
-
-        // prime cache
-        $reader = new FileCacheReader(new AnnotationReader(), sys_get_temp_dir());
-        $reader->getMethodAnnotations($method);
-
-        $time = microtime(true);
-        for ($i=0,$c=500; $i<$c; $i++) {
-            $reader = new FileCacheReader(new AnnotationReader(), sys_get_temp_dir());
-            $reader->getMethodAnnotations($method);
-            clearstatcache();
-        }
-        $time = microtime(true) - $time;
-
-        $this->printResults('cached reader with interface (file)', $time, $c);
-    }
-
-    /**
-     * @group performance
-     */
-    public function testReadPerformanceWithInterface()
-    {
-        $reader = new AnnotationReader();
-        $method = $this->getMethodWithInterfaceAnnotation();
-
-        $time = microtime(true);
-        for ($i=0,$c=150; $i<$c; $i++) {
-            $reader = new AnnotationReader();
-            $items  = $reader->getMethodAnnotations($method);
-        }
-        $time = microtime(true) - $time;
-
-        $this->printResults('reader with interface', $time, $c);
-    }
     
+
+    
+
 
     private function getMethod()
     {
         return new \ReflectionMethod('Doctrine\Tests\Common\Annotations\Fixtures\Controller', 'helloAction');
     }
     
-    private function getMethodWithInterfaceAnnotation()
+    private function getMethodWithMarkedAnnotation()
     {
-        return new \ReflectionMethod('Doctrine\Tests\Common\Annotations\Fixtures\Controller', 'helloActionWithInterfaceAnnotation');
+        return new \ReflectionMethod('Doctrine\Tests\Common\Annotations\Fixtures\Controller', 'helloActionWithMarkedAnnotation');
     }
 
     private function printResults($test, $time, $iterations)

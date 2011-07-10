@@ -21,7 +21,7 @@
 namespace Doctrine\Common\Annotations\Marker\Annotation;
 
 /**
- * Annotation Marker DefaultValue
+ * Annotation that must be used set default value.
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
@@ -34,7 +34,7 @@ final class DefaultValue extends Marker
     protected $value;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function strategyClass()
     {
@@ -42,7 +42,7 @@ final class DefaultValue extends Marker
     }
     
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function priority()
     {
