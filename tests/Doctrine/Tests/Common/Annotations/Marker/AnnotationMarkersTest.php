@@ -5,6 +5,7 @@ namespace Doctrine\Tests\Common\Annotations\Marker;
 use Doctrine\Common\Annotations\Marker\AnnotationMarkers;
 use Doctrine\Common\Annotations\Marker\Annotation\DefaultValue;
 use Doctrine\Common\Annotations\Marker\Annotation\Marker;
+use Doctrine\Common\Annotations\Marker\Annotation\Marked;
 use Doctrine\Common\Annotations\Marker\Annotation\Target;
 use Doctrine\Common\Annotations\Marker\Annotation\Type;
 
@@ -54,7 +55,10 @@ class AnnotationMarkersTest extends \PHPUnit_Framework_TestCase
         
         $this->assertEquals(2, sizeof($list));
         $this->assertTrue($list[0] instanceof Marker);
-        $this->assertTrue($list[0] instanceof Target);
+        $this->assertTrue($list[0] instanceof Marked);
+        
+        $this->assertTrue($list[1] instanceof Marker);
+        $this->assertTrue($list[1] instanceof Target);
         
         $target = $markers->getClassMarker($this->_marker("Target"));        
         $this->assertTrue($target instanceof Marker);
@@ -137,6 +141,29 @@ class AnnotationMarkersTest extends \PHPUnit_Framework_TestCase
         $markers->runMarker($annotation, $target, $marker);
 
         $this->assertEquals($annotation->name, "Foo Value");
+    }
+    
+     /**
+     * @group Marker
+     */
+    public function testRunMarkers()
+    {
+        $class      = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\Annotation\AnnotationTargetClass');
+        $target     = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\MarkedClassName');
+        $markers    = new AnnotationMarkers($class);
+        $annotation = $class->newInstance();
+        
+        $annotation->data = "Some data";
+        
+        $this->assertNull($annotation->name);
+
+        $markers->runMarkers($annotation, $target);
+        
+        
+        $this->assertEquals($annotation->data, "Some data");
+        $this->assertEquals($annotation->name,  "Foo Value");
+        $this->assertTrue($annotation->target instanceof Target);
+        $this->assertEquals($annotation->target->value,  Target::TARGET_ALL);
     }
     
     

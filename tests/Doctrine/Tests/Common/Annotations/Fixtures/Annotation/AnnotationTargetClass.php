@@ -4,9 +4,9 @@ namespace Doctrine\Tests\Common\Annotations\Fixtures\Annotation;
 
 
 /**
- * @Target("CLASS")
- * @Annotation
  * @Marked
+ * @Annotation
+ * @Target("CLASS")
  */
 final class AnnotationTargetClass
 {

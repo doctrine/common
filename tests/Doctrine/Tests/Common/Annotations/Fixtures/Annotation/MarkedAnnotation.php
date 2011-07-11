@@ -3,9 +3,9 @@
 namespace Doctrine\Tests\Common\Annotations\Fixtures\Annotation;
 
 /**
- * @Target("ALL")
- * @Annotation
  * @Marked
+ * @Annotation
+ * @Target("ALL")
  */
 final class MarkedAnnotation
 {

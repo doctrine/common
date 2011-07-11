@@ -20,7 +20,6 @@
 namespace Doctrine\Common\Annotations;
 
 use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
-use Doctrine\Common\Annotations\Marker\AnnotationMarkers;
 use Closure;
 use ReflectionClass;
 use ReflectionMethod;
@@ -111,14 +110,6 @@ final class AnnotationReader implements Reader
      * @var array
      */
     private $ignoredAnnotationNames = array();
-    
-    /**
-     * In-memory cache mechanism to store class markers
-     *
-     * @var array
-     */
-    private static $markers = array();
-    
 
     /**
      * Constructor. Initializes a new AnnotationReader that uses the given Cache provider.
@@ -141,18 +132,17 @@ final class AnnotationReader implements Reader
     /**
      * Gets the annotations applied to a class.
      *
-     * @param string|ReflectionClass $class The name or ReflectionClass of the class from which
-     * the class annotations should be read.
+     * @param ReflectionClass $class ReflectionClass of the class from which
+     *                               the class annotations should be read.
      * @return array An array of Annotations.
      */
     public function getClassAnnotations(ReflectionClass $class)
     {
+        $this->parser->setTarget($class);
         $this->parser->setImports($this->getImports($class));
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
-        $context = 'class ' . $class->getName();
-        $annotations = $this->parser->parse($class->getDocComment(), $context);
-        $this->runAnnotaionMarkers($annotations,$class);
-        return $annotations;
+
+        return $this->parser->parse($class->getDocComment(), 'class ' . $class->getName());
     }
 
     /**
@@ -179,20 +169,20 @@ final class AnnotationReader implements Reader
     /**
      * Gets the annotations applied to a property.
      *
-     * @param string|ReflectionProperty $property The name or ReflectionProperty of the property
-     * from which the annotations should be read.
+     * @param ReflectionProperty $property ReflectionProperty of the property
+     *                                     from which the annotations should be read.
      * @return array An array of Annotations.
      */
     public function getPropertyAnnotations(ReflectionProperty $property)
     {
         $class = $property->getDeclaringClass();
         $context = 'property ' . $class->getName() . "::\$" . $property->getName();
+        
+        $this->parser->setTarget($property);
         $this->parser->setImports($this->getImports($class));
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
 
-        $annotations = $this->parser->parse($property->getDocComment(), $context);
-        $this->runAnnotaionMarkers($annotations,$property);
-        return $annotations;
+        return $this->parser->parse($property->getDocComment(), $context);
     }
 
     /**
@@ -218,21 +208,20 @@ final class AnnotationReader implements Reader
     /**
      * Gets the annotations applied to a method.
      *
-     * @param ReflectionMethod $property The name or ReflectionMethod of the method from which
-     * the annotations should be read.
+     * @param ReflectionMethod $property The ReflectionMethod of the method from which
+     *                                       the annotations should be read.
      * @return array An array of Annotations.
      */
     public function getMethodAnnotations(ReflectionMethod $method)
     {
         $class = $method->getDeclaringClass();
         $context = 'method ' . $class->getName() . '::' . $method->getName() . '()';
+        
+        $this->parser->setTarget($method);
         $this->parser->setImports($this->getImports($class));
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
 
-        
-        $annotations = $this->parser->parse($method->getDocComment(), $context);
-        $this->runAnnotaionMarkers($annotations,$method);
-        return $annotations;
+        return $this->parser->parse($method->getDocComment(), $context);
     }
 
     /**
@@ -253,38 +242,6 @@ final class AnnotationReader implements Reader
         }
 
         return null;
-    }
-    
-    /**
-     * Returns the class markers
-     *
-     * @param   ReflectionClass $class
-     * @return  AnnotationMarkers
-     */
-    private function getAnnotationMarkers(ReflectionClass $class)
-    {
-        if (!isset(self::$markers[$name = $class->getName()])) 
-        {
-            self::$markers[$name] = new AnnotationMarkers($class);
-        }
-        return self::$markers[$name];
-    }
-    
-    /**
-     * @param array $annotations
-     * @param \Reflector $target 
-     * @param $context
-     */
-    private function runAnnotaionMarkers(array $annotations, \Reflector $target)
-    {
-        foreach ($annotations as $annotation) 
-        {
-            $class = new \ReflectionClass($annotation);
-            if(AnnotationMarkers::isMarked($class))
-            {
-                $this->getAnnotationMarkers($class)->runMarkers($annotation, $target);
-            }
-        }
     }
 
     /**

@@ -167,7 +167,7 @@ class AnnotationMarkers
         $this->markers = array();
         $this->readClassMarkers();
         $this->readPropertyMarkers();
-        $this->sortByPriority($this->markers);
+        $this->markers = $this->sort($this->markers);
     }
 
     /**
@@ -186,7 +186,7 @@ class AnnotationMarkers
             }
         }
         
-        $this->sortByPriority($this->classMarkers);
+        $this->classMarkers = $this->sort($this->classMarkers);
     }
 
 
@@ -210,7 +210,7 @@ class AnnotationMarkers
             }
             if(isset($this->propertyMarkers[$property->name]))
             {
-                $this->sortByPriority($this->propertyMarkers[$property->name]);
+                $this->propertyMarkers[$property->name] = $this->sort($this->propertyMarkers[$property->name]);
             }
         }
     }
@@ -253,7 +253,7 @@ class AnnotationMarkers
      * @param  array
      * @return array 
      */
-    private function sortByPriority(array $markers)
+    private function sort(array $markers)
     {
         usort($markers, function(Marker $a, Marker$b){
             if ($a->priority() == $b->priority()) {
@@ -288,14 +288,6 @@ class AnnotationMarkers
      */
     public function runMarkers($annotation,\Reflector $target)
     {
-        if(!($annotation instanceof $this->class->name))
-        {
-             throw new \InvalidArgumentException(
-                sprintf('Argument 1 must be an instance of "%s", "%s" given. ',
-                  $this->class->name, is_object($annotation) ? get_class($annotation) : gettext($annotation))
-            );
-        }
-        
         foreach ($this->getAllMarkers() as $marker) {
             $this->runMarker($annotation, $target, $marker);
         }

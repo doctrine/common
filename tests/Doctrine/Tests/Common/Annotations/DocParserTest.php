@@ -95,6 +95,75 @@ DOCBLOCK;
         $this->assertNull($annot->value);
    }
    
+   
+   /**
+    *@group Marker
+    */
+   public function testMarkedAnnotations()
+   {
+       
+        $c = function($class){
+            return 'Doctrine\\Tests\\Common\\Annotations\\Fixtures\\'.$class;
+        };
+        
+        $a = function($class){
+            return 'Doctrine\\Tests\\Common\\Annotations\\Fixtures\\Annotation\\'.$class;
+        };
+        
+        $class  = new \ReflectionClass($c('MarkedClassName'));
+        
+        $parser = new DocParser;
+        $parser->setImports(array(
+            '__NAMESPACE__' => 'Doctrine\Tests\Common\Annotations\Fixtures\Annotation',
+        ));
+
+        
+        $parser->setTarget($class);
+        $result = $parser->parse($class->getDocComment());
+        
+
+        $this->assertEquals(1, count($result));
+        $this->assertInstanceOf($a('AnnotationTargetClass'), $annot = $result[0]);
+        $this->assertEquals("Some data", $annot->data);
+        
+        
+        $parser->setTarget($class->getProperty('foo'));
+        $result = $parser->parse($class->getProperty('foo')->getDocComment());
+        $this->assertEquals(1, count($result));
+        $this->assertInstanceOf($a('MarkedAnnotation'), $annot = $result[0]);
+        $this->assertEquals("Some data", $annot->data);
+        
+        
+        $parser->setTarget($class->getMethod('someFunction'));
+        $result = $parser->parse($class->getMethod('someFunction')->getDocComment());
+        $this->assertEquals(1, count($result));
+        $this->assertInstanceOf($a('MarkedAnnotation'), $annot = $result[0]);
+        
+        
+        $this->assertTrue($annot->target instanceof \Doctrine\Common\Annotations\Marker\Annotation\Target);
+        $this->assertTrue($annot->target->value == \Doctrine\Common\Annotations\Marker\Annotation\Target::TARGET_ALL);
+        
+        
+        $class = new \ReflectionClass($c('MarkedClassNameWithInvalidMethod'));
+        try {
+            $parser->setTarget($class->getMethod('functionName'));
+            $parser->parse($class->getMethod('functionName')->getDocComment());
+            $this->fail();
+            
+        } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
+            $this->assertNotNull($exc->getMessage());
+        }
+        
+        $class = new \ReflectionClass($c('MarkedClassNameWithInvalidProperty'));
+        try {
+            $parser->setTarget($class->getProperty('foo'));
+            $parser->parse($class->getProperty('foo')->getDocComment());
+            $this->fail();
+        } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
+            $this->assertNotNull($exc->getMessage());
+        }
+    }
+    
 
     public function testNamespacedAnnotations()
     {

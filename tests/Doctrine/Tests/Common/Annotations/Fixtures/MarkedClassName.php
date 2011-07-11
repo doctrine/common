@@ -4,7 +4,6 @@ namespace Doctrine\Tests\Common\Annotations\Fixtures;
 
 use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\AnnotationTargetClass;
 use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MarkedAnnotation;
-use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MarkerdAnnotationInterface;
 
 /**
  * @AnnotationTargetClass("Some data")

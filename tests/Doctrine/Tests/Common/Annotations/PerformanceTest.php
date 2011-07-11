@@ -178,6 +178,55 @@ class PerformanceTest extends \PHPUnit_Framework_TestCase
     }
     
     
+     /**
+     * @group performance
+     */
+    public function testDocParsePerformanceWithMarkedAnnotation()
+    {
+        $imports = array(
+            'ignorephpdoc'     => 'Annotations\Annotation\IgnorePhpDoc',
+            'ignoreannotation' => 'Annotations\Annotation\IgnoreAnnotation',
+            'markedroute'      => 'Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MarkedRoute',
+            'markedtemplate'   => 'Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MarkedTemplate',
+            '__NAMESPACE__'    => 'Doctrine\Tests\Common\Annotations\Fixtures',
+        );
+        $ignored = array(
+            'access' => true, 'author' => true, 'copyright' => true, 'deprecated' => true,
+            'example' => true, 'ignore' => true, 'internal' => true, 'link' => true, 'see' => true,
+            'since' => true, 'tutorial' => true, 'version' => true, 'package' => true,
+            'subpackage' => true, 'name' => true, 'global' => true, 'param' => true,
+            'return' => true, 'staticvar' => true, 'category' => true, 'staticVar' => true,
+            'static' => true, 'var' => true, 'throws' => true, 'inheritdoc' => true,
+            'inheritDoc' => true, 'license' => true, 'todo' => true, 'deprecated' => true,
+            'deprec' => true, 'author' => true, 'property' => true, 'method' => true,
+            'abstract' => true, 'exception' => true, 'magic' => true, 'api' => true,
+            'final' => true, 'filesource' => true, 'throw' => true, 'uses' => true,
+            'usedby' => true, 'private' => true
+        );
+
+        $parser         = new DocParser();
+        $method         = $this->getMethodWithMarkedAnnotation();
+        $class          = $method->getDeclaringClass();
+        $methodComment  = $method->getDocComment();
+        $classComment   = str_replace('@Route(', '@MarkedRoute(', $method->getDeclaringClass()->getDocComment());
+        
+        $time = microtime(true);
+        for ($i=0,$c=200; $i<$c; $i++) {
+            $parser = new DocParser();
+            $parser->setImports($imports);
+            $parser->setIgnoredAnnotationNames($ignored);
+
+            $parser->setTarget($method);
+            $parser->parse($methodComment);
+            
+            $parser->setTarget($class);
+            $parser->parse($classComment);
+        }
+        $time = microtime(true) - $time;
+
+        $this->printResults('doc-parser with markers', $time, $c);
+    }
+    
 
     /**
      * @group performance

@@ -3,10 +3,9 @@
 namespace Doctrine\Tests\Common\Annotations\Fixtures\Annotation;
 
 /**
- * @Target({"METHOD", "CLASS"})
- * @Annotation
  * @Marked
- * @LALALA
+ * @Annotation
+ * @Target({"METHOD", "CLASS"})
  */
 final class MarkedRoute
 {

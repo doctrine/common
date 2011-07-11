@@ -4,9 +4,9 @@ namespace Doctrine\Tests\Common\Annotations\Fixtures\Annotation;
 
 
 /**
- * @Target("METHOD")
- * @Annotation
  * @Marked
+ * @Annotation
+ * @Target("METHOD")
  */
 final class AnnotationTargetMethod
 {

@@ -22,6 +22,7 @@ namespace Doctrine\Common\Annotations;
 use Closure;
 use ReflectionClass;
 use Doctrine\Common\Annotations\AnnotationFactory;
+use Doctrine\Common\Annotations\Marker\AnnotationMarkers;
 
 /**
  * A parser for docblock annotations.
@@ -56,6 +57,14 @@ final class DocParser
      * @var Doctrine\Common\Annotations\AnnotationFactory
      */
     private $factory;
+    
+    /**
+     * The DocBlock Target
+     * 
+     * @var \Reflector
+     */
+    private $target;
+    
 
     /**
      * Flag to control if the current annotation is nested or not.
@@ -107,6 +116,13 @@ final class DocParser
      * @var array
      */
     private $isAnnotation = array();
+    
+    /**
+     * Static in-memory cache mechanism to store class markers
+     *
+     * @var array
+     */
+    private static $markers = array();
 
     /**
      * Constructs a new DocParser.
@@ -139,7 +155,40 @@ final class DocParser
     {
         $this->ignoreNotImportedAnnotations = (Boolean) $bool;
     }
+    
+    /**
+     * Sets current target context that is being parsed.
+     * 
+     * @param \Reflector $target 
+     */
+    public function setTarget(\Reflector $target)
+    {
+        $this->target = $target;
+    }
+    
+    
+    /**
+     * @param   string $name
+     * @return  AnnotationMarkers
+     */
+    private function getAnnotationMarkers($name)
+    {
+        if (!isset(self::$markers[$name])) 
+        {
+            $class = new \ReflectionClass($name);
+            if(AnnotationMarkers::isMarked($class))
+            {
+                self::$markers[$name] = new AnnotationMarkers(new \ReflectionClass($name));
+            }
+            else
+            {
+                self::$markers[$name] = null;
+            }
+        }
+        return self::$markers[$name];
+    }
 
+    
     /**
      * Parses the given docblock string for annotations.
      *
@@ -377,8 +426,20 @@ final class DocParser
 
             $this->match(DocLexer::T_CLOSE_PARENTHESIS);
         }
+        
+        
+        $annotation = $this->factory->newAnnotation($name, $values);
+        
+        if($this->target != null)
+        {
+            $annotationMarkers  = $this->getAnnotationMarkers($name);
+            if($annotationMarkers != null)
+            {
+                $annotationMarkers->runMarkers($annotation, $this->target);
+            }
+        }
 
-        return $this->factory->newAnnotation($name, $values);
+        return $annotation;
     }
 
     /**

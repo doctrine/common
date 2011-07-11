@@ -24,7 +24,7 @@ use Doctrine\Common\Annotations\Annotation\Annotation;
 use Doctrine\Common\Annotations\Marker\Annotation\Target;
 use Doctrine\Common\Annotations\AnnotationException;
 /**
- * RequiredStrategy strategy for annotation @Target
+ * RequiredStrategy strategy for annotation @Required
  *
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */

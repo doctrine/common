@@ -88,7 +88,6 @@ abstract class MarkerStrategy
      */
     public static function factory(AnnotationMarkers $markers,Marker $marker)
     {
-        // TODO - do it better
         if($marker->strategyClass() != null)
         {
             if (class_exists($marker->strategyClass()))
@@ -105,6 +104,8 @@ abstract class MarkerStrategy
                     $marker->strategyClass(), get_class($annotation)
             ));
         }
+        
+        return null;
     }
 
     abstract function run(\Reflector $target,$annotation);

@@ -24,7 +24,7 @@ use Doctrine\Common\Annotations\Annotation\Annotation;
 use Doctrine\Common\Annotations\Marker\Annotation\Target;
 use Doctrine\Common\Annotations\AnnotationException;
 /**
- * TypeStrategy strategy for annotation Target
+ * TypeStrategy strategy for annotation @Type
  *
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
