@@ -26,6 +26,7 @@ use Doctrine\Common\Annotations\Annotation\Annotation;
  * Base class for Annotations Markers
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * 
  */
 abstract class Marker
 {
@@ -71,7 +72,7 @@ abstract class Marker
     }
 
     /**
-     * Property accessor in Annotation class.
+     * Property accessor in marker class.
      *
      * @param string $name Unknown property name
      */
@@ -83,7 +84,7 @@ abstract class Marker
         }
         return $this->$name;
     }
-
+    
     /**
      * @return string the marker strategy class name
      */

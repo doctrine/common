@@ -24,6 +24,8 @@ namespace Doctrine\Common\Annotations\Marker\Annotation;
  * Annotation that must be used set default value.
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * 
+ * @Annotation
  */
 final class DefaultValue extends Marker
 {

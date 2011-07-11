@@ -24,6 +24,8 @@ namespace Doctrine\Common\Annotations\Marker\Annotation;
  * Annotation Marker Required
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * 
+ * @Annotation
  */
 final class Required extends Marker
 {

@@ -119,13 +119,6 @@ final class AnnotationReader implements Reader
      */
     private static $markers = array();
     
-    /**
-     * In-memory cache mechanism to store markers execute
-     *
-     * @var array
-     */
-    private static $markersRun = array();
-    
 
     /**
      * Constructor. Initializes a new AnnotationReader that uses the given Cache provider.
@@ -134,6 +127,8 @@ final class AnnotationReader implements Reader
      */
     public function __construct()
     {
+        AnnotationRegistry::registerFile(__DIR__ . '/Annotation/IgnoreAnnotation.php');
+        
         $this->parser = new DocParser;
 
         $this->preParser = new DocParser;
@@ -141,31 +136,6 @@ final class AnnotationReader implements Reader
         $this->preParser->setIgnoreNotImportedAnnotations(true);
 
         $this->phpParser = new PhpParser;
-    }
-
-    /**
-     * Sets a flag whether to auto-load annotation classes or not.
-     *
-     * NOTE: It is recommended to turn auto-loading on if your auto-loader
-     *       supports silent failing. For this reason, setting this to TRUE
-     *       renders the parser incompatible with {@link ClassLoader}.
-     *
-     * @param boolean $bool Boolean flag.
-     */
-    public function setAutoloadAnnotations($bool)
-    {
-        $this->parser->setAutoloadAnnotations($bool);
-    }
-
-    /**
-     * Gets a flag whether to try to autoload annotation classes.
-     *
-     * @see setAutoloadAnnotations
-     * @return boolean
-     */
-    public function isAutoloadAnnotations()
-    {
-        return $this->parser->isAutoloadAnnotations();
     }
 
     /**
@@ -180,8 +150,8 @@ final class AnnotationReader implements Reader
         $this->parser->setImports($this->getImports($class));
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
         $context = 'class ' . $class->getName();
-        $annotations = $this->parser->parse($class->getDocComment(), 'class ' . $context);
-        $this->runAnnotaionMarkers($annotations,$class,$context);
+        $annotations = $this->parser->parse($class->getDocComment(), $context);
+        $this->runAnnotaionMarkers($annotations,$class);
         return $annotations;
     }
 
@@ -221,7 +191,7 @@ final class AnnotationReader implements Reader
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
 
         $annotations = $this->parser->parse($property->getDocComment(), $context);
-        $this->runAnnotaionMarkers($annotations,$property,$context);
+        $this->runAnnotaionMarkers($annotations,$property);
         return $annotations;
     }
 
@@ -261,7 +231,7 @@ final class AnnotationReader implements Reader
 
         
         $annotations = $this->parser->parse($method->getDocComment(), $context);
-        $this->runAnnotaionMarkers($annotations,$method,$context);
+        $this->runAnnotaionMarkers($annotations,$method);
         return $annotations;
     }
 
@@ -295,7 +265,7 @@ final class AnnotationReader implements Reader
     {
         if (!isset(self::$markers[$name = $class->getName()])) 
         {
-            self::$markers[$name] = new AnnotationMarkers($class, $this);
+            self::$markers[$name] = new AnnotationMarkers($class);
         }
         return self::$markers[$name];
     }
@@ -305,12 +275,12 @@ final class AnnotationReader implements Reader
      * @param \Reflector $target 
      * @param $context
      */
-    private function runAnnotaionMarkers(array $annotations, \Reflector $target,$context)
+    private function runAnnotaionMarkers(array $annotations, \Reflector $target)
     {
         foreach ($annotations as $annotation) 
         {
             $class = new \ReflectionClass($annotation);
-            if($this->getClassAnnotation($class,'Doctrine\Common\Annotations\Marker\Annotation\Marked'))
+            if(AnnotationMarkers::isMarked($class))
             {
                 $this->getAnnotationMarkers($class)->runMarkers($annotation, $target);
             }
@@ -356,7 +326,7 @@ final class AnnotationReader implements Reader
         $annotations = $this->preParser->parse($class->getDocComment());
         foreach ($annotations as $annotation) {
             if ($annotation instanceof IgnoreAnnotation) {
-                foreach ($annotation->names AS $annot) {
+                foreach ((array)$annotation->names AS $annot) {
                     $ignoredAnnotationNames[$annot] = true;
                 }
             }

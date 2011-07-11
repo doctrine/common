@@ -7,7 +7,6 @@ use Doctrine\Common\Annotations\Marker\Strategy\DefaultValueStrategy;
 use Doctrine\Common\Annotations\Marker\Strategy\MarkerStrategy;
 use Doctrine\Common\Annotations\Marker\Annotation\DefaultValue;
 use Doctrine\Common\Annotations\Marker\AnnotationMarkers;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Marker\Annotation\Target;
 
 class DefaltValueStrategyTest extends \PHPUnit_Framework_TestCase
@@ -18,7 +17,7 @@ class DefaltValueStrategyTest extends \PHPUnit_Framework_TestCase
      */
     public function testNullValue()
     {
-        $markers    = new AnnotationMarkers(new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MarkedAnnotation'), new AnnotationReader());
+        $markers    = new AnnotationMarkers(new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MarkedAnnotation'));
         $marker     = $markers->getPropertyMarker('Doctrine\Common\Annotations\Marker\Annotation\DefaultValue', 'name');
         $class      = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\MarkedClassName');
         $annot      = new MarkedAnnotation();
@@ -40,7 +39,7 @@ class DefaltValueStrategyTest extends \PHPUnit_Framework_TestCase
      */
     public function testNotNullValue()
     {
-        $markers        = new AnnotationMarkers(new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MarkedAnnotation'), new AnnotationReader());
+        $markers        = new AnnotationMarkers(new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MarkedAnnotation'));
         $marker         = $markers->getPropertyMarker('Doctrine\Common\Annotations\Marker\Annotation\DefaultValue', 'name');
         $class          = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\MarkedClassName');
         $annot          = new MarkedAnnotation();

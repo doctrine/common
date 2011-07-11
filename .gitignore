@@ -3,3 +3,4 @@ build/
 logs/
 reports/
 dist/
+/phpunit.xml

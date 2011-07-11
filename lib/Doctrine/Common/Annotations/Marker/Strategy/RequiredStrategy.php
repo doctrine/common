@@ -32,34 +32,9 @@ class RequiredStrategy extends MarkerStrategy
 {
     public function run(\Reflector $target,$annotation)
     {
-        /**
-        if (!($annotation instanceof Annotation))
-        {
-            print_r($this->getMarkers()->getClassMarkers());
-            throw AnnotationException::semanticalError(sprintf(
-                    'The class "%s" is not an annotation.', get_class($annotation)
-            ));
-        }
-        **/
         
-        
-        if($this->getMarker()->getProperty())
-        {
-            $item   = $this->getMarker()->getProperty();
-            $value  = $item->getValue($annotation);
-        }
-        elseif($this->getMarker()->getMethod())
-        {
-            $item   = $this->getMarker()->getMethod();
-            $value  = $item->invoke($annotation);
-        }
-        else
-        {
-            throw new \InvalidArgumentException('Invalid marker.');
-        }
-        
-        
-        
+        $property   = $this->getMarker()->getProperty();
+        $value      = $property->getValue($annotation);
         $nullable   = $this->getMarker()->value;
         
         
@@ -67,13 +42,42 @@ class RequiredStrategy extends MarkerStrategy
         {
             if ($nullable != true)
             {
-                throw AnnotationException::semanticalError(
-                        sprintf('Property "%s" can not be null on "@%s", "%s" at property "%s"', 
-                                $item->getName(), $this->getMarker()->getClass()->getShortName(),
-                                $target->getName(), $item->getName())
-                );
+                throw self::exception($this->getMarker()->getClass(), $property, $target);
             }
         }
     }
+    
+     private static function exception(\ReflectionClass $annot, \Reflector $property,\Reflector $target)
+    {
+        if($target instanceof \ReflectionClass)
+        {
+            return AnnotationException::semanticalError(
+                sprintf('Property "%s" can not be null. "%s" at "@%s".', 
+                        $property->getName(), $target->getName(), $annot->getShortName())
+            );
+        }
+        if($target instanceof \ReflectionMethod)
+        {
+            return AnnotationException::semanticalError(
+                sprintf('Property "%s" can not be null. "%s" method "%s" at "@%s".', 
+                        $property->getName(), $target->getDeclaringClass()->getName(), $target->getName(), $annot->getShortName())
+            );
+        }
+        
+        if($target instanceof \ReflectionProperty)
+        {
+            return AnnotationException::semanticalError(
+                sprintf('Property "%s" can not be null. "%s" property "%s" at "@%s".', 
+                        $property->getName(), $target->getDeclaringClass()->getName(), $target->getName(), $annot->getShortName())
+            );
+        }
+        else{
+            return AnnotationException::semanticalError(
+                sprintf('Property "%s" can not be null. "%s" at "@%s".', 
+                        $property->getName(), get_class($target), $annot->getShortName())
+            );
+        }
+    }
+
 
 }

@@ -32,12 +32,10 @@ class RequiredTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($annot->data);
         
         try {
-            
             $strategy->run($class, $annot);
-            
             $this->fail();
         } catch (AnnotationException $exc) {
-            $this->assertEquals($exc->getMessage(),'[Semantical Error] Property "data" can not be null on "@MarkedAnnotation", "Doctrine\Tests\Common\Annotations\Fixtures\MarkedClassName" at property "data"');
+            $this->assertEquals($exc->getMessage(),'[Semantical Error] Property "data" can not be null. "Doctrine\Tests\Common\Annotations\Fixtures\MarkedClassName" at "@MarkedAnnotation".');
         }
     }
 

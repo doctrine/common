@@ -18,11 +18,13 @@
  */
 
 namespace Doctrine\Common\Annotations\Annotation;
+use Doctrine\Common\Annotations\Annotation;
 
 /**
  * Annotation that can be used to signal to the parser to ignore specific
  * annotations during the parsing process.
  *
+ * @Annotation
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 final class IgnoreAnnotation
@@ -31,6 +33,7 @@ final class IgnoreAnnotation
 
     public function __construct(array $values)
     {
+        
         if (is_string($values['value'])) {
             $values['value'] = array($values['value']);
         }

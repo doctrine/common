@@ -5,6 +5,7 @@ namespace Doctrine\Tests\Common\Annotations;
 use Doctrine\Common\Annotations\Annotation\IgnorePhpDoc;
 use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
 use Doctrine\Common\Annotations\DocParser;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 
 class DocParserTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,8 +32,6 @@ class DocParserTest extends \PHPUnit_Framework_TestCase
     public function testBasicAnnotations()
     {
         $parser = $this->createTestParser();
-
-        $this->assertTrue($parser->isAutoloadAnnotations());
 
         // Marker annotation
         $result = $parser->parse("@Name");
@@ -153,32 +152,6 @@ DOCBLOCK;
         $this->assertTrue($marker instanceof Marker);
     }
     
-    public function testIndexedByClass()
-    {
-        $parser = $this->createTestParser();
-        $parser->setIndexByClass(true);
-        $docblock = <<<DOCBLOCK
-/**
- * @Name(foo="bar")
- * @Marker
- */
-DOCBLOCK;
-
-        
-        $result = $parser->parse($docblock);
-        
-        $this->assertEquals(2, count($result));
-        $this->assertTrue(array_key_exists('Doctrine\Tests\Common\Annotations\Marker', $result));
-        $this->assertTrue(array_key_exists('Doctrine\Tests\Common\Annotations\Name', $result));
-        
-        
-        $annot = $result['Doctrine\Tests\Common\Annotations\Name'];
-        $this->assertInstanceOf('Doctrine\Tests\Common\Annotations\Name', $annot);
-        $this->assertEquals("bar", $annot->foo);
-        
-        $annot = $result['Doctrine\Tests\Common\Annotations\Marker'];
-        $this->assertInstanceOf('Doctrine\Tests\Common\Annotations\Marker', $annot);
-    }
 
     /**
      * @group DDC-575
@@ -254,6 +227,27 @@ DOCBLOCK;
     {
         $parser = new DocParser();
         $result = $parser->parse("@Doctrine\Tests\Common\Annotations\Name(@')");
+    }
+
+    /**
+     * @group DCOM-56
+     */
+    public function testAutoloadAnnotation()
+    {
+        $this->assertFalse(class_exists('Doctrine\Tests\Common\Annotations\Fixture\Annotation\Autoload', false), 'Pre-condition: Doctrine\Tests\Common\Annotations\Fixture\Annotation\Autoload not allowed to be loaded.');
+
+        $parser = new DocParser();
+
+        // its already done in TestInit.php but this makes it explicit
+        AnnotationRegistry::registerAutoloadNamespace('Doctrine\Tests\Common\Annotations\Fixtures\Annotation', __DIR__ . '/../../../../');
+
+        $parser->setImports(array(
+            'autoload' => 'Doctrine\Tests\Common\Annotations\Fixtures\Annotation\Autoload',
+        ));
+        $annotations = $parser->parse('@Autoload');
+
+        $this->assertEquals(1, count($annotations));
+        $this->assertInstanceOf('Doctrine\Tests\Common\Annotations\Fixtures\Annotation\Autoload', $annotations[0]);
     }
 
     public function createTestParser()
@@ -375,25 +369,42 @@ DOCBLOCK;
     public function testInvalidIdentifierInAnnotation()
     {
         $parser = $this->createTestParser();
+        $parser->parse('@Foo\3.42');
+    }
 
-        $result = $parser->parse('@Foo\3.42');
+    public function testTrailingCommaIsAllowed()
+    {
+        $parser = $this->createTestParser();
+
+        $annots = $parser->parse('@Name({
+            "Foo",
+            "Bar",
+        })');
+        $this->assertEquals(1, count($annots));
+        $this->assertEquals(array('Foo', 'Bar'), $annots[0]->value);
     }
 }
 
+/** @Annotation */
 class Name extends \Doctrine\Common\Annotations\Annotation {
     public $foo;
 }
 
+/** @Annotation */
 class Marker {}
 
+/** @Annotation */
 class True {}
 
+/** @Annotation */
 class False {}
 
+/** @Annotation */
 class Null {}
 
 
 namespace Doctrine\Tests\Common\Annotations\FooBar;
 
+/** @Annotation */
 class Name extends \Doctrine\Common\Annotations\Annotation {
 }

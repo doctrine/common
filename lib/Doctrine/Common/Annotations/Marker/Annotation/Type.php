@@ -24,6 +24,8 @@ namespace Doctrine\Common\Annotations\Marker\Annotation;
  * Annotation Marker Type
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * 
+ * @Annotation
  */
 final class Type extends Marker
 {

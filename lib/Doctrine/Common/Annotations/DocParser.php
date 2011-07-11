@@ -49,6 +49,13 @@ final class DocParser
      * @var Doctrine\Common\Annotations\DocLexer
      */
     private $lexer;
+    
+    /**
+     * The Factory.
+     * 
+     * @var Doctrine\Common\Annotations\AnnotationFactory
+     */
+    private $factory;
 
     /**
      * Flag to control if the current annotation is nested or not.
@@ -72,22 +79,6 @@ final class DocParser
      * @var array
      */
     private $classExists = array();
-    
-    /**
-     * This hashmap is used internally to cache results.
-     *
-     * @var array
-     */
-    private $class = array();
-    
-     /**
-     * Whether to index annotations by their class.
-     *
-     * If set to true, duplicate annotations will override each other.
-     *
-     * @var boolean
-     */
-    private $indexByClass = false;
 
     /**
      * Whether annotations that have not been imported should be ignored.
@@ -112,14 +103,10 @@ final class DocParser
     private $context = '';
 
     /**
-     * @var boolean
+     * Hash-map for caching annotation classes to avoid reparsing their doc-blocks
+     * @var array
      */
-    private $autoloadAnnotations = true;
-    
-    /**
-     * @var AnnotationFactory
-     */
-    private $factory;
+    private $isAnnotation = array();
 
     /**
      * Constructs a new DocParser.
@@ -127,6 +114,7 @@ final class DocParser
     public function __construct()
     {
         $this->lexer = new DocLexer;
+        $this->factory = new AnnotationFactory();
     }
 
     /**
@@ -142,46 +130,6 @@ final class DocParser
         $this->ignoredAnnotationNames = $names;
     }
 
-    /**
-     * Sets a flag whether to auto-load annotation classes or not.
-     *
-     * NOTE: It is recommend to turn auto-loading on if your auto-loader supports
-     *       silent failing.
-     *
-     * @param boolean $bool Boolean flag.
-     */
-    public function setAutoloadAnnotations($bool)
-    {
-        $this->autoloadAnnotations = $bool;
-    }
-
-    /**
-     * Gets a flag whether to try to autoload annotation classes.
-     *
-     * @see setAutoloadAnnotations
-     * @return boolean
-     */
-    public function isAutoloadAnnotations()
-    {
-        return $this->autoloadAnnotations;
-    }
-    
-    /**
-     * @param bool $bool 
-     */
-    public function setIndexByClass($bool)
-    {
-        $this->indexByClass = (Boolean) $bool;
-    }
-
-    /**
-     * @return bool 
-     */
-    public function isIndexByClass()
-    {
-        return $this->indexByClass;
-    }
-
     public function setImports(array $imports)
     {
         $this->imports = $imports;
@@ -190,19 +138,6 @@ final class DocParser
     public function setIgnoreNotImportedAnnotations($bool)
     {
         $this->ignoreNotImportedAnnotations = (Boolean) $bool;
-    }
-    
-
-    
-    /**
-     * @return Factory
-     */
-    private function getFactory()
-    {
-        if($this->factory == null){
-            $this->factory = new AnnotationFactory();
-        }
-        return $this->factory;
     }
 
     /**
@@ -295,22 +230,28 @@ final class DocParser
     }
 
     /**
-     * This will prevent going through the auto-loader on each occurence of the
-     * annotation.
+     * Attempt to check if a class exists or not. This never goes through the PHP autoloading mechanism
+     * but uses the {@link AnnotationRegistry} to load classes.
      *
      * @param string $fqcn
      * @return boolean
      */
     private function classExists($fqcn)
     {
-        if (!isset($this->classExists[$fqcn])) {
-            $this->classExists[$fqcn] = class_exists($fqcn, $this->autoloadAnnotations);
+        if (isset($this->classExists[$fqcn])) {
+            return $this->classExists[$fqcn];
         }
 
-        return $this->classExists[$fqcn];
+        // first check if the class already exists, maybe loaded through another AnnotationReader
+        if (class_exists($fqcn, false)) {
+            return $this->classExists[$fqcn] = true;
+        }
+
+        // final check, does this class exist?
+        return $this->classExists[$fqcn] = AnnotationRegistry::loadAnnotationClass($fqcn);
     }
-    
-    
+
+
     /**
      * Annotations ::= Annotation {[ "*" ]* [Annotation]}*
      *
@@ -343,11 +284,7 @@ final class DocParser
 
             $this->isNestedAnnotation = false;
             if (false !== $annot = $this->Annotation()) {
-                if($this->isIndexByClass()){
-                    $annotations[get_class($annot)] = $annot;
-                }else{
-                    $annotations[] = $annot;
-                }
+                $annotations[] = $annot;
             }
         }
 
@@ -384,6 +321,7 @@ final class DocParser
         }
 
         // only process names which are not fully qualified, yet
+        $originalName = $name;
         if ('\\' !== $name[0] && !$this->classExists($name)) {
             $alias = (false === $pos = strpos($name, '\\'))? $name : substr($name, 0, $pos);
 
@@ -399,7 +337,7 @@ final class DocParser
                 if ($this->ignoreNotImportedAnnotations || isset($this->ignoredAnnotationNames[$name])) {
                     return false;
                 }
-                
+
                 throw AnnotationException::semanticalError(sprintf('The annotation "@%s" in %s was never imported.', $name, $this->context));
             }
         }
@@ -411,6 +349,20 @@ final class DocParser
         // at this point, $name contains the fully qualified class name of the
         // annotation, and it is also guaranteed that this class exists, and
         // that it is loaded
+
+        // verify that the class is really meant to be an annotation and not just any ordinary class
+        if (!isset($this->isAnnotation[$name])) {
+            $ref = new \ReflectionClass($name);
+
+            if (false === strpos($ref->getDocComment(), '@Annotation')) {
+                if (isset($this->ignoredAnnotationNames[$originalName])) {
+                    return false;
+                }
+
+                throw AnnotationException::semanticalError(sprintf('The class "%s" is not annotated with @Annotation. Are you sure this class can be used as annotation? If so, then you need to add @Annotation to the _class_ doc comment of "%s". If it is indeed no annotation, then you need to add @IgnoreAnnotation("%s") to the _class_ doc comment of %s.', $name, $name, $originalName, $this->context));
+            }
+            $this->isAnnotation[$name] = true;
+        }
 
         // Next will be nested
         $this->isNestedAnnotation = true;
@@ -426,7 +378,7 @@ final class DocParser
             $this->match(DocLexer::T_CLOSE_PARENTHESIS);
         }
 
-        return $this->getFactory()->newAnnotation($name, $values);;
+        return $this->factory->newAnnotation($name, $values);
     }
 
     /**
@@ -559,7 +511,7 @@ final class DocParser
     }
 
     /**
-     * Array ::= "{" ArrayEntry {"," ArrayEntry}* "}"
+     * Array ::= "{" ArrayEntry {"," ArrayEntry}* [","] "}"
      *
      * @return array
      */
@@ -572,6 +524,12 @@ final class DocParser
 
         while ($this->lexer->isNextToken(DocLexer::T_COMMA)) {
             $this->match(DocLexer::T_COMMA);
+
+            // optional trailing comma
+            if ($this->lexer->isNextToken(DocLexer::T_CLOSE_CURLY_BRACES)) {
+                break;
+            }
+
             $values[] = $this->ArrayEntry();
         }
 

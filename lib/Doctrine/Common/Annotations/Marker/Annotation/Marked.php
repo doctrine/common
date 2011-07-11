@@ -21,39 +21,29 @@
 namespace Doctrine\Common\Annotations\Marker\Annotation;
 
 /**
- * Annotation Marker Target
+ * Annotation that must be used to signal markers.
  *
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  * 
  * @Annotation
  */
-final class Target extends Marker
+final class Marked extends Marker
 {
-    const TARGET_ALL = 'ALL';
-    const TARGET_CLASS = 'CLASS';
-    const TARGET_METHOD = 'METHOD';
-    const TARGET_PROPERTY = 'PROPERTY';
-    const TARGET_NESTED_ANNOTATION = 'NESTED_ANNOTATION';
-
-    /**
-     * @var strign
-     */
-    protected $value;
 
     /**
      * {@inheritDoc}
      */
     public function strategyClass()
     {
-        return 'Doctrine\Common\Annotations\Marker\Strategy\TargetStrategy';
+        return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public function priority()
     {
-        return 2;
+        return -2;
     }
 
 }

@@ -41,23 +41,23 @@ class AnnotationFactory
     /**
      * @var array 
      */
-    private $properties = array();
+    private static $properties = array();
     /**
      * @var array 
      */
-    private $hasProperty = array();
+    private static $hasProperty = array();
     /**
      * @var array 
      */
-    private $hasConstructor = array();
+    private static $hasConstructor = array();
     /**
      * @var array 
      */
-    private $isValid = array();
+    private static $isValid = array();
     /**
      * @var array 
      */
-    private $classExists = array();
+    private static $classExists = array();
 
     /**
      * @param    string  $className
@@ -99,11 +99,11 @@ class AnnotationFactory
      */
     private function classExists($className)
     {
-        if (!isset($this->classExists[$className]))
+        if (!isset(self::$classExists[$className]))
         {
-            $this->classExists[$className] = class_exists($className);
+            self::$classExists[$className] = class_exists($className);
         }
-        return $this->classExists[$className];
+        return self::$classExists[$className];
     }
 
     /**
@@ -112,19 +112,19 @@ class AnnotationFactory
      */
     private function hasConstructor($className)
     {
-        if (!isset($this->hasConstructor[$className]))
+        if (!isset(self::$hasConstructor[$className]))
         {
-            $this->hasConstructor[$className] = false;
+            self::$hasConstructor[$className] = false;
             $constructor = $this->getClass($className)->getConstructor();
             if ($constructor instanceof \ReflectionMethod)
             {
                 if ($constructor->isPublic())
                 {
-                    $this->hasConstructor[$className] = true;
+                    self::$hasConstructor[$className] = true;
                 }
             }
         }
-        return $this->hasConstructor[$className];
+        return self::$hasConstructor[$className];
     }
 
     /**
@@ -133,9 +133,9 @@ class AnnotationFactory
      */
     private function isValid($className)
     {
-        if (!isset($this->isValid[$className]))
+        if (!isset(self::$isValid[$className]))
         {
-            $this->isValid[$className] = false;
+            self::$isValid[$className] = false;
             $constructor = $this->getClass($className)->getConstructor();
             if ($constructor instanceof \ReflectionMethod)
             {
@@ -144,21 +144,21 @@ class AnnotationFactory
                     $required = $constructor->getNumberOfRequiredParameters();
                     if($required == 0)
                     {
-                        $this->isValid[$className] = true;
+                        self::$isValid[$className] = true;
                     }
                     if($required == 1)
                     {
                         $parameters = $constructor->getParameters();
                         $parameter  = reset($parameters);
-                        $this->isValid[$className] = $parameter->isArray();
+                        self::$isValid[$className] = $parameter->isArray();
                     }
                 }
             }
             else{
-                $this->isValid[$className] = true;
+                self::$isValid[$className] = true;
             }
         }
-        return $this->isValid[$className];
+        return self::$isValid[$className];
     }
 
     /**
@@ -168,11 +168,11 @@ class AnnotationFactory
      */
     private function hasProperty($className, $property)
     {
-        if (!isset($this->hasProperty[$className][$property]))
+        if (!isset(self::$hasProperty[$className][$property]))
         {
-            $this->hasProperty[$className][$property] = $this->getClass($className)->hasProperty($property);
+            self::$hasProperty[$className][$property] = $this->getClass($className)->hasProperty($property);
         }
-        return $this->hasProperty[$className][$property];
+        return self::$hasProperty[$className][$property];
     }
 
     /**
@@ -194,16 +194,16 @@ class AnnotationFactory
      */
     private function getProperties($className)
     {
-        if (!isset($this->properties[$className]))
+        if (!isset(self::$properties[$className]))
         {
             $list = (array) $this->getClass($className)->getProperties();
-            $this->properties[$className] = array();
+            self::$properties[$className] = array();
             foreach ($list as $property)
             {
-                $this->properties[$className][] = $property->getName();
+                self::$properties[$className][] = $property->getName();
             }
         }
-        return $this->properties[$className];
+        return self::$properties[$className];
     }
 
     /**

@@ -91,7 +91,7 @@ class TypeStrategy extends MarkerStrategy
     }
     
     
-     private static function exception(\ReflectionClass $annot, \Reflector $property,$type,$value,\Reflector $target)
+    private static function exception(\ReflectionClass $annot, \Reflector $property,$type,$value,\Reflector $target)
     {
         $valType = is_object($value) ? get_class($value) : gettype($value);
         if($target instanceof \ReflectionClass)

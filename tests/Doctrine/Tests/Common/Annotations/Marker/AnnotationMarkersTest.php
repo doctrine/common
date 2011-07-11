@@ -2,21 +2,13 @@
 
 namespace Doctrine\Tests\Common\Annotations\Marker;
 
-
-use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\AnnnotedAnnotation;
-
-use Doctrine\Common\Annotations\Marker\MarkerStrategy;
-use Doctrine\Common\Annotations\Marker\TargetStrategy;
 use Doctrine\Common\Annotations\Marker\AnnotationMarkers;
 use Doctrine\Common\Annotations\Marker\Annotation\DefaultValue;
 use Doctrine\Common\Annotations\Marker\Annotation\Marker;
 use Doctrine\Common\Annotations\Marker\Annotation\Target;
 use Doctrine\Common\Annotations\Marker\Annotation\Type;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\Proxy\ProxyFactory;
 use Doctrine\Common\Annotations\AnnotationFactory;
-
 use Doctrine\Common\Annotations\AnnotationException;
 
 
@@ -49,7 +41,7 @@ class AnnotationMarkersTest extends \PHPUnit_Framework_TestCase
     {
         $annotation = $this->_annot("MarkedAnnotation");
         $target     = $this->_marker("Target");
-        $markers    = new AnnotationMarkers($annotation,new AnnotationReader());
+        $markers    = new AnnotationMarkers($annotation);
 
         
         $list    = $markers->getAllMarkers();
@@ -78,7 +70,7 @@ class AnnotationMarkersTest extends \PHPUnit_Framework_TestCase
     {
         $default    = $this->_marker("DefaultValue");
         $annotation = $this->_annot("MarkedAnnotation");
-        $markers    = new AnnotationMarkers($annotation,new AnnotationReader());
+        $markers    = new AnnotationMarkers($annotation);
         $list       = $markers->getPropertiesMarkers();
         
         
@@ -127,4 +119,115 @@ class AnnotationMarkersTest extends \PHPUnit_Framework_TestCase
     }
 
     
+     /**
+     * @group Marker
+     */
+    public function testRunMarker()
+    {
+        $class      = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\Annotation\MarkedAnnotation');
+        $markers    = new AnnotationMarkers($class);
+        $marker     = $markers->getPropertyMarker('Doctrine\Common\Annotations\Marker\Annotation\DefaultValue', 'name');
+        $target     = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\MarkedClassName');
+        $annotation = $class->newInstance();
+        
+        
+        
+        $this->assertNull($annotation->name);
+
+        $markers->runMarker($annotation, $target, $marker);
+
+        $this->assertEquals($annotation->name, "Foo Value");
+    }
+    
+    
+    
+    
+     
+     /**
+     * @group Marker
+     */
+    public function testIsMarkerd()
+    {
+        $class = new \ReflectionClass(__NAMESPACE__ . '\MarkedClassAnnotation');
+        $this->assertTrue(AnnotationMarkers::isMarked($class));
+        
+        $class = new \ReflectionClass(__NAMESPACE__ . '\NotMarkedClassAnnotation');
+        $this->assertFalse(AnnotationMarkers::isMarked($class));
+    }
+    
+    
+      /**
+     * @group Marker
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Argument 1 must be an instance of "Doctrine\Tests\Common\Annotations\Fixtures\Annotation\AnnotationTargetClass", "stdClass" given.
+     */
+    public function testRunMarkerExceptionTarget()
+    {
+        $class      = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\Annotation\AnnotationTargetClass');
+        $markers    = new AnnotationMarkers($class);
+        $target     = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\MarkedClassName');
+        $annotation = $class->newInstance();
+        
+        $markers->runMarkers(new \stdClass, $target);
+    }
+    
+    
+     /**
+     * @group Marker
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Annotation 'Doctrine\Tests\Common\Annotations\Marker\SubclassOfMarker' can not be a sub class of Marker.
+     */
+    public function testisSubclassOfMarker()
+    {
+        $annotation = new \ReflectionClass(__NAMESPACE__ . '\SubclassOfMarker');
+        $markers    = new AnnotationMarkers($annotation);
+    }
+    
+     
+     /**
+     * @group Marker
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage  Class 'Doctrine\Tests\Common\Annotations\Marker\NotMarkedClassAnnotation' is not marked with @Marked.
+     */
+    public function testisSubclassOfMarkerException()
+    {
+        $annotation = new \ReflectionClass(__NAMESPACE__ . '\NotMarkedClassAnnotation');
+        $markers    = new AnnotationMarkers($annotation);
+    }
+    
+    
+}
+
+/**
+ * @Target("CLASS")
+ * @Annotation
+ * @Marked
+ */
+class MarkedClassAnnotation
+{
+    
+}
+
+/**
+ * @Annotation
+ */
+class NotMarkedClassAnnotation 
+{
+    
+}
+
+/**
+ * @Annotation
+ */
+class SubclassOfMarker extends Marker 
+{
+    public function strategyClass()
+    {
+        return null;
+    }
+    
+    public function priority()
+    {
+        return 0;
+    }  
 }

@@ -24,7 +24,8 @@ use Doctrine\Common\Annotations\Marker\Annotation\Target;
 use Doctrine\Common\Annotations\Marker\Annotation\Type;
 use Doctrine\Common\Annotations\Marker\Annotation\Marker;
 use Doctrine\Common\Annotations\Marker\Strategy\MarkerStrategy;
-use Doctrine\Common\Annotations\Reader;
+use Doctrine\Common\Annotations\DocParser;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use \ReflectionClass;
 use \ReflectionMethod;
 use \ReflectionProperty;
@@ -36,15 +37,34 @@ use \ReflectionProperty;
  */
 class AnnotationMarkers
 {
+    
+    /**
+     * Global markers imports.
+     *
+     * @var array
+     */
+    private static $imports = array(
+        'defaultvalue'  => 'Doctrine\Common\Annotations\Marker\Annotation\DefaultValue',
+        'marked'        => 'Doctrine\Common\Annotations\Marker\Annotation\Marked',
+        'required'      => 'Doctrine\Common\Annotations\Marker\Annotation\Required',
+        'target'        => 'Doctrine\Common\Annotations\Marker\Annotation\Target',
+        'type'          => 'Doctrine\Common\Annotations\Marker\Annotation\Type',
+        '__NAMESPACE__' => 'Doctrine\Common\Annotations\Marker\Annotation',
+    );
 
+    /**
+     * @var DocParser 
+     */
+    private static $parser;
+    /**
+     * @var DocParser 
+     */
+    private static $isMarked = array();
+    
     /**
      * @var ReflectionClass
      */
     private $class;
-    /**
-     * @var Reader 
-     */
-    private $reader;
     /**
      * @var array
      */
@@ -65,21 +85,33 @@ class AnnotationMarkers
      * @var array
      */
     private $hasPropertyMarker = array();
-
-    /**
-     * @return Reader
-     */
-    private function getReader()
-    {
-        return $this->reader;
-    }
     
+    /**
+     *
+     * @return DocParser
+     */
+    private static function parser()
+    {
+        if(self::$parser == null)
+        {
+            self::$parser = new DocParser();
+            self::$parser->setIgnoreNotImportedAnnotations(true);
+            self::$parser->setImports(self::$imports);
+            
+            AnnotationRegistry::registerFile(__DIR__ . '/Annotation/DefaultValue.php');
+            AnnotationRegistry::registerFile(__DIR__ . '/Annotation/Marked.php');
+            AnnotationRegistry::registerFile(__DIR__ . '/Annotation/Required.php');
+            AnnotationRegistry::registerFile(__DIR__ . '/Annotation/Target.php');
+            AnnotationRegistry::registerFile(__DIR__ . '/Annotation/Type.php');
+        }
+        return self::$parser;
+    }
 
     /**
      * @param \ReflectionClass $class
      * @param Reader $reader 
      */
-    public function __construct(\ReflectionClass $class, Reader $reader)
+    public function __construct(\ReflectionClass $class)
     {
         if($class->isSubclassOf('Doctrine\Common\Annotations\Marker\Annotation\Marker'))
         {
@@ -88,18 +120,43 @@ class AnnotationMarkers
             );
         }
         
-        if(!$reader->getClassAnnotation($class,'Doctrine\Common\Annotations\Marker\Annotation\Marked'))
+        if(!self::isMarked($class))
         {
             throw new \InvalidArgumentException(
                 sprintf("Class '%s' is not marked with @Marked.",$class->getName())
             );
         }
         
-        $this->class = $class;
-        $this->reader= $reader;
+        $this->class  = $class;
 
         $this->readMarkers();
     }
+    
+    
+    
+     /**
+     * Read annotation markers
+     */
+    private function parse(\Reflector $target)
+    {
+        return self::parser()->parse($target->getDocComment());
+    }
+    
+     /**
+      * Check if annotation class is marked
+      * 
+      * @param \ReflectionClass $class
+      * @return type 
+      */
+    public static function isMarked(\ReflectionClass $class)
+    {
+        if (!isset(self::$isMarked[$class->name]))
+        {
+            self::$isMarked[$class->name] = !(false === strpos($class->getDocComment(), '@Marked'));
+        }
+        return self::$isMarked[$class->name];
+    }
+    
     
     
     /**
@@ -120,7 +177,7 @@ class AnnotationMarkers
     {
         $this->classMarkers     = array();
         $this->hasClassMarker   = array();
-        $annotations            = $this->getReader()->getClassAnnotations($this->class);
+        $annotations            = $this->parse($this->class);
         foreach ($annotations as $annotation) {
             if ($annotation instanceof Marker)
             {
@@ -142,18 +199,18 @@ class AnnotationMarkers
         $this->hasPropertyMarker = array();
         $properties = $this->class->getProperties();
         foreach ($properties as $property) {
-            $annotations = $this->getReader()->getPropertyAnnotations($property);
+            $annotations = $this->parse($property);
             foreach ($annotations as $annotation) {
                 if ($annotation instanceof Marker)
                 {
                     $annotation->setClass($this->class);
                     $annotation->setProperty($property);
-                    $this->addPropertyMarker($annotation, $property->getName());
+                    $this->addPropertyMarker($annotation, $property->name);
                 }
             }
-            if(isset($this->propertyMarkers[$property->getName()]))
+            if(isset($this->propertyMarkers[$property->name]))
             {
-                $this->sortByPriority($this->propertyMarkers[$property->getName()]);
+                $this->sortByPriority($this->propertyMarkers[$property->name]);
             }
         }
     }
