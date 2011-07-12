@@ -39,7 +39,7 @@ interface ObjectManager
      * @param mixed
      * @return object
      */
-    public function find($className, $id);
+    function find($className, $id);
 
     /**
      * Tells the ObjectManager to make an instance managed and persistent.
@@ -51,7 +51,7 @@ interface ObjectManager
      *
      * @param object $object The instance to make managed and persistent.
      */
-    public function persist($object);
+    function persist($object);
 
     /**
      * Removes an object instance.
@@ -60,7 +60,7 @@ interface ObjectManager
      *
      * @param object $object The object instance to remove.
      */
-    public function remove($object);
+    function remove($object);
 
     /**
      * Merges the state of a detached object into the persistence context
@@ -69,7 +69,7 @@ interface ObjectManager
      *
      * @param object $object
      */
-    public function merge($object);
+    function merge($object);
 
     /**
      * Detaches an object from the ObjectManager, causing a managed object to
@@ -80,7 +80,7 @@ interface ObjectManager
      *
      * @param object $object The object to detach.
      */
-    public function detach($object);
+    function detach($object);
 
     /**
      * Refreshes the persistent state of an object from the database,
@@ -88,14 +88,14 @@ interface ObjectManager
      *
      * @param object $object The object to refresh.
      */
-    public function refresh($object);
+    function refresh($object);
 
     /**
      * Flushes all changes to objects that have been queued up to now to the database.
      * This effectively synchronizes the in-memory state of managed objects with the
      * database.
      */
-    public function flush();
+    function flush();
 
     /**
      * Gets the repository for a class.
@@ -103,7 +103,7 @@ interface ObjectManager
      * @param string $className
      * @return \Doctrine\Common\Persistence\ObjectRepository
      */
-    public function getRepository($className);
+    function getRepository($className);
 
     /**
      * Returns the ClassMetadata descriptor for a class.
@@ -114,12 +114,12 @@ interface ObjectManager
      * @param string $className
      * @return \Doctrine\Common\Persistence\Mapping\ClassMetadata
      */
-    public function getClassMetadata($className);
+    function getClassMetadata($className);
 
     /**
      * Gets the metadata factory used to gather the metadata of classes.
      *
      * @return Doctrine\Common\Persistence\Mapping\ClassMetadataFactory
      */
-    public function getMetadataFactory();
+    function getMetadataFactory();
 }
