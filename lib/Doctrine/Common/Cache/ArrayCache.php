@@ -44,7 +44,7 @@ class ArrayCache extends AbstractCache
     /**
      * {@inheritdoc}
      */
-    public function getIds()
+    protected function _getIds()
     {
         return array_keys($this->data);
     }

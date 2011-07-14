@@ -39,7 +39,7 @@ class XcacheCache extends AbstractCache
     /**
      * {@inheritdoc}
      */
-    public function getIds()
+    protected function _getIds()
     {
         $this->_checkAuth();
         $keys = array();
