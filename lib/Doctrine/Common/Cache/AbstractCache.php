@@ -128,7 +128,7 @@ abstract class AbstractCache implements Cache
     public function deleteByPrefix($prefix)
     {
         $prefix  = $this->_getNamespacedId($prefix);
-        $ids     = $this->getIds();
+        $ids     = $this->_getIds();
         $deleted = array();
 
         foreach ($ids as $id) {
@@ -149,7 +149,7 @@ abstract class AbstractCache implements Cache
      */
     public function deleteBySuffix($suffix)
     {
-        $ids     = $this->_getIds();
+        $ids     = $this->getIds();
         $deleted = array();
 
         foreach ($ids as $id) {
