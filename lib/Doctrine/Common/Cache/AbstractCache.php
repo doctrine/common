@@ -166,7 +166,7 @@ abstract class AbstractCache implements Cache
 	public function getIds(){
 		$ids = $this->_getIds();
 		foreach($ids as $index=>$id){
-			if (strpos($id, $this->_namespace) !== 0) {
+			if (!empty($this->_namespace) && strpos($id, $this->_namespace) !== 0) {
 				unset($ids[$index]);
 			}
 		}
