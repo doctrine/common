@@ -9,8 +9,7 @@ class AnnotationFactoryTest extends \PHPUnit_Framework_TestCase
 {
     
     /**
-     * @group proxy
-     * @group factory
+     * @group AnnotationFactory
      */
     public function testNewAnnotationWithoutConstructor()
     {
@@ -35,7 +34,7 @@ class AnnotationFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($annot->data, "Some data");
         
         
-        $class      = 'Doctrine\Tests\Common\Annotations\Fixtures\MarkedClassName';
+        $class      = __NAMESPACE__.'\MarkedClassName';
         $annot      = $factory->newAnnotation($class,array("foo"=>"Foo Val","name"=>"Some Name"));
         
         $this->assertNotNull($annot);
@@ -48,8 +47,7 @@ class AnnotationFactoryTest extends \PHPUnit_Framework_TestCase
     
      
     /**
-     * @group proxy
-     * @group factory
+     * @group AnnotationFactory
      */
     public function testNewAnnotationWithConstructor()
     {
@@ -75,7 +73,7 @@ class AnnotationFactoryTest extends \PHPUnit_Framework_TestCase
     
     
     /**
-     * @group factory
+     * @group AnnotationFactory
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The constructor of class Doctrine\Tests\Common\Annotations\SomeAnnotationClassNameWithConstructorNotArray must be public and type of first parameter should be an array.
      */
@@ -87,7 +85,7 @@ class AnnotationFactoryTest extends \PHPUnit_Framework_TestCase
     }
     
      /**
-     * @group factory
+     * @group AnnotationFactory
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The constructor of class Doctrine\Tests\Common\Annotations\SomeAnnotationClassNameWithConstructorPrivate must be public and type of first parameter should be an array.
      */
@@ -99,7 +97,7 @@ class AnnotationFactoryTest extends \PHPUnit_Framework_TestCase
     }
      
      /**
-     * @group factory
+     * @group AnnotationFactory
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Class InvalidClassName does not exist.
      */
@@ -113,6 +111,32 @@ class AnnotationFactoryTest extends \PHPUnit_Framework_TestCase
     
 }
 
+/**
+ * @AnnotationTargetClass("Some data")
+ */
+class MarkedClassName
+{
+
+    /**
+     * @MarkedAnnotation("Some data")
+     */
+    public $foo;
+    
+    
+    /**
+     * @MarkedAnnotation("Some data",name="Some name")
+     */
+    public $name;
+    
+    /**
+     * @MarkedAnnotation("Some data",name="Some name")
+     */
+    public function someFunction()
+    {
+        
+    }
+
+}
 
 class SomeAnnotationClassName
 {
