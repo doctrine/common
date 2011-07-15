@@ -20,8 +20,6 @@
 
 namespace Doctrine\Common\Annotations;
 
-use Doctrine\Common\Annotations\AnnotationMarkers;
-
 /**
  * Factory for annotations classes.
  *
@@ -30,38 +28,46 @@ use Doctrine\Common\Annotations\AnnotationMarkers;
 class AnnotationFactory
 {
     /**
-     * const
+     * Default DocParser Key
+     * 
      */
     const DEFAULT_KEY = 'value';
-
+    
     /**
-     * @var array 
+     * @var Hash-map of ReflectionClass
      */
     private $classes = array();
+    
     /**
-     * @var array 
+     * @var Hash-map for caching to avoid reparsing class properties.
      */
     private static $properties = array();
+    
     /**
-     * @var array 
+     * @var Hash-map for caching to avoid reparsing.
      */
     private static $hasProperty = array();
+    
     /**
-     * @var array 
+     * @var Hash-map for caching to avoid reparsing class constructor.
      */
     private static $hasConstructor = array();
+    
     /**
-     * @var array 
+     * @var Hash-map for caching to avoid reparsing class constructor declaration.
      */
     private static $isValid = array();
+    
     /**
-     * @var array 
+     * @varThis hashmap is used internally to cache results of class_exists().
      */
     private static $classExists = array();
 
     /**
-     * @param    string  $className
-     * @param    array   $data
+     * Creates a new instance of the class annotation and sets their values
+     * 
+     * @param    string  $className     The name of the class
+     * @param    array   $data          Key-value for properties to be defined in this class
      * @return   mixed 
      */
     public function newAnnotation($className, array $data = array())
@@ -86,16 +92,17 @@ class AnnotationFactory
         } else
         {
             $annotation = new $className();
+            $this->setData($className, $annotation, $data);
         }
-
-        $this->setData($className, $annotation, $data);
 
         return $annotation;
     }
 
     /**
-     * @param  string $className
-     * @return bool 
+     * Check if a class exists or not.
+     * 
+     * @param  string $className    The name of the class
+     * @return bool
      */
     private function classExists($className)
     {
@@ -107,6 +114,8 @@ class AnnotationFactory
     }
 
     /**
+     * Check if a class has a constructor.
+     * 
      * @param  string $className
      * @return bool 
      */
@@ -128,6 +137,8 @@ class AnnotationFactory
     }
 
     /**
+     * Check if a class has a valid constructor.
+     * 
      * @param  string $className
      * @return bool 
      */
@@ -162,6 +173,8 @@ class AnnotationFactory
     }
 
     /**
+     * Check if a class has the property.
+     * 
      * @param   string $className
      * @param   string $property
      * @return  bool
@@ -176,6 +189,8 @@ class AnnotationFactory
     }
 
     /**
+     * Returns a ReflectionClass from hash-map or creates if does not exist.
+     * 
      * @param   string $className
      * @return \ReflectionClass
      */
@@ -189,8 +204,10 @@ class AnnotationFactory
     }
 
     /**
+     * Returns an array with the names of class properties
+     * 
      * @param    string $className
-     * @return   bool 
+     * @return   array 
      */
     private function getProperties($className)
     {
@@ -207,6 +224,8 @@ class AnnotationFactory
     }
 
     /**
+     * Sets key-value for properties to be defined in this class
+     * 
      * @param string $className
      * @param mixed $object
      * @param array $data 
