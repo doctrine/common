@@ -33,10 +33,25 @@ namespace Doctrine\Common;
  */
 class ClassLoader
 {
-    private $fileExtension = '.php';
-    private $namespace;
-    private $includePath;
-    private $namespaceSeparator = '\\';
+    /**
+     * @var string PHP file extension
+     */
+    protected $fileExtension = '.php';
+    
+    /**
+     * @var string Current namespace
+     */
+    protected $namespace;
+    
+    /**
+     * @var string Current include path
+     */
+    protected $includePath;
+    
+    /**
+     * @var string PHP namespace separator
+     */
+    protected $namespaceSeparator = '\\';
 
     /**
      * Creates a new <tt>ClassLoader</tt> that loads classes of the
