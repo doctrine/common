@@ -128,7 +128,7 @@ abstract class AbstractCache implements Cache
     public function deleteByPrefix($prefix)
     {
         $prefix  = $this->_getNamespacedId($prefix);
-        $ids     = $this->getIds();
+        $ids     = $this->_getIds();
         $deleted = array();
 
         foreach ($ids as $id) {
@@ -161,6 +161,18 @@ abstract class AbstractCache implements Cache
 
         return $deleted;
     }
+	
+	
+	public function getIds(){
+		$ids = $this->_getIds();
+		foreach($ids as $index=>$id){
+			if (!empty($this->_namespace) && strpos($id, $this->_namespace) !== 0) {
+				unset($ids[$index]);
+			}
+		}
+		
+		return $ids;
+	}
 
     /**
      * Prefix the passed id with the configured namespace value
@@ -212,5 +224,5 @@ abstract class AbstractCache implements Cache
      *
      * @return array $ids
      */
-    abstract public function getIds();
+    abstract protected function _getIds();
 }

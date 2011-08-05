@@ -40,7 +40,7 @@ class ApcCache extends AbstractCache
     /**
      * {@inheritdoc}
      */
-    public function getIds()
+    protected function _getIds()
     {
         $ci = apc_cache_info('user');
         $keys = array();

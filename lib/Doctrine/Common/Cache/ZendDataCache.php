@@ -37,7 +37,7 @@ class ZendDataCache extends AbstractCache
     /**
      * {@inheritdoc}
      */
-    public function getIds()
+    protected function _getIds()
     {
         throw new \BadMethodCallException("getIds() is not supported by ZendDataCache");
     }

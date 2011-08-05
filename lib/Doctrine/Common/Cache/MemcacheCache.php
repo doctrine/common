@@ -66,7 +66,7 @@ class MemcacheCache extends AbstractCache
     /**
      * {@inheritdoc}
      */
-    public function getIds()
+    protected function _getIds()
     {
         $keys = array();
         $allSlabs = $this->_memcache->getExtendedStats('slabs');
