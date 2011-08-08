@@ -21,6 +21,7 @@ namespace Doctrine\Common\Annotations;
 
 use Closure;
 use ReflectionClass;
+use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
  * A parser for docblock annotations.
@@ -48,6 +49,20 @@ final class DocParser
      * @var Doctrine\Common\Annotations\DocLexer
      */
     private $lexer;
+    
+    /**
+     * The DocBlock Target
+     * 
+     * @var \Reflector
+     */
+    private $target;
+    
+    /**
+     * Doc Parser used to collect annotation target
+     *
+     * @var Doctrine\Common\Annotations\DocParser
+     */
+    private static $preParser;
 
     /**
      * Flag to control if the current annotation is nested or not.
@@ -119,6 +134,11 @@ final class DocParser
      * @var Hash-map for caching to avoid reparsing class constructor.
      */
     private static $hasConstructor = array();
+    
+     /**
+     * @var Hash-map for caching to avoid reparsing  annotation class target.
+     */
+    private static $checkTarget = array();
 
     /**
      * Constructs a new DocParser.
@@ -149,6 +169,16 @@ final class DocParser
     public function setIgnoreNotImportedAnnotations($bool)
     {
         $this->ignoreNotImportedAnnotations = (Boolean) $bool;
+    }
+    
+     /**
+     * Sets current target context that is being parsed.
+     * 
+     * @param string $target 
+     */
+    public function setTarget($target)
+    {
+        $this->target = $target;
     }
 
     /**
@@ -261,11 +291,56 @@ final class DocParser
         // final check, does this class exist?
         return $this->classExists[$fqcn] = AnnotationRegistry::loadAnnotationClass($fqcn);
     }
+    
+    /**
+     * Checks if the annotation can be used in the current target.
+     * 
+     * @param   string $name        The annotation name
+     * @throws  AnnotationException Throws an AnnotationException if the target is invalid
+     */
+    private function checkTarget($name)
+    {
+        if (false !== $pos = strpos($input = $this->getAnnotationClass($name)->getDocComment(), '@Target')) {
+            
+            $parser = self::$preParser ?: $this->getPreParser();
+            $parser->lexer->setInput(trim(substr($input, $pos), '* /'));
+            $parser->lexer->moveNext();
+            $parser->context = 'class @' . $name;
+            
+            if(null != ($target = $parser->Annotation())){
+                if (!in_array(Target::TARGET_ALL, $target->value) && !in_array($this->target, $target->value)) {
+                    throw AnnotationException::semanticalError(
+                        sprintf('Declaration of "@%s" is not compatible with annotation target [%s], %s.', 
+                            $name, implode(", ", $target->value), $this->context)
+                    );
+                }
+            }
+        }
+        self::$checkTarget[$this->context][$name] = true;
+    }
+    
+    /**
+     * Returns the DocParser used to collect annotation target
+     * 
+     * @return DocParser
+     */
+    private function getPreParser()
+    {
+        if(self::$preParser == null){
+            self::$preParser = new self();
+            self::$preParser->setIgnoreNotImportedAnnotations(true);
+            self::$preParser->setImports(array(
+                'target' => 'Doctrine\Common\Annotations\Annotation\Target'
+            ));
+            AnnotationRegistry::registerFile(__DIR__ . '/Annotation/Target.php');
+        }
+        return self::$preParser;
+    }
 
     /**
      * Returns a ReflectionClass from hash-map or creates if does not exist.
      * 
-     * @param   string $className
+     * @param  string $className    The annotation name
      * @return \ReflectionClass
      */
     private function getAnnotationClass($className)
@@ -280,7 +355,7 @@ final class DocParser
     /**
      * Returns an array with the names of class properties
      * 
-     * @param    string $className
+     * @param    string $className  The annotation name
      * @return   array 
      */
     private function getProperties($className)
@@ -408,6 +483,10 @@ final class DocParser
 
         // Next will be nested
         $this->isNestedAnnotation = true;
+        
+        if (!isset(self::$checkTarget[$this->context][$name]) && $this->target && $this->context){
+            $this->checkTarget($name);
+        }
 
         $values = array();
         if ($this->lexer->isNextToken(DocLexer::T_OPEN_PARENTHESIS)) {
@@ -420,7 +499,7 @@ final class DocParser
             $this->match(DocLexer::T_CLOSE_PARENTHESIS);
         }
 
-         if (!isset(self::$hasConstructor[$name])){
+        if (!isset(self::$hasConstructor[$name])){
             $constructor = $this->getAnnotationClass($name)->getConstructor();
             self::$hasConstructor[$name] = ($constructor != null) && ($constructor->getNumberOfParameters() > 0);
         }
