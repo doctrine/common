@@ -21,6 +21,7 @@ namespace Doctrine\Common\Annotations;
 
 use Closure;
 use ReflectionClass;
+use Doctrine\Common\Annotations\Annotation\Target;
 
 /**
  * A parser for docblock annotations.
@@ -32,6 +33,7 @@ use ReflectionClass;
  * @author Jonathan Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
+ * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
 final class DocParser
 {
@@ -48,6 +50,20 @@ final class DocParser
      * @var Doctrine\Common\Annotations\DocLexer
      */
     private $lexer;
+
+    /**
+     * Current target context
+     *
+     * @var string
+     */
+    private $target;
+
+    /**
+     * Doc Parser used to collect annotation target
+     *
+     * @var Doctrine\Common\Annotations\DocParser
+     */
+    private static $metadataParser;
 
     /**
      * Flag to control if the current annotation is nested or not.
@@ -102,30 +118,19 @@ final class DocParser
     private $context = '';
 
     /**
-     * Hash-map for caching annotation classes to avoid reparsing their doc-blocks
+     * Hash-map for caching annotation metadata
      * @var array
      */
-    private static $isAnnotation = array();
-
-    /**
-     * @var Hash-map of ReflectionClass
-     */
-    private static $annotations = array();
-
-    /**
-     * @var Hash-map for caching to avoid reparsing class properties.
-     */
-    private static $properties = array();
-
-    /**
-     * @var Hash-map for caching to avoid reparsing.
-     */
-    private static $hasProperty = array();
-
-    /**
-     * @var Hash-map for caching to avoid reparsing class constructor.
-     */
-    private static $hasConstructor = array();
+    private static $annotationMetadata = array(
+        'Doctrine\Common\Annotations\Annotation\Target' => array(
+            'default_property' => null,
+            'has_constructor'  => true,
+            'properties'       => array(),
+            'targets_literal'  => 'ANNOTATION_CLASS',
+            'targets'          => Target::TARGET_ALL,
+            'is_annotation'    => true,
+        ),
+    );
 
     /**
      * Constructs a new DocParser.
@@ -171,6 +176,16 @@ final class DocParser
             throw new \RuntimeException('You must either use addNamespace(), or setImports(), but not both.');
         }
         $this->imports = $imports;
+    }
+
+     /**
+     * Sets current target context as bitmask.
+     *
+     * @param integer $target
+     */
+    public function setTarget($target)
+    {
+        $this->target = $target;
     }
 
     /**
@@ -285,37 +300,56 @@ final class DocParser
     }
 
     /**
-     * Returns a ReflectionClass from hash-map or creates if does not exist.
+     * Collects parsing metadata for a given annotation class
      *
-     * @param   string $className
-     * @return \ReflectionClass
+     * @param   string $name        The annotation name
      */
-    private function getAnnotationClass($className)
+    private function collectAnnotationMetadata($name)
     {
-        if (!isset(self::$annotations[$className])) {
-            self::$annotations[$className] = new \ReflectionClass($className);
+        if(self::$metadataParser == null){
+            self::$metadataParser = new self();
+            self::$metadataParser->setIgnoreNotImportedAnnotations(true);
+            self::$metadataParser->setImports(array(
+                'target' => 'Doctrine\Common\Annotations\Annotation\Target'
+            ));
+            AnnotationRegistry::registerFile(__DIR__ . '/Annotation/Target.php');
         }
 
-        return self::$annotations[$className];
-    }
+        $class      = new \ReflectionClass($name);
+        $docComment = $class->getDocComment();
 
-    /**
-     * Returns an array with the names of class properties
-     *
-     * @param    string $className
-     * @return   array
-     */
-    private function getProperties($className)
-    {
-        if (!isset(self::$properties[$className])) {
-            self::$properties[$className] = array();
+        // Sets default values for annotation metadata
+        $metadata = array(
+            'default_property' => null,
+            'has_constructor'  => (null !== $constructor = $class->getConstructor()) && $constructor->getNumberOfParameters() > 0,
+            'properties'       => array(),
+            'targets_literal'  => null,
+            'targets'          => Target::TARGET_ALL,
+            'is_annotation'    => false !== strpos($docComment, '@Annotation'),
+        );
 
-            foreach ($this->getAnnotationClass($className)->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
-                self::$properties[$className][] = $property->name;
+        // verify that the class is really meant to be an annotation
+        if ($metadata['is_annotation']) {
+            foreach (self::$metadataParser->parse($docComment, 'class @' . $name) as $annotation) {
+                if ($annotation instanceof Target) {
+                    $metadata['targets']         = $annotation->targets;
+                    $metadata['targets_literal'] = $annotation->literal;
+                }
+            }
+
+            // if not has a constructor will inject values into public properties
+            if (false === $metadata['has_constructor']) {
+                //collect all public properties
+                foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
+                    $metadata['properties'][$property->name] = $property->name;
+                }
+
+                // choose the first property as default property
+                $metadata['default_property'] = reset($metadata['properties']);
             }
         }
 
-        return self::$properties[$className];
+        self::$annotationMetadata[$name] = $metadata;
     }
 
     /**
@@ -429,21 +463,34 @@ final class DocParser
         // annotation, and it is also guaranteed that this class exists, and
         // that it is loaded
 
-        // verify that the class is really meant to be an annotation and not just any ordinary class
-        if (!isset(self::$isAnnotation[$name])) {
 
-            if (false === strpos($this->getAnnotationClass($name)->getDocComment(), '@Annotation')) {
-                if (isset($this->ignoredAnnotationNames[$originalName])) {
-                    return false;
-                }
-
-                throw AnnotationException::semanticalError(sprintf('The class "%s" is not annotated with @Annotation. Are you sure this class can be used as annotation? If so, then you need to add @Annotation to the _class_ doc comment of "%s". If it is indeed no annotation, then you need to add @IgnoreAnnotation("%s") to the _class_ doc comment of %s.', $name, $name, $originalName, $this->context));
-            }
-            self::$isAnnotation[$name] = true;
+        // collects the metadata annotation only if there is not yet
+        if (!isset(self::$annotationMetadata[$name])) {
+            $this->collectAnnotationMetadata($name);
         }
+
+        // verify that the class is really meant to be an annotation and not just any ordinary class
+        if (!self::$annotationMetadata[$name]['is_annotation'] === true) {
+            if (isset($this->ignoredAnnotationNames[$originalName])) {
+                return false;
+            }
+
+            throw AnnotationException::semanticalError(sprintf('The class "%s" is not annotated with @Annotation. Are you sure this class can be used as annotation? If so, then you need to add @Annotation to the _class_ doc comment of "%s". If it is indeed no annotation, then you need to add @IgnoreAnnotation("%s") to the _class_ doc comment of %s.', $name, $name, $originalName, $this->context));
+        }
+
+        //if target is nested annotation
+        $target = $this->isNestedAnnotation ? Target::TARGET_ANNOTATION : $this->target;
 
         // Next will be nested
         $this->isNestedAnnotation = true;
+
+        //if anotation does not support current target
+        if (0 === (self::$annotationMetadata[$name]['targets'] & $target) && $target) {
+            throw AnnotationException::semanticalError(
+                sprintf('Annotation @%s is not allowed to be declared on %s. You may only use this annotation on these code elements: %s.',
+                     $originalName, $this->context, self::$annotationMetadata[$name]['targets_literal'])
+            );
+        }
 
         $values = array();
         if ($this->lexer->isNextToken(DocLexer::T_OPEN_PARENTHESIS)) {
@@ -456,36 +503,23 @@ final class DocParser
             $this->match(DocLexer::T_CLOSE_PARENTHESIS);
         }
 
-        if (!isset(self::$hasConstructor[$name])) {
-            $constructor = $this->getAnnotationClass($name)->getConstructor();
-            self::$hasConstructor[$name] = null !== $constructor && $constructor->getNumberOfParameters() > 0;
-        }
-
         // check if the annotation expects values via the constructor,
         // or directly injected into public properties
-        if (self::$hasConstructor[$name]) {
+        if (self::$annotationMetadata[$name]['has_constructor'] === true) {
             return new $name($values);
         }
 
         $instance = new $name();
         foreach ($values as $property => $value) {
-            if (!isset(self::$hasProperty[$name][$property])) {
-                $refClass = $this->getAnnotationClass($name);
-                self::$hasProperty[$name][$property] = $refClass->hasProperty($property) && $refClass->getProperty($property)->isPublic();
-            }
-
-            if (!self::$hasProperty[$name][$property]) {
+            if (!isset(self::$annotationMetadata[$name]['properties'][$property])) {
                 if ('value' !== $property) {
-                    throw AnnotationException::creationError(sprintf('The annotation @%s declared on %s does not have a property named "%s". Available properties: %s', $originalName, $this->context, $property, implode(', ', $this->getProperties($name))));
+                    throw AnnotationException::creationError(sprintf('The annotation @%s declared on %s does not have a property named "%s". Available properties: %s', $originalName, $this->context, $property, implode(', ', self::$annotationMetadata[$name]['properties'])));
                 }
 
                 // handle the case if the property has no annotations
-                if (!$properties = $this->getProperties($name)) {
+                if (!$property = self::$annotationMetadata[$name]['default_property']) {
                     throw AnnotationException::creationError(sprintf('The annotation @%s declared on %s does not accept any values, but got %s.', $originalName, $this->context, json_encode($values)));
                 }
-
-                // choose the first property as default property
-                $property   = reset($properties);
             }
 
             $instance->{$property} = $value;

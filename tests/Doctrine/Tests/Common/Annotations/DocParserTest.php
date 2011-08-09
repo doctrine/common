@@ -6,6 +6,7 @@ use Doctrine\Common\Annotations\Annotation\IgnorePhpDoc;
 use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
 use Doctrine\Common\Annotations\DocParser;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Doctrine\Common\Annotations\Annotation\Target;
 
 class DocParserTest extends \PHPUnit_Framework_TestCase
 {
@@ -253,7 +254,7 @@ DOCBLOCK;
         $this->assertEquals($annot->data, "Some data");
 
 
-                $docblock = <<<DOCBLOCK
+        $docblock = <<<DOCBLOCK
 /**
  * @SomeAnnotationWithConstructorWithoutParams(name = "Some name")
  */
@@ -265,9 +266,188 @@ DOCBLOCK;
 
         $this->assertEquals($annot->name, "Some name");
         $this->assertEquals($annot->data, "Some data");
+        
+        $docblock = <<<DOCBLOCK
+/**
+ * @SomeAnnotationClassNameWithoutConstructorAndProperties()
+ */
+DOCBLOCK;
 
+        $result     = $parser->parse($docblock);
+        $this->assertEquals(count($result), 1);
+        $this->assertTrue($result[0] instanceof SomeAnnotationClassNameWithoutConstructorAndProperties);
     }
+    
+    public function testAnnotationTarget()
+    {
+        
+        $parser = new DocParser;
+        $parser->setImports(array(
+            '__NAMESPACE__' => 'Doctrine\Tests\Common\Annotations\Fixtures',
+        ));
+        $class  = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\ClassWithValidAnnotationTarget');
+        
 
+        $context    = 'class ' . $class->getName();
+        $docComment = $class->getDocComment();
+        
+        $parser->setTarget(Target::TARGET_CLASS);
+        $this->assertNotNull($parser->parse($docComment,$context));
+        
+        
+        $property   = $class->getProperty('foo');
+        $docComment = $property->getDocComment();
+        $context    = 'property ' . $class->getName() . "::\$" . $property->getName();
+        
+        $parser->setTarget(Target::TARGET_PROPERTY);
+        $this->assertNotNull($parser->parse($docComment,$context));
+        
+        
+        
+        $method     = $class->getMethod('someFunction');
+        $docComment = $property->getDocComment();
+        $context    = 'method ' . $class->getName() . '::' . $method->getName() . '()';
+        
+        $parser->setTarget(Target::TARGET_METHOD);
+        $this->assertNotNull($parser->parse($docComment,$context));
+        
+        
+        try {
+            $class      = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\ClassWithInvalidAnnotationTargetAtClass');
+            $context    = 'class ' . $class->getName();
+            $docComment = $class->getDocComment();
+
+            $parser->setTarget(Target::TARGET_CLASS);
+            $parser->parse($class->getDocComment(),$context);
+            
+            $this->fail();
+        } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
+            $this->assertNotNull($exc->getMessage());
+        }
+        
+        
+        try {
+            
+            $class      = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\ClassWithInvalidAnnotationTargetAtMethod');
+            $method     = $class->getMethod('functionName');
+            $docComment = $method->getDocComment();
+            $context    = 'method ' . $class->getName() . '::' . $method->getName() . '()';
+        
+            $parser->setTarget(Target::TARGET_METHOD);
+            $parser->parse($docComment,$context);
+            
+            $this->fail();
+        } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
+            $this->assertNotNull($exc->getMessage());
+        }
+        
+        
+        try {
+            $class      = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\ClassWithInvalidAnnotationTargetAtProperty');
+            $property   = $class->getProperty('foo');
+            $docComment = $property->getDocComment();
+            $context    = 'property ' . $class->getName() . "::\$" . $property->getName();
+
+            $parser->setTarget(Target::TARGET_PROPERTY);
+            $parser->parse($docComment,$context);
+
+            $this->fail();
+        } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
+            $this->assertNotNull($exc->getMessage());
+        }
+        
+    }
+    
+    
+    /**
+     * @expectedException Doctrine\Common\Annotations\AnnotationException
+     * @expectedExceptionMessage The annotation @SomeAnnotationClassNameWithoutConstructorAndProperties declared on  does not accept any values, but got {"value":"Foo"}.
+     */
+    public function testWithoutConstructorWhenIsNotDefaultValue()
+    {
+        $parser     = $this->createTestParser();
+        $docblock   = <<<DOCBLOCK
+/**
+ * @SomeAnnotationClassNameWithoutConstructorAndProperties("Foo")
+ */
+DOCBLOCK;
+
+        
+        $parser->setTarget(Target::TARGET_CLASS);    
+        $parser->parse($docblock);
+    }
+    
+    /**
+     * @expectedException Doctrine\Common\Annotations\AnnotationException
+     * @expectedExceptionMessage The annotation @SomeAnnotationClassNameWithoutConstructorAndProperties declared on  does not accept any values, but got {"value":"Foo"}.
+     */
+    public function testWithoutConstructorWhenHasNoProperties()
+    {
+        $parser     = $this->createTestParser();
+        $docblock   = <<<DOCBLOCK
+/**
+ * @SomeAnnotationClassNameWithoutConstructorAndProperties(value = "Foo")
+ */
+DOCBLOCK;
+
+        $parser->setTarget(Target::TARGET_CLASS);    
+        $parser->parse($docblock);
+    }
+    
+    /**
+     * @expectedException Doctrine\Common\Annotations\AnnotationException
+     * @expectedExceptionMessage Expected namespace separator or identifier, got ')' at position 24 in class @Doctrine\Tests\Common\Annotations\Fixtures\AnnotationWithTargetSyntaxError.
+     */
+    public function testAnnotationTargetSyntaxError()
+    {
+        $parser     = $this->createTestParser();
+        $context    = 'class ' . 'SomeClassName';
+        $docblock   = <<<DOCBLOCK
+/**
+ * @Doctrine\Tests\Common\Annotations\Fixtures\AnnotationWithTargetSyntaxError()
+ */
+DOCBLOCK;
+        
+        $parser->setTarget(Target::TARGET_CLASS);    
+        $parser->parse($docblock,$context);
+    }
+    
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Invalid Target "Foo". Available targets: [ALL, CLASS, METHOD, PROPERTY, ANNOTATION]
+     */
+    public function testAnnotationWithInvalidTargetDeclarationError()
+    {
+        $parser     = $this->createTestParser();
+        $context    = 'class ' . 'SomeClassName';
+        $docblock   = <<<DOCBLOCK
+/**
+ * @AnnotationWithInvalidTargetDeclaration()
+ */
+DOCBLOCK;
+        
+        $parser->setTarget(Target::TARGET_CLASS);    
+        $parser->parse($docblock,$context);
+    }
+        
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage @Target expects either a string value, or an array of strings, "NULL" given.
+     */
+    public function testAnnotationWithTargetEmptyError()
+    {
+        $parser     = $this->createTestParser();
+        $context    = 'class ' . 'SomeClassName';
+        $docblock   = <<<DOCBLOCK
+/**
+ * @AnnotationWithTargetEmpty()
+ */
+DOCBLOCK;
+        
+        $parser->setTarget(Target::TARGET_CLASS);    
+        $parser->parse($docblock,$context);
+    }
+    
     /**
      * @group DDC-575
      */
@@ -561,6 +741,20 @@ class SomeAnnotationWithConstructorWithoutParams
     public $name;
 }
 
+/** @Annotation */
+class SomeAnnotationClassNameWithoutConstructorAndProperties{}
+
+/** 
+ * @Annotation 
+ * @Target("Foo")
+ */
+class AnnotationWithInvalidTargetDeclaration{}
+
+/** 
+ * @Annotation 
+ * @Target
+ */
+class AnnotationWithTargetEmpty{}
 
 /** @Annotation */
 class Name extends \Doctrine\Common\Annotations\Annotation {
