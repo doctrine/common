@@ -28,7 +28,7 @@ use \Memcached;
  *
  * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link    www.doctrine-project.org
- * @since   2.1
+ * @since   2.2
  * @version $Id$
  * @author  Christian Soronellas <christian@sistemes-cayman.es>
  */
