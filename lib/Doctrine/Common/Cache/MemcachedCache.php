@@ -90,9 +90,14 @@ class MemcachedCache extends AbstractCache
         
         if (true === $result) {
             if ($this->_doContains('__keys')) {
-                $this->_memcached->append('__keys', "#{$id}");
+                $keys = (array) $this->_memcached->get('__keys');
             } else {
-                $this->_memcached->set('__keys', $id);
+                $keys = array();
+            }
+            
+            if (!in_array($id, $keys)) {
+                $keys[] = $id;
+                $this->_memcached->set('__keys', $keys);
             }
             
             return true;
@@ -113,7 +118,10 @@ class MemcachedCache extends AbstractCache
         $result = $this->_memcached->delete($id);
         
         if (true === $result) {
-            $this->_memcached->set('__keys', str_replace("#{$id}", '', $this->_memcached->get('__keys')));
+            $keys = (array) $this->_memcached->get('__keys');
+            unset($keys[array_search($id, $keys)]);
+            $this->_memcached->set('__keys', $keys);
+            
             return true;
         }
         
@@ -125,22 +133,6 @@ class MemcachedCache extends AbstractCache
      */
     public function getIds()
     {
-        $keys = $this->_memcached->get('__keys');
-        
-        if (strlen($keys) > 0) {
-            return array_filter(
-                array_map(
-                    function($element) {
-                        return trim($element);
-                    },
-                    explode('#', $keys)
-                ),
-                function($element) {
-                    return strlen($element) > 0;
-                }
-            );
-        }
-        
-        return array();
+        return (array) $this->_memcached->get('__keys');
     }
 }
