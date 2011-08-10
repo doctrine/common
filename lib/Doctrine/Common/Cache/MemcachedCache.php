@@ -30,7 +30,7 @@ use \Memcached;
  * @link    www.doctrine-project.org
  * @since   2.1
  * @version $Id$
- * @author Christian Soronellas <christian@sistemes-cayman.es>
+ * @author  Christian Soronellas <christian@sistemes-cayman.es>
  */
 class MemcachedCache extends AbstractCache
 {
@@ -74,7 +74,7 @@ class MemcachedCache extends AbstractCache
      */
     protected function _doContains($id)
     {
-        return (false !== $this->_memcached->get($id));
+        return (bool) $this->_memcached->get($id);
     }
     
     /**
@@ -82,17 +82,17 @@ class MemcachedCache extends AbstractCache
      */
     protected function _doSave($id, $data, $lifeTime = false)
     {
-        if ('_keys' == $id) {
+        if ('__keys' == $id) {
             return false;
         }
         
         $result = $this->_memcached->set($id, $data, (int) $lifeTime);
         
         if (true === $result) {
-            if ($this->_doContains('_keys')) {
-                $this->_memcached->append('_keys', "#{$id}");
+            if ($this->_doContains('__keys')) {
+                $this->_memcached->append('__keys', "#{$id}");
             } else {
-                $this->_memcached->set('_keys', $id);
+                $this->_memcached->set('__keys', $id);
             }
             
             return true;
@@ -106,14 +106,14 @@ class MemcachedCache extends AbstractCache
      */
     protected function _doDelete($id)
     {
-        if ('_keys' == $id) {
+        if ('__keys' == $id) {
             return false;
         }
         
         $result = $this->_memcached->delete($id);
         
         if (true === $result) {
-            $this->_memcached->set('_keys', str_replace("#{$id}", '', $this->_memcached->get('_keys')));
+            $this->_memcached->set('__keys', str_replace("#{$id}", '', $this->_memcached->get('__keys')));
             return true;
         }
         
@@ -125,12 +125,20 @@ class MemcachedCache extends AbstractCache
      */
     public function getIds()
     {
-        $keys = $this->_memcached->get('_keys');
+        $keys = $this->_memcached->get('__keys');
         
         if (strlen($keys) > 0) {
-            return array_walk(explode('#', $keys), function(&$element, $index) {
-                $element = trim($element);
-            });
+            return array_filter(
+                array_map(
+                    function($element) {
+                        return trim($element);
+                    },
+                    explode('#', $keys)
+                ),
+                function($element) {
+                    return strlen($element) > 0;
+                }
+            );
         }
         
         return array();
