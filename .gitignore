@@ -3,3 +3,11 @@ build/
 logs/
 reports/
 dist/
+/nbproject/private/
+nbproject/project.xml
+
+nbproject/project.properties
+
+.gitignore
+
+.gitignore
