@@ -266,7 +266,7 @@ DOCBLOCK;
 
         $this->assertEquals($annot->name, "Some name");
         $this->assertEquals($annot->data, "Some data");
-        
+
         $docblock = <<<DOCBLOCK
 /**
  * @SomeAnnotationClassNameWithoutConstructorAndProperties()
@@ -277,41 +277,41 @@ DOCBLOCK;
         $this->assertEquals(count($result), 1);
         $this->assertTrue($result[0] instanceof SomeAnnotationClassNameWithoutConstructorAndProperties);
     }
-    
+
     public function testAnnotationTarget()
     {
-        
+
         $parser = new DocParser;
         $parser->setImports(array(
             '__NAMESPACE__' => 'Doctrine\Tests\Common\Annotations\Fixtures',
         ));
         $class  = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\ClassWithValidAnnotationTarget');
-        
+
 
         $context    = 'class ' . $class->getName();
         $docComment = $class->getDocComment();
-        
+
         $parser->setTarget(Target::TARGET_CLASS);
         $this->assertNotNull($parser->parse($docComment,$context));
-        
-        
+
+
         $property   = $class->getProperty('foo');
         $docComment = $property->getDocComment();
         $context    = 'property ' . $class->getName() . "::\$" . $property->getName();
-        
+
         $parser->setTarget(Target::TARGET_PROPERTY);
         $this->assertNotNull($parser->parse($docComment,$context));
-        
-        
-        
+
+
+
         $method     = $class->getMethod('someFunction');
         $docComment = $property->getDocComment();
         $context    = 'method ' . $class->getName() . '::' . $method->getName() . '()';
-        
+
         $parser->setTarget(Target::TARGET_METHOD);
         $this->assertNotNull($parser->parse($docComment,$context));
-        
-        
+
+
         try {
             $class      = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\ClassWithInvalidAnnotationTargetAtClass');
             $context    = 'class ' . $class->getName();
@@ -319,29 +319,29 @@ DOCBLOCK;
 
             $parser->setTarget(Target::TARGET_CLASS);
             $parser->parse($class->getDocComment(),$context);
-            
+
             $this->fail();
         } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
             $this->assertNotNull($exc->getMessage());
         }
-        
-        
+
+
         try {
-            
+
             $class      = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\ClassWithInvalidAnnotationTargetAtMethod');
             $method     = $class->getMethod('functionName');
             $docComment = $method->getDocComment();
             $context    = 'method ' . $class->getName() . '::' . $method->getName() . '()';
-        
+
             $parser->setTarget(Target::TARGET_METHOD);
             $parser->parse($docComment,$context);
-            
+
             $this->fail();
         } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
             $this->assertNotNull($exc->getMessage());
         }
-        
-        
+
+
         try {
             $class      = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\ClassWithInvalidAnnotationTargetAtProperty');
             $property   = $class->getProperty('foo');
@@ -355,10 +355,190 @@ DOCBLOCK;
         } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
             $this->assertNotNull($exc->getMessage());
         }
-        
+
     }
-    
-    
+
+    public function getAnnotationVarTypeProviderValid()
+    {
+        //({attribute name}, {attribute value})
+         return array(
+            // mixed type
+            array('mixed', '"String Value"'),
+            array('mixed', 'true'),
+            array('mixed', 'false'),
+            array('mixed', '1'),
+            array('mixed', '1.2'),
+            array('mixed', '@Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll'),
+
+            // boolean type
+            array('boolean', 'true'),
+            array('boolean', 'false'),
+
+            // alias for internal type boolean
+            array('bool', 'true'),
+            array('bool', 'false'),
+
+            // integer type
+            array('integer', '0'),
+            array('integer', '1'),
+            array('integer', '123456789'),
+            array('integer', '9223372036854775807'),
+
+            // alias for internal type double
+            array('float', '0.1'),
+            array('float', '1.2'),
+            array('float', '123.456'),
+
+            // string type
+            array('string', '"String Value"'),
+            array('string', '"true"'),
+            array('string', '"123"'),
+
+              // array type
+            array('array', '{@AnnotationExtendsAnnotationTargetAll}'),
+            array('array', '{@AnnotationExtendsAnnotationTargetAll,@AnnotationExtendsAnnotationTargetAll}'),
+
+            array('arrayOfIntegers', '1'),
+            array('arrayOfIntegers', '{1}'),
+            array('arrayOfIntegers', '{1,2,3,4}'),
+            array('arrayOfAnnotations', '@AnnotationExtendsAnnotationTargetAll'),
+            array('arrayOfAnnotations', '{@Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll}'),
+            array('arrayOfAnnotations', '{@AnnotationExtendsAnnotationTargetAll, @Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll}'),
+
+            // annotation instance
+            array('annotation', '@Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll'),
+            array('annotation', '@AnnotationExtendsAnnotationTargetAll'),
+        );
+    }
+
+    public function getAnnotationVarTypeProviderInvalid()
+    {
+         //({attribute name}, {type declared type}, {attribute value} , {given type or class})
+         return array(
+            // boolean type
+            array('boolean','boolean','1','integer'),
+            array('boolean','boolean','1.2','double'),
+            array('boolean','boolean','"str"','string'),
+            array('boolean','boolean','{1,2,3}','array'),
+            array('boolean','boolean','@Name', 'an instance of Doctrine\Tests\Common\Annotations\Name'),
+
+            // alias for internal type boolean
+            array('bool','bool', '1','integer'),
+            array('bool','bool', '1.2','double'),
+            array('bool','bool', '"str"','string'),
+            array('bool','bool', '{"str"}','array'),
+
+            // integer type
+            array('integer','integer', 'true','boolean'),
+            array('integer','integer', 'false','boolean'),
+            array('integer','integer', '1.2','double'),
+            array('integer','integer', '"str"','string'),
+            array('integer','integer', '{"str"}','array'),
+            array('integer','integer', '{1,2,3,4}','array'),
+
+            // alias for internal type double
+            array('float','float', 'true','boolean'),
+            array('float','float', 'false','boolean'),
+            array('float','float', '123','integer'),
+            array('float','float', '"str"','string'),
+            array('float','float', '{"str"}','array'),
+            array('float','float', '{12.34}','array'),
+            array('float','float', '{1,2,3}','array'),
+
+            // string type
+            array('string','string', 'true','boolean'),
+            array('string','string', 'false','boolean'),
+            array('string','string', '12','integer'),
+            array('string','string', '1.2','double'),
+            array('string','string', '{"str"}','array'),
+            array('string','string', '{1,2,3,4}','array'),
+
+             // annotation instance
+            array('annotation','Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll', 'true','boolean'),
+            array('annotation','Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll', 'false','boolean'),
+            array('annotation','Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll', '12','integer'),
+            array('annotation','Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll', '1.2','double'),
+            array('annotation','Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll', '{"str"}','array'),
+            array('annotation','Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll', '{1,2,3,4}','array'),
+            array('annotation','Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll', '@Name','an instance of Doctrine\Tests\Common\Annotations\Name'),
+        );
+    }
+
+    public function getAnnotationVarTypeArrayProviderInvalid()
+    {
+         //({attribute name}, {type declared type}, {attribute value} , {given type or class})
+         return array(
+            array('arrayOfIntegers','integer', 'true','boolean'),
+            array('arrayOfIntegers','integer', 'false','boolean'),
+            array('arrayOfIntegers','integer', '{true,true}','boolean'),
+            array('arrayOfIntegers','integer', '{1,true}','boolean'),
+            array('arrayOfIntegers','integer', '{1,2,1.2}','double'),
+            array('arrayOfIntegers','integer', '{1,2,"str"}','string'),
+
+
+            array('arrayOfAnnotations','Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll', 'true','boolean'),
+            array('arrayOfAnnotations','Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll', 'false','boolean'),
+            array('arrayOfAnnotations','Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll', '{@Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll,true}','boolean'),
+            array('arrayOfAnnotations','Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll', '{@Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll,true}','boolean'),
+            array('arrayOfAnnotations','Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll', '{@Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll,1.2}','double'),
+            array('arrayOfAnnotations','Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll', '{@Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll,@AnnotationExtendsAnnotationTargetAll,"str"}','string'),
+        );
+    }
+
+    /**
+     * @dataProvider getAnnotationVarTypeProviderValid
+     */
+    public function testAnnotationWithVarType($attribute, $value)
+    {
+        $parser     = $this->createTestParser();
+        $context    = 'property SomeClassName::$invalidProperty.';
+        $docblock   = sprintf('@Doctrine\Tests\Common\Annotations\Fixtures\AnnotationWithVarType(%s = %s)',$attribute, $value);
+        $parser->setTarget(Target::TARGET_PROPERTY);
+
+        $result = $parser->parse($docblock, $context);
+
+        $this->assertTrue(sizeof($result) === 1);
+        $this->assertInstanceOf('Doctrine\Tests\Common\Annotations\Fixtures\AnnotationWithVarType', $result[0]);
+        $this->assertNotNull($result[0]->$attribute);
+    }
+
+    /**
+     * @dataProvider getAnnotationVarTypeProviderInvalid
+     */
+    public function testAnnotationWithVarTypeError($attribute,$type,$value,$given)
+    {
+        $parser     = $this->createTestParser();
+        $context    = 'property SomeClassName::invalidProperty.';
+        $docblock   = sprintf('@Doctrine\Tests\Common\Annotations\Fixtures\AnnotationWithVarType(%s = %s)',$attribute, $value);
+        $parser->setTarget(Target::TARGET_PROPERTY);
+
+        try {
+            $parser->parse($docblock, $context);
+            $this->fail();
+        } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
+            $this->assertContains("[Type Error] Attribute \"$attribute\" of @Doctrine\Tests\Common\Annotations\Fixtures\AnnotationWithVarType declared on property SomeClassName::invalidProperty. expects a(n) $type, but got $given.", $exc->getMessage());
+        }
+    }
+
+
+    /**
+     * @dataProvider getAnnotationVarTypeArrayProviderInvalid
+     */
+    public function testAnnotationWithVarTypeArrayError($attribute,$type,$value,$given)
+    {
+        $parser     = $this->createTestParser();
+        $context    = 'property SomeClassName::invalidProperty.';
+        $docblock   = sprintf('@Doctrine\Tests\Common\Annotations\Fixtures\AnnotationWithVarType(%s = %s)',$attribute, $value);
+        $parser->setTarget(Target::TARGET_PROPERTY);
+
+        try {
+            $parser->parse($docblock, $context);
+            $this->fail();
+        } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
+            $this->assertContains("[Type Error] Attribute \"$attribute\" of @Doctrine\Tests\Common\Annotations\Fixtures\AnnotationWithVarType declared on property SomeClassName::invalidProperty. expects either a(n) $type, or an array of {$type}s, but got $given.", $exc->getMessage());
+        }
+    }
+
     /**
      * @expectedException Doctrine\Common\Annotations\AnnotationException
      * @expectedExceptionMessage The annotation @SomeAnnotationClassNameWithoutConstructorAndProperties declared on  does not accept any values, but got {"value":"Foo"}.
@@ -372,11 +552,11 @@ DOCBLOCK;
  */
 DOCBLOCK;
 
-        
-        $parser->setTarget(Target::TARGET_CLASS);    
+
+        $parser->setTarget(Target::TARGET_CLASS);
         $parser->parse($docblock);
     }
-    
+
     /**
      * @expectedException Doctrine\Common\Annotations\AnnotationException
      * @expectedExceptionMessage The annotation @SomeAnnotationClassNameWithoutConstructorAndProperties declared on  does not accept any values, but got {"value":"Foo"}.
@@ -390,10 +570,10 @@ DOCBLOCK;
  */
 DOCBLOCK;
 
-        $parser->setTarget(Target::TARGET_CLASS);    
+        $parser->setTarget(Target::TARGET_CLASS);
         $parser->parse($docblock);
     }
-    
+
     /**
      * @expectedException Doctrine\Common\Annotations\AnnotationException
      * @expectedExceptionMessage Expected namespace separator or identifier, got ')' at position 24 in class @Doctrine\Tests\Common\Annotations\Fixtures\AnnotationWithTargetSyntaxError.
@@ -407,11 +587,11 @@ DOCBLOCK;
  * @Doctrine\Tests\Common\Annotations\Fixtures\AnnotationWithTargetSyntaxError()
  */
 DOCBLOCK;
-        
-        $parser->setTarget(Target::TARGET_CLASS);    
+
+        $parser->setTarget(Target::TARGET_CLASS);
         $parser->parse($docblock,$context);
     }
-    
+
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Invalid Target "Foo". Available targets: [ALL, CLASS, METHOD, PROPERTY, ANNOTATION]
@@ -425,11 +605,11 @@ DOCBLOCK;
  * @AnnotationWithInvalidTargetDeclaration()
  */
 DOCBLOCK;
-        
-        $parser->setTarget(Target::TARGET_CLASS);    
+
+        $parser->setTarget(Target::TARGET_CLASS);
         $parser->parse($docblock,$context);
     }
-        
+
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage @Target expects either a string value, or an array of strings, "NULL" given.
@@ -443,11 +623,11 @@ DOCBLOCK;
  * @AnnotationWithTargetEmpty()
  */
 DOCBLOCK;
-        
-        $parser->setTarget(Target::TARGET_CLASS);    
+
+        $parser->setTarget(Target::TARGET_CLASS);
         $parser->parse($docblock,$context);
     }
-    
+
     /**
      * @group DDC-575
      */
@@ -744,17 +924,22 @@ class SomeAnnotationWithConstructorWithoutParams
 /** @Annotation */
 class SomeAnnotationClassNameWithoutConstructorAndProperties{}
 
-/** 
- * @Annotation 
+/**
+ * @Annotation
  * @Target("Foo")
  */
 class AnnotationWithInvalidTargetDeclaration{}
 
-/** 
- * @Annotation 
+/**
+ * @Annotation
  * @Target
  */
 class AnnotationWithTargetEmpty{}
+
+/** @Annotation */
+class AnnotationExtendsAnnotationTargetAll extends \Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetAll
+{
+}
 
 /** @Annotation */
 class Name extends \Doctrine\Common\Annotations\Annotation {
