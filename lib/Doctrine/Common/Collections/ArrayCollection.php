@@ -152,6 +152,20 @@ class ArrayCollection implements Collection
         return implode($delim, $this->_elements);
     }
 
+    public function walk(Closure $closure)
+    {
+        $refl = new \ReflectionFunction($closure);
+        if (2 === $refl->getNumberOfParameters()) {
+            $actualClosure = function ($value, $key) use ($closure) {
+                return $closure($key, $value);
+            };
+        } else {
+            $actualClosure = $closure;
+        }
+
+        return array_walk($this->toArray(), $actualClosure);
+    }
+
     /**
      * ArrayAccess implementation of offsetExists()
      *
