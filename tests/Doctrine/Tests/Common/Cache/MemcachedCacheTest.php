@@ -15,10 +15,10 @@ class MemcachedCacheTest extends CacheTest
             $this->_memcached->setOption(\Memcached::OPT_COMPRESSION, false);
             $ok = $this->_memcached->addServer('localhost', 11211);
             if (!$ok) {
-                $this->markTestSkipped('The ' . __CLASS__ .' requires the use of memcache');
+                $this->markTestSkipped('The ' . __CLASS__ .' requires the use of memcached');
             }
         } else {
-            $this->markTestSkipped('The ' . __CLASS__ .' requires the use of memcache');
+            $this->markTestSkipped('The ' . __CLASS__ .' requires the use of memcached');
         }
     }
 
