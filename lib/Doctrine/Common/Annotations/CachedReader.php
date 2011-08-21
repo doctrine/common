@@ -170,10 +170,14 @@ final class CachedReader implements Reader
 
     private function isCacheFresh($cacheKey, \ReflectionClass $class)
     {
-        if (false === $filename = $class->getFilename()) {
-            return true;
-        }
+        $time = $this->cache->fetch('[C]'.$cacheKey);
+        do {
+            if ($filename = $class->getFilename() && $time < @filemtime($filename)) { // stat may fail
+                return false;
+            }
 
-        return $this->cache->fetch('[C]'.$cacheKey) >= filemtime($filename);
+        } while ($class = $class->getParentClass());
+
+        return true;
     }
 }
