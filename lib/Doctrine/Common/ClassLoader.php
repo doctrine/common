@@ -266,6 +266,9 @@ class ClassLoader
      */
     public static function fileExistsInIncludePath($file)
     {
+        if (function_exists('stream_resolve_include_path')) {
+            return stream_resolve_include_path($file);
+        }
         foreach (explode(PATH_SEPARATOR, get_include_path()) as $dir) {
             if (file_exists($dir . DIRECTORY_SEPARATOR . $file)) {
                 return true;
