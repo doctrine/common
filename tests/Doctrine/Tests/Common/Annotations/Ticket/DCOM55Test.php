@@ -3,6 +3,7 @@
 namespace Doctrine\Tests\Common\Annotations\Ticket;
 
 use Doctrine\Tests\Common\Annotations\Fixtures\Controller;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 
 /**
  * @group
@@ -11,6 +12,8 @@ class DCOM55Test extends \PHPUnit_Framework_TestCase
 {
     public function testIssue()
     {
+        AnnotationRegistry::registerAutoloadNamespace('Doctrine\Tests\Common\Annotations\Fixtures', __DIR__ . '/../../../../../');
+
         $class = new \ReflectionClass(__NAMESPACE__ . '\\Dummy');
         $reader = new \Doctrine\Common\Annotations\AnnotationReader();
         $annots = $reader->getClassAnnotations($class);
