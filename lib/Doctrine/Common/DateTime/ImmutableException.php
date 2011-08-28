@@ -1,5 +1,4 @@
 <?php
-
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -18,63 +17,25 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Common\Cache;
+namespace Doctrine\Common\DateTime;
 
 /**
- * APC cache provider.
- *
+ * Thrown if a method is called on the Doctrine DateTime that semantically would change the
+ * inner state of the instance, hence immutability has to be enforced.
+ * 
  * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link    www.doctrine-project.org
- * @since   2.0
+ * @since   3.0
  * @author  Benjamin Eberlei <kontakt@beberlei.de>
- * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author  Jonathan Wage <jonwage@gmail.com>
- * @author  Roman Borschel <roman@code-factory.org>
- * @author  David Abdemoulaie <dave@hobodave.com>
  */
-class APCCache extends CacheProvider
+class ImmutableException extends \Exception
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function doFetch($id)
+    public function __construct()
     {
-        return apc_fetch($id);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doContains($id)
-    {
-        $found = false;
-
-        apc_fetch($id, $found);
-
-        return $found;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doSave($id, $data, $lifeTime = 0)
-    {
-        return (bool) apc_store($id, $data, (int) $lifeTime);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doDelete($id)
-    {
-        return apc_delete($id);
-    }
-    
-    /**
-     * {@inheritdoc}
-     */
-    protected function doFlush()
-    {
-        return apc_clear_cache();
+        parent::__construct(
+            "Cannot modify Doctrine\Common\DateTime\DateTime instance, its immutable. ".
+            "You can use #modify(), #add() and #sub() and work with the newly created instances " .
+            "that are returned."
+        );
     }
 }

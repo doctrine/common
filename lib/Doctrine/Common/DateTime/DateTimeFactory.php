@@ -1,5 +1,4 @@
 <?php
-
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -18,63 +17,65 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Common\Cache;
+namespace Doctrine\Common\DateTime;
 
 /**
- * APC cache provider.
+ * DateTimeFactory that makes use of the immutable property of Doctrines DateTime instances.
  *
  * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link    www.doctrine-project.org
- * @since   2.0
+ * @since   3.0
  * @author  Benjamin Eberlei <kontakt@beberlei.de>
- * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author  Jonathan Wage <jonwage@gmail.com>
- * @author  Roman Borschel <roman@code-factory.org>
- * @author  David Abdemoulaie <dave@hobodave.com>
  */
-class APCCache extends CacheProvider
+class DateTimeFactory
 {
     /**
-     * {@inheritdoc}
+     * Map of all the dates
+     *
+     * @todo Evaluate for WeakRef?
+     * @var array
      */
-    protected function doFetch($id)
+    static private $dates = array();
+
+    /**
+     * @var DateTime
+     */
+    static private $now;
+
+    /**
+     * @return DateTime
+     */
+    static public function now()
     {
-        return apc_fetch($id);
+        if (self::$now == null) {
+            self::$now = new DateTime("now");
+        }
+        return self::$now;
     }
 
     /**
-     * {@inheritdoc}
+     * @param DateTime $now
      */
-    protected function doContains($id)
+    static public function setTestingNow(DateTime $now)
     {
-        $found = false;
-
-        apc_fetch($id, $found);
-
-        return $found;
+        self::$now = $now;
     }
 
     /**
-     * {@inheritdoc}
+     * Create from format using the default timezone.
+     *
+     * This method is not overwritten on DateTime, so that you can still create instances with a non-default
+     * timezone. However only the DateTimeFactory#createFromFormat() can re-use instances.
+     *
+     * @param string $format
+     * @param string $time
+     * @return DateTime
      */
-    protected function doSave($id, $data, $lifeTime = 0)
+    static public function createFromFormat($format, $time)
     {
-        return (bool) apc_store($id, $data, (int) $lifeTime);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doDelete($id)
-    {
-        return apc_delete($id);
-    }
-    
-    /**
-     * {@inheritdoc}
-     */
-    protected function doFlush()
-    {
-        return apc_clear_cache();
+        if (!isset(self::$dates[$format][$time])) {
+            self::$dates[$format][$time] = DateTime::createFromFormat($format, $time);
+        }
+        return self::$dates[$format][$time];
     }
 }

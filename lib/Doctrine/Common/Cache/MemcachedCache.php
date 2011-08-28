@@ -20,26 +20,53 @@
 
 namespace Doctrine\Common\Cache;
 
+use \Memcached;
+
 /**
- * Xcache cache driver.
+ * Memcached cache provider.
  *
  * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link    www.doctrine-project.org
- * @since   2.0
+ * @since   2.2
  * @author  Benjamin Eberlei <kontakt@beberlei.de>
  * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author  Jonathan Wage <jonwage@gmail.com>
  * @author  Roman Borschel <roman@code-factory.org>
  * @author  David Abdemoulaie <dave@hobodave.com>
  */
-class XcacheCache extends CacheProvider
+class MemcacheCache extends CacheProvider
 {
+    /**
+     * @var Memcached
+     */
+    private $memcached;
+
+    /**
+     * Sets the memcache instance to use.
+     *
+     * @param Memcached $memcached
+     */
+    public function setMemcached(Memcached $memcached)
+    {
+        $this->memcached = $memcached;
+    }
+
+    /**
+     * Gets the memcached instance used by the cache.
+     *
+     * @return Memcached
+     */
+    public function getMemcached()
+    {
+        return $this->memcached;
+    }
+
     /**
      * {@inheritdoc}
      */
     protected function doFetch($id)
     {
-        return $this->doContains($id) ? unserialize(xcache_get($id)) : false;
+        return $this->memcached->get($id);
     }
 
     /**
@@ -47,7 +74,7 @@ class XcacheCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return xcache_isset($id);
+        return (false !== $this->memcached->get($id));
     }
 
     /**
@@ -55,7 +82,7 @@ class XcacheCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return xcache_set($id, serialize($data), (int) $lifeTime);
+        return $this->memcached->set($id, $data, 0, (int) $lifeTime);
     }
 
     /**
@@ -63,31 +90,14 @@ class XcacheCache extends CacheProvider
      */
     protected function doDelete($id)
     {
-        return xcache_unset($id);
+        return $this->memcached->delete($id);
     }
-    
+
     /**
      * {@inheritdoc}
      */
     protected function doFlush()
     {
-        $this->checkAuthorization();
-        
-        xcache_clear_cache(XC_TYPE_VAR, 0);
-        
-        return true;
-    }
-
-    /**
-     * Checks that xcache.admin.enable_auth is Off
-     *
-     * @throws \BadMethodCallException When xcache.admin.enable_auth is On
-     * @return void
-     */
-    protected function checkAuthorization()
-    {
-        if (ini_get('xcache.admin.enable_auth')) {
-            throw new \BadMethodCallException('To use all features of \Doctrine\Common\Cache\XcacheCache, you must set "xcache.admin.enable_auth" to "Off" in your php.ini.');
-        }
+        return $this->memcached->flush();
     }
 }

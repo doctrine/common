@@ -34,4 +34,28 @@ updating your project from Doctrine Common 2.1 to 2.2:
   AnnotationReader::addGlobalIgnoredName (the exception message will contain detailed
   instructions when you run into this problem).
 
+## Cache Changes
   
+- Renamed old AbstractCache to CacheProvider
+
+- Dropped the support to the following functions of all cache providers:
+
+ - CacheProvider::deleteByWildcard
+
+ - CacheProvider::deleteByRegEx
+
+ - CacheProvider::deleteByPrefix
+
+ - CacheProvider::deleteBySuffix
+
+- CacheProvider::deleteAll will not remove ALL entries, it will only mark them as invalid
+
+- CacheProvider::flushAll will remove ALL entries, namespaced or not
+
+- Added support to MemcachedCache
+
+- Added support to WincacheCache
+
+## ClassLoader Changes
+
+- ClassLoader::fileExistsInIncludePath() no longer exists. Use the native stream_resolve_include_path() PHP function
