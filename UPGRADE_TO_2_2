@@ -55,3 +55,7 @@ updating your project from Doctrine Common 2.1 to 2.2:
 - Added support to MemcachedCache
 
 - Added support to WincacheCache
+
+## ClassLoader Changes
+
+- ClassLoader::fileExistsInIncludePath() no longer exists. Use the native stream_resolve_include_path() PHP function

@@ -184,7 +184,7 @@ class ClassLoader
             return file_exists($this->includePath . DIRECTORY_SEPARATOR . $file);
         }
 
-        return (false !== stream_resolve_include_path($file));//self::fileExistsInIncludePath($file);
+        return (false !== stream_resolve_include_path($file));
     }
 
     /**
@@ -259,13 +259,4 @@ class ClassLoader
 
         return null;
     }
-    
-    /**
-     * @param string $file The file relative path.
-     * @return boolean Whether file exists in include_path.
-     */
-    /*public static function fileExistsInIncludePath($file)
-    {
-        return (false !== stream_resolve_include_path($file));
-    }*/
 }
