@@ -19,6 +19,8 @@
 
 namespace Doctrine\Common\DateTime;
 
+use Doctrine\Common\Comparable;
+
 /**
  * Immutable DateTime class.
  *
@@ -30,7 +32,7 @@ namespace Doctrine\Common\DateTime;
  * @since   3.0
  * @author  Benjamin Eberlei <kontakt@beberlei.de>
  */
-class DateTime extends \DateTime
+class DateTime extends \DateTime implements Comparable
 {
     /**
      * Add interval to date by returning a new DateTime instance.
@@ -134,5 +136,32 @@ class DateTime extends \DateTime
     {
         $newDate = clone $this;
         return date_timezone_set($newDate, $timezone);
+    }
+
+    /**
+     * Compare two dates which each other for equality.
+     * 
+     * @param DateTime $other
+     * @return bool
+     */
+    public function equals($other)
+    {
+        if (!($other instanceof \DateTime)) {
+            return false;
+        }
+
+        return $this->format('c e') === $other->format('c e');
+    }
+
+    /**
+     * PHPs internal DateTime is missing a __toString(), which prevents it from
+     * being usable as primary keys in the ORMs for example.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        // This is the most precise and yet short format for a date.
+        return $this->format('Y-m-d H:i:s.u e');
     }
 }
