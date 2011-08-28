@@ -34,38 +34,6 @@ updating your project from Doctrine Common 2.1 to 2.2:
   AnnotationReader::addGlobalIgnoredName (the exception message will contain detailed
   instructions when you run into this problem).
 
-- The annotation parser has support for classes without constructor parameters
-  If not has a constructor will inject values into public properties
-
-- The annotation parser has support for the @Target annotation
-  That can be used to signal to the parser to check the annotation target during the parsing process.
-  Usage is as follows:
-    @Target("CLASS") for a single target
-    @Target({"CLASS", "METHOD", "PROPERTY", "ANNOTATION"}) for multiple targets
-
-- The annotation parser will validate the type of the attributes of an annotation when not using the constructor parameters.
-  Parser will look for the attribute type declared in the annotation @ var and validate the input with that type.
-  Usage is as follows for a simple type:
-    /** @var string */
-    public $stringAttrib;
-    /** @var Fully\Qualified\AnnotationClass */
-    public $annotAttrib;
-  Usage is as follows for a array with type, like java generics:
-    /** @var array<integer> */
-    public $arrayOfIntegersAttrib;
-    /** @var array<Fully\Qualified\AnnotationClass> */
-    public $arrayOfAnnotationsAttrib;
-
-- The annotation parser will validate the type of the attributes of an annotation when using @Attributes.
-  Parser will look for all @Attribute in @Attributes declared at annotation class doc block and validate the input with that type.
-  Usage is as follows:
-  @Attributes({
-      @Attribute("stringAttrib",                type = "string"),
-      @Attribute("annotAttrib",                 type = "Fully\Qualified\AnnotationClass"),
-      @Attribute("arrayOfAnnotationsAttrib",    type = "array<Fully\Qualified\AnnotationClass>"),
-  })
-
-
 ## Cache Changes
   
 - Renamed old AbstractCache to CacheProvider
