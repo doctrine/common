@@ -38,8 +38,6 @@ updating your project from Doctrine Common 2.1 to 2.2:
   
 - Renamed old AbstractCache to CacheProvider
 
-- Renamed ApcCache to APCCache to follow our Coding Standards
-
 - Dropped the support to the following functions of all cache providers:
 
  - CacheProvider::deleteByWildcard
