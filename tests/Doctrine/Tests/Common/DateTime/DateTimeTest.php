@@ -80,4 +80,26 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException("Doctrine\Common\DateTime\ImmutableException");
         $a->setISODate(2010, 40);
     }
+
+    /**
+     * @group DDC-280
+     */
+    public function testComparable()
+    {
+        $a = new DateTime("2009-12-12", new \DateTimeZone("UTC"));
+        $b = new DateTime("2009-12-12", new \DateTimeZone("UTC"));
+        $c = new DateTime("2009-12-12", new \DateTimeZone("Europe/Berlin"));
+        $d = new DateTime("2009-12-12", new \DateTimeZone("Europe/Zurich"));
+
+        $this->assertTrue($a->equals($b), "Equal date");
+        $this->assertFalse($a->equals("b"), "Handle non DateTime values");
+        $this->assertFalse($a->equals($c), "Different Timezone");
+        $this->assertFalse($a->equals($d), "Even though Berlin and Zurich is always the same time they are different dates.");
+    }
+
+    public function testToString()
+    {
+        $a = new DateTime("2009-12-12", new \DateTimeZone("UTC"));
+        $this->assertEquals("2009-12-12 00:00:00.000000 UTC", (string)$a);
+    }
 }
