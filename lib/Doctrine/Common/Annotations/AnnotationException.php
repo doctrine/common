@@ -87,4 +87,25 @@ class AnnotationException extends \Exception
             is_object($actual) ? 'an instance of '.get_class($actual) : gettype($actual)
         ));
     }
+    
+    /**
+     * Creates a new AnnotationException describing an required error of an attribute.
+     *
+     * @since 2.2
+     * @param string $attributeName
+     * @param string $annotationName
+     * @param string $context
+     * @param string $expected
+     * @return AnnotationException
+     */
+    public static function requiredError($attributeName, $annotationName, $context, $expected)
+    {
+        return new self(sprintf(
+            '[Type Error] Attribute "%s" of @%s declared on %s expects %s. This value should not be null.',
+            $attributeName,
+            $annotationName,
+            $context,
+            $expected
+        ));
+    }
 }
