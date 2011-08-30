@@ -22,6 +22,8 @@ namespace Doctrine\Common\Annotations;
 use Closure;
 use ReflectionClass;
 use Doctrine\Common\Annotations\Annotation\Target;
+use Doctrine\Common\Annotations\Annotation\Attribute;
+use Doctrine\Common\Annotations\Annotation\Attributes;
 
 /**
  * A parser for docblock annotations.
@@ -123,13 +125,67 @@ final class DocParser
      */
     private static $annotationMetadata = array(
         'Doctrine\Common\Annotations\Annotation\Target' => array(
-            'default_property' => null,
+            'is_annotation'    => true,
             'has_constructor'  => true,
             'properties'       => array(),
-            'attribute_types'  => array(),
             'targets_literal'  => 'ANNOTATION_CLASS',
             'targets'          => Target::TARGET_CLASS,
+            'default_property' => 'value',
+            'attribute_types'  => array(
+                'value'  => array(
+                    'required'  => false,
+                    'type'      =>'array',
+                    'array_type'=>'string',
+                    'value'     =>'array<string>'
+                )
+             ),
+        ),
+        'Doctrine\Common\Annotations\Annotation\Attribute' => array(
             'is_annotation'    => true,
+            'has_constructor'  => false,
+            'targets_literal'  => 'ANNOTATION_ANNOTATION',
+            'targets'          => Target::TARGET_ANNOTATION,
+            'default_property' => 'name',
+            'properties'       => array(
+                'name'      => 'name',
+                'type'      => 'type',
+                'required'  => 'required'
+            ),
+            'attribute_types'  => array(
+                'value'  => array(
+                    'required'  => true,
+                    'type'      =>'string',
+                    'value'     =>'string'
+                ),
+                'type'  => array(
+                    'required'  =>true,
+                    'type'      =>'string',
+                    'value'     =>'string'
+                ),
+                'required'  => array(
+                    'required'  =>false,
+                    'type'      =>'boolean',
+                    'value'     =>'boolean'
+                )
+             ),
+        ),
+        'Doctrine\Common\Annotations\Annotation\Attributes' => array(
+            'is_annotation'    => true,
+            'has_constructor'  => false,
+            'targets_literal'  => 'ANNOTATION_CLASS',
+            'targets'          => Target::TARGET_CLASS,
+            'default_property' => 'value',
+            'properties'       => array(
+                'value' => 'value'
+            ),
+            'attribute_types'  => array(
+                'value' => array(
+                    'type'      =>'array',
+                    'required'  =>true,
+                    'array_type'=>'Doctrine\Common\Annotations\Annotation\Attribute',
+                    'value'     =>'array<Doctrine\Common\Annotations\Annotation\Attribute>'
+                )
+             ),
         ),
     );
 
@@ -318,14 +374,18 @@ final class DocParser
      */
     private function collectAnnotationMetadata($name)
     {
-        if(self::$metadataParser == null){
+        if (self::$metadataParser == null){
             self::$metadataParser = new self();
             self::$metadataParser->setTarget(Target::TARGET_CLASS);
             self::$metadataParser->setIgnoreNotImportedAnnotations(true);
             self::$metadataParser->setImports(array(
-                'target' => 'Doctrine\Common\Annotations\Annotation\Target'
+                'target'        => 'Doctrine\Common\Annotations\Annotation\Target',
+                'attribute'     => 'Doctrine\Common\Annotations\Annotation\Attribute',
+                'attributes'    => 'Doctrine\Common\Annotations\Annotation\Attributes'
             ));
             AnnotationRegistry::registerFile(__DIR__ . '/Annotation/Target.php');
+            AnnotationRegistry::registerFile(__DIR__ . '/Annotation/Attribute.php');
+            AnnotationRegistry::registerFile(__DIR__ . '/Annotation/Attributes.php');
         }
 
         $class      = new \ReflectionClass($name);
@@ -337,6 +397,7 @@ final class DocParser
             'has_constructor'  => (null !== $constructor = $class->getConstructor()) && $constructor->getNumberOfParameters() > 0,
             'properties'       => array(),
             'property_types'   => array(),
+            'attribute_types'  => array(),
             'targets_literal'  => null,
             'targets'          => Target::TARGET_ALL,
             'is_annotation'    => false !== strpos($docComment, '@Annotation'),
@@ -348,6 +409,31 @@ final class DocParser
                 if ($annotation instanceof Target) {
                     $metadata['targets']         = $annotation->targets;
                     $metadata['targets_literal'] = $annotation->literal;
+
+                } elseif ($annotation instanceof Attributes) {
+                    foreach ($annotation->value as $attrib) {
+                        // handle internal type declaration
+                        $type = isset(self::$typeMap[$attrib->type]) ? self::$typeMap[$attrib->type] : $attrib->type;
+
+                        // handle the case if the property type is mixed
+                        if ('mixed' !== $type) {
+                            // Checks if the property has array<type>
+                            if (false !== $pos = strpos($type, '<')) {
+                                $arrayType  = substr($type, $pos+1, -1);
+                                $type       = 'array';
+
+                                if (isset(self::$typeMap[$arrayType])) {
+                                    $arrayType = self::$typeMap[$arrayType];
+                                }
+
+                                $metadata['attribute_types'][$attrib->name]['array_type'] = $arrayType;
+                            }
+
+                            $metadata['attribute_types'][$attrib->name]['type']     = $type;
+                            $metadata['attribute_types'][$attrib->name]['value']    = $attrib->type;
+                            $metadata['attribute_types'][$attrib->name]['required'] = $attrib->required;
+                        }
+                    }
                 }
             }
 
@@ -381,8 +467,9 @@ final class DocParser
                                 $metadata['attribute_types'][$property->name]['array_type'] = $arrayType;
                             }
 
-                            $metadata['attribute_types'][$property->name]['type']   = $type;
-                            $metadata['attribute_types'][$property->name]['value']  = $value;
+                            $metadata['attribute_types'][$property->name]['type']       = $type;
+                            $metadata['attribute_types'][$property->name]['value']      = $value;
+                            $metadata['attribute_types'][$property->name]['required']   = false !== strpos($propertyComment, '@Required');
                         }
                     }
                 }
@@ -546,6 +633,37 @@ final class DocParser
             $this->match(DocLexer::T_CLOSE_PARENTHESIS);
         }
 
+        // checks all declared attributes
+        foreach (self::$annotationMetadata[$name]['attribute_types'] as $property => $type) {
+            //handle a not given attribute or null value
+            if (!isset($values[$property])) {
+                if ($type['required']) {
+                    throw AnnotationException::requiredError($property, $originalName, $this->context, 'a(n) '.$type['value']);
+                }
+
+                $values[$property] = null;
+                continue;
+            }
+
+            if ($type['type'] === 'array') {
+                // handle the case of a single value
+                if (!is_array($values[$property])) {
+                    $values[$property] = array($values[$property]);
+                }
+
+                // checks if the attribute has array type declaration, such as "array<string>"
+                if (isset($type['array_type'])) {
+                    foreach ($values[$property] as $item) {
+                        if (gettype($item) !== $type['array_type'] && !$item instanceof $type['array_type']) {
+                            throw AnnotationException::typeError($property, $originalName, $this->context, 'either a(n) '.$type['array_type'].', or an array of '.$type['array_type'].'s', $item);
+                        }
+                    }
+                }
+            } elseif (gettype($values[$property]) !== $type['type'] && !$values[$property] instanceof $type['type']) {
+                throw AnnotationException::typeError($property, $originalName, $this->context, 'a(n) '.$type['value'], $values[$property]);
+            }
+        }
+
         // check if the annotation expects values via the constructor,
         // or directly injected into public properties
         if (self::$annotationMetadata[$name]['has_constructor'] === true) {
@@ -562,30 +680,6 @@ final class DocParser
                 // handle the case if the property has no annotations
                 if (!$property = self::$annotationMetadata[$name]['default_property']) {
                     throw AnnotationException::creationError(sprintf('The annotation @%s declared on %s does not accept any values, but got %s.', $originalName, $this->context, json_encode($values)));
-                }
-            }
-
-            // checks if the attribute type matches
-            if (null !== $value && isset(self::$annotationMetadata[$name]['attribute_types'][$property])) {
-                $type = self::$annotationMetadata[$name]['attribute_types'][$property]['type'];
-
-                if ($type === 'array') {
-                    // Handle the case of a single value
-                    if (!is_array($value)) {
-                        $value = array($value);
-                    }
-
-                    // checks if the attribute has array type declaration, such as "array<string>"
-                    if (isset(self::$annotationMetadata[$name]['attribute_types'][$property]['array_type'])) {
-                        $arrayType = self::$annotationMetadata[$name]['attribute_types'][$property]['array_type'];
-                        foreach ($value as $item) {
-                            if (gettype($item) !== $arrayType && !$item instanceof $arrayType) {
-                                throw AnnotationException::typeError($property, $originalName, $this->context, 'either a(n) '.$arrayType.', or an array of '.$arrayType.'s', $item);
-                            }
-                        }
-                    }
-                } elseif (gettype($value) !== $type && !$value instanceof $type) {
-                    throw AnnotationException::typeError($property, $originalName, $this->context, 'a(n) '.self::$annotationMetadata[$name]['attribute_types'][$property]['value'], $value);
                 }
             }
 
