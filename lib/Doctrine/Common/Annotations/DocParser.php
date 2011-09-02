@@ -136,6 +136,7 @@ final class DocParser
                     'required'  => false,
                     'type'      =>'array',
                     'array_type'=>'string',
+                    'default'   => null,
                     'value'     =>'array<string>'
                 )
              ),
@@ -149,21 +150,25 @@ final class DocParser
             'properties'       => array(
                 'name'      => 'name',
                 'type'      => 'type',
+                'default'   => 'default',
                 'required'  => 'required'
             ),
             'attribute_types'  => array(
                 'value'  => array(
-                    'required'  => true,
+                    'required'  =>true,
+                    'default'   =>null,
                     'type'      =>'string',
                     'value'     =>'string'
                 ),
                 'type'  => array(
                     'required'  =>true,
+                    'default'   =>null,
                     'type'      =>'string',
                     'value'     =>'string'
                 ),
                 'required'  => array(
                     'required'  =>false,
+                    'default'   =>false,
                     'type'      =>'boolean',
                     'value'     =>'boolean'
                 )
@@ -182,6 +187,7 @@ final class DocParser
                 'value' => array(
                     'type'      =>'array',
                     'required'  =>true,
+                    'default'   =>array(),
                     'array_type'=>'Doctrine\Common\Annotations\Annotation\Attribute',
                     'value'     =>'array<Doctrine\Common\Annotations\Annotation\Attribute>'
                 )
@@ -432,6 +438,7 @@ final class DocParser
                             $metadata['attribute_types'][$attrib->name]['type']     = $type;
                             $metadata['attribute_types'][$attrib->name]['value']    = $attrib->type;
                             $metadata['attribute_types'][$attrib->name]['required'] = $attrib->required;
+                            $metadata['attribute_types'][$attrib->name]['default']  = $attrib->default;
                         }
                     }
                 }
@@ -439,6 +446,9 @@ final class DocParser
 
             // if not has a constructor will inject values into public properties
             if (false === $metadata['has_constructor']) {
+                // default property values
+                $defaultProperties = $class->getDefaultProperties();
+                
                 // collect all public properties
                 foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
                     $metadata['properties'][$property->name] = $property->name;
@@ -466,10 +476,11 @@ final class DocParser
 
                                 $metadata['attribute_types'][$property->name]['array_type'] = $arrayType;
                             }
-
+                            
                             $metadata['attribute_types'][$property->name]['type']       = $type;
                             $metadata['attribute_types'][$property->name]['value']      = $value;
-                            $metadata['attribute_types'][$property->name]['required']   = (false !== strpos($propertyComment, '@Required') ?:null);
+                            $metadata['attribute_types'][$property->name]['default']    = $defaultProperties[$property->name];
+                            $metadata['attribute_types'][$property->name]['required']   = false !== strpos($propertyComment, '@Required');
                         }
                     }
                 }
@@ -638,12 +649,12 @@ final class DocParser
             
             //handle a not given attribute or null value
             if (!isset($values[$property]) || $values[$property] === null) {
-                if ($type['required'] === true) {
+                if ($type['required']) {
                     throw AnnotationException::requiredError($property, $originalName, $this->context, 'a(n) '.$type['value']);
                 
-                // else if required given set null as default value
-                }else if ($type['required'] !== null){
-                   $values[$property] = null; 
+                // set dafault value
+                } elseif (!isset($values[$property]) && !array_key_exists($property, $values)) {
+                    $values[$property] = $type['default'];
                 }
                 continue;
             }

@@ -710,6 +710,7 @@ DOCBLOCK;
         $this->assertTrue($result[0] instanceof AnnotationGivenAttributesWithRequired);
         $this->assertEquals($result[0]->name, "Some name");
         $this->assertEquals($result[0]->list, null);
+        $this->assertEquals($result[0]->default, array('DEFAULT'));
         
         
         $docblock   = '@AnnotationGivenAttributesWithRequired(name = "Some name", list = {"Some","Values"})';
@@ -719,6 +720,7 @@ DOCBLOCK;
         $this->assertTrue($result[0] instanceof AnnotationGivenAttributesWithRequired);
         $this->assertEquals($result[0]->name, "Some name");
         $this->assertEquals($result[0]->list, array("Some","Values"));
+        $this->assertEquals($result[0]->default, array('DEFAULT'));
         
         $docblock   = '@AnnotationGivenAttributesWithRequired()';
         try {
@@ -1109,8 +1111,9 @@ class AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue
  * @Annotation
  * @Target("ALL")
  * @Attributes({
-      @Attribute("name",  required = true ,  type = "string"),
-      @Attribute("list",  required = false , type = "array<string>"),
+      @Attribute("name",    required = true ,  type = "string"),
+      @Attribute("list",    required = false , type = "array<string>"),
+      @Attribute("default", required = false , type = "array<string>" , default = {"DEFAULT"}),
    })
  */
 final class AnnotationGivenAttributesWithRequired
@@ -1118,12 +1121,16 @@ final class AnnotationGivenAttributesWithRequired
     //will be replaced
     public $name = 'DEFAULT';
     public $list = array('DEFAULT');
+
+    // not replaced
+    public $default;
     
     public final function __construct(array $data)
     {
         // values always given (null or value)
-        $this->name = $data['name'];
-        $this->list = $data['list'];
+        $this->name     = $data['name'];
+        $this->list     = $data['list'];
+        $this->default  = $data['default'];
     }
 }
 
