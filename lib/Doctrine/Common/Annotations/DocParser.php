@@ -469,7 +469,7 @@ final class DocParser
 
                             $metadata['attribute_types'][$property->name]['type']       = $type;
                             $metadata['attribute_types'][$property->name]['value']      = $value;
-                            $metadata['attribute_types'][$property->name]['required']   = false !== strpos($propertyComment, '@Required');
+                            $metadata['attribute_types'][$property->name]['required']   = (false !== strpos($propertyComment, '@Required') ?:null);
                         }
                     }
                 }
@@ -635,16 +635,19 @@ final class DocParser
 
         // checks all declared attributes
         foreach (self::$annotationMetadata[$name]['attribute_types'] as $property => $type) {
+            
             //handle a not given attribute or null value
-            if (!isset($values[$property])) {
-                if ($type['required']) {
+            if (!isset($values[$property]) || $values[$property] === null) {
+                if ($type['required'] === true) {
                     throw AnnotationException::requiredError($property, $originalName, $this->context, 'a(n) '.$type['value']);
+                
+                // else if required given set null as default value
+                }else if ($type['required'] !== null){
+                   $values[$property] = null; 
                 }
-
-                $values[$property] = null;
                 continue;
             }
-
+            
             if ($type['type'] === 'array') {
                 // handle the case of a single value
                 if (!is_array($values[$property])) {
@@ -672,9 +675,6 @@ final class DocParser
 
         $instance = new $name();
         foreach ($values as $property => $value) {
-            if($value === null){
-                continue;
-            }
             if (!isset(self::$annotationMetadata[$name]['properties'][$property])) {
                 if ('value' !== $property) {
                     throw AnnotationException::creationError(sprintf('The annotation @%s declared on %s does not have a property named "%s". Available properties: %s', $originalName, $this->context, $property, implode(', ', self::$annotationMetadata[$name]['properties'])));

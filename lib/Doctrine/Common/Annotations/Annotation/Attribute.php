@@ -43,5 +43,5 @@ final class Attribute
     /**
      * @var boolean
      */
-    public $required = false;
+    public $required = null;
 }
