@@ -653,7 +653,7 @@ final class DocParser
                     throw AnnotationException::requiredError($property, $originalName, $this->context, 'a(n) '.$type['value']);
                 
                 // set dafault value
-                } elseif (!isset($values[$property]) && !array_key_exists($property, $values)) {
+                } elseif (!array_key_exists($property, $values)) {
                     $values[$property] = $type['default'];
                 }
                 continue;
