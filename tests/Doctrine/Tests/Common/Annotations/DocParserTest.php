@@ -662,6 +662,39 @@ DOCBLOCK;
         
     }
     
+    public function testAnnotationWithoutConstructorWhitTypeValidationAndDetaultValue()
+    {
+        $parser     = $this->createTestParser();
+        $context    = 'property SomeClassName::$invalidProperty.';
+        $parser->setTarget(Target::TARGET_PROPERTY);
+
+        $docblock   = '@AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue(name = "Some Value")';
+        $result     = $parser->parse($docblock, $context);
+
+        $this->assertTrue(sizeof($result) === 1);
+        $this->assertTrue($result[0] instanceof AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue);
+        $this->assertEquals($result[0]->name, "Some Value");
+        $this->assertEquals($result[0]->list, array('DEFAULT'));
+        
+        
+        $docblock   = '@AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue(list = {"Some","Values"})';
+        $result     = $parser->parse($docblock, $context);
+        
+        $this->assertTrue(sizeof($result) === 1);
+        $this->assertTrue($result[0] instanceof AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue);
+        $this->assertEquals($result[0]->name, 'DEFAULT');
+        $this->assertEquals($result[0]->list, array("Some","Values"));
+        
+        
+        $docblock   = '@AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue()';
+        $result     = $parser->parse($docblock, $context);
+        
+        $this->assertTrue(sizeof($result) === 1);
+        $this->assertTrue($result[0] instanceof AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue);
+        $this->assertEquals($result[0]->name, 'DEFAULT');
+        $this->assertEquals($result[0]->list, array('DEFAULT'));
+    }
+    
     
     /**
      * @expectedException Doctrine\Common\Annotations\AnnotationException
@@ -1025,6 +1058,16 @@ DOCBLOCK;
         $this->assertEquals(1, count($annots));
         $this->assertEquals(array('Foo', 'Bar'), $annots[0]->value);
     }
+}
+
+/** @Annotation */
+class AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue
+{
+    /** @var string */
+    public $name = 'DEFAULT';
+    
+    /** @var array<string> */
+    public $list = array('DEFAULT');
 }
 
 /** @Annotation */

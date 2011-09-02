@@ -672,6 +672,9 @@ final class DocParser
 
         $instance = new $name();
         foreach ($values as $property => $value) {
+            if($value === null){
+                continue;
+            }
             if (!isset(self::$annotationMetadata[$name]['properties'][$property])) {
                 if ('value' !== $property) {
                     throw AnnotationException::creationError(sprintf('The annotation @%s declared on %s does not have a property named "%s". Available properties: %s', $originalName, $this->context, $property, implode(', ', self::$annotationMetadata[$name]['properties'])));
