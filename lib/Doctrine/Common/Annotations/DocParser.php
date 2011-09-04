@@ -136,6 +136,7 @@ final class DocParser
                     'required'  => false,
                     'type'      =>'array',
                     'array_type'=>'string',
+                    'default'   => null,
                     'value'     =>'array<string>'
                 )
              ),
@@ -149,21 +150,25 @@ final class DocParser
             'properties'       => array(
                 'name'      => 'name',
                 'type'      => 'type',
+                'default'   => 'default',
                 'required'  => 'required'
             ),
             'attribute_types'  => array(
                 'value'  => array(
-                    'required'  => true,
+                    'required'  =>true,
+                    'default'   =>null,
                     'type'      =>'string',
                     'value'     =>'string'
                 ),
                 'type'  => array(
                     'required'  =>true,
+                    'default'   =>null,
                     'type'      =>'string',
                     'value'     =>'string'
                 ),
                 'required'  => array(
                     'required'  =>false,
+                    'default'   =>false,
                     'type'      =>'boolean',
                     'value'     =>'boolean'
                 )
@@ -182,6 +187,7 @@ final class DocParser
                 'value' => array(
                     'type'      =>'array',
                     'required'  =>true,
+                    'default'   =>array(),
                     'array_type'=>'Doctrine\Common\Annotations\Annotation\Attribute',
                     'value'     =>'array<Doctrine\Common\Annotations\Annotation\Attribute>'
                 )
@@ -432,6 +438,7 @@ final class DocParser
                             $metadata['attribute_types'][$attrib->name]['type']     = $type;
                             $metadata['attribute_types'][$attrib->name]['value']    = $attrib->type;
                             $metadata['attribute_types'][$attrib->name]['required'] = $attrib->required;
+                            $metadata['attribute_types'][$attrib->name]['default']  = $attrib->default;
                         }
                     }
                 }
@@ -466,7 +473,7 @@ final class DocParser
 
                                 $metadata['attribute_types'][$property->name]['array_type'] = $arrayType;
                             }
-
+                            
                             $metadata['attribute_types'][$property->name]['type']       = $type;
                             $metadata['attribute_types'][$property->name]['value']      = $value;
                             $metadata['attribute_types'][$property->name]['required']   = false !== strpos($propertyComment, '@Required');
@@ -635,16 +642,19 @@ final class DocParser
 
         // checks all declared attributes
         foreach (self::$annotationMetadata[$name]['attribute_types'] as $property => $type) {
+            
             //handle a not given attribute or null value
             if (!isset($values[$property])) {
                 if ($type['required']) {
                     throw AnnotationException::requiredError($property, $originalName, $this->context, 'a(n) '.$type['value']);
                 }
-
-                $values[$property] = null;
+                // Sets default value for annotation with expected values via the constructor
+                if (self::$annotationMetadata[$name]['has_constructor'] && !array_key_exists($property, $values)) {
+                    $values[$property] = $type['default'];
+                }
                 continue;
             }
-
+            
             if ($type['type'] === 'array') {
                 // handle the case of a single value
                 if (!is_array($values[$property])) {

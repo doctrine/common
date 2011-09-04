@@ -662,6 +662,76 @@ DOCBLOCK;
         
     }
     
+    public function testAnnotationWithoutConstructorWhitTypeValidationAndDetaultValue()
+    {
+        $parser     = $this->createTestParser();
+        $context    = 'property SomeClassName::$invalidProperty.';
+        $parser->setTarget(Target::TARGET_PROPERTY);
+
+        $docblock   = '@AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue(name = "Some Value")';
+        $result     = $parser->parse($docblock, $context);
+
+        $this->assertTrue(sizeof($result) === 1);
+        $this->assertTrue($result[0] instanceof AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue);
+        $this->assertEquals($result[0]->name, "Some Value");
+        $this->assertEquals($result[0]->list, array('DEFAULT'));
+        
+        
+        $docblock   = '@AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue(list = {"Some","Values"})';
+        $result     = $parser->parse($docblock, $context);
+        
+        $this->assertTrue(sizeof($result) === 1);
+        $this->assertTrue($result[0] instanceof AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue);
+        $this->assertEquals($result[0]->name, 'DEFAULT');
+        $this->assertEquals($result[0]->list, array("Some","Values"));
+        
+        
+        $docblock   = '@AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue()';
+        $result     = $parser->parse($docblock, $context);
+        
+        $this->assertTrue(sizeof($result) === 1);
+        $this->assertTrue($result[0] instanceof AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue);
+        $this->assertEquals($result[0]->name, 'DEFAULT');
+        $this->assertEquals($result[0]->list, array('DEFAULT'));
+        
+        $docblock   = '@AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue(name = null)';
+        $result     = $parser->parse($docblock, $context);
+        
+        $this->assertTrue(sizeof($result) === 1);
+        $this->assertTrue($result[0] instanceof AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue);
+        $this->assertEquals($result[0]->name, null);
+        $this->assertEquals($result[0]->list, array('DEFAULT'));
+        
+        
+        $docblock   = '@AnnotationGivenAttributesWithRequired(name = "Some name")';
+        $result     = $parser->parse($docblock, $context);
+        
+        $this->assertTrue(sizeof($result) === 1);
+        $this->assertTrue($result[0] instanceof AnnotationGivenAttributesWithRequired);
+        $this->assertEquals($result[0]->name, "Some name");
+        $this->assertEquals($result[0]->list, null);
+        $this->assertEquals($result[0]->default, array('DEFAULT'));
+        
+        
+        $docblock   = '@AnnotationGivenAttributesWithRequired(name = "Some name", list = {"Some","Values"})';
+        $result     = $parser->parse($docblock, $context);
+        
+        $this->assertTrue(sizeof($result) === 1);
+        $this->assertTrue($result[0] instanceof AnnotationGivenAttributesWithRequired);
+        $this->assertEquals($result[0]->name, "Some name");
+        $this->assertEquals($result[0]->list, array("Some","Values"));
+        $this->assertEquals($result[0]->default, array('DEFAULT'));
+        
+        $docblock   = '@AnnotationGivenAttributesWithRequired()';
+        try {
+            $result = $parser->parse($docblock,$context);
+            $this->fail();
+        } catch (\Doctrine\Common\Annotations\AnnotationException $exc) {
+            $this->assertContains('Attribute "name" of @AnnotationGivenAttributesWithRequired declared on property SomeClassName::$invalidProperty. expects a(n) string. This value should not be null.', $exc->getMessage());
+        }
+        
+    }
+    
     
     /**
      * @expectedException Doctrine\Common\Annotations\AnnotationException
@@ -1024,6 +1094,43 @@ DOCBLOCK;
         })');
         $this->assertEquals(1, count($annots));
         $this->assertEquals(array('Foo', 'Bar'), $annots[0]->value);
+    }
+}
+
+/** @Annotation */
+class AnnotationWithoutConstructorWhitTypeValidationAndDetaultValue
+{
+    /** @var string */
+    public $name = 'DEFAULT';
+    
+    /** @var array<string> */
+    public $list = array('DEFAULT');
+}
+
+/**
+ * @Annotation
+ * @Target("ALL")
+ * @Attributes({
+      @Attribute("name",    required = true ,  type = "string"),
+      @Attribute("list",    required = false , type = "array<string>"),
+      @Attribute("default", required = false , type = "array<string>" , default = {"DEFAULT"}),
+   })
+ */
+final class AnnotationGivenAttributesWithRequired
+{
+    //will be replaced
+    public $name = 'DEFAULT';
+    public $list = array('DEFAULT');
+
+    // not replaced
+    public $default;
+    
+    public final function __construct(array $data)
+    {
+        // values always given (null or value)
+        $this->name     = $data['name'];
+        $this->list     = $data['list'];
+        $this->default  = $data['default'];
     }
 }
 

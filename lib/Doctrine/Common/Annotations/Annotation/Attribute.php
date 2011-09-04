@@ -44,4 +44,9 @@ final class Attribute
      * @var boolean
      */
     public $required = false;
+    
+    /**
+     * @var mixed
+     */
+    public $default = null;
 }
