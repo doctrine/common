@@ -446,9 +446,6 @@ final class DocParser
 
             // if not has a constructor will inject values into public properties
             if (false === $metadata['has_constructor']) {
-                // default property values
-                $defaultProperties = $class->getDefaultProperties();
-                
                 // collect all public properties
                 foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
                     $metadata['properties'][$property->name] = $property->name;
@@ -479,7 +476,6 @@ final class DocParser
                             
                             $metadata['attribute_types'][$property->name]['type']       = $type;
                             $metadata['attribute_types'][$property->name]['value']      = $value;
-                            $metadata['attribute_types'][$property->name]['default']    = $defaultProperties[$property->name];
                             $metadata['attribute_types'][$property->name]['required']   = false !== strpos($propertyComment, '@Required');
                         }
                     }
@@ -651,9 +647,9 @@ final class DocParser
             if (!isset($values[$property]) || $values[$property] === null) {
                 if ($type['required']) {
                     throw AnnotationException::requiredError($property, $originalName, $this->context, 'a(n) '.$type['value']);
-                
-                // set dafault value
-                } elseif (!array_key_exists($property, $values)) {
+                }
+                // Sets default value for annotation with expected values via the constructor
+                if (self::$annotationMetadata[$name]['has_constructor'] && !array_key_exists($property, $values)) {
                     $values[$property] = $type['default'];
                 }
                 continue;
