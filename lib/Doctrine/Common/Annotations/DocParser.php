@@ -644,7 +644,7 @@ final class DocParser
         foreach (self::$annotationMetadata[$name]['attribute_types'] as $property => $type) {
             
             //handle a not given attribute or null value
-            if (!isset($values[$property]) || $values[$property] === null) {
+            if (!isset($values[$property])) {
                 if ($type['required']) {
                     throw AnnotationException::requiredError($property, $originalName, $this->context, 'a(n) '.$type['value']);
                 }
