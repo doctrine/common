@@ -551,8 +551,9 @@ final class DocParser
         }
 
         // only process names which are not fully qualified, yet
+        // fully qualified names must start with a \
         $originalName = $name;
-        if ('\\' !== $name[0] && !$this->classExists($name)) {
+        if ('\\' !== $name[0]) {
             $alias = (false === $pos = strpos($name, '\\'))? $name : substr($name, 0, $pos);
 
             $found = false;
@@ -574,6 +575,8 @@ final class DocParser
             } elseif (isset($this->imports['__NAMESPACE__']) && $this->classExists($this->imports['__NAMESPACE__'].'\\'.$name)) {
                  $name = $this->imports['__NAMESPACE__'].'\\'.$name;
                  $found = true;
+            } elseif ($this->classExists($name)) {
+                $found = true;
             }
 
             if (!$found) {
