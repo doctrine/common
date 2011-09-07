@@ -226,23 +226,23 @@ DOCBLOCK;
         $parser = new DocParser();
         $result = $parser->parse("@Doctrine\Tests\Common\Annotations\Name(@')");
     }
-    
+
     /**
      * @group DCOM-56
      */
     public function testAutoloadAnnotation()
     {
         $this->assertFalse(class_exists('Doctrine\Tests\Common\Annotations\Fixture\Annotation\Autoload', false), 'Pre-condition: Doctrine\Tests\Common\Annotations\Fixture\Annotation\Autoload not allowed to be loaded.');
-        
+
         $parser = new DocParser();
-        
+
         AnnotationRegistry::registerAutoloadNamespace('Doctrine\Tests\Common\Annotations\Fixtures\Annotation', __DIR__ . '/../../../../');
-        
+
         $parser->setImports(array(
             'autoload' => 'Doctrine\Tests\Common\Annotations\Fixtures\Annotation\Autoload',
         ));
         $annotations = $parser->parse('@Autoload');
-        
+
         $this->assertEquals(1, count($annotations));
         $this->assertInstanceOf('Doctrine\Tests\Common\Annotations\Fixtures\Annotation\Autoload', $annotations[0]);
     }
