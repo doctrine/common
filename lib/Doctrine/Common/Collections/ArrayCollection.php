@@ -89,7 +89,7 @@ class ArrayCollection implements Collection
     {
         return key($this->_elements);
     }
-    
+
     /**
      * Moves the internal iterator position to the next element.
      *
@@ -99,7 +99,7 @@ class ArrayCollection implements Collection
     {
         return next($this->_elements);
     }
-    
+
     /**
      * Gets the element of the collection at the current internal iterator position.
      *
@@ -121,7 +121,7 @@ class ArrayCollection implements Collection
         if (isset($this->_elements[$key])) {
             $removed = $this->_elements[$key];
             unset($this->_elements[$key]);
-            
+
             return $removed;
         }
 
@@ -137,14 +137,33 @@ class ArrayCollection implements Collection
     public function removeElement($element)
     {
         $key = array_search($element, $this->_elements, true);
-        
+
         if ($key !== false) {
             unset($this->_elements[$key]);
-            
+
             return true;
         }
-        
+
         return false;
+    }
+
+    public function join($delim)
+    {
+        return implode($delim, $this->_elements);
+    }
+
+    public function walk(Closure $closure)
+    {
+        $refl = new \ReflectionFunction($closure);
+        if (2 === $refl->getNumberOfParameters()) {
+            $actualClosure = function ($value, $key) use ($closure) {
+                return $closure($key, $value);
+            };
+        } else {
+            $actualClosure = $closure;
+        }
+
+        return array_walk($this->toArray(), $actualClosure);
     }
 
     /**
@@ -327,7 +346,7 @@ class ArrayCollection implements Collection
 
     /**
      * Checks whether the collection is empty.
-     * 
+     *
      * Note: This is preferrable over count() == 0.
      *
      * @return boolean TRUE if the collection is empty, FALSE otherwise.
@@ -385,7 +404,7 @@ class ArrayCollection implements Collection
                 return false;
             }
         }
-        
+
         return true;
     }
 
