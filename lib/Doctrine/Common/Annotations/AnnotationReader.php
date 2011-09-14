@@ -297,4 +297,13 @@ final class AnnotationReader implements Reader
         );
         $this->ignoredAnnotationNames[$name] = $ignoredAnnotationNames;
     }
+
+    /**
+     * @param string $name The alias for the namespace
+     * @param string $namespace The actual namespace to import
+     */
+    public static function addGlobalImport($name, $namespace)
+    {
+        self::$globalImports[strtolower($name)] = $namespace;
+    }
 }
