@@ -85,4 +85,12 @@ class ArrayCache extends CacheProvider
         
         return true;
     }
+    
+    /**
+     * {@inheritdoc}
+     */
+    protected function doGetStats()
+    {
+        return null;
+    }
 }

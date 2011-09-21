@@ -2,6 +2,8 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
+use Doctrine\Common\Cache\Cache;
+
 abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 {
     public function testBasics()
@@ -57,6 +59,29 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         
         $this->assertFalse($cache->contains('key1'));
     }
-
+    
+    /**
+     * @group DCOM-43
+     */
+    public function testGetStats()
+    {
+        if ($this instanceof ArrayCacheTest || $this instanceof ZendDataCacheTest ) {
+            $this->markTestSkipped("Statistics are not available for this driver");
+        }
+        
+        $cache = $this->_getCacheDriver();
+        $stats = $cache->getStats();
+        
+        
+        $this->assertArrayHasKey(Cache::STATS_HITS,   $stats);
+        $this->assertArrayHasKey(Cache::STATS_MISSES, $stats);
+        $this->assertArrayHasKey(Cache::STATS_UPTIME, $stats);
+        $this->assertArrayHasKey(Cache::STATS_MEMORY_USAGE, $stats);
+        $this->assertArrayHasKey(Cache::STATS_MEMORY_AVAILIABLE, $stats);
+    }
+    
+    /**
+     * @return \Doctrine\Common\Cache\CacheProvider
+     */
     abstract protected function _getCacheDriver();
 }

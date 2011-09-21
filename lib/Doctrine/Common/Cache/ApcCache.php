@@ -32,7 +32,7 @@ namespace Doctrine\Common\Cache;
  * @author  Roman Borschel <roman@code-factory.org>
  * @author  David Abdemoulaie <dave@hobodave.com>
  */
-class APCCache extends CacheProvider
+class ApcCache extends CacheProvider
 {
     /**
      * {@inheritdoc}
@@ -76,5 +76,21 @@ class APCCache extends CacheProvider
     protected function doFlush()
     {
         return apc_clear_cache();
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    protected function doGetStats()
+    {
+        $info = apc_cache_info();
+        $sma  = apc_sma_info();
+        return array(
+            Cache::STATS_HITS   => $info['num_hits'],
+            Cache::STATS_MISSES => $info['num_misses'],
+            Cache::STATS_UPTIME => $info['start_time'],
+            Cache::STATS_MEMORY_USAGE       => $info['mem_size'],
+            Cache::STATS_MEMORY_AVAILIABLE  => $sma['avail_mem'],
+        );
     }
 }
