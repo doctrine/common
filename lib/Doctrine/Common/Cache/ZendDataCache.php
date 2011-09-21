@@ -69,4 +69,12 @@ class ZendDataCache extends CacheProvider
     {
         return empty($this->getNamespace()) ? zend_shm_cache_clear() : zend_shm_cache_clear($this->getNamespace());
     }
+    
+    /**
+     * {@inheritdoc}
+     */
+    protected function doGetStats()
+    {
+        return null;
+    }
 }

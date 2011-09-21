@@ -100,4 +100,22 @@ class MemcachedCache extends CacheProvider
     {
         return $this->memcached->flush();
     }
+    
+    /**
+     * {@inheritdoc}
+     */
+    protected function doGetStats()
+    {
+        $stats   = $this->memcached->getStats();
+        $servers = $this->memcached->getServerList();
+        $key     = $servers[0]['host'] . ':' . $servers[0]['port'];
+        $stats   = $stats[$key];
+        return array(
+            Cache::STATS_HITS   => $stats['get_hits'],
+            Cache::STATS_MISSES => $stats['get_misses'],
+            Cache::STATS_UPTIME => $stats['uptime'],
+            Cache::STATS_MEMORY_USAGE       => $stats['bytes'],
+            Cache::STATS_MEMORY_AVAILIABLE  => $stats['limit_maxbytes'],
+        );
+    }
 }
