@@ -66,7 +66,7 @@ final class AnnotationReader implements Reader
         'abstract'=> true, 'exception'=> true, 'magic' => true, 'api' => true,
         'final'=> true, 'filesource'=> true, 'throw' => true, 'uses' => true,
         'usedby'=> true, 'private' => true, 'Annotation' => true, 'Target' => true,
-        'Attribute' => true, 'Attributes' => true, 'Required' => true,
+        'Attribute' => true, 'Attributes' => true, 'Required' => true, 'override' => true,
     );
 
     /**
