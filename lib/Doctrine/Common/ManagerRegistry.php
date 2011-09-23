@@ -140,7 +140,7 @@ abstract class ManagerRegistry implements ManagerRegistryInterface, ConnectionRe
         }
 
         if (!isset($this->managers[$name])) {
-            throw new \InvalidArgumentException(sprintf('Doctrine %s Object Manager named "%s" does not exist.', $this->name, $name));
+            throw new \InvalidArgumentException(sprintf('Doctrine %s Manager named "%s" does not exist.', $this->name, $name));
         }
 
         return $this->getService($this->managers[$name]);
