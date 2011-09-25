@@ -18,7 +18,7 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Common;
+namespace Doctrine\Common\Persistence;
 
 use Doctrine\Common\Persistence\ManagerRegistry as ManagerRegistryInterface;
 use Doctrine\Common\Persistence\ConnectionRegistry as ConnectionRegistryInterface;
@@ -32,7 +32,7 @@ use Doctrine\Common\Persistence\ConnectionRegistry as ConnectionRegistryInterfac
  * @author  Benjamin Eberlei <kontakt@beberlei.de>
  * @author  Lukas Kahwe Smith <smith@pooteeweet.org>
  */
-abstract class ManagerRegistry implements ManagerRegistryInterface, ConnectionRegistryInterface
+abstract class AbstractManagerRegistry implements ManagerRegistryInterface, ConnectionRegistryInterface
 {
     private $name;
     private $connections;
@@ -191,7 +191,24 @@ abstract class ManagerRegistry implements ManagerRegistryInterface, ConnectionRe
      */
     public function getObjectNamespace($alias)
     {
-        throw new \BadMethodCallException("Not yet implemented.");
+        $method = 'ORM' === $this->name ? 'getEntityNamespace' : 'getDocumentNamespace';
+        foreach (array_keys($this->getManagers()) as $name) {
+            try {
+                $namespace = $this->getManager($name)->getConfiguration()->{$method}($alias);
+                break;
+            } catch (\Exception $e) {
+            }
+        }
+
+        if (!isset($namespace)) {
+            if (empty($this->managers)) {
+                $e = new \InvalidArgumentException(sprintf('No Doctrine %s Manager defined.', $this->name));
+            }
+
+            throw $e;
+        }
+
+        return $namespace;
     }
 
     /**
