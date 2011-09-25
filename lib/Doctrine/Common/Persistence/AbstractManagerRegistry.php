@@ -159,7 +159,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistryInterface, Conn
         foreach ($this->managers as $id) {
             $manager = $this->getService($id);
 
-            if (!$manager->getConfiguration()->getMetadataDriverImpl()->isTransient($class)) {
+            if (!$manager->getMetadataFactory()->isTransient($class)) {
                 return $manager;
             }
         }
