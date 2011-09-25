@@ -54,6 +54,8 @@ abstract class AbstractManagerRegistry implements ManagerRegistry, ConnectionReg
     /**
      * Fetches/creates the given services
      *
+     * A service in this context is connection or a manager instance
+     *
      * @param string $name name of the service
      * @return object instance of the given service
      */
@@ -62,6 +64,8 @@ abstract class AbstractManagerRegistry implements ManagerRegistry, ConnectionReg
     /**
      * Resets the given services
      *
+     * A service in this context is connection or a manager instance
+     * 
      * @param string $name name of the service
      * @return void
      */
