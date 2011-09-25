@@ -71,11 +71,11 @@ final class DocParser
      * @var array
      */
     private $classExists = array();
-    
+
     /**
      *
      * @var This hashmap is used internally to cache if a class is an annotation or not.
-     * 
+     *
      * @var array
      */
     private $isAnnotation = array();
@@ -106,7 +106,7 @@ final class DocParser
      * @var string
      */
     private $context = '';
-    
+
     /**
      * @var Closure
      */
@@ -132,7 +132,7 @@ final class DocParser
     {
         $this->ignoredAnnotationNames = $names;
     }
-    
+
     /**
      * @deprecated Will be removed in 3.0
      * @param \Closure $func
@@ -258,7 +258,7 @@ final class DocParser
         if (isset($this->classExists[$fqcn])) {
             return $this->classExists[$fqcn];
         }
-        
+
         // first check if the class already exists, maybe loaded through another AnnotationReader
         if (class_exists($fqcn, false)) {
             return $this->classExists[$fqcn] = true;
@@ -347,7 +347,9 @@ final class DocParser
         }
 
         // only process names which are not fully qualified, yet
-        if ('\\' !== $name[0] && !$this->classExists($name)) {
+        // fully qualified names must start with a \
+        $originalName = $name;
+        if ('\\' !== $name[0]) {
             $alias = (false === $pos = strpos($name, '\\'))? $name : substr($name, 0, $pos);
 
             if (isset($this->imports[$loweredAlias = strtolower($alias)])) {
@@ -360,26 +362,26 @@ final class DocParser
                  $name = $this->imports['__DEFAULT__'].$name;
             } elseif (isset($this->imports['__NAMESPACE__']) && $this->classExists($this->imports['__NAMESPACE__'].'\\'.$name)) {
                  $name = $this->imports['__NAMESPACE__'].'\\'.$name;
-            } else {
+            } elseif (!$this->classExists($name)) {
                 if ($this->ignoreNotImportedAnnotations || isset($this->ignoredAnnotationNames[$name])) {
                     return false;
                 }
 
-                throw AnnotationException::semanticalError(sprintf('The annotation "@%s" in %s was never imported.', $name, $this->context));
+                throw AnnotationException::semanticalError(sprintf('The annotation "@%s" in %s was never imported. Did you maybe forget to add a "use" statement for this annotation?', $name, $this->context));
             }
         }
 
         if (!$this->classExists($name)) {
             throw AnnotationException::semanticalError(sprintf('The annotation "@%s" in %s does not exist, or could not be auto-loaded.', $name, $this->context));
         }
-        
+
         if (!$this->isAnnotation($name)) {
             return false;
         }
 
         // Verifies that the annotation class extends any class that contains "Annotation".
         // This is done to avoid coupling of Doctrine Annotations against other libraries.
-        
+
 
         // at this point, $name contains the fully qualified class name of the
         // annotation, and it is also guaranteed that this class exists, and
@@ -398,17 +400,17 @@ final class DocParser
 
             $this->match(DocLexer::T_CLOSE_PARENTHESIS);
         }
-        
+
         return $this->newAnnotation($name, $values);
     }
-    
+
     /**
      * Verify that the found class is actually an annotation.
-     * 
+     *
      * This can be detected through two mechanisms:
      * 1. Class extends Doctrine\Common\Annotations\Annotation
      * 2. The class level docblock contains the string "@Annotation"
-     * 
+     *
      * @param string $name
      * @return bool
      */
@@ -424,14 +426,14 @@ final class DocParser
         }
         return $this->isAnnotation[$name];
     }
-    
+
     private function newAnnotation($name, $values)
     {
         if ($this->creationFn !== null) {
             $fn = $this->creationFn;
             return $fn($name, $values);
         }
-        
+
         return new $name($values);
     }
 
