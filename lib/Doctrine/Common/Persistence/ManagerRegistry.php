@@ -81,7 +81,7 @@ interface ManagerRegistry
      *
      * @return string The full namespace
      */
-    function getObjectNamespace($alias);
+    function getAliasNamespace($alias);
 
     /**
      * Gets all connection names.
