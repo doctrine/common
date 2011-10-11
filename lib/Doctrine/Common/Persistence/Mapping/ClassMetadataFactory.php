@@ -61,4 +61,14 @@ interface ClassMetadataFactory
      * @param ClassMetadata $class
      */
     function setMetadataFor($className, $class);
+
+    /**
+     * Whether the class with the specified name should have its metadata loaded.
+     * This is only the case if it is either mapped directly or as a
+     * MappedSuperclass.
+     *
+     * @param string $className
+     * @return boolean
+     */
+    function isTransient($className);
 }
