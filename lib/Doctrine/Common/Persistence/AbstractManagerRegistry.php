@@ -21,7 +21,6 @@
 namespace Doctrine\Common\Persistence;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ConnectionRegistry;
 
 /**
  * Abstract implementation of the ManagerRegistry contract.
@@ -33,7 +32,7 @@ use Doctrine\Common\Persistence\ConnectionRegistry;
  * @author  Benjamin Eberlei <kontakt@beberlei.de>
  * @author  Lukas Kahwe Smith <smith@pooteeweet.org>
  */
-abstract class AbstractManagerRegistry implements ManagerRegistry, ConnectionRegistry
+abstract class AbstractManagerRegistry implements ManagerRegistry
 {
     private $name;
     private $connections;
