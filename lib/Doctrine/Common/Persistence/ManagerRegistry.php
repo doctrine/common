@@ -29,7 +29,7 @@ namespace Doctrine\Common\Persistence;
  * @author  Benjamin Eberlei <kontakt@beberlei.de>
  * @author  Lukas Kahwe Smith <smith@pooteeweet.org>
  */
-interface ManagerRegistry
+interface ManagerRegistry extends ConnectionRegistry
 {
     /**
      * Gets the default object manager name.
