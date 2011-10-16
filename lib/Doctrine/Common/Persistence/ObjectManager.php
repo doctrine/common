@@ -45,7 +45,7 @@ interface ObjectManager
      * Tells the ObjectManager to make an instance managed and persistent.
      *
      * The object will be entered into the database as a result of the flush operation.
-     * 
+     *
      * NOTE: The persist operation always considers objects that are not yet known to
      * this ObjectManager as NEW. Do not pass detached objects to the persist operation.
      *
@@ -122,4 +122,13 @@ interface ObjectManager
      * @return Doctrine\Common\Persistence\Mapping\ClassMetadataFactory
      */
     function getMetadataFactory();
+
+    /**
+     * Helper method to initialize a lazy loading proxy or persistent collection.
+     *
+     * This method is a no-op for other objects.
+     *
+     * @param object $obj
+     */
+    function initializeObject($obj);
 }
