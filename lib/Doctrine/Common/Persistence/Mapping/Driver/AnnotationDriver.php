@@ -40,35 +40,35 @@ abstract class AnnotationDriver implements Driver
      *
      * @var AnnotationReader
      */
-    protected $_reader;
+    protected $reader;
 
     /**
      * The paths where to look for mapping files.
      *
      * @var array
      */
-    protected $_paths = array();
+    protected $paths = array();
 
     /**
      * The file extension of mapping documents.
      *
      * @var string
      */
-    protected $_fileExtension = '.php';
+    protected $fileExtension = '.php';
 
     /**
      * Cache for AnnotationDriver#getAllClassNames()
      *
      * @param array
      */
-    protected $_classNames;
+    protected $classNames;
 
     /**
      * Name of the entity annotations as keys
      *
      * @var
      */
-    protected $_entityAnnotationClasses = array();
+    protected $entityAnnotationClasses = array();
 
     /**
      * Initializes a new AnnotationDriver that uses the given AnnotationReader for reading
@@ -79,7 +79,7 @@ abstract class AnnotationDriver implements Driver
      */
     public function __construct($reader, $paths = null)
     {
-        $this->_reader = $reader;
+        $this->reader = $reader;
         if ($paths) {
             $this->addPaths((array) $paths);
         }
@@ -92,7 +92,7 @@ abstract class AnnotationDriver implements Driver
      */
     public function addPaths(array $paths)
     {
-        $this->_paths = array_unique(array_merge($this->_paths, $paths));
+        $this->paths = array_unique(array_merge($this->paths, $paths));
     }
 
     /**
@@ -102,7 +102,7 @@ abstract class AnnotationDriver implements Driver
      */
     public function getPaths()
     {
-        return $this->_paths;
+        return $this->paths;
     }
 
     /**
@@ -112,7 +112,7 @@ abstract class AnnotationDriver implements Driver
      */
     public function getReader()
     {
-        return $this->_reader;
+        return $this->reader;
     }
 
     /**
@@ -122,7 +122,7 @@ abstract class AnnotationDriver implements Driver
      */
     public function getFileExtension()
     {
-        return $this->_fileExtension;
+        return $this->fileExtension;
     }
 
     /**
@@ -133,7 +133,7 @@ abstract class AnnotationDriver implements Driver
      */
     public function setFileExtension($fileExtension)
     {
-        $this->_fileExtension = $fileExtension;
+        $this->fileExtension = $fileExtension;
     }
 
     /**
@@ -147,10 +147,10 @@ abstract class AnnotationDriver implements Driver
      */
     public function isTransient($className)
     {
-        $classAnnotations = $this->_reader->getClassAnnotations(new \ReflectionClass($className));
+        $classAnnotations = $this->reader->getClassAnnotations(new \ReflectionClass($className));
 
         foreach ($classAnnotations as $annot) {
-            if (isset($this->_entityAnnotationClasses[get_class($annot)])) {
+            if (isset($this->entityAnnotationClasses[get_class($annot)])) {
                 return false;
             }
         }
@@ -162,18 +162,18 @@ abstract class AnnotationDriver implements Driver
      */
     public function getAllClassNames()
     {
-        if ($this->_classNames !== null) {
-            return $this->_classNames;
+        if ($this->classNames !== null) {
+            return $this->classNames;
         }
 
-        if (!$this->_paths) {
+        if (!$this->paths) {
             throw MappingException::pathRequired();
         }
 
         $classes = array();
         $includedFiles = array();
 
-        foreach ($this->_paths as $path) {
+        foreach ($this->paths as $path) {
             if ( ! is_dir($path)) {
                 throw MappingException::fileMappingDriversRequireConfiguredDirectoryPath($path);
             }
@@ -183,7 +183,7 @@ abstract class AnnotationDriver implements Driver
                     new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS),
                     \RecursiveIteratorIterator::LEAVES_ONLY
                 ),
-                '/^.+' . str_replace('.', '\.', $this->_fileExtension) . '$/i',
+                '/^.+' . str_replace('.', '\.', $this->fileExtension) . '$/i',
                 \RecursiveRegexIterator::GET_MATCH
             );
 
@@ -206,7 +206,7 @@ abstract class AnnotationDriver implements Driver
             }
         }
 
-        $this->_classNames = $classes;
+        $this->classNames = $classes;
 
         return $classes;
     }

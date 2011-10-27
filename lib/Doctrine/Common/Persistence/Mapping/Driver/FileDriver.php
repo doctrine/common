@@ -44,14 +44,14 @@ abstract class FileDriver implements Driver
      *
      * @var array
      */
-    protected $_paths = array();
+    protected $paths = array();
 
     /**
      * The file extension of mapping documents.
      *
      * @var string
      */
-    protected $_fileExtension;
+    protected $fileExtension;
 
     /**
      * Initializes a new FileDriver that looks in the given path(s) for mapping
@@ -71,7 +71,7 @@ abstract class FileDriver implements Driver
      */
     public function addPaths(array $paths)
     {
-        $this->_paths = array_unique(array_merge($this->_paths, $paths));
+        $this->paths = array_unique(array_merge($this->paths, $paths));
     }
 
     /**
@@ -81,7 +81,7 @@ abstract class FileDriver implements Driver
      */
     public function getPaths()
     {
-        return $this->_paths;
+        return $this->paths;
     }
 
     /**
@@ -91,7 +91,7 @@ abstract class FileDriver implements Driver
      */
     public function getFileExtension()
     {
-        return $this->_fileExtension;
+        return $this->fileExtension;
     }
 
     /**
@@ -102,7 +102,7 @@ abstract class FileDriver implements Driver
      */
     public function setFileExtension($fileExtension)
     {
-        $this->_fileExtension = $fileExtension;
+        $this->fileExtension = $fileExtension;
     }
 
     /**
@@ -128,10 +128,10 @@ abstract class FileDriver implements Driver
      */
     public function isTransient($className)
     {
-        $fileName = str_replace('\\', '.', $className) . $this->_fileExtension;
+        $fileName = str_replace('\\', '.', $className) . $this->fileExtension;
 
         // Check whether file exists
-        foreach ((array) $this->_paths as $path) {
+        foreach ((array) $this->paths as $path) {
             if (file_exists($path . DIRECTORY_SEPARATOR . $fileName)) {
                 return false;
             }
@@ -149,8 +149,8 @@ abstract class FileDriver implements Driver
     {
         $classes = array();
 
-        if ($this->_paths) {
-            foreach ((array) $this->_paths as $path) {
+        if ($this->paths) {
+            foreach ((array) $this->paths as $path) {
                 if ( ! is_dir($path)) {
                     throw MappingException::fileMappingDriversRequireConfiguredDirectoryPath($path);
                 }
@@ -161,7 +161,7 @@ abstract class FileDriver implements Driver
                 );
 
                 foreach ($iterator as $file) {
-                    if (($fileName = $file->getBasename($this->_fileExtension)) == $file->getBasename()) {
+                    if (($fileName = $file->getBasename($this->fileExtension)) == $file->getBasename()) {
                         continue;
                     }
 
@@ -184,10 +184,10 @@ abstract class FileDriver implements Driver
      */
     protected function _findMappingFile($className)
     {
-        $fileName = str_replace('\\', '.', $className) . $this->_fileExtension;
+        $fileName = str_replace('\\', '.', $className) . $this->fileExtension;
 
         // Check whether file exists
-        foreach ((array) $this->_paths as $path) {
+        foreach ((array) $this->paths as $path) {
             if (file_exists($path . DIRECTORY_SEPARATOR . $fileName)) {
                 return $path . DIRECTORY_SEPARATOR . $fileName;
             }

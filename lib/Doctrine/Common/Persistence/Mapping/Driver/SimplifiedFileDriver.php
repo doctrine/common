@@ -43,14 +43,14 @@ abstract class SimplifiedFileDriver implements Driver
      *
      * @var array
      */
-    protected $_paths = array();
+    protected $paths = array();
 
     /**
      * A map of mapping directory path to namespace prefix used to expand class shortnames.
      *
      * @var array
      */
-    protected $_prefixes = array();
+    protected $prefixes = array();
 
     /**
      * Global file with one or many entities defined in.
@@ -60,21 +60,21 @@ abstract class SimplifiedFileDriver implements Driver
      *
      * @var string
      */
-    protected $_globalBasename;
+    protected $globalBasename;
 
     /**
      * Cache for all class names in the global base name.
      *
      * @var array
      */
-    protected $_classCache;
+    protected $classCache;
 
     /**
      * File extension that is searched for.
      *
      * @var string
      */
-    protected $_fileExtension;
+    protected $fileExtension;
 
     public function __construct($prefixes)
     {
@@ -83,33 +83,33 @@ abstract class SimplifiedFileDriver implements Driver
 
     public function setGlobalBasename($file)
     {
-        $this->_globalBasename = $file;
+        $this->globalBasename = $file;
     }
 
     public function getGlobalBasename()
     {
-        return $this->_globalBasename;
+        return $this->globalBasename;
     }
 
     public function addNamespacePrefixes($prefixes)
     {
-        $this->_prefixes = array_merge($this->_prefixes, $prefixes);
-        $this->_paths = array_merge($this->_paths, array_keys($prefixes));
+        $this->prefixes = array_merge($this->prefixes, $prefixes);
+        $this->paths = array_merge($this->paths, array_keys($prefixes));
     }
 
     public function getNamespacePrefixes()
     {
-        return $this->_prefixes;
+        return $this->prefixes;
     }
 
     public function isTransient($className)
     {
-        if (null === $this->_classCache) {
+        if (null === $this->classCache) {
             $this->initialize();
         }
 
         // The mapping is defined in the global mapping file
-        if (isset($this->_classCache[$className])) {
+        if (isset($this->classCache[$className])) {
             return false;
         }
 
@@ -124,14 +124,14 @@ abstract class SimplifiedFileDriver implements Driver
 
     public function getAllClassNames()
     {
-        if (null === $this->_classCache) {
+        if (null === $this->classCache) {
             $this->initialize();
         }
 
         $classes = array();
 
-        if ($this->_paths) {
-            foreach ((array) $this->_paths as $path) {
+        if ($this->paths) {
+            foreach ((array) $this->paths as $path) {
                 if (!is_dir($path)) {
                     throw MappingException::fileMappingDriversRequireConfiguredDirectoryPath($path);
                 }
@@ -142,15 +142,15 @@ abstract class SimplifiedFileDriver implements Driver
                 );
 
                 foreach ($iterator as $file) {
-                    $fileName = $file->getBasename($this->_fileExtension);
+                    $fileName = $file->getBasename($this->fileExtension);
 
-                    if ($fileName == $file->getBasename() || $fileName == $this->_globalBasename) {
+                    if ($fileName == $file->getBasename() || $fileName == $this->globalBasename) {
                         continue;
                     }
 
                     // NOTE: All files found here means classes are not transient!
-                    if (isset($this->_prefixes[$path])) {
-                        $classes[] = $this->_prefixes[$path].'\\'.str_replace('.', '\\', $fileName);
+                    if (isset($this->prefixes[$path])) {
+                        $classes[] = $this->prefixes[$path].'\\'.str_replace('.', '\\', $fileName);
                     } else {
                         $classes[] = str_replace('.', '\\', $fileName);
                     }
@@ -158,29 +158,29 @@ abstract class SimplifiedFileDriver implements Driver
             }
         }
 
-        return array_merge($classes, array_keys($this->_classCache));
+        return array_merge($classes, array_keys($this->classCache));
     }
 
     public function getElement($className)
     {
-        if (null === $this->_classCache) {
+        if (null === $this->classCache) {
             $this->initialize();
         }
 
-        if (!isset($this->_classCache[$className])) {
-            $this->_classCache[$className] = $this->_loadMappingFile($this->_findMappingFile($className));
+        if (!isset($this->classCache[$className])) {
+            $this->classCache[$className] = $this->_loadMappingFile($this->_findMappingFile($className));
         }
 
-        return $this->_classCache[$className];
+        return $this->classCache[$className];
     }
 
     protected function initialize()
     {
-        $this->_classCache = array();
-        if (null !== $this->_globalBasename) {
-            foreach ($this->_paths as $path) {
-                if (is_file($file = $path.'/'.$this->_globalBasename.$this->_fileExtension)) {
-                    $this->_classCache = array_merge($this->_classCache, $this->_loadMappingFile($file));
+        $this->classCache = array();
+        if (null !== $this->globalBasename) {
+            foreach ($this->paths as $path) {
+                if (is_file($file = $path.'/'.$this->globalBasename.$this->fileExtension)) {
+                    $this->classCache = array_merge($this->classCache, $this->_loadMappingFile($file));
                 }
             }
         }
@@ -188,9 +188,9 @@ abstract class SimplifiedFileDriver implements Driver
 
     protected function _findMappingFile($className)
     {
-        $defaultFileName = str_replace('\\', '.', $className).$this->_fileExtension;
-        foreach ($this->_paths as $path) {
-            if (!isset($this->_prefixes[$path])) {
+        $defaultFileName = str_replace('\\', '.', $className).$this->fileExtension;
+        foreach ($this->paths as $path) {
+            if (!isset($this->prefixes[$path])) {
                 if (is_file($path.DIRECTORY_SEPARATOR.$defaultFileName)) {
                     return $path.DIRECTORY_SEPARATOR.$defaultFileName;
                 }
@@ -198,13 +198,13 @@ abstract class SimplifiedFileDriver implements Driver
                 continue;
             }
 
-            $prefix = $this->_prefixes[$path];
+            $prefix = $this->prefixes[$path];
 
             if (0 !== strpos($className, $prefix.'\\')) {
                 continue;
             }
 
-            $filename = $path.'/'.strtr(substr($className, strlen($prefix)+1), '\\', '.').$this->_fileExtension;
+            $filename = $path.'/'.strtr(substr($className, strlen($prefix)+1), '\\', '.').$this->fileExtension;
             if (is_file($filename)) {
                 return $filename;
             }
@@ -212,7 +212,7 @@ abstract class SimplifiedFileDriver implements Driver
             throw MappingException::mappingFileNotFound($className, $filename);
         }
 
-        throw MappingException::mappingFileNotFound($className, substr($className, strrpos($className, '\\') + 1).$this->_fileExtension);
+        throw MappingException::mappingFileNotFound($className, substr($className, strrpos($className, '\\') + 1).$this->fileExtension);
     }
 
     /**

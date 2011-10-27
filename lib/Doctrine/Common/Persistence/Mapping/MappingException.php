@@ -26,6 +26,12 @@ namespace Doctrine\Common\Persistence\Mapping;
  */
 class MappingException extends \Exception
 {
+    public static function classNotFoundInNamespaces($className, $namespaces)
+    {
+        return new self("The class '" . $className . "' was not found in the ".
+            "chain configured namespaces " . implode(", ", $namespaces));
+    }
+
     public static function pathRequired()
     {
         return new self("Specifying the paths to your entities is required ".
