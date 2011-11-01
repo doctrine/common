@@ -16,6 +16,6 @@
         "php": ">=5.3.2"
     },
     "autoload": {
-        "psr-0": { "Doctrine\\Common": "src/" }
+        "psr-0": { "Doctrine\\Common": "lib/" }
     }
 }
