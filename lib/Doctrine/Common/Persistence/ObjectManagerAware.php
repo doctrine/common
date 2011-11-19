@@ -45,5 +45,5 @@ interface ObjectManagerAware
      * @param ObjectManager $objectManager
      * @param ClassMetadata $classMetadata
      */
-    public function setDoctrine(ObjectManager $objectManager, ClassMetadata $classMetadata);
+    public function injectObjectManager(ObjectManager $objectManager, ClassMetadata $classMetadata);
 }
