@@ -32,10 +32,10 @@ use Doctrine\Common\Collections\Collection;
  *
  * Limitations:
  *
- * 1. All persistent objects have to be associated with a single EntityManager, multiple
- *    EntityManagers are not supported. You can set the EntityManager with `PersistentObject#setEntityManager()`.
+ * 1. All persistent objects have to be associated with a single ObjectManager, multiple
+ *    ObjectManagers are not supported. You can set the ObjectManager with `PersistentObject#setObjectManager()`.
  * 2. Setters and getters only work if a ClassMetadata instance was injected into the PersistentObject.
- *    This is either done on `postLoad` of an entity or by accessing the global entity manager.
+ *    This is either done on `postLoad` of an object or by accessing the global object manager.
  * 3. There are no hooks for setters/getters. Just implement the method yourself instead of relying on __call().
  * 4. Slower than handcoded implementations: An average of 7 method calls per access to a field and 11 for an association.
  * 5. Only the inverse side associations get autoset on the owning side aswell. Setting objects on the owning side
@@ -68,7 +68,7 @@ abstract class PersistentObject implements ObjectManagerAware
     private $cm;
 
     /**
-     * Set the entity manager responsible for all persistent object base classes.
+     * Set the object manager responsible for all persistent object base classes.
      *
      * @param ObjectManager $objectManager
      */
@@ -93,7 +93,9 @@ abstract class PersistentObject implements ObjectManagerAware
      */
     public function injectObjectManager(ObjectManager $objectManager, ClassMetadata $classMetadata)
     {
-        if ($objectManager !== self::$objectManager) {
+        if (self::$objectManager === null) {
+            self::$objectManager = $objectManager;
+        } else if ($objectManager !== self::$objectManager) {
             throw new \RuntimeException("Trying to use PersistentObject with different ObjectManager instances. " .
                 "Was PersistentObject::setObjectManager() called?");
         }
@@ -104,7 +106,7 @@ abstract class PersistentObject implements ObjectManagerAware
     /**
      * Sets a persistent fields value.
      *
-     * @throws InvalidArgumentException - When the wrong target entity type is passed to an association
+     * @throws InvalidArgumentException - When the wrong target object type is passed to an association
      * @throws BadMethodCallException - When no persistent field exists by that name.
      * @param string $field
      * @param array $args
@@ -119,7 +121,7 @@ abstract class PersistentObject implements ObjectManagerAware
         } else if ($this->cm->hasAssociation($field) && $this->cm->isSingleValuedAssociation($field)) {
             $targetClass = $this->cm->getAssociationTargetClass($field);
             if (!($args[0] instanceof $targetClass) && $args[0] !== null) {
-                throw new \InvalidArgumentException("Expected entity of type '".$targetClass."'");
+                throw new \InvalidArgumentException("Expected persistent object of type '".$targetClass."'");
             }
             $this->$field = $args[0];
             $this->completeOwningSide($field, $targetClass, $args[0]);
@@ -179,7 +181,7 @@ abstract class PersistentObject implements ObjectManagerAware
         if ($this->cm->hasAssociation($field) && $this->cm->isCollectionValuedAssociation($field)) {
             $targetClass = $this->cm->getAssociationTargetClass($field);
             if (!($args[0] instanceof $targetClass)) {
-                throw new \InvalidArgumentException("Expected entity of type '".$targetClass."'");
+                throw new \InvalidArgumentException("Expected persistent object of type '".$targetClass."'");
             }
             if (!($this->$field instanceof Collection)) {
                 $this->$field = new ArrayCollection($this->$field ?: array());
@@ -203,7 +205,7 @@ abstract class PersistentObject implements ObjectManagerAware
         }
 
         if (!self::$objectManager) {
-            throw new \RuntimeException("No runtime entity manager set. Call PersistentObject#setPersistentObjectManager().");
+            throw new \RuntimeException("No runtime object manager set. Call PersistentObject#setObjectManager().");
         }
 
         $this->cm = self::$objectManager->getClassMetadata(get_class($this));
