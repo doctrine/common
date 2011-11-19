@@ -93,9 +93,7 @@ abstract class PersistentObject implements ObjectManagerAware
      */
     public function injectObjectManager(ObjectManager $objectManager, ClassMetadata $classMetadata)
     {
-        if (self::$objectManager === null) {
-            self::$objectManager = $objectManager;
-        } else if ($objectManager !== self::$objectManager) {
+        if ($objectManager !== self::$objectManager) {
             throw new \RuntimeException("Trying to use PersistentObject with different ObjectManager instances. " .
                 "Was PersistentObject::setObjectManager() called?");
         }
