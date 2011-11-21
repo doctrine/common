@@ -19,26 +19,72 @@
 
 namespace Doctrine\Common\Persistence\Mapping\Driver;
 
-use Doctrine\Common\Persistence\Mapping\MappingException;
-
 /**
- * Simplified driver that additionally looks for mapping information in a global file
- * and looks for class shortname filenames only, not for full-qualified ones.
- *
- * @example
- *
- * $driver = new SimplifiedFileDriverImplementation(
- *   "/path/to/entities1" => "MyProject\Entities",
- *   "/path/to/entities2" => "OtherNamespace\Entities",
- * );
+ * The Symfony File Locator makes a bunch of simplifying assumptions compared
+ * to the DefaultFileLocator and introduces a global mapping file that contain
+ * several mappings.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Benjamin Eberlei <kontakt@beberlei.de>
  * @license MIT
  */
-abstract class SimplifiedFileDriver implements Driver
+class SymfonyFileLocator implements FileLocator
 {
-    public function isTransient($className)
+    /**
+     * The paths where to look for mapping files.
+     *
+     * @var array
+     */
+    protected $paths = array();
+
+    /**
+     * A map of mapping directory path to namespace prefix used to expand class shortnames.
+     *
+     * @var array
+     */
+    protected $prefixes = array();
+
+    /**
+     * Global file with one or many entities defined in.
+     *
+     * Attention: Having lots of entities defined in this file can have a pretty
+     * negative effect on performance.
+     *
+     * @var string
+     */
+    protected $globalBasename;
+
+    /**
+     * Cache for all class names in the global base name.
+     *
+     * @var array
+     */
+    protected $classCache;
+
+    /**
+     * File extension that is searched for.
+     *
+     * @var string
+     */
+    protected $fileExtension;
+
+    public function __construct($prefixes)
+    {
+        $this->addNamespacePrefixes($prefixes);
+    }
+
+    public function addNamespacePrefixes($prefixes)
+    {
+        $this->prefixes = array_merge($this->prefixes, $prefixes);
+        $this->paths = array_merge($this->paths, array_keys($prefixes));
+    }
+
+    public function getNamespacePrefixes()
+    {
+        return $this->prefixes;
+    }
+
+    public function fileExists($className)
     {
         if (null === $this->classCache) {
             $this->initialize();
@@ -97,33 +143,24 @@ abstract class SimplifiedFileDriver implements Driver
         return array_merge($classes, array_keys($this->classCache));
     }
 
-    public function getElement($className)
-    {
-        if (null === $this->classCache) {
-            $this->initialize();
-        }
-
-        if (!isset($this->classCache[$className])) {
-            $this->classCache[$className] = $this->_loadMappingFile($this->_findMappingFile($className));
-        }
-
-        return $this->classCache[$className];
-    }
-
     protected function initialize()
     {
         $this->classCache = array();
         if (null !== $this->globalBasename) {
             foreach ($this->paths as $path) {
                 if (is_file($file = $path.'/'.$this->globalBasename.$this->fileExtension)) {
-                    $this->classCache = array_merge($this->classCache, $this->_loadMappingFile($file));
+                    $this->classCache = array_merge($this->classCache, $this->loadMappingFile($file));
                 }
             }
         }
     }
 
-    protected function _findMappingFile($className)
+    public function findMappingFile($className)
     {
+        if (null === $this->classCache) {
+            $this->initialize();
+        }
+
         $defaultFileName = str_replace('\\', '.', $className).$this->fileExtension;
         foreach ($this->paths as $path) {
             if (!isset($this->prefixes[$path])) {
@@ -150,13 +187,4 @@ abstract class SimplifiedFileDriver implements Driver
 
         throw MappingException::mappingFileNotFound($className, substr($className, strrpos($className, '\\') + 1).$this->fileExtension);
     }
-
-    /**
-     * Loads a mapping file with the given name and returns a map
-     * from class/entity names to their corresponding elements.
-     *
-     * @param string $file The mapping file to load.
-     * @return array
-     */
-    abstract protected function _loadMappingFile($file);
 }
