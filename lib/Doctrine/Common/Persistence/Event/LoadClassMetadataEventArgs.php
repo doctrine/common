@@ -27,7 +27,7 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata;
  * Class that holds event arguments for a loadMetadata event.
  *
  * @author Jonathan H. Wage <jonwage@gmail.com>
- * @since  2.0
+ * @since  2.2
  */
 class LoadClassMetadataEventArgs extends EventArgs
 {
@@ -50,7 +50,7 @@ class LoadClassMetadataEventArgs extends EventArgs
     public function __construct(ClassMetadata $classMetadata, ObjectManager $objectManager)
     {
         $this->classMetadata = $classMetadata;
-        $this->objectManager            = $objectManager;
+        $this->objectManager = $objectManager;
     }
 
     /**

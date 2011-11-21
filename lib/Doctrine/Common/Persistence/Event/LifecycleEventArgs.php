@@ -27,7 +27,7 @@ use Doctrine\Common\Persistence\ObjectManager;
  * of entities.
  *
  * @link   www.doctrine-project.org
- * @since  2.0
+ * @since  2.2
  * @author Roman Borschel <roman@code-factory.de>
  * @author Benjamin Eberlei <kontakt@beberlei.de>
  */

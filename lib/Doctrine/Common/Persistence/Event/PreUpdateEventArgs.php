@@ -23,12 +23,12 @@ use Doctrine\Common\EventArgs,
     Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Class that holds event arguments for a preInsert/preUpdate event.
+ * Class that holds event arguments for a preUpdate event.
  *
  * @author Guilherme Blanco <guilehrmeblanco@hotmail.com>
  * @author Roman Borschel <roman@code-factory.org>
  * @author Benjamin Eberlei <kontakt@beberlei.de>
- * @since  2.0
+ * @since  2.2
  */
 class PreUpdateEventArgs extends LifecycleEventArgs
 {
