@@ -79,7 +79,7 @@ class PreUpdateEventArgs extends LifecycleEventArgs
      */
     public function getOldValue($field)
     {
-    	$this->assertValidField($field);
+        $this->assertValidField($field);
 
         return $this->entityChangeSet[$field][0];
     }
