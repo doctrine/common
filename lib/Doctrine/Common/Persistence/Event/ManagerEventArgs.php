@@ -19,16 +19,18 @@
 
 namespace Doctrine\Common\Persistence\Event;
 
+use Doctrine\Common\Persistence\ObjectManager;
+
 /**
  * Provides event arguments for the preFlush event.
  *
  * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.com
+ * @link        www.doctrine-project.org
  * @since       2.0
  * @author      Roman Borschel <roman@code-factory.de>
  * @author      Benjamin Eberlei <kontakt@beberlei.de>
  */
-class PreFlushEventArgs extends \Doctrine\Common\EventArgs
+class ManagerEventArgs extends \Doctrine\Common\EventArgs
 {
     /**
      * @var ObjectManager
