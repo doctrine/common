@@ -158,9 +158,14 @@ class ClassLoader
             return false;
         }
 
-        require ($this->includePath !== null ? $this->includePath . DIRECTORY_SEPARATOR : '')
+        $path = ($this->includePath !== null ? $this->includePath . DIRECTORY_SEPARATOR : '')
                . str_replace($this->namespaceSeparator, DIRECTORY_SEPARATOR, $className)
                . $this->fileExtension;
+               
+        if (!file_exists($path))
+        	return false;
+        	
+        require $path;
         
         return true;
     }
@@ -221,17 +226,17 @@ class ClassLoader
                         if ($loader[0]->canLoadClass($className)) {
                             return true;
                         }
-                    } else if ($loader[0]->{$loader[1]}($className)) {
+                    } else if ($loader[0]->{$loader[1]}($className) || class_exists($className, false)) {
                         return true;
                     }
-                } else if ($loader[0]::$loader[1]($className)) { // array('ClassName', 'methodName')
+                } else if ($loader[0]::$loader[1]($className) || class_exists($className, false)) { // array('ClassName', 'methodName')
                     return true;
                 }
             } else if ($loader instanceof \Closure) { // function($className) {..}
-                if ($loader($className)) {
+                if ($loader($className) || class_exists($className, false)) {
                     return true;
                 }
-            } else if (is_string($loader) && $loader($className)) { // "MyClass::loadClass"
+            } else if (is_string($loader) && ($loader($className) || class_exists($className, false))) { // "MyClass::loadClass"
                 return true;
             }
         }
