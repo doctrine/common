@@ -42,7 +42,7 @@ interface ClassMetadataFactory
      * Gets the class metadata descriptor for a class.
      *
      * @param string $className The name of the class.
-     * @return Doctrine\ODM\MongoDB\Mapping\ClassMetadata
+     * @return ClassMetadata
      */
     function getMetadataFor($className);
 
