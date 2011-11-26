@@ -19,6 +19,8 @@
 
 namespace Doctrine\Common\Persistence\Mapping\Driver;
 
+use Doctrine\Common\Persistence\Mapping\MappingException;
+
 /**
  * Locate the file that contains the metadata information for a given class name.
  *
@@ -50,9 +52,10 @@ class DefaultFileLocator implements FileLocator
      *
      * @param string|array $paths One or multiple paths where mapping documents can be found.
      */
-    public function __construct($paths)
+    public function __construct($paths, $fileExtension = null)
     {
         $this->addPaths((array) $paths);
+        $this->fileExtension = $fileExtension;
     }
 
     /**
@@ -104,7 +107,7 @@ class DefaultFileLocator implements FileLocator
         $fileName = str_replace('\\', '.', $className) . $this->fileExtension;
 
         // Check whether file exists
-        foreach ((array) $this->paths as $path) {
+        foreach ($this->paths as $path) {
             if (file_exists($path . DIRECTORY_SEPARATOR . $fileName)) {
                 return $path . DIRECTORY_SEPARATOR . $fileName;
             }
@@ -116,12 +119,12 @@ class DefaultFileLocator implements FileLocator
     /**
      * {@inheritDoc}
      */
-    public function getAllClassNames()
+    public function getAllClassNames($globalBasename)
     {
         $classes = array();
 
         if ($this->paths) {
-            foreach ((array) $this->paths as $path) {
+            foreach ($this->paths as $path) {
                 if ( ! is_dir($path)) {
                     throw MappingException::fileMappingDriversRequireConfiguredDirectoryPath($path);
                 }
@@ -132,7 +135,9 @@ class DefaultFileLocator implements FileLocator
                 );
 
                 foreach ($iterator as $file) {
-                    if (($fileName = $file->getBasename($this->fileExtension)) == $file->getBasename()) {
+                    $fileName = $file->getBasename($this->fileExtension);
+
+                    if ($fileName == $file->getBasename() || $fileName == $globalBasename) {
                         continue;
                     }
 
@@ -145,6 +150,9 @@ class DefaultFileLocator implements FileLocator
         return $classes;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function fileExists($className)
     {
         $fileName = str_replace('\\', '.', $className) . $this->fileExtension;
@@ -152,10 +160,10 @@ class DefaultFileLocator implements FileLocator
         // Check whether file exists
         foreach ((array) $this->paths as $path) {
             if (file_exists($path . DIRECTORY_SEPARATOR . $fileName)) {
-                return false;
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 }

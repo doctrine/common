@@ -54,16 +54,4 @@ class MappingException extends \Exception
     {
         return new self("No mapping file found named '$fileName' for class '$entityName'.");
     }
-
-    public static function fileMappingDriversRequireConfiguredDirectoryPath($path = null)
-    {
-        if ( ! empty($path)) {
-            $path = '[' . $path . ']';
-        }
-
-        return new self(
-            'File mapping drivers must have a valid directory path, ' .
-            'however the given path ' . $path . ' seems to be incorrect!'
-        );
-    }
 }

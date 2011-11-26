@@ -19,10 +19,12 @@
 
 namespace Doctrine\Common\Persistence\Mapping\Driver;
 
+use Doctrine\Common\Persistence\Mapping\MappingException;
+
 /**
- * The Symfony File Locator makes a bunch of simplifying assumptions compared
- * to the DefaultFileLocator and introduces a global mapping file that contain
- * several mappings.
+ * The Symfony File Locator makes a simplifying assumptions compared
+ * to the DefaultFileLocator. By assuming paths only contain entities of a certain
+ * namespace the mapping files consinst of the short classname only.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Benjamin Eberlei <kontakt@beberlei.de>
@@ -45,35 +47,19 @@ class SymfonyFileLocator implements FileLocator
     protected $prefixes = array();
 
     /**
-     * Global file with one or many entities defined in.
-     *
-     * Attention: Having lots of entities defined in this file can have a pretty
-     * negative effect on performance.
-     *
-     * @var string
-     */
-    protected $globalBasename;
-
-    /**
-     * Cache for all class names in the global base name.
-     *
-     * @var array
-     */
-    protected $classCache;
-
-    /**
      * File extension that is searched for.
      *
      * @var string
      */
     protected $fileExtension;
 
-    public function __construct($prefixes)
+    public function __construct(array $prefixes, $fileExtension = null)
     {
         $this->addNamespacePrefixes($prefixes);
+        $this->fileExtension = $fileExtension;
     }
 
-    public function addNamespacePrefixes($prefixes)
+    public function addNamespacePrefixes(array $prefixes)
     {
         $this->prefixes = array_merge($this->prefixes, $prefixes);
         $this->paths = array_merge($this->paths, array_keys($prefixes));
@@ -83,33 +69,68 @@ class SymfonyFileLocator implements FileLocator
     {
         return $this->prefixes;
     }
-
-    public function fileExists($className)
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function getPaths()
     {
-        if (null === $this->classCache) {
-            $this->initialize();
-        }
-
-        // The mapping is defined in the global mapping file
-        if (isset($this->classCache[$className])) {
-            return false;
-        }
-
-        try {
-            $this->_findMappingFile($className);
-
-            return false;
-        } catch (MappingException $e) {
-            return true;
-        }
+        return $this->paths;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function getFileExtension()
+    {
+        return $this->fileExtension;
+    }
+    
+    /**
+     * Set the file extension used to look for mapping files under
+     *
+     * @param string $fileExtension The file extension to set
+     * @return void
+     */
+    public function setFileExtension($fileExtension)
+    {
+        $this->fileExtension = $fileExtension;
     }
 
-    public function getAllClassNames()
+    /**
+     * {@inheritDoc}
+     */
+    public function fileExists($className)
     {
-        if (null === $this->classCache) {
-            $this->initialize();
+        $defaultFileName = str_replace('\\', '.', $className).$this->fileExtension;
+        foreach ($this->paths as $path) {
+            if (!isset($this->prefixes[$path])) {
+                // global namespace class
+                if (is_file($path.DIRECTORY_SEPARATOR.$defaultFileName)) {
+                    return true;
+                }
+
+                continue;
+            }
+
+            $prefix = $this->prefixes[$path];
+
+            if (0 !== strpos($className, $prefix.'\\')) {
+                continue;
+            }
+
+            $filename = $path.'/'.strtr(substr($className, strlen($prefix)+1), '\\', '.').$this->fileExtension;
+            return is_file($filename);
         }
 
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAllClassNames($globalBasename = null)
+    {
         $classes = array();
 
         if ($this->paths) {
@@ -126,7 +147,7 @@ class SymfonyFileLocator implements FileLocator
                 foreach ($iterator as $file) {
                     $fileName = $file->getBasename($this->fileExtension);
 
-                    if ($fileName == $file->getBasename() || $fileName == $this->globalBasename) {
+                    if ($fileName == $file->getBasename() || $fileName == $globalBasename) {
                         continue;
                     }
 
@@ -140,27 +161,14 @@ class SymfonyFileLocator implements FileLocator
             }
         }
 
-        return array_merge($classes, array_keys($this->classCache));
+        return $classes;
     }
 
-    protected function initialize()
-    {
-        $this->classCache = array();
-        if (null !== $this->globalBasename) {
-            foreach ($this->paths as $path) {
-                if (is_file($file = $path.'/'.$this->globalBasename.$this->fileExtension)) {
-                    $this->classCache = array_merge($this->classCache, $this->loadMappingFile($file));
-                }
-            }
-        }
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     public function findMappingFile($className)
     {
-        if (null === $this->classCache) {
-            $this->initialize();
-        }
-
         $defaultFileName = str_replace('\\', '.', $className).$this->fileExtension;
         foreach ($this->paths as $path) {
             if (!isset($this->prefixes[$path])) {

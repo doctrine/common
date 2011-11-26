@@ -37,25 +37,36 @@ use Doctrine\Common\Persistence\Mapping\MappingException;
  * @author      Jonathan H. Wage <jonwage@gmail.com>
  * @author      Roman Borschel <roman@code-factory.org>
  */
-abstract class FileDriver implements Driver
+abstract class FileDriver implements MappingDriver
 {
     /**
      * @var FileLocator
      */
     protected $locator;
+    
+    /**
+     * @var array
+     */
+    protected $classCache;
+    
+    /**
+     * @var string
+     */
+    protected $globalBasename;
 
     /**
      * Initializes a new FileDriver that looks in the given path(s) for mapping
      * documents and operates in the specified operating mode.
      *
      * @param string|array|FileLocator $paths A FileLocator or one/multiple paths where mapping documents can be found.
+     * @param string $fileExtension
      */
-    public function __construct($locator)
+    public function __construct($locator, $fileExtension = null)
     {
         if ($locator instanceof FileLocator) {
             $this->locator = $locator;
         } else {
-            $this->locator = new DefaultFileLocator((array)$locator);
+            $this->locator = new DefaultFileLocator((array)$locator, $fileExtension);
         }
     }
 
@@ -77,6 +88,14 @@ abstract class FileDriver implements Driver
      */
     public function getElement($className)
     {
+        if ($this->classCache === null) {
+            $this->initialize();
+        }
+        
+        if (isset($this->classCache[$className])) {
+            return $this->classCache[$className];
+        }
+        
         $result = $this->loadMappingFile($this->locator->findMappingFile($className));
 
         return $result[$className];
@@ -92,7 +111,15 @@ abstract class FileDriver implements Driver
      */
     public function isTransient($className)
     {
-        return $this->locator->fileExists($className);
+        if ($this->classCache === null) {
+            $this->initialize();
+        }
+        
+        if (isset($this->classCache[$className])) {
+            return false;
+        }
+        
+        return !$this->locator->fileExists($className);
     }
 
     /**
@@ -102,15 +129,50 @@ abstract class FileDriver implements Driver
      */
     public function getAllClassNames()
     {
-        return $this->locator->getAllClassNames();
+        if ($this->classCache === null) {
+            $this->initialize();
+        }
+        
+        $classNames = (array)$this->locator->getAllClassNames($this->globalBasename);
+        if ($this->classCache) {
+            $classNames = array_merge(array_keys($this->classCache), $classNames);
+        }
+        return $classNames;
     }
 
     /**
      * Loads a mapping file with the given name and returns a map
-     * from class/entity names to their corresponding elements.
+     * from class/entity names to their corresponding file driver elements.
      *
      * @param string $file The mapping file to load.
      * @return array
      */
     abstract protected function loadMappingFile($file);
+    
+    /**
+     * Initialize the class cache from all the global files.
+     * 
+     * Using this feature adds a substantial performance hit to file drivers as
+     * more metadata has to be loaded into memory than might actually be
+     * necessary. This may not be relevant to scenarios where caching of
+     * metadata is in place, however hits very hard in scenarios where no
+     * caching is used.
+     * 
+     * @return void
+     */
+    protected function initialize()
+    {
+        $this->classCache = array();
+        if (null !== $this->globalBasename) {
+            foreach ($this->locator->getPaths() as $path) {
+                $file = $path.'/'.$this->globalBasename.$this->locator->getFileExtension();
+                if (is_file($file)) {
+                    $this->classCache = array_merge(
+                        $this->classCache,
+                        $this->loadMappingFile($file)
+                    );
+                }
+            }
+        }
+    }
 }
