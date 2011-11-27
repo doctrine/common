@@ -20,6 +20,7 @@
 namespace Doctrine\Common\Persistence\Mapping\Driver;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Common\Persistence\Mapping\MappingException;
 
 /**
  * The StaticPHPDriver calls a static loadMetadata() method on your entity
@@ -49,13 +50,6 @@ class StaticPHPDriver implements MappingDriver
      */
     private $classNames;
 
-    /**
-     * The file extension of mapping documents.
-     *
-     * @var string
-     */
-    private $fileExtension = '.php';
-
     public function __construct($paths)
     {
         $this->addPaths((array) $paths);
@@ -69,9 +63,9 @@ class StaticPHPDriver implements MappingDriver
     /**
      * {@inheritdoc}
      */
-    public function loadMetadataForClass($className, ClassMetadataInfo $metadata)
+    public function loadMetadataForClass($className, ClassMetadata $metadata)
     {
-        call_user_func_array(array($className, 'loadMetadata'), array($metadata));
+        $className::loadMetadata($metadata);
     }
 
     /**
@@ -102,7 +96,7 @@ class StaticPHPDriver implements MappingDriver
             );
 
             foreach ($iterator as $file) {
-                if (($fileName = $file->getBasename($this->fileExtension)) == $file->getBasename()) {
+                if (($fileName = $file->getBasename(".php")) == $file->getBasename()) {
                     continue;
                 }
 
@@ -132,6 +126,6 @@ class StaticPHPDriver implements MappingDriver
      */
     public function isTransient($className)
     {
-        return method_exists($className, 'loadMetadata') ? false : true;
+        return ! method_exists($className, 'loadMetadata');
     }
 }

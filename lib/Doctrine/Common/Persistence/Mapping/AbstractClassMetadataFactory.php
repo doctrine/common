@@ -42,11 +42,6 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
     protected $cacheSalt = "\$CLASSMETADATA";
 
     /**
-     * @var Driver\MappingDriver
-     */
-    protected $driver;
-
-    /**
      * @var \Doctrine\Common\Cache\Cache
      */
     private $cacheDriver;
@@ -60,7 +55,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
      * @var bool
      */
     protected $initialized = false;
-
+    
     /**
      * Sets the cache driver used by the factory to cache ClassMetadata instances.
      *
@@ -81,6 +76,11 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         return $this->cacheDriver;
     }
 
+    /**
+     * Return an array of all the loaded metadata currently in memory.
+     * 
+     * @return array
+     */
     public function getLoadedMetadata()
     {
         return $this->loadedMetadata;
@@ -97,9 +97,10 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         if ( ! $this->initialized) {
             $this->initialize();
         }
-
+        
+        $driver = $this->getDriver();
         $metadata = array();
-        foreach ($this->driver->getAllClassNames() as $className) {
+        foreach ($driver->getAllClassNames() as $className) {
             $metadata[] = $this->getMetadataFor($className);
         }
 
@@ -109,10 +110,26 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
     /**
      * Lazy initialization of this stuff, especially the metadata driver,
      * since these are not needed at all when a metadata cache is active.
+     * 
+     * @return void
      */
     abstract protected function initialize();
 
+    /**
+     * Get the fully qualified class-name from the namespace alias.
+     * 
+     * @param string $namespaceAlias
+     * @param string $simpleClassName
+     * @return string
+     */
     abstract protected function getFqcnFromAlias($namespaceAlias, $simpleClassName);
+    
+    /**
+     * Return the mapping driver implementation.
+     * 
+     * @return MappingDriver
+     */
+    abstract protected function getDriver();
 
     /**
      * Gets the class metadata descriptor for a class.
@@ -128,7 +145,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
             // Check for namespace alias
             if (strpos($className, ':') !== false) {
                 list($namespaceAlias, $simpleClassName) = explode(':', $className);
-                $realClassName = $this->getFqcnFromAlias($namespaceAlias) . '\\' . $simpleClassName;
+                $realClassName = $this->getFqcnFromAlias($namespaceAlias, $simpleClassName);
 
                 if (isset($this->loadedMetadata[$realClassName])) {
                     // We do not have the alias name in the map, include it
@@ -196,7 +213,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         // Collect parent classes, ignoring transient (not-mapped) classes.
         $parentClasses = array();
         foreach (array_reverse(class_parents($name)) as $parentClass) {
-            if ( ! $this->driver->isTransient($parentClass)) {
+            if ( ! $this->getDriver()->isTransient($parentClass)) {
                 $parentClasses[] = $parentClass;
             }
         }
@@ -228,7 +245,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         foreach ($parentClasses as $className) {
             if (isset($this->loadedMetadata[$className])) {
                 $parent = $this->loadedMetadata[$className];
-                if ( ! $parent->isMappedSuperclass) {
+                if (isset($parent->isMappedSuperclass) && $parent->isMappedSuperclass === false) {
                     $rootEntityFound = true;
                     array_unshift($visited, $className);
                 }
@@ -243,7 +260,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
 
             $parent = $class;
 
-            if ( ! $class->isMappedSuperclass) {
+            if (isset($parent->isMappedSuperclass) && $class->isMappedSuperclass === false) {
                 $rootEntityFound = true;
                 array_unshift($visited, $className);
             }
@@ -254,6 +271,14 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         return $loaded;
     }
 
+    /**
+     * Actually load the metadata from the underlying metadata
+     * 
+     * @param ClassMetadata $class
+     * @param ClassMetadata $parent
+     * @param bool $rootEntityFound
+     * @return void
+     */
     abstract protected function doLoadMetadata($class, $parent, $rootEntityFound);
 
     /**
@@ -275,7 +300,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         if ( ! $this->initialized) {
             $this->initialize();
         }
-
-        return $this->driver->isTransient($class);
+        
+        return $this->getDriver()->isTransient($class);
     }
 }

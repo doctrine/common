@@ -33,7 +33,7 @@ use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver,
  * @author Jonathan H. Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
  */
-class MappingDriverChain implements Driver
+class MappingDriverChain implements MappingDriver
 {
     /**
      * @var array

@@ -33,7 +33,7 @@ use Doctrine\Common\Cache\ArrayCache,
  * @author Jonathan H. Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
  */
-abstract class AnnotationDriver implements Driver
+abstract class AnnotationDriver implements MappingDriver
 {
     /**
      * The AnnotationReader.
