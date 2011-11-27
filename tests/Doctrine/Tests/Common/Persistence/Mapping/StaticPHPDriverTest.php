@@ -15,6 +15,15 @@ class StaticPHPDriverTest extends DoctrineTestCase
         $driver = new StaticPHPDriver(array(__DIR__));
         $driver->loadMetadataForClass(__NAMESPACE__ . '\\TestEntity', $metadata);
     }
+    
+    public function testGetAllClassNames()
+    {
+        $driver = new StaticPHPDriver(array(__DIR__));
+        $classNames = $driver->getAllClassNames();
+        
+        $this->assertTrue(in_array(
+            'Doctrine\Tests\Common\Persistence\Mapping\TestEntity', $classNames));
+    }
 }
 
 class TestEntity
