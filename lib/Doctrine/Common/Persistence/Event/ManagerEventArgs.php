@@ -15,27 +15,45 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information, see
  * <http://www.doctrine-project.org>.
- */
+*/
 
-namespace Doctrine\Common\DateTime;
+namespace Doctrine\Common\Persistence\Event;
+
+use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * Thrown if a method is called on the Doctrine DateTime that semantically would change the
- * inner state of the instance, hence immutability has to be enforced.
- * 
- * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link    www.doctrine-project.org
- * @since   3.0
- * @author  Benjamin Eberlei <kontakt@beberlei.de>
+ * Provides event arguments for the preFlush event.
+ *
+ * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link        www.doctrine-project.org
+ * @since       2.2
+ * @author      Roman Borschel <roman@code-factory.de>
+ * @author      Benjamin Eberlei <kontakt@beberlei.de>
  */
-class ImmutableException extends \Exception
+class ManagerEventArgs extends \Doctrine\Common\EventArgs
 {
-    public function __construct()
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
+
+    /**
+     * Constructor.
+     *
+     * @param ObjectManager $objectManager
+     */
+    public function __construct(ObjectManager $objectManager)
     {
-        parent::__construct(
-            "Cannot modify Doctrine\Common\DateTime\DateTime instance, its immutable. ".
-            "You can use #modify(), #add() and #sub() and work with the newly created instances " .
-            "that are returned."
-        );
+        $this->objectManager = $objectManager;
+    }
+
+    /**
+     * Retrieve associated ObjectManager.
+     *
+     * @return ObjectManager
+     */
+    public function getObjectManager()
+    {
+        return $this->objectManager;
     }
 }

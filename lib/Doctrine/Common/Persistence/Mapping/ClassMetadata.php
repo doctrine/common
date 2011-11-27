@@ -32,14 +32,14 @@ interface ClassMetadata
 {
     /**
      * Get fully-qualified class name of this persistent class.
-     * 
+     *
      * @return string
      */
     function getName();
-    
+
     /**
      * Gets the mapped identifier field name.
-     * 
+     *
      * The returned structure is an array of the identifier field names.
      *
      * @return array
@@ -64,7 +64,7 @@ interface ClassMetadata
     /**
      * Checks if the given field is a mapped property for this class.
      *
-     * @param string $fieldName 
+     * @param string $fieldName
      * @return boolean
      */
     function hasField($fieldName);
@@ -92,41 +92,45 @@ interface ClassMetadata
      * @return boolean
      */
     function isCollectionValuedAssociation($fieldName);
-    
+
     /**
      * A numerically indexed list of field names of this persistent class.
-     * 
+     *
      * This array includes identifier fields if present on this class.
-     * 
+     *
      * @return array
      */
     function getFieldNames();
-    
+
     /**
      * A numerically indexed list of association names of this persistent class.
-     * 
+     *
      * This array includes identifier associations if present on this class.
-     * 
+     *
      * @return array
      */
     function getAssociationNames();
-    
+
     /**
      * Returns a type name of this field.
-     * 
+     *
      * This type names can be implementation specific but should at least include the php types:
      * integer, string, boolean, float/double, datetime.
-     * 
+     *
      * @param string $fieldName
      * @return string
      */
     function getTypeOfField($fieldName);
-    
+
     /**
      * Returns the target class name of the given association.
-     * 
+     *
      * @param string $assocName
      * @return string
      */
     function getAssociationTargetClass($assocName);
+
+    function isAssociationInverseSide($assocName);
+
+    function getAssociationMappedByTargetField($assocName);
 }

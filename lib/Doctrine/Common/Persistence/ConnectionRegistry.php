@@ -17,68 +17,47 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Common\Cache;
+namespace Doctrine\Common\Persistence;
 
 /**
- * Zend Data Cache cache driver.
+ * Contract covering connection for a Doctrine persistence layer ManagerRegistry class to implement.
  *
  * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link    www.doctrine-project.org
- * @since   2.0
- * @author  Ralph Schindler <ralph.schindler@zend.com>
- * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
+ * @since   2.2
+ * @author  Fabien Potencier <fabien@symfony.com>
+ * @author  Benjamin Eberlei <kontakt@beberlei.de>
+ * @author  Lukas Kahwe Smith <smith@pooteeweet.org>
  */
-class ZendDataCache extends CacheProvider
+interface ConnectionRegistry
 {
     /**
-     * {@inheritdoc}
+     * Gets the default connection name.
+     *
+     * @return string The default connection name
      */
-    protected function doFetch($id)
-    {
-        return zend_shm_cache_fetch($id);
-    }
+    function getDefaultConnectionName();
 
     /**
-     * {@inheritdoc}
+     * Gets the named connection.
+     *
+     * @param string $name The connection name (null for the default one)
+     *
+     * @return Connection
      */
-    protected function doContains($id)
-    {
-        return (false !== zend_shm_cache_fetch($id));
-    }
+    function getConnection($name = null);
 
     /**
-     * {@inheritdoc}
+     * Gets an array of all registered connections
+     *
+     * @return array An array of Connection instances
      */
-    protected function doSave($id, $data, $lifeTime = 0)
-    {
-        return zend_shm_cache_store($id, $data, $lifeTime);
-    }
+    function getConnections();
 
     /**
-     * {@inheritdoc}
+     * Gets all connection names.
+     *
+     * @return array An array of connection names
      */
-    protected function doDelete($id)
-    {
-        return zend_shm_cache_delete($id);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doFlush()
-    {
-        $namespace = $this->getNamespace();
-        if (empty($namespace)) {
-            return zend_shm_cache_clear();
-        }
-        return zend_shm_cache_clear($namespace);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doGetStats()
-    {
-        return null;
-    }
+    function getConnectionNames();
 }
