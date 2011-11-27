@@ -21,8 +21,8 @@ class StaticPHPDriverTest extends DoctrineTestCase
         $driver = new StaticPHPDriver(array(__DIR__));
         $classNames = $driver->getAllClassNames();
         
-        $this->assertTrue(in_array(
-            'Doctrine\Tests\Common\Persistence\Mapping\TestEntity', $classNames));
+        $this->assertContains(
+            'Doctrine\Tests\Common\Persistence\Mapping\TestEntity', $classNames);
     }
 }
 
