@@ -91,8 +91,8 @@ class StaticPHPDriver implements MappingDriver
             }
 
             $iterator = new \RecursiveIteratorIterator(
-                            new \RecursiveDirectoryIterator($path),
-                            \RecursiveIteratorIterator::LEAVES_ONLY
+                new \RecursiveDirectoryIterator($path),
+                \RecursiveIteratorIterator::LEAVES_ONLY
             );
 
             foreach ($iterator as $file) {

@@ -59,14 +59,14 @@ abstract class AnnotationDriver implements MappingDriver
     /**
      * Cache for AnnotationDriver#getAllClassNames()
      *
-     * @param array
+     * @var array
      */
     protected $classNames;
 
     /**
      * Name of the entity annotations as keys
      *
-     * @var
+     * @var array
      */
     protected $entityAnnotationClasses = array();
 
@@ -139,8 +139,9 @@ abstract class AnnotationDriver implements MappingDriver
     /**
      * Whether the class with the specified name is transient. Only non-transient
      * classes, that is entities and mapped superclasses, should have their metadata loaded.
-     * A class is non-transient if it is annotated with either @Entity or
-     * @MappedSuperclass in the class doc block.
+     * 
+     * A class is non-transient if it is annotated with an annotation
+     * from the {@see AnnotationDriver::entityAnnotationClasses}.
      *
      * @param string $className
      * @return boolean

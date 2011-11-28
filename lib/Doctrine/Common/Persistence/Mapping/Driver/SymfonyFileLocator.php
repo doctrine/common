@@ -24,7 +24,7 @@ use Doctrine\Common\Persistence\Mapping\MappingException;
 /**
  * The Symfony File Locator makes a simplifying assumptions compared
  * to the DefaultFileLocator. By assuming paths only contain entities of a certain
- * namespace the mapping files consinst of the short classname only.
+ * namespace the mapping files consists of the short classname only.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Benjamin Eberlei <kontakt@beberlei.de>
