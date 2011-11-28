@@ -17,68 +17,54 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Common\Cache;
+namespace Doctrine\Common\Persistence\Mapping\Driver;
+
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
 /**
- * Zend Data Cache cache driver.
+ * The PHPDriver includes php files which just populate ClassMetadataInfo
+ * instances with plain php code
  *
- * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link    www.doctrine-project.org
- * @since   2.0
- * @author  Ralph Schindler <ralph.schindler@zend.com>
- * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
+ * @license 	http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link    	www.doctrine-project.org
+ * @since   	2.0
+ * @version     $Revision$
+ * @author      Benjamin Eberlei <kontakt@beberlei.de>
+ * @author      Guilherme Blanco <guilhermeblanco@hotmail.com>
+ * @author      Jonathan H. Wage <jonwage@gmail.com>
+ * @author      Roman Borschel <roman@code-factory.org>
  */
-class ZendDataCache extends CacheProvider
+class PHPDriver extends FileDriver
 {
     /**
      * {@inheritdoc}
      */
-    protected function doFetch($id)
+    protected $metadata;
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct($locator, $fileExtension = null)
     {
-        return zend_shm_cache_fetch($id);
+        $fileExtension = ".php";
+        parent::__construct($locator, $fileExtension);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function doContains($id)
+    public function loadMetadataForClass($className, ClassMetadata $metadata)
     {
-        return (false !== zend_shm_cache_fetch($id));
+        $this->metadata = $metadata;
+        $this->loadMappingFile($this->locator->findMappingFile($className));
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function doSave($id, $data, $lifeTime = 0)
+    protected function loadMappingFile($file)
     {
-        return zend_shm_cache_store($id, $data, $lifeTime);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doDelete($id)
-    {
-        return zend_shm_cache_delete($id);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doFlush()
-    {
-        $namespace = $this->getNamespace();
-        if (empty($namespace)) {
-            return zend_shm_cache_clear();
-        }
-        return zend_shm_cache_clear($namespace);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doGetStats()
-    {
-        return null;
+        $metadata = $this->metadata;
+        include $file;
     }
 }
