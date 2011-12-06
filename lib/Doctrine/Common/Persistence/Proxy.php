@@ -28,4 +28,12 @@ namespace Doctrine\Common\Persistence;
  */
 interface Proxy
 {
+    /**
+     * Initialize this proxy if its not yet initialized.
+     * 
+     * Acts as a no-op if already initialized.
+     * 
+     * @return void
+     */
+    public function __load();
 }
