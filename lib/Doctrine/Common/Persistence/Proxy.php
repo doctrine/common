@@ -35,5 +35,19 @@ interface Proxy
      * 
      * @return void
      */
-    public function __load();
+    function __load();
+
+    /**
+     * Check if the proxy is initialized.
+     *
+     * @return bool
+     */
+    function __isInitialized();
+
+    /**
+     * Get the list of internal properties
+     *
+     * @return array
+     */
+    function __getInternalProperties();
 }
