@@ -43,4 +43,11 @@ interface Proxy
      * @return bool
      */
     function __isInitialized();
+
+    /**
+     * Get the list of internal properties
+     *
+     * @return array
+     */
+    function __getInternalProperties();
 }

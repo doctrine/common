@@ -21,6 +21,9 @@
 
 namespace Doctrine\Common\Util;
 
+use Doctrine\ORM\Proxy\Proxy as ORMProxy;
+use Doctrine\Common\Persistence\Proxy;
+
 /**
  * Static class containing most used debug methods.
  *
@@ -40,6 +43,28 @@ final class Debug
      *
      */
     private function __construct() {}
+
+    /**
+     * Determine if a given variable contains a Proxy
+     * It has BC handling for Doctrine ORM 2.0/2.1
+     *
+     * @static
+     * @param $var
+     * @param null $initializationState if set, it is compared to the initialization state of the variable
+     * @return bool
+     */
+    public static function isProxy($var, $initializationState = null)
+    {
+        if ($var instanceof Proxy) {
+            return null === $initializationState ? true : $var->__isInitialized() === $initializationState;
+        }
+
+        if ($var instanceof ORMProxy) {
+            return null === $initializationState ? true : $var->__isInitialized__ === $initializationState;
+        }
+
+        return false;
+    }
 
     /**
      * Prints a dump of the public, protected and private properties of $var.
@@ -94,7 +119,7 @@ final class Debug
                     $return = new \stdclass();
                     $return->{'__CLASS__'} = get_class($var);
 
-                    if ($var instanceof \Doctrine\ORM\Proxy\Proxy && ! $var->__isInitialized__) {
+                    if (static::isProxy($var, false)) {
                         $reflProperty = $reflClass->getProperty('_identifier');
                         $reflProperty->setAccessible(true);
 
@@ -104,8 +129,10 @@ final class Debug
                     } else {
                         $excludeProperties = array();
 
-                        if ($var instanceof \Doctrine\ORM\Proxy\Proxy) {
+                        if ($var instanceof ORMProxy) {
                             $excludeProperties = array('_entityPersister', '__isInitialized__', '_identifier');
+                        } elseif ($var instanceof Proxy) {
+                            $excludeProperties = $var->__getInternalProperties();
                         }
 
                         foreach ($reflClass->getProperties() as $reflProperty) {
