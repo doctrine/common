@@ -129,10 +129,10 @@ final class Debug
                     } else {
                         $excludeProperties = array();
 
-                        if ($var instanceof ORMProxy) {
-                            $excludeProperties = array('_entityPersister', '__isInitialized__', '_identifier');
-                        } elseif ($var instanceof Proxy) {
+                        if ($var instanceof Proxy) {
                             $excludeProperties = $var->__getInternalProperties();
+                        } elseif ($var instanceof ORMProxy) {
+                            $excludeProperties = array('_entityPersister', '__isInitialized__', '_identifier');
                         }
 
                         foreach ($reflClass->getProperties() as $reflProperty) {
