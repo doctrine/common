@@ -21,23 +21,27 @@
 namespace Doctrine\Common;
 
 /**
- * Comparable interface that allows to compare two value objects to each other for equality.
+ * Comparable interface that allows to compare two value objects to each other for similarity.
  *
  * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link        www.doctrine-project.com
- * @since       2.0
+ * @since       2.2
  * @author      Benjamin Eberlei <kontakt@beberlei.de>
  * @author      Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
 interface Comparable
 {
     /**
-     * Compare the current object to the passed $other. Returns true if they are semantically equal.
+     * Compare the current object to the passed $other.
+     *
+     * Returns 0 if they are semantically equal, 1 if the other object
+     * is less than the current one, or -1 if its more than the current one.
      *
      * This method should not check for identity using ===, only for semantical equality for example
      * when two different DateTime instances point to the exact same Date + TZ.
      *
-     * @return bool
+     * @return int
      */
-    public function equals($other);
+    public function compareTo($other);
 }
+
