@@ -22,17 +22,23 @@ namespace Doctrine\Common\Persistence;
 
 /**
  * Interface for proxy classes.
- * 
+ *
  * @author Roman Borschel <roman@code-factory.org>
  * @since 2.2
  */
 interface Proxy
 {
     /**
+     * Marker for Proxy class names.
+     *
+     * @var string
+     */
+    const MARKER = '__CG__';
+    /**
      * Initialize this proxy if its not yet initialized.
-     * 
+     *
      * Acts as a no-op if already initialized.
-     * 
+     *
      * @return void
      */
     public function __load();
