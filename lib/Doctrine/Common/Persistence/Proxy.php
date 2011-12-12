@@ -34,6 +34,14 @@ interface Proxy
      * @var string
      */
     const MARKER = '__CG__';
+
+    /**
+     * Length of the proxy marker
+     *
+     * @var int
+     */
+    const MARKER_LENGTH = 6;
+
     /**
      * Initialize this proxy if its not yet initialized.
      *
