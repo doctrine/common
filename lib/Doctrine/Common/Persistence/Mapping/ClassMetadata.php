@@ -130,7 +130,19 @@ interface ClassMetadata
      */
     function getAssociationTargetClass($assocName);
 
+    /**
+     * Checks if the association is the inverse side of a bidirectional association
+     *
+     * @param string $assocName
+     * @return boolean
+     */
     function isAssociationInverseSide($assocName);
 
+    /**
+     * Returns the target field of the owning side of the association
+     *
+     * @param string $assocName
+     * @return string
+     */
     function getAssociationMappedByTargetField($assocName);
 }

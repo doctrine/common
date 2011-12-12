@@ -43,14 +43,14 @@ interface ManagerRegistry extends ConnectionRegistry
      *
      * @param string $name The object manager name (null for the default one)
      *
-     * @return \Doctrine\Common\Persistence\Manager
+     * @return \Doctrine\Common\Persistence\ObjectManager
      */
     function getManager($name = null);
 
     /**
      * Gets an array of all registered object managers
      *
-     * @return array An array of Manager instances
+     * @return array An array of ObjectManager instances
      */
     function getManagers();
 
@@ -69,7 +69,7 @@ interface ManagerRegistry extends ConnectionRegistry
      *
      * @param string $name The object manager name (null for the default one)
      *
-     * @return \Doctrine\Common\Persistence\Manager
+     * @return \Doctrine\Common\Persistence\ObjectManager
      */
     function resetManager($name = null);
 
@@ -97,7 +97,7 @@ interface ManagerRegistry extends ConnectionRegistry
      * @param string $persistentObject        The name of the persistent object.
      * @param string $persistentManagerName The object manager name (null for the default one)
      *
-     * @return Doctrine\Common\Persistence\ObjectRepository
+     * @return \Doctrine\Common\Persistence\ObjectRepository
      */
     function getRepository($persistentObject, $persistentManagerName = null);
 
@@ -106,7 +106,7 @@ interface ManagerRegistry extends ConnectionRegistry
      *
      * @param string $class A persistent object class name
      *
-     * @return Manager|null
+     * @return \Doctrine\Common\Persistence\ObjectManager|null
      */
     function getManagerForClass($class);
 }
