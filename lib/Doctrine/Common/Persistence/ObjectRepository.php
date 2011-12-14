@@ -68,4 +68,11 @@ interface ObjectRepository
      * @return object The object.
      */
     function findOneBy(array $criteria);
+
+    /**
+     * Returns the class name of the object managed by the repository
+     *
+     * @return string
+     */
+    function getClassName();
 }
