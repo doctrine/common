@@ -43,7 +43,7 @@ class FileCacheReader implements Reader
             throw new \InvalidArgumentException(sprintf('The directory "%s" does not exist and could not be created.', $cacheDir));
         }
         if (!is_writable($cacheDir)) {
-            throw new \InvalidArgumentException(sprintf('The directory "%s" is not writable.', $cacheDir));
+            throw new \InvalidArgumentException(sprintf('The directory "%s" is not writable. Both, the webserver and the console user need access. You can manage access rights for multiple users with "chmod +a". If your system does not support this, check out the acl package.', $cacheDir));
         }
 
         $this->dir   = rtrim($cacheDir, '\\/');
