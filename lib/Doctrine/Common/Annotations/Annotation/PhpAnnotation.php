@@ -21,26 +21,11 @@
 namespace Doctrine\Common\Annotations\Annotation;
 
 /**
- * That base annotation is used to represent php annotations (@var, @param, @return).
+ * Base php annotation interfece.
  *
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
- * 
- * @Annotation
  */
-abstract class PhpAnnotation
+interface PhpAnnotation
 {
-    /**
-     * @var string
-     */
-    public $value;
-
-    /**
-     * Annotation Contructor
-     * 
-     * @param array $value
-     */
-    public function __construct(array $value = null)
-    {
-        $this->value = isset($value['value']) ? $value['value'] : null;
-    }
+    
 }

@@ -617,15 +617,13 @@ final class DocParser
             }
 
             if (!$found) {
-                if (isset($this->ignoredAnnotationNames[$name])) {
-                    return false;
-                } else if (!$this->ignorePhpAnnotations && isset(self::$phpAnnotations[$loweredAlias])) {
+                if (!$this->ignorePhpAnnotations && isset(self::$phpAnnotations[$loweredAlias])) {
                     $className  = self::$phpAnnotations[$loweredAlias];
                     if (preg_match("/$name\s+([^\s]+)/", substr($this->input, $this->lexer->lookahead['position']-1), $matches)) {
                         return new $className(array('value'=>$matches[1]));
                     }
                     return new $className();
-                } else if ($this->ignoreNotImportedAnnotations) {
+                } else if ($this->ignoreNotImportedAnnotations || isset($this->ignoredAnnotationNames[$name])) {
                     return false;
                 }
 

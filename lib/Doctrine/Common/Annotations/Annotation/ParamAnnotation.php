@@ -27,7 +27,21 @@ namespace Doctrine\Common\Annotations\Annotation;
  *
  * @Annotation
  */
-final class ParamAnnotation extends PhpAnnotation
+final class ParamAnnotation implements PhpAnnotation
 {
+    /**
+     * @var string
+     */
+    public $value;
+
+    /**
+     * Annotation Contructor
+     *
+     * @param array $value
+     */
+    public function __construct(array $value = null)
+    {
+        $this->value = isset($value['value']) ? $value['value'] : null;
+    }
 
 }

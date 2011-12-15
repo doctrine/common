@@ -171,9 +171,13 @@ DOCBLOCK;
         $result = $parser->parse($docblock);
         $this->assertEquals(count($result), 3);
 
-        $this->assertInstanceOf('Doctrine\Common\Annotations\Annotation\ParamAnnotation',  $result[0]);
-        $this->assertInstanceOf('Doctrine\Common\Annotations\Annotation\ReturnAnnotation', $result[1]);
-        $this->assertInstanceOf('Doctrine\Common\Annotations\Annotation\VarAnnotation',    $result[2]);
+        $this->assertInstanceOf('Doctrine\Common\Annotations\Annotation\PhpAnnotation',     $result[0]);
+        $this->assertInstanceOf('Doctrine\Common\Annotations\Annotation\PhpAnnotation',     $result[1]);
+        $this->assertInstanceOf('Doctrine\Common\Annotations\Annotation\PhpAnnotation',     $result[2]);
+        
+        $this->assertInstanceOf('Doctrine\Common\Annotations\Annotation\ParamAnnotation',   $result[0]);
+        $this->assertInstanceOf('Doctrine\Common\Annotations\Annotation\ReturnAnnotation',  $result[1]);
+        $this->assertInstanceOf('Doctrine\Common\Annotations\Annotation\VarAnnotation',     $result[2]);
 
         $this->assertEquals('array', $result[0]->value);
         $this->assertEquals('bool|string', $result[1]->value);
