@@ -22,7 +22,8 @@ namespace Doctrine\Common\Annotations\Annotation;
 
 /**
  * Annotation that represent php annotations @return.
- * 
+ *
+ * @since 2.2
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  *
  * @Annotation

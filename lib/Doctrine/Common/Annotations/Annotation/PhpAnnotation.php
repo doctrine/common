@@ -23,6 +23,7 @@ namespace Doctrine\Common\Annotations\Annotation;
 /**
  * Base php annotation interfece.
  *
+ * @since 2.2
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
 interface PhpAnnotation
