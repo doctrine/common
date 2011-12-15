@@ -623,7 +623,9 @@ final class DocParser
                         return new $className(array('value'=>$matches[1]));
                     }
                     return new $className();
-                } else if ($this->ignoreNotImportedAnnotations || isset($this->ignoredAnnotationNames[$name])) {
+                }
+
+                if ($this->ignoreNotImportedAnnotations || isset($this->ignoredAnnotationNames[$name])) {
                     return false;
                 }
 
