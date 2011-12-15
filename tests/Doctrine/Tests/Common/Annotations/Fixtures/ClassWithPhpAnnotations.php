@@ -34,6 +34,8 @@ class ClassWithPhpAnnotations
     /**
      * @param float $param
      * @return boolean
+     * 
+     * @AnnotationTargetAll
      */
     public function someFunction($param)
     {
