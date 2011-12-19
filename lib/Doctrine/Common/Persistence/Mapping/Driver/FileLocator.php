@@ -52,17 +52,17 @@ interface FileLocator
      * @return bool
      */
     function fileExists($className);
-    
+
     /**
      * Get all the paths that this file locator looks for mapping files.
-     * 
+     *
      * @return array
      */
     function getPaths();
-    
+
     /**
      * Get the file extension that mapping files are suffixed with.
-     * 
+     *
      * @return string
      */
     function getFileExtension();

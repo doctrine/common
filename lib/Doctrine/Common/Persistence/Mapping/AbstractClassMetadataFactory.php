@@ -55,7 +55,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
      * @var bool
      */
     protected $initialized = false;
-    
+
     /**
      * Sets the cache driver used by the factory to cache ClassMetadata instances.
      *
@@ -78,7 +78,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
 
     /**
      * Return an array of all the loaded metadata currently in memory.
-     * 
+     *
      * @return array
      */
     public function getLoadedMetadata()
@@ -97,7 +97,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         if ( ! $this->initialized) {
             $this->initialize();
         }
-        
+
         $driver = $this->getDriver();
         $metadata = array();
         foreach ($driver->getAllClassNames() as $className) {
@@ -110,23 +110,23 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
     /**
      * Lazy initialization of this stuff, especially the metadata driver,
      * since these are not needed at all when a metadata cache is active.
-     * 
+     *
      * @return void
      */
     abstract protected function initialize();
 
     /**
      * Get the fully qualified class-name from the namespace alias.
-     * 
+     *
      * @param string $namespaceAlias
      * @param string $simpleClassName
      * @return string
      */
     abstract protected function getFqcnFromAlias($namespaceAlias, $simpleClassName);
-    
+
     /**
      * Return the mapping driver implementation.
-     * 
+     *
      * @return MappingDriver
      */
     abstract protected function getDriver();
@@ -273,7 +273,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
 
     /**
      * Actually load the metadata from the underlying metadata
-     * 
+     *
      * @param ClassMetadata $class
      * @param ClassMetadata $parent
      * @param bool $rootEntityFound
@@ -300,7 +300,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         if ( ! $this->initialized) {
             $this->initialize();
         }
-        
+
         return $this->getDriver()->isTransient($class);
     }
 }

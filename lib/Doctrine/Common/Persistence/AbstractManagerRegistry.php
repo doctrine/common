@@ -65,7 +65,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
      * Resets the given services
      *
      * A service in this context is connection or a manager instance
-     * 
+     *
      * @param string $name name of the service
      * @return void
      */

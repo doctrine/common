@@ -139,7 +139,7 @@ abstract class AnnotationDriver implements MappingDriver
     /**
      * Whether the class with the specified name is transient. Only non-transient
      * classes, that is entities and mapped superclasses, should have their metadata loaded.
-     * 
+     *
      * A class is non-transient if it is annotated with an annotation
      * from the {@see AnnotationDriver::entityAnnotationClasses}.
      *

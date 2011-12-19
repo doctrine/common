@@ -11,16 +11,16 @@ class StaticPHPDriverTest extends DoctrineTestCase
     {
         $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
         $metadata->expects($this->once())->method('getFieldNames');
-        
+
         $driver = new StaticPHPDriver(array(__DIR__));
         $driver->loadMetadataForClass(__NAMESPACE__ . '\\TestEntity', $metadata);
     }
-    
+
     public function testGetAllClassNames()
     {
         $driver = new StaticPHPDriver(array(__DIR__));
         $classNames = $driver->getAllClassNames();
-        
+
         $this->assertContains(
             'Doctrine\Tests\Common\Persistence\Mapping\TestEntity', $classNames);
     }

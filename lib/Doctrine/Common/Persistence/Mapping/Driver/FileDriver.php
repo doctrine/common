@@ -43,12 +43,12 @@ abstract class FileDriver implements MappingDriver
      * @var FileLocator
      */
     protected $locator;
-    
+
     /**
      * @var array
      */
     protected $classCache;
-    
+
     /**
      * @var string
      */
@@ -91,11 +91,11 @@ abstract class FileDriver implements MappingDriver
         if ($this->classCache === null) {
             $this->initialize();
         }
-        
+
         if (isset($this->classCache[$className])) {
             return $this->classCache[$className];
         }
-        
+
         $result = $this->loadMappingFile($this->locator->findMappingFile($className));
 
         return $result[$className];
@@ -114,11 +114,11 @@ abstract class FileDriver implements MappingDriver
         if ($this->classCache === null) {
             $this->initialize();
         }
-        
+
         if (isset($this->classCache[$className])) {
             return false;
         }
-        
+
         return !$this->locator->fileExists($className);
     }
 
@@ -132,7 +132,7 @@ abstract class FileDriver implements MappingDriver
         if ($this->classCache === null) {
             $this->initialize();
         }
-        
+
         $classNames = (array)$this->locator->getAllClassNames($this->globalBasename);
         if ($this->classCache) {
             $classNames = array_merge(array_keys($this->classCache), $classNames);
@@ -148,16 +148,16 @@ abstract class FileDriver implements MappingDriver
      * @return array
      */
     abstract protected function loadMappingFile($file);
-    
+
     /**
      * Initialize the class cache from all the global files.
-     * 
+     *
      * Using this feature adds a substantial performance hit to file drivers as
      * more metadata has to be loaded into memory than might actually be
      * necessary. This may not be relevant to scenarios where caching of
      * metadata is in place, however hits very hard in scenarios where no
      * caching is used.
-     * 
+     *
      * @return void
      */
     protected function initialize()

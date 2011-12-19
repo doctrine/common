@@ -241,6 +241,6 @@ class NativePhpunitPrinter extends PHPUnit_Util_Printer implements PHPUnit_Frame
      */
     public function endTest(PHPUnit_Framework_Test $test, $time)
     {
-        
+
     }
 }

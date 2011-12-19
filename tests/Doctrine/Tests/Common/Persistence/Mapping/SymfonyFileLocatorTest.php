@@ -11,23 +11,23 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
     {
         $path = __DIR__ . "/_files";
         $prefix = "Foo";
-        
+
         $locator = new SymfonyFileLocator(array($path => $prefix));
         $this->assertEquals(array($path), $locator->getPaths());
-        
+
         $locator = new SymfonyFileLocator(array($path => $prefix));
         $this->assertEquals(array($path), $locator->getPaths());
     }
-    
+
     public function testGetPrefixes()
     {
         $path = __DIR__ . "/_files";
         $prefix = "Foo";
-        
+
         $locator = new SymfonyFileLocator(array($path => $prefix));
         $this->assertEquals(array($path => $prefix), $locator->getNamespacePrefixes());
     }
-    
+
     public function testGetFileExtension()
     {
         $locator = new SymfonyFileLocator(array(), ".yml");
@@ -35,48 +35,48 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
         $locator->setFileExtension(".xml");
         $this->assertEquals(".xml", $locator->getFileExtension());
     }
-    
+
     public function testFileExists()
     {
         $path = __DIR__ . "/_files";
         $prefix = "Foo";
-        
+
         $locator = new SymfonyFileLocator(array($path => $prefix), ".yml");
-        
+
         $this->assertTrue($locator->fileExists("Foo\stdClass"));
         $this->assertTrue($locator->fileExists("Foo\global"));
         $this->assertFalse($locator->fileExists("Foo\stdClass2"));
         $this->assertFalse($locator->fileExists("Foo\global2"));
     }
-    
+
     public function testGetAllClassNames()
     {
         $path = __DIR__ . "/_files";
         $prefix = "Foo";
-        
+
         $locator = new SymfonyFileLocator(array($path => $prefix), ".yml");
-        
+
         $this->assertEquals(array("Foo\\stdClass", "Foo\\global"), $locator->getAllClassNames(null));
         $this->assertEquals(array("Foo\\stdClass"), $locator->getAllClassNames("global"));
     }
-    
+
     public function testFindMappingFile()
     {
         $path = __DIR__ . "/_files";
         $prefix = "Foo";
-        
+
         $locator = new SymfonyFileLocator(array($path => $prefix), ".yml");
-        
+
         $this->assertEquals(__DIR__ . "/_files/stdClass.yml", $locator->findMappingFile("Foo\\stdClass"));
     }
-    
+
     public function testFindMappingFileNotFound()
     {
         $path = __DIR__ . "/_files";
         $prefix = "Foo";
-        
+
         $locator = new SymfonyFileLocator(array($path => $prefix), ".yml");
-        
+
         $this->setExpectedException(
             "Doctrine\Common\Persistence\Mapping\MappingException",
             "No mapping file found named '".__DIR__."/_files/stdClass2.yml' for class 'Foo\stdClass2'."

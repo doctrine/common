@@ -2,5 +2,5 @@
 
 class ClassLoaderTest_ClassB
 {
-    
+
 }

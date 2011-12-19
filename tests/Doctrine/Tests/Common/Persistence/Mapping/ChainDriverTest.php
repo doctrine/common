@@ -43,7 +43,7 @@ class DriverChainTest extends DoctrineTestCase
         $classMetadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
 
         $chain = new MappingDriverChain();
-        
+
         $this->setExpectedException('Doctrine\Common\Persistence\Mapping\MappingException');
         $chain->loadMetadataForClass($className, $classMetadata);
     }
@@ -79,7 +79,7 @@ class DriverChainTest extends DoctrineTestCase
      * @group DDC-706
      */
     public function testIsTransient()
-    {        
+    {
         $driver1 = $this->getMock('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver');
         $chain = new MappingDriverChain();
         $chain->addDriver($driver1, 'Doctrine\Tests\Models\CMS');
@@ -90,5 +90,5 @@ class DriverChainTest extends DoctrineTestCase
 
 class DriverChainEntity
 {
-    
+
 }

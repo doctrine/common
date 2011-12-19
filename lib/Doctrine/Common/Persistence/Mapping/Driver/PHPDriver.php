@@ -40,7 +40,7 @@ class PHPDriver extends FileDriver
      * {@inheritdoc}
      */
     protected $metadata;
-    
+
     /**
      * {@inheritDoc}
      */

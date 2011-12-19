@@ -69,7 +69,7 @@ class SymfonyFileLocator implements FileLocator
     {
         return $this->prefixes;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -77,7 +77,7 @@ class SymfonyFileLocator implements FileLocator
     {
         return $this->paths;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -85,7 +85,7 @@ class SymfonyFileLocator implements FileLocator
     {
         return $this->fileExtension;
     }
-    
+
     /**
      * Set the file extension used to look for mapping files under
      *
