@@ -145,4 +145,14 @@ interface ClassMetadata
      * @return string
      */
     function getAssociationMappedByTargetField($assocName);
+
+    /**
+     * Return the identifier of this object as an array with field name as key.
+     *
+     * Has to return an empty array if no identifier isset.
+     *
+     * @param object $object
+     * @return array
+     */
+    function getIdentifierValues($object);
 }

@@ -131,4 +131,13 @@ interface ObjectManager
      * @param object $obj
      */
     function initializeObject($obj);
+
+    /**
+     * Check if the object is part of the current UnitOfWork and therefore
+     * managed.
+     *
+     * @param object $object
+     * @return bool
+     */
+    function contains($object);
 }
