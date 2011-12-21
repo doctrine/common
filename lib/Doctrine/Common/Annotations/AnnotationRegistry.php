@@ -120,7 +120,8 @@ final class AnnotationRegistry
         }
 
         foreach (self::$loaders AS $loader) {
-            if (call_user_func($loader, $class) === true) {
+            call_user_func($loader, $class);
+            if (class_exists($class, false)) {
                 return true;
             }
         }
