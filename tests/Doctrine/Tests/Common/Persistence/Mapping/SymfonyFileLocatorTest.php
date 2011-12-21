@@ -55,8 +55,10 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
         $prefix = "Foo";
 
         $locator = new SymfonyFileLocator(array($path => $prefix), ".yml");
+        $classes = $locator->getAllClassNames(null);
+        sort($classes);
 
-        $this->assertEquals(array("Foo\\stdClass", "Foo\\global"), $locator->getAllClassNames(null));
+        $this->assertEquals(array("Foo\\global", "Foo\\stdClass"), $classes);
         $this->assertEquals(array("Foo\\stdClass"), $locator->getAllClassNames("global"));
     }
 

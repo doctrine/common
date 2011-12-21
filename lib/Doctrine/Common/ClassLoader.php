@@ -210,7 +210,7 @@ class ClassLoader
      */
     public static function classExists($className)
     {
-        if (class_exists($className, false)) {
+        if (class_exists($className, false) || interface_exists($className, false)) {
             return true;
         }
 
@@ -236,7 +236,7 @@ class ClassLoader
             }
         }
 
-        return false;
+        return class_exists($className, false) || interface_exists($className, false);
     }
 
     /**
