@@ -103,6 +103,13 @@ interface ClassMetadata
     function getFieldNames();
 
     /**
+     * Returns an array of identifier field names numerically indexed.
+     *
+     * @return array
+     */
+    function getIdentifierFieldNames();
+
+    /**
      * A numerically indexed list of association names of this persistent class.
      *
      * This array includes identifier associations if present on this class.
