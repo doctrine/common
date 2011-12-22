@@ -228,4 +228,9 @@ class TestObjectMetadata implements ClassMetadata
     {
 
     }
+
+    public function getIdentifierFieldNames()
+    {
+
+    }
 }
