@@ -236,7 +236,7 @@ class ClassLoader
             }
         }
 
-        return false;
+        return class_exists($className, false); // test again since loader may have loaded it while not returning true
     }
 
     /**

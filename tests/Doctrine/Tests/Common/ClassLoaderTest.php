@@ -42,4 +42,16 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertNull(ClassLoader::getClassLoader('This\Class\Does\Not\Exist'));
         $cl->unregister();
     }
+
+    public function testForeignClassLoader()
+    {
+        $this->assertFalse(ClassLoader::classExists('ClassLoaderTest\ClassE'));
+        $badLoader = function($className) {
+            require __DIR__ . '/ClassLoaderTest/ClassE.php';
+            // do not return anything like most classloaders
+        };
+        spl_autoload_register($badLoader);
+        $this->assertTrue(ClassLoader::classExists('ClassLoaderTest\ClassE'));
+        spl_autoload_unregister($badLoader);
+    }
 }
