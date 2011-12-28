@@ -170,7 +170,7 @@ interface ClassMetadata
      *
      * This method is called from a metadata factory after an uncached
      * initialization. Data set in this method should be serialized and
-     * reconsituted on wakeup.
+     * reconstituted on wakeup.
      *
      * @param ReflectionService $reflService
      * @return void
