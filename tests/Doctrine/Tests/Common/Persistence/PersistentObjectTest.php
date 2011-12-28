@@ -4,6 +4,7 @@ namespace Doctrine\Tests\Common\Persistence;
 
 use Doctrine\Common\Persistence\PersistentObject;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Common\Util\ReflectionService;
 
 /**
  * @group DDC-1448
@@ -230,6 +231,16 @@ class TestObjectMetadata implements ClassMetadata
     }
 
     public function getIdentifierFieldNames()
+    {
+
+    }
+
+    public function initializeReflection(ReflectionService $reflService)
+    {
+
+    }
+
+    public function wakupReflection(ReflectionService $reflService)
     {
 
     }
