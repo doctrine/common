@@ -186,5 +186,5 @@ interface ClassMetadata
      * @param ReflectionService $reflService
      * @return void
      */
-    function wakupReflection(ReflectionService $reflService);
+    function wakeupReflection(ReflectionService $reflService);
 }

@@ -240,7 +240,7 @@ class TestObjectMetadata implements ClassMetadata
 
     }
 
-    public function wakupReflection(ReflectionService $reflService)
+    public function wakeupReflection(ReflectionService $reflService)
     {
 
     }

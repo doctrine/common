@@ -167,7 +167,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
             if ($this->cacheDriver) {
                 if (($cached = $this->cacheDriver->fetch($realClassName . $this->cacheSalt)) !== false) {
                     $this->loadedMetadata[$realClassName] = $cached;
-                    $cached->wakupReflection($this->getReflectionService());
+                    $cached->wakeupReflection($this->getReflectionService());
                 } else {
                     foreach ($this->loadMetadata($realClassName) as $loadedClassName) {
                         $this->cacheDriver->save(
@@ -277,7 +277,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
             }
 
             $class->initializeReflection($reflService);
-            $class->wakupReflection($reflService);
+            $class->wakeupReflection($reflService);
 
             $loaded[] = $className;
         }
