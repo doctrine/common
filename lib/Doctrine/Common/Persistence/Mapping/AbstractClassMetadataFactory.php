@@ -19,8 +19,6 @@
 
 namespace Doctrine\Common\Persistence\Mapping;
 
-use Doctrine\Common\Util\ReflectionService;
-use Doctrine\Common\Util\RuntimeReflectionService;
 use Doctrine\Common\Cache\Cache;
 
 /**

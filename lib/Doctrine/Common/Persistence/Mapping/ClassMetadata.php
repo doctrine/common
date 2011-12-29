@@ -19,8 +19,6 @@
 
 namespace Doctrine\Common\Persistence\Mapping;
 
-use Doctrine\Common\Util\ReflectionService;
-
 /**
  * Contract for a Doctrine persistence layer ClassMetadata class to implement.
  *

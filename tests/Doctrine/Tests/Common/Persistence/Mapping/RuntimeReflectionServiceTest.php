@@ -17,9 +17,9 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Tests\Common\Util;
+namespace Doctrine\Tests\Common\Persistence\Mapping;
 
-use Doctrine\Common\Util\RuntimeReflectionService;
+use Doctrine\Common\Persistence\Mapping\RuntimeReflectionService;
 
 /**
  * @group DCOM-93
@@ -40,7 +40,7 @@ class RuntimeReflectionServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testClassNamespaceName()
     {
-        $this->assertEquals("Doctrine\Tests\Common\Util", $this->reflectionService->getClassNamespace(__CLASS__));
+        $this->assertEquals("Doctrine\Tests\Common\Persistence\Mapping", $this->reflectionService->getClassNamespace(__CLASS__));
     }
 
     public function testGetParentClasses()

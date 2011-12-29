@@ -17,7 +17,7 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Common\Util;
+namespace Doctrine\Common\Persistence\Mapping;
 
 use ReflectionClass;
 use ReflectionProperty;

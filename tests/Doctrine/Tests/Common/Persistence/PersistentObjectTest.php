@@ -4,7 +4,7 @@ namespace Doctrine\Tests\Common\Persistence;
 
 use Doctrine\Common\Persistence\PersistentObject;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\Common\Util\ReflectionService;
+use Doctrine\Common\Persistence\Mapping\ReflectionService;
 
 /**
  * @group DDC-1448
