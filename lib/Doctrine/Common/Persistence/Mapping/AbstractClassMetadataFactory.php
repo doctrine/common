@@ -262,6 +262,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
             }
 
             $class = $this->newClassMetadataInstance($className);
+            $class->initializeReflection($reflService);
 
             $this->doLoadMetadata($class, $parent, $rootEntityFound);
 
@@ -274,7 +275,6 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
                 array_unshift($visited, $className);
             }
 
-            $class->initializeReflection($reflService);
             $class->wakeupReflection($reflService);
 
             $loaded[] = $className;
