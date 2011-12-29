@@ -4,6 +4,8 @@ namespace Doctrine\Tests\Common\Persistence\Mapping;
 
 use Doctrine\Tests\DoctrineTestCase;
 use Doctrine\Common\Persistence\Mapping\Driver\DefaultFileLocator;
+use Doctrine\Common\Persistence\Mapping\ReflectionService;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\AbstractClassMetadataFactory;
 use Doctrine\Common\Cache\ArrayCache;
 
@@ -111,6 +113,13 @@ class TestClassMetadataFactory extends AbstractClassMetadataFactory
     protected function getDriver()
     {
         return $this->driver;
+    }
+    protected function wakeupReflection(ClassMetadata $class, ReflectionService $reflService)
+    {
+    }
+
+    protected function initializeReflection(ClassMetadata $class, ReflectionService $reflService)
+    {
     }
 }
 

@@ -139,6 +139,24 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
     abstract protected function getDriver();
 
     /**
+     * Wakeup reflection after ClassMetadata gets unserialized from cache.
+     *
+     * @param ClassMetadata $class
+     * @param ReflectionService $reflService
+     * @return void
+     */
+    abstract protected function wakeupReflection(ClassMetadata $class, ReflectionService $reflService);
+
+    /**
+     * Initialize Reflection after ClassMetadata was constructed.
+     *
+     * @param ClassMetadata $class
+     * @param ReflectionSErvice $reflService
+     * @return void
+     */
+    abstract protected function initializeReflection(ClassMetadata $class, ReflectionService $reflService);
+
+    /**
      * Gets the class metadata descriptor for a class.
      *
      * @param string $className The name of the class.
@@ -165,7 +183,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
             if ($this->cacheDriver) {
                 if (($cached = $this->cacheDriver->fetch($realClassName . $this->cacheSalt)) !== false) {
                     $this->loadedMetadata[$realClassName] = $cached;
-                    $cached->wakeupReflection($this->getReflectionService());
+                    $this->wakeupReflection($cached, $this->getReflectionService());
                 } else {
                     foreach ($this->loadMetadata($realClassName) as $loadedClassName) {
                         $this->cacheDriver->save(
@@ -262,7 +280,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
             }
 
             $class = $this->newClassMetadataInstance($className);
-            $class->initializeReflection($reflService);
+            $this->initializeReflection($class, $reflService);
 
             $this->doLoadMetadata($class, $parent, $rootEntityFound);
 
@@ -275,7 +293,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
                 array_unshift($visited, $className);
             }
 
-            $class->wakeupReflection($reflService);
+            $this->wakeupReflection($class, $reflService);
 
             $loaded[] = $className;
         }
