@@ -261,12 +261,12 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
                 continue;
             }
 
-            $builder = $this->newClassMetadataBuilderInstance($className);
-            $builder->initializeReflection($reflService);
-            $this->doLoadMetadata($builder, $parent, $rootEntityFound);
-            $builder->wakeupReflection($reflService);
+            $class = $this->newClassMetadataInstance($className);
+            $class->initializeReflection($reflService);
 
-            $this->loadedMetadata[$className] = $class = $builder->getWrappedClassMetadata();
+            $this->doLoadMetadata($class, $parent, $rootEntityFound);
+
+            $this->loadedMetadata[$className] = $class;
 
             $parent = $class;
 
@@ -275,6 +275,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
                 array_unshift($visited, $className);
             }
 
+            $class->wakeupReflection($reflService);
 
             $loaded[] = $className;
         }
@@ -285,20 +286,20 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
     /**
      * Actually load the metadata from the underlying metadata
      *
-     * @param ClassMetadataBuilder $builder
+     * @param ClassMetadata $class
      * @param ClassMetadata $parent
      * @param bool $rootEntityFound
      * @return void
      */
-    abstract protected function doLoadMetadata($builder, $parent, $rootEntityFound);
+    abstract protected function doLoadMetadata($class, $parent, $rootEntityFound);
 
     /**
      * Creates a new ClassMetadata instance for the given class name.
      *
      * @param string $className
-     * @return ClassMetadataBuilder
+     * @return ClassMetadata
      */
-    abstract protected function newClassMetadataBuilderInstance($className);
+    abstract protected function newClassMetadataInstance($className);
 
     /**
      * Check if this class is mapped by this Object Manager + ClassMetadata configuration

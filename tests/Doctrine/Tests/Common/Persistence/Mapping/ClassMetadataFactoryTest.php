@@ -17,10 +17,8 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
     public function setUp()
     {
         $driver = $this->getMock('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver');
-        $builder = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadataBuilder');
         $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
-        $builder->expects($this->any())->method('getWrappedClassMetadata')->will($this->returnValue($metadata));
-        $this->cmf = new TestClassMetadataFactory($driver, $builder);
+        $this->cmf = new TestClassMetadataFactory($driver, $metadata);
     }
 
     public function testGetCacheDriver()
@@ -50,7 +48,7 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
 
     public function testGetCachedMetadata()
     {
-        $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadataBuilder');
+        $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
         $cache = new ArrayCache();
         $cache->save(__NAMESPACE__. '\ChildEntity$CLASSMETADATA', $metadata);
 
@@ -105,7 +103,7 @@ class TestClassMetadataFactory extends AbstractClassMetadataFactory
 
     }
 
-    protected function newClassMetadataBuilderInstance($className)
+    protected function newClassMetadataInstance($className)
     {
         return $this->metadata;
     }
