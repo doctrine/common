@@ -162,4 +162,27 @@ interface ClassMetadata
      * @return array
      */
     function getIdentifierValues($object);
+
+    /**
+     * Initialize Reflection services
+     *
+     * This method is called from a metadata factory after an uncached
+     * initialization. Data set in this method should be serialized and
+     * reconstituted on wakeup.
+     *
+     * @param ReflectionService $reflService
+     * @return void
+     */
+    function initializeReflection(ReflectionService $reflService);
+
+    /**
+     * Wakeup Reflection
+     *
+     * Method is called when the metadata instance is reconstituted from the
+     * cache and also after initialization.
+     *
+     * @param ReflectionService $reflService
+     * @return void
+     */
+    function wakeupReflection(ReflectionService $reflService);
 }

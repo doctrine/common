@@ -19,6 +19,8 @@
 
 namespace Doctrine\Common\Persistence\Mapping;
 
+use Doctrine\Common\Cache\Cache;
+
 /**
  * The ClassMetadataFactory is used to create ClassMetadata objects that contain all the
  * metadata mapping informations of a class which describes how a class should be mapped
@@ -57,11 +59,16 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
     protected $initialized = false;
 
     /**
+     * @var ReflectionService
+     */
+    private $reflectionService;
+
+    /**
      * Sets the cache driver used by the factory to cache ClassMetadata instances.
      *
      * @param Doctrine\Common\Cache\Cache $cacheDriver
      */
-    public function setCacheDriver($cacheDriver)
+    public function setCacheDriver(Cache $cacheDriver = null)
     {
         $this->cacheDriver = $cacheDriver;
     }
@@ -158,6 +165,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
             if ($this->cacheDriver) {
                 if (($cached = $this->cacheDriver->fetch($realClassName . $this->cacheSalt)) !== false) {
                     $this->loadedMetadata[$realClassName] = $cached;
+                    $cached->wakeupReflection($this->getReflectionService());
                 } else {
                     foreach ($this->loadMetadata($realClassName) as $loadedClassName) {
                         $this->cacheDriver->save(
@@ -212,7 +220,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
     {
         // Collect parent classes, ignoring transient (not-mapped) classes.
         $parentClasses = array();
-        foreach (array_reverse(class_parents($name)) as $parentClass) {
+        foreach (array_reverse($this->getReflectionService()->getParentClasses($name)) as $parentClass) {
             if ( ! $this->getDriver()->isTransient($parentClass)) {
                 $parentClasses[] = $parentClass;
             }
@@ -242,6 +250,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         $parent = null;
         $rootEntityFound = false;
         $visited = array();
+        $reflService = $this->getReflectionService();
         foreach ($parentClasses as $className) {
             if (isset($this->loadedMetadata[$className])) {
                 $parent = $this->loadedMetadata[$className];
@@ -264,6 +273,9 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
                 $rootEntityFound = true;
                 array_unshift($visited, $className);
             }
+
+            $class->initializeReflection($reflService);
+            $class->wakeupReflection($reflService);
 
             $loaded[] = $className;
         }
@@ -302,5 +314,28 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         }
 
         return $this->getDriver()->isTransient($class);
+    }
+
+    /**
+     * Set reflectionService.
+     *
+     * @param ReflectionService $reflectionService
+     */
+    public function setReflectionService(ReflectionService $reflectionService)
+    {
+        $this->reflectionService = $reflectionService;
+    }
+
+    /**
+     * Get the reflection service associated with this metadata factory.
+     *
+     * @return ReflectionService
+     */
+    public function getReflectionService()
+    {
+        if ($this->reflectionService === null) {
+            $this->reflectionService = new RuntimeReflectionService();
+        }
+        return $this->reflectionService;
     }
 }
