@@ -552,6 +552,9 @@ final class DocParser
             $name .= '\\'.$this->lexer->token['value'];
         }
 
+        if (isset($this->ignoredAnnotationNames[$name])) {
+            return false;
+        }
         // only process names which are not fully qualified, yet
         // fully qualified names must start with a \
         $originalName = $name;
@@ -582,7 +585,7 @@ final class DocParser
             }
 
             if (!$found) {
-                if ($this->ignoreNotImportedAnnotations || isset($this->ignoredAnnotationNames[$name])) {
+                if ($this->ignoreNotImportedAnnotations) {
                     return false;
                 }
 

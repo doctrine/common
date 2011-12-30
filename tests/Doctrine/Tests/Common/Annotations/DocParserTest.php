@@ -848,6 +848,28 @@ DOCBLOCK;
         $this->assertInstanceOf('Doctrine\Tests\Common\Annotations\Fixtures\Annotation\Autoload', $annotations[0]);
     }
 
+    /**
+     * @group DCOM-86
+     */
+    public function testDoNotTryToLoadIgnoredAnnotations()
+    {
+        $parser     = $this->createTestParser();
+        $classes    = (object)array('list'=>null);
+        $loader     = function($class) use ($classes) {
+            $classes->list[] = $class;
+            return false;
+        };
+        
+        AnnotationRegistry::registerLoader($loader);
+        $parser->setIgnoredAnnotationNames(array('IgnoreThisOne'=>true));
+        
+        $parser->parse('@IgnoreThisOne');
+        $parser->parse('@Doctrine\Tests\Common\Annotations\Name(foo="bar")');
+
+        $this->assertNotContains('IgnoreThisOne', $classes->list);
+        $this->assertContains('Doctrine\Tests\Common\Annotations\Doctrine\Tests\Common\Annotations\Name', $classes->list);
+    }
+
     public function createTestParser()
     {
         $parser = new DocParser();
