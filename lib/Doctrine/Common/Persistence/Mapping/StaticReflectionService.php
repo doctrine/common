@@ -75,7 +75,7 @@ class StaticReflectionService implements ReflectionService
      */
     public function getClass($class)
     {
-        return null;
+        return new \ReflectionClass($class);
     }
 
     /**
