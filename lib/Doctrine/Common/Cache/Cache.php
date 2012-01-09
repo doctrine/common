@@ -44,13 +44,14 @@ interface Cache
     /**
      * Fetches an entry from the cache.
      *
-     * @param string $id cache id The id of the cache entry to fetch.
+     * @param string $id The id of the cache entry to fetch.
+     * @param bool   $success Whether the operation has succeeded
      * @return mixed The cached data or FALSE, if no cache entry exists for the given id.
      */
-    function fetch($id);
+    function fetch($id, &$success = null);
 
     /**
-     * Test if an entry exists in the cache.
+     * Tests if an entry exists in the cache.
      *
      * @param string $id cache id The cache id of the entry to check for.
      * @return boolean TRUE if a cache entry exists for the given cache id, FALSE otherwise.

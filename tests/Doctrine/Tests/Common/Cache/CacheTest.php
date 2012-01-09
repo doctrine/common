@@ -17,12 +17,18 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertTrue($this->cache->contains('test_key'));
 
         // Test fetch
-        $this->assertEquals('testing this out', $this->cache->fetch('test_key'));
+        $success = false;
+        $value = $this->cache->fetch('test_key', $success);
+        $this->assertEquals('testing this out', $value);
+        $this->assertTrue($success, 'fetch() should set $success to true when the key exists');
 
         // Test delete
         $this->cache->save('test_key2', 'test2');
         $this->cache->delete('test_key2');
         $this->assertFalse($this->cache->contains('test_key2'));
+        $value = $this->cache->fetch('test_key2', $success);
+        $this->assertFalse($value);
+        $this->assertFalse($success, 'fetch() should set $success to false when the key does not exist');
     }
 
     public function testDeleteAll()

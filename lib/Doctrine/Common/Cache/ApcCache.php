@@ -37,9 +37,9 @@ class ApcCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
-    protected function doFetch($id)
+    protected function doFetch($id, &$success = null)
     {
-        return apc_fetch($id);
+        return apc_fetch($id, $success);
     }
 
     /**

@@ -64,9 +64,12 @@ class MemcachedCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
-    protected function doFetch($id)
+    protected function doFetch($id, &$success = null)
     {
-        return $this->memcached->get($id);
+        $value = $this->memcached->get($id);
+        $success =  false === $value ? !($this->memcached->getResultCode() === Memcached::RES_NOTFOUND) : true;
+
+        return $value;
     }
 
     /**

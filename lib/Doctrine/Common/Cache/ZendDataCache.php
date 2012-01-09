@@ -33,10 +33,12 @@ class ZendDataCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
-    protected function doFetch($id)
+    protected function doFetch($id, &$success = null)
     {
         $value = zend_shm_cache_fetch($id);
-        return null === $value ? false : $value;
+        $success = null !== $value;
+
+        return $success ? $value : false;
     }
 
     /**

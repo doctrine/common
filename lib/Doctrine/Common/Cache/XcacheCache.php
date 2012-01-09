@@ -37,9 +37,11 @@ class XcacheCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
-    protected function doFetch($id)
+    protected function doFetch($id, &$success = null)
     {
-        return $this->doContains($id) ? unserialize(xcache_get($id)) : false;
+        $success = $this->doContains($id);
+
+        return  $success ? unserialize(xcache_get($id)) : false;
     }
 
     /**

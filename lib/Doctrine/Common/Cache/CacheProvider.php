@@ -63,9 +63,9 @@ abstract class CacheProvider implements Cache
     /**
      * {@inheritdoc}
      */
-    public function fetch($id)
+    public function fetch($id, &$success = null)
     {
-        return $this->doFetch($this->getNamespacedId($id));
+        return $this->doFetch($this->getNamespacedId($id), $success);
     }
 
     /**
@@ -142,9 +142,10 @@ abstract class CacheProvider implements Cache
      * Fetches an entry from the cache.
      *
      * @param string $id cache id The id of the cache entry to fetch.
+     * @param bool   $success Whether the operation has succeeded
      * @return string The cached data or FALSE, if no cache entry exists for the given id.
      */
-    abstract protected function doFetch($id);
+    abstract protected function doFetch($id, &$success = null);
 
     /**
      * Test if an entry exists in the cache.
