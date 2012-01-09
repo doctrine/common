@@ -58,9 +58,7 @@ class FileCacheReader implements Reader
      */
     public function getClassAnnotations(\ReflectionClass $class)
     {
-        $reader = $this->reader;
-
-        $getter = function () use ($reader, $class) {
+        $getter = function(Reader $reader) use ($class) {
             return $reader->getClassAnnotations($class);
         };
 
@@ -77,11 +75,10 @@ class FileCacheReader implements Reader
      */
     public function getPropertyAnnotations(\ReflectionProperty $property)
     {
-        $reader = $this->reader;
         $class = $property->getDeclaringClass();
         $key = $class->getName().'$'.$property->getName();
 
-        $getter = function () use ($reader, $property) {
+        $getter = function(Reader $reader) use ($property) {
             return $reader->getPropertyAnnotations($property);
         };
 
@@ -100,7 +97,7 @@ class FileCacheReader implements Reader
         $class = $method->getDeclaringClass();
         $key = $class->getName().'#'.$method->getName();
 
-        $getter = function () use ($reader, $method) {
+        $getter = function(Reader $reader) use ($method) {
             return $reader->getMethodAnnotations($method);
         };
 
@@ -190,7 +187,7 @@ class FileCacheReader implements Reader
         }
 
         if (!file_exists($path)) {
-            $annot = $getter();
+            $annot = $getter($this->reader);
             file_put_contents($path, '<?php return unserialize('.var_export(serialize($annot), true).');');
             return $this->loadedAnnotations[$key] = $annot;
         }
