@@ -64,10 +64,9 @@ final class CachedReader implements Reader
 
     public function getClassAnnotations(\ReflectionClass $class)
     {
-        $reader = $this->delegate;
         $cacheKey = $class->getName();
 
-        $getter = function () use ($reader, $class) {
+        $getter = function(Reader $reader) use ($class) {
             return $reader->getClassAnnotations($class);
         };
 
@@ -87,11 +86,10 @@ final class CachedReader implements Reader
 
     public function getPropertyAnnotations(\ReflectionProperty $property)
     {
-        $reader = $this->delegate;
         $class = $property->getDeclaringClass();
         $cacheKey = $class->getName().'$'.$property->getName();
 
-        $getter = function () use ($reader, $property) {
+        $getter = function(Reader $reader) use ($property) {
             return $reader->getPropertyAnnotations($property);
         };
 
@@ -111,11 +109,10 @@ final class CachedReader implements Reader
 
     public function getMethodAnnotations(\ReflectionMethod $method)
     {
-        $reader = $this->delegate;
         $class = $method->getDeclaringClass();
         $cacheKey = $class->getName().'#'.$method->getName();
 
-        $getter = function () use ($reader, $method) {
+        $getter = function(Reader $reader) use ($method) {
             return $reader->getMethodAnnotations($method);
         };
 
@@ -153,7 +150,7 @@ final class CachedReader implements Reader
         }
 
         if (false === ($annots = $this->fetchFromCache($key, $class))) {
-            $annots = $getter();
+            $annots = $getter($this->delegate);
             $this->saveToCache($key, $annots);
         }
 
