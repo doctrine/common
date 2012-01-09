@@ -48,7 +48,6 @@ class ArrayCache extends CacheProvider
         $success = array_key_exists($id, $this->data);
 
         return $success ? $this->data[$id] : false;
-
     }
 
     /**

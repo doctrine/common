@@ -48,7 +48,6 @@ class ApcCache extends CacheProvider
     protected function doContains($id)
     {
         $found = false;
-
         apc_fetch($id, $found);
 
         return $found;
@@ -60,6 +59,7 @@ class ApcCache extends CacheProvider
     protected function doSave($id, $data, $lifeTime = 0)
     {
         $status = apc_store(array($id => $data), null, (int) $lifeTime);
+        
         return !array_key_exists($id, $status);
     }
 

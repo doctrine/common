@@ -142,7 +142,7 @@ abstract class CacheProvider implements Cache
      * Fetches an entry from the cache.
      *
      * @param string $id cache id The id of the cache entry to fetch.
-     * @param bool   $success Whether the operation has succeeded
+     * @param bool   $success Whether the operation has succeeded.
      * @return string The cached data or FALSE, if no cache entry exists for the given id.
      */
     abstract protected function doFetch($id, &$success = null);
