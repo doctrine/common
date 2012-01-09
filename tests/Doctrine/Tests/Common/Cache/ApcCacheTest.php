@@ -11,6 +11,7 @@ class ApcCacheTest extends CacheTest
         if ( ! extension_loaded('apc') || false === @apc_cache_info()) {
             $this->markTestSkipped('The ' . __CLASS__ .' requires the use of APC');
         }
+        parent::setUp();
     }
 
     protected function _getCacheDriver()

@@ -10,4 +10,9 @@ class ArrayCacheTest extends CacheTest
     {
         return new ArrayCache();
     }
+
+    public function testGetStats()
+    {
+        $this->assertNull($this->cache->getStats());
+    }
 }

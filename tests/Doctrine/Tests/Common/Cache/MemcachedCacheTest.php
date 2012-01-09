@@ -22,6 +22,7 @@ class MemcachedCacheTest extends CacheTest
         } else {
             $this->markTestSkipped('The ' . __CLASS__ .' requires the use of memcache');
         }
+        parent::setUp();
     }
 
     protected function _getCacheDriver()

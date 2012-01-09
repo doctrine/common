@@ -19,6 +19,12 @@ class MemcacheCacheTest extends CacheTest
         } else {
             $this->markTestSkipped('The ' . __CLASS__ .' requires the use of memcache');
         }
+        parent::setUp();
+    }
+
+    public function testStoreFalse()
+    {
+        $this->markTestSkipped('Memcache can not store the "false" value');
     }
 
     protected function _getCacheDriver()

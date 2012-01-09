@@ -59,7 +59,8 @@ class ApcCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return (bool) apc_store($id, $data, (int) $lifeTime);
+        $status = apc_store(array($id => $data), null, (int) $lifeTime);
+        return !array_key_exists($id, $status);
     }
 
     /**
@@ -75,7 +76,7 @@ class ApcCache extends CacheProvider
      */
     protected function doFlush()
     {
-        return apc_clear_cache() && apc_clear_cache('user');
+        return apc_clear_cache('user');
     }
 
     /**

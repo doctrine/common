@@ -55,7 +55,7 @@ class WincacheCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return (bool) wincache_ucache_set($id, $data, (int) $lifeTime);
+        return wincache_ucache_set($id, $data, (int) $lifeTime);
     }
 
     /**
