@@ -96,7 +96,7 @@ class StaticPHPDriver implements MappingDriver
             );
 
             foreach ($iterator as $file) {
-                if (($fileName = $file->getBasename(".php")) == $file->getBasename()) {
+                if ($file->getBasename('.php') == $file->getBasename()) {
                     continue;
                 }
 
