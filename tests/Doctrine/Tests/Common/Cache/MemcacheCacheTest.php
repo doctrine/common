@@ -27,6 +27,11 @@ class MemcacheCacheTest extends CacheTest
         $this->markTestSkipped('Memcache can not store the "false" value');
     }
 
+    public function testSuccessOnStoreFalse()
+    {
+        $this->markTestSkipped('Memcache can not store the "false" value');
+    }
+
     public function testLongLifetime()
     {
         $this->cache->save('key', 'value', 30 * 24 * 3600 + 1);

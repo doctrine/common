@@ -84,6 +84,15 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals(false, $this->cache->fetch('key'));
     }
 
+    public function testSuccessOnStoreFalse()
+    {
+        $success = false;
+        $this->cache->save('key', false);
+        $value = $this->cache->fetch('key', $success);
+        $this->assertEquals(false, $value);
+        $this->assertTrue($success);
+    }
+
     public function testStoreArray()
     {
         $value = array('foo' => 'foo', 'bar' => 'bar');
