@@ -84,7 +84,8 @@ abstract class FileDriver implements MappingDriver
      * Get the element of schema meta data for the class from the mapping file.
      * This will lazily load the mapping file if it is not loaded yet
      *
-     * @return array|null $element  The element of schema meta data
+     * @return array $element  The element of schema meta data
+     * @throws MappingException
      */
     public function getElement($className)
     {
