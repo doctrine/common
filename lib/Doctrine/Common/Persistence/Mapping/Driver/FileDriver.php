@@ -84,7 +84,7 @@ abstract class FileDriver implements MappingDriver
      * Get the element of schema meta data for the class from the mapping file.
      * This will lazily load the mapping file if it is not loaded yet
      *
-     * @return array $element  The element of schema meta data
+     * @return array|null $element  The element of schema meta data
      */
     public function getElement($className)
     {
@@ -97,8 +97,11 @@ abstract class FileDriver implements MappingDriver
         }
 
         $result = $this->loadMappingFile($this->locator->findMappingFile($className));
+        if (!isset($result[$className])) {
+            throw MappingException::invalidMappingFile($className, str_replace('\\', '.', $className) . $this->locator->getFileExtension());
+        }
 
-        return $result[$className];
+        return isset($result[$className]) ? $result[$className] : null;
     }
 
     /**
@@ -174,5 +177,25 @@ abstract class FileDriver implements MappingDriver
                 }
             }
         }
+    }
+
+    /**
+     * Retrieve the locator used to discover mapping files by className
+     *
+     * @return FileLocator
+     */
+    public function getLocator()
+    {
+        return $this->locator;
+    }
+
+    /**
+     * Set the locator used to discover mapping files by className
+     *
+     * @param FileLocator $locator
+     */
+    public function setLocator(FileLocator $locator)
+    {
+        $this->locator = $locator;
     }
 }
