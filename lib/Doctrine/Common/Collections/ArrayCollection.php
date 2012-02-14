@@ -446,17 +446,17 @@ class ArrayCollection implements Collection
     }
 
     /**
-     * Verifies if the given object is of type ArrayCOllection
+     * Verifies if the given object is of type ArrayCollection
      *
      * @param object $collection
      * @return boolean True, if it is of the expected type, else false.
      */
-    public function isCollection($collection) {
+    public function isArrayCollection($collection) {
         return $collection instanceof $this;
     }
 
     /**
-     * Merges the given collections into a new of the same class where this method was called from.
+     * Merges the given collections into the one given in the first argument.
      *
      * @param ArrayCollection $collection
      * @return ArrayCollection
@@ -471,7 +471,7 @@ class ArrayCollection implements Collection
         $i = 0;
 
         foreach ($args as $arg) {
-            if (!$this->isCollection($arg)) {
+            if (!$this->isArrayCollection($arg)) {
                 throw new \InvalidArgumentException('Given argument (' . $i . ') is not a valid collection');
             }
             $c = $this->doMerge($c, $arg);

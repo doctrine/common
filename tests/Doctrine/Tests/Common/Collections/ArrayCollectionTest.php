@@ -8,13 +8,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 class ArrayCollectionTest extends \Doctrine\Tests\DoctrineTestCase
 {
     /**
-     * @dataProvider isCollectionDataprovider
-     * @covers \\Doctrine\\Common\\Collections\\ArrayCollection::isCollection
+     * @dataProvider isArrayCollectionDataprovider
+     * @covers \\Doctrine\\Common\\Collections\\ArrayCollection::isArrayCollection
      */
     public function testIsCollection($expected, $c) 
     {
         $collection = new ArrayCollection();
-        $this->assertEquals($expected, $collection->isCollection($c));
+        $this->assertEquals($expected, $collection->isArrayCollection($c));
     }
 
     /**
@@ -76,7 +76,7 @@ class ArrayCollectionTest extends \Doctrine\Tests\DoctrineTestCase
     }
 
 
-    public static function isCollectionDataprovider() 
+    public static function isArrayCollectionDataprovider() 
     {
         return array(
             'check an actual collection » true' => array(true, new ArrayCollection()),
