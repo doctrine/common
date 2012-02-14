@@ -50,4 +50,11 @@ interface Proxy
      * @return void
      */
     public function __load();
+
+    /**
+     * Is this proxy initialized or not.
+     *
+     * @return bool
+     */
+    public function __isInitialized();
 }
