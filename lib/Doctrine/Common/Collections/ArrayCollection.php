@@ -444,4 +444,58 @@ class ArrayCollection implements Collection
     {
         return array_slice($this->_elements, $offset, $length, true);
     }
+
+    /**
+     * Verifies if the given object is of type ArrayCOllection
+     *
+     * @param object $collection
+     * @return boolean True, if it is of the expected type, else false.
+     */
+    public function isCollection($collection) {
+        return $collection instanceof $this;
+    }
+
+    /**
+     * Merges the given collections into a new of the same class where this method was called from.
+     *
+     * @param ArrayCollection $collection
+     * @return ArrayCollection
+     *
+     * @throws \InvalidArgumentException, in case no arguments were given.
+     * @throws \InvalidArgumentException, in case at least one given argument is not a valid collection..
+     */
+    public function merge(ArrayCollection $collection) 
+    {
+        $args = func_get_args();
+        $c = array_shift($args);
+        $i = 0;
+
+        foreach ($args as $arg) {
+            if (!$this->isCollection($arg)) {
+                throw new \InvalidArgumentException('Given argument (' . $i . ') is not a valid collection');
+            }
+            $c = $this->doMerge($c, $arg);
+            ++$i;
+        }
+        return $c;
+    }
+
+    /**
+     * Merges the given collections into one.
+     *
+     * @param ArrayCollection $to
+     * @param ArrayCollection $from
+     * @return ArrayCollection
+     */
+    protected function doMerge(ArrayCollection $to, ArrayCollection $from) 
+    {
+        foreach ($from as $key => $item) {
+            if (is_numeric($key)) {
+                $to[] = $item;
+                continue;
+            }
+            $to[$key] = $item;
+        }
+        return $to;
+    }
 }
