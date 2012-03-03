@@ -19,7 +19,6 @@
 
 namespace Doctrine\Common\Annotations;
 
-
 /**
  * File cache reader for annotations.
  *
@@ -47,98 +46,62 @@ class FileCacheReader implements Reader
         }
 
         $this->dir   = rtrim($cacheDir, '\\/');
-        $this->debug = $debug;
+        $this->debug = (Boolean) $debug;
     }
 
+    /**
+     * Gets class annotations.
+     *
+     * @param ReflectionClass $class The ReflectionClass of the class from which
+     *                               the class annotations should be read.
+     * @return array The list of annotations.
+     */
     public function getClassAnnotations(\ReflectionClass $class)
     {
-        $key = $class->getName();
+        $getter = function(Reader $reader) use ($class) {
+            return $reader->getClassAnnotations($class);
+        };
 
-        if (isset($this->loadedAnnotations[$key])) {
-            return $this->loadedAnnotations[$key];
-        }
-
-        $path = $this->dir.'/'.strtr($key, '\\', '-').'.cache.php';
-        if (!file_exists($path)) {
-            $annot = $this->reader->getClassAnnotations($class);
-            $this->saveCacheFile($path, $annot);
-            return $this->loadedAnnotations[$key] = $annot;
-        }
-
-        if ($this->debug
-            && (false !== $filename = $class->getFilename())
-            && filemtime($path) < filemtime($filename)) {
-            @unlink($path);
-
-            $annot = $this->reader->getClassAnnotations($class);
-            $this->saveCacheFile($path, $annot);
-            return $this->loadedAnnotations[$key] = $annot;
-        }
-
-        return $this->loadedAnnotations[$key] = include $path;
+        return $this->getAnnotations($getter, $class, $class->getName());
     }
 
+    /**
+     * Gets a property annotation.
+     *
+     * @param ReflectionProperty $property
+     *
+     * @param \ReflectionProperty $property
+     * @return array The list of annotations.
+     */
     public function getPropertyAnnotations(\ReflectionProperty $property)
     {
         $class = $property->getDeclaringClass();
         $key = $class->getName().'$'.$property->getName();
 
-        if (isset($this->loadedAnnotations[$key])) {
-            return $this->loadedAnnotations[$key];
-        }
+        $getter = function(Reader $reader) use ($property) {
+            return $reader->getPropertyAnnotations($property);
+        };
 
-        $path = $this->dir.'/'.strtr($key, '\\', '-').'.cache.php';
-        if (!file_exists($path)) {
-            $annot = $this->reader->getPropertyAnnotations($property);
-            $this->saveCacheFile($path, $annot);
-            return $this->loadedAnnotations[$key] = $annot;
-        }
-
-        if ($this->debug
-            && (false !== $filename = $class->getFilename())
-            && filemtime($path) < filemtime($filename)) {
-            unlink($path);
-
-            $annot = $this->reader->getPropertyAnnotations($property);
-            $this->saveCacheFile($path, $annot);
-            return $this->loadedAnnotations[$key] = $annot;
-        }
-
-        return $this->loadedAnnotations[$key] = include $path;
+        return $this->getAnnotations($getter, $class, $key);
     }
 
+    /**
+     * Gets method annotations.
+     *
+     * @param ReflectionMethod $method
+     * @return array The list of annotations.
+     */
     public function getMethodAnnotations(\ReflectionMethod $method)
     {
+        $reader = $this->reader;
         $class = $method->getDeclaringClass();
         $key = $class->getName().'#'.$method->getName();
 
-        if (isset($this->loadedAnnotations[$key])) {
-            return $this->loadedAnnotations[$key];
-        }
+        $getter = function(Reader $reader) use ($method) {
+            return $reader->getMethodAnnotations($method);
+        };
 
-        $path = $this->dir.'/'.strtr($key, '\\', '-').'.cache.php';
-        if (!file_exists($path)) {
-            $annot = $this->reader->getMethodAnnotations($method);
-            $this->saveCacheFile($path, $annot);
-            return $this->loadedAnnotations[$key] = $annot;
-        }
-
-        if ($this->debug
-            && (false !== $filename = $class->getFilename())
-            && filemtime($path) < filemtime($filename)) {
-            unlink($path);
-
-            $annot = $this->reader->getMethodAnnotations($method);
-            $this->saveCacheFile($path, $annot);
-            return $this->loadedAnnotations[$key] = $annot;
-        }
-
-        return $this->loadedAnnotations[$key] = include $path;
-    }
-
-    private function saveCacheFile($path, $data)
-    {
-        file_put_contents($path, '<?php return unserialize('.var_export(serialize($data), true).');');
+        return $this->getAnnotations($getter, $class, $key);
     }
 
     /**
@@ -151,15 +114,7 @@ class FileCacheReader implements Reader
      */
     public function getClassAnnotation(\ReflectionClass $class, $annotationName)
     {
-        $annotations = $this->getClassAnnotations($class);
-
-        foreach ($annotations as $annotation) {
-            if ($annotation instanceof $annotationName) {
-                return $annotation;
-            }
-        }
-
-        return null;
+        return $this->filterAnnotationsByName($this->getClassAnnotations($class), $annotationName);
     }
 
     /**
@@ -171,15 +126,7 @@ class FileCacheReader implements Reader
      */
     public function getMethodAnnotation(\ReflectionMethod $method, $annotationName)
     {
-        $annotations = $this->getMethodAnnotations($method);
-
-        foreach ($annotations as $annotation) {
-            if ($annotation instanceof $annotationName) {
-                return $annotation;
-            }
-        }
-
-        return null;
+        return $this->filterAnnotationsByName($this->getMethodAnnotations($method), $annotationName);
     }
 
     /**
@@ -191,10 +138,25 @@ class FileCacheReader implements Reader
      */
     public function getPropertyAnnotation(\ReflectionProperty $property, $annotationName)
     {
-        $annotations = $this->getPropertyAnnotations($property);
+        return $this->filterAnnotationsByName($this->getPropertyAnnotations($property), $annotationName);
+    }
 
+    public function clearLoadedAnnotations()
+    {
+        $this->loadedAnnotations = array();
+    }
+
+    /**
+     * Return the annotation of the given type.
+     *
+     * @param type $annotations The list of annotations.
+     * @param type $name        The name of the annotation.
+     * @return The Annotation or NULL, if the requested annotation does not exist.
+     */
+    private function filterAnnotationsByName($annotations, $name)
+    {
         foreach ($annotations as $annotation) {
-            if ($annotation instanceof $annotationName) {
+            if ($annotation instanceof $name) {
                 return $annotation;
             }
         }
@@ -202,8 +164,34 @@ class FileCacheReader implements Reader
         return null;
     }
 
-    public function clearLoadedAnnotations()
+    /**
+     * Returns the annotations and handle the cache.
+     *
+     * @param \Closure         $getter A closure returning the target annotations.
+     * @param \ReflectionClass $class  The target related class.
+     * @param string           $key    The target UID.
+     * @return array The target annotations.
+     */
+    private function getAnnotations(\Closure $getter, \ReflectionClass $class, $key)
     {
-        $this->loadedAnnotations = array();
+        if (isset($this->loadedAnnotations[$key])) {
+            return $this->loadedAnnotations[$key];
+        }
+
+        $path = $this->dir.'/'.strtr($key, '\\', '-').'.cache.php';
+
+        if ($this->debug
+            && (false !== $filename = $class->getFilename())
+            && filemtime($path) < filemtime($filename)) {
+            unlink($path);
+        }
+
+        if (!file_exists($path)) {
+            $annot = $getter($this->reader);
+            file_put_contents($path, '<?php return unserialize('.var_export(serialize($annot), true).');');
+            return $this->loadedAnnotations[$key] = $annot;
+        }
+
+        return $this->loadedAnnotations[$key] = include $path;
     }
 }
