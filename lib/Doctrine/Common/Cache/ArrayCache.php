@@ -43,9 +43,11 @@ class ArrayCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
-    protected function doFetch($id)
+    protected function doFetch($id, &$success = null)
     {
-        return (isset($this->data[$id])) ? $this->data[$id] : false;
+        $success = array_key_exists($id, $this->data);
+
+        return $success ? $this->data[$id] : false;
     }
 
     /**
@@ -53,7 +55,7 @@ class ArrayCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return isset($this->data[$id]);
+        return array_key_exists($id, $this->data);
     }
 
     /**

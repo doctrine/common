@@ -11,6 +11,7 @@ class WincacheCacheTest extends CacheTest
         if ( ! extension_loaded('wincache') || ! function_exists('wincache_ucache_info')) {
             $this->markTestSkipped('The ' . __CLASS__ .' requires the use of Wincache');
         }
+        parent::setUp();
     }
 
     protected function _getCacheDriver()

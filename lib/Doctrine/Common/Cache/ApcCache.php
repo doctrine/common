@@ -37,9 +37,9 @@ class ApcCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
-    protected function doFetch($id)
+    protected function doFetch($id, &$success = null)
     {
-        return apc_fetch($id);
+        return apc_fetch($id, $success);
     }
 
     /**
@@ -48,7 +48,6 @@ class ApcCache extends CacheProvider
     protected function doContains($id)
     {
         $found = false;
-
         apc_fetch($id, $found);
 
         return $found;
@@ -59,7 +58,9 @@ class ApcCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return (bool) apc_store($id, $data, (int) $lifeTime);
+        $status = apc_store(array($id => $data), null, (int) $lifeTime);
+        
+        return !array_key_exists($id, $status);
     }
 
     /**
@@ -75,7 +76,7 @@ class ApcCache extends CacheProvider
      */
     protected function doFlush()
     {
-        return apc_clear_cache() && apc_clear_cache('user');
+        return apc_clear_cache('user');
     }
 
     /**

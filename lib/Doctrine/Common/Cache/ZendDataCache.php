@@ -33,9 +33,12 @@ class ZendDataCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
-    protected function doFetch($id)
+    protected function doFetch($id, &$success = null)
     {
-        return zend_shm_cache_fetch($id);
+        $value = zend_shm_cache_fetch($id);
+        $success = null !== $value;
+
+        return $success ? $value : false;
     }
 
     /**
@@ -43,7 +46,7 @@ class ZendDataCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return (false !== zend_shm_cache_fetch($id));
+        return (null !== zend_shm_cache_fetch($id));
     }
 
     /**
@@ -51,7 +54,7 @@ class ZendDataCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return zend_shm_cache_store($id, $data, $lifeTime);
+        return zend_shm_cache_store($id, $data, (int) $lifeTime);
     }
 
     /**

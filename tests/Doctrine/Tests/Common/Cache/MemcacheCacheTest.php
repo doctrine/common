@@ -19,6 +19,24 @@ class MemcacheCacheTest extends CacheTest
         } else {
             $this->markTestSkipped('The ' . __CLASS__ .' requires the use of memcache');
         }
+        parent::setUp();
+    }
+
+    public function testStoreFalse()
+    {
+        $this->markTestSkipped('Memcache can not store the "false" value');
+    }
+
+    public function testSuccessOnStoreFalse()
+    {
+        $this->markTestSkipped('Memcache can not store the "false" value');
+    }
+
+    public function testLongLifetime()
+    {
+        $this->cache->save('key', 'value', 30 * 24 * 3600 + 1);
+
+        $this->assertTrue($this->cache->contains('key'), 'Memcache provider should support TTL > 30 days');
     }
 
     protected function _getCacheDriver()

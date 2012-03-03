@@ -37,9 +37,9 @@ class WincacheCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
-    protected function doFetch($id)
+    protected function doFetch($id, &$success = null)
     {
-        return wincache_ucache_get($id);
+        return wincache_ucache_get($id, $success);
     }
 
     /**
@@ -55,7 +55,7 @@ class WincacheCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return (bool) wincache_ucache_set($id, $data, (int) $lifeTime);
+        return wincache_ucache_set($id, $data, (int) $lifeTime);
     }
 
     /**

@@ -64,9 +64,12 @@ class MemcachedCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
-    protected function doFetch($id)
+    protected function doFetch($id, &$success = null)
     {
-        return $this->memcached->get($id);
+        $value = $this->memcached->get($id);
+        $success =  false === $value ? !($this->memcached->getResultCode() === Memcached::RES_NOTFOUND) : true;
+
+        return $value;
     }
 
     /**
@@ -74,7 +77,7 @@ class MemcachedCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return (false !== $this->memcached->get($id));
+        return false === $this->memcached->get($id) ? !($this->memcached->getResultCode() === Memcached::RES_NOTFOUND) : true;
     }
 
     /**
@@ -82,7 +85,7 @@ class MemcachedCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return $this->memcached->set($id, $data, (int) $lifeTime);
+        return $this->memcached->set($id, $data, time() + (int) $lifeTime);
     }
 
     /**
