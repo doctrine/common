@@ -73,6 +73,7 @@ final class CachedReader implements Reader
         // Attempt to grab data from cache
         if (($data = $this->cache->fetch($cacheKey)) !== false) {
             if (!$this->debug || $this->isCacheFresh($cacheKey, $class)) {
+                reset($data);
                 return $data;
             }
         }
