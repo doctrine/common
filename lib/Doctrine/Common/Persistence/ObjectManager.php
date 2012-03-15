@@ -77,7 +77,7 @@ interface ObjectManager
      *
      * @param string $objectName if given, only objects of this type will get detached
      */
-    function clear($objectName = null)
+    function clear($objectName = null);
 
     /**
      * Detaches an object from the ObjectManager, causing a managed object to
