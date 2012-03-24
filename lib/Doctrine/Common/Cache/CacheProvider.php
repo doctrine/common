@@ -118,7 +118,11 @@ abstract class CacheProvider implements Cache
     public function deleteAll()
     {
         $namespaceCacheKey = sprintf(self::DOCTRINE_NAMESPACE_CACHEKEY, $this->namespace);
-        $namespaceVersion  = ($this->doContains($namespaceCacheKey)) ? $this->doFetch($namespaceCacheKey) : 1;
+
+        $namespaceVersion = $this->doFetch($namespaceCacheKey);
+        if(false === $namespaceVersion){
+            $namespaceVersion = 1;
+        }
 
         return $this->doSave($namespaceCacheKey, $namespaceVersion + 1);
     }
@@ -132,7 +136,12 @@ abstract class CacheProvider implements Cache
     private function getNamespacedId($id)
     {
         $namespaceCacheKey = sprintf(self::DOCTRINE_NAMESPACE_CACHEKEY, $this->namespace);
-        $namespaceVersion  = ($this->doContains($namespaceCacheKey)) ? $this->doFetch($namespaceCacheKey) : 1;
+
+        $namespaceVersion = $this->doFetch($namespaceCacheKey);
+        if(false === $namespaceVersion){
+            $namespaceVersion = 1;
+            $this->doSave($namespaceCacheKey, $namespaceVersion);
+        }
 
         return sprintf('%s[%s][%s]', $this->namespace, $id, $namespaceVersion);
     }
