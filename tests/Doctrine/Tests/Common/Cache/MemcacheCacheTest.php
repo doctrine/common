@@ -21,10 +21,18 @@ class MemcacheCacheTest extends CacheTest
         }
     }
 
+    public function testNoExpire() {
+        $cache = $this->_getCacheDriver();
+        $cache->save('noexpire', 'value', 0);
+        sleep(1);
+        $this->assertTrue($cache->contains('noexpire'), 'Memcache provider should support no-expire');
+    }
+
     protected function _getCacheDriver()
     {
         $driver = new MemcacheCache();
         $driver->setMemcache($this->_memcache);
         return $driver;
     }
+
 }
