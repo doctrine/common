@@ -18,15 +18,15 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         // Test fetch
         $this->assertEquals('testing this out', $cache->fetch('test_key'));
-        
+
         // Test delete
         $cache->save('test_key2', 'test2');
         $cache->delete('test_key2');
         $this->assertFalse($cache->contains('test_key2'));
-        
+
         // Fetch/save test with objects (Is cache driver serializes/unserializes objects correctly ?)
         $cache->save('test_object_key', new \ArrayObject());
-        $this->assertTrue($cache->fetch('test_object_key') instanceof \ArrayObject);        
+        $this->assertTrue($cache->fetch('test_object_key') instanceof \ArrayObject);
     }
 
     public function testDeleteAll()
@@ -64,6 +64,34 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($cache->contains('key1'));
     }
 
+    public function testZeroNotFalse()
+    {
+        $cache = $this->_getCacheDriver();
+
+        // Test save of int 0
+        $cache->save('test_key_zero', 0);
+        $cache->save('test_key_false', false);
+        $cache->save('test_key_empty', '');
+
+        // Test contains on int 0
+        $this->assertTrue($cache->contains('test_key_zero'));
+
+        // Test contains FALSE value
+        $this->assertTrue($cache->contains('test_key_false'));
+
+        // Test contains FALSE value
+        $this->assertTrue($cache->contains('test_key_empty'));
+
+        // Test fetch of int 0
+        $this->assertEquals(0, $cache->fetch('test_key_zero'));
+
+        // Test fetch FALSE value
+        $this->assertFalse($cache->fetch('test_key_false'));
+
+        // Test fetch FALSE value
+        $this->assertEquals('', $cache->fetch('test_key_empty'));
+    }
+
     /**
      * @group DCOM-43
      */
@@ -88,4 +116,29 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
      * @return \Doctrine\Common\Cache\CacheProvider
      */
     abstract protected function _getCacheDriver();
+
+    /**
+     * Clean-up
+     */
+    protected function tearDown()
+    {
+        if (0 != $this->getStatus()) {
+            return;
+        }
+
+        $cache = $this->_getCacheDriver();
+
+        $cache->delete('test_key');
+        $cache->delete('test_key1');
+        $cache->delete('test_key2');
+        $cache->delete('test_object_key');
+        $cache->delete('test_key_zero');
+        $cache->delete('test_key_false');
+        $cache->delete('test_key_empty');
+
+        $cache->setNamespace('test_');
+        $cache->delete('key1');
+        $cache->setNamespace('test2_');
+        $cache->delete('key1');
+    }
 }

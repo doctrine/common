@@ -66,7 +66,19 @@ class MemcacheCache extends CacheProvider
      */
     protected function doFetch($id)
     {
-        return $this->memcache->get($id);
+        $content = $this->memcache->get($id);
+
+        if ($content == 'doctrine__true__') {
+            $content = true;
+        } elseif ($content == 'doctrine__false__') {
+            $content = false;
+        } elseif ($content == 'doctrine__empty__') {
+            $content = '';
+        } elseif ($content == 'doctrine__zero__') {
+            $content = 0;
+        }
+
+        return $content;
     }
 
     /**
@@ -74,7 +86,9 @@ class MemcacheCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return (bool) $this->memcache->get($id);
+        $content = $this->memcache->get($id);
+
+        return ($content === 0 || (bool) $content);
     }
 
     /**
@@ -85,6 +99,17 @@ class MemcacheCache extends CacheProvider
         if ($lifeTime > 30 * 24 * 3600) {
             $lifeTime = time() + $lifeTime;
         }
+
+        if (true === $data) {
+                $data = 'doctrine__true__';
+        } elseif(false === $data) {
+            $data = 'doctrine__false__';
+        } elseif ('' === $data) {
+            $data = 'doctrine__empty__';
+        } elseif (0 === $data) {
+            $data = 'doctrine__zero__';
+        }
+
         return $this->memcache->set($id, $data, 0, (int) $lifeTime);
     }
 
