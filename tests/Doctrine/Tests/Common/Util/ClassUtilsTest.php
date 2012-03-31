@@ -73,20 +73,52 @@ namespace Doctrine\Tests\Common\Util
 
 namespace MyProject\Proxies\__CG__
 {
-    class stdClass extends \stdClass
+    use Doctrine\Common\Persistence\Proxy;
+
+    class stdClass extends \stdClass implements Proxy
     {
+        /**
+         * {@inheritDoc}
+         */
+        public function __load()
+        {
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function __isInitialized()
+        {
+        }
     }
 }
 
 namespace MyProject\Proxies\__CG__\Doctrine\Tests\Common\Util
 {
-    class ChildObject extends \Doctrine\Tests\Common\Util\ChildObject
+    use Doctrine\Common\Persistence\Proxy;
+
+    class ChildObject extends \Doctrine\Tests\Common\Util\ChildObject implements Proxy
     {
+        /**
+         * {@inheritDoc}
+         */
+        public function __load()
+        {
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public function __isInitialized()
+        {
+        }
     }
 }
 
 namespace MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__
 {
+    use Doctrine\Common\Persistence\Proxy;
+
     class stdClass extends \MyProject\Proxies\__CG__\stdClass
     {
     }
@@ -94,6 +126,8 @@ namespace MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__
 
 namespace MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\Doctrine\Tests\Common\Util
 {
+    use Doctrine\Common\Persistence\Proxy;
+
     class ChildObject extends \MyProject\Proxies\__CG__\Doctrine\Tests\Common\Util\ChildObject
     {
     }
