@@ -19,7 +19,8 @@
 
 namespace Doctrine\Common\Persistence\Mapping;
 
-use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Cache\Cache,
+    Doctrine\Common\Util\ClassUtils;
 
 /**
  * The ClassMetadataFactory is used to create ClassMetadata objects that contain all the
