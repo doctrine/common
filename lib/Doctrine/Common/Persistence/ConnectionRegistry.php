@@ -43,14 +43,14 @@ interface ConnectionRegistry
      *
      * @param string $name The connection name (null for the default one)
      *
-     * @return Connection
+     * @return \Doctrine\DBAL\Connection
      */
     function getConnection($name = null);
 
     /**
      * Gets an array of all registered connections
      *
-     * @return array An array of Connection instances
+     * @return \Doctrine\DBAL\Connection[] An array of Connection instances
      */
     function getConnections();
 

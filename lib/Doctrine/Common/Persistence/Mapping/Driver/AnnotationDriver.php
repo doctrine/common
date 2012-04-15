@@ -118,7 +118,7 @@ abstract class AnnotationDriver implements MappingDriver
     /**
      * Get the file extension used to look for mapping files under
      *
-     * @return void
+     * @return string
      */
     public function getFileExtension()
     {

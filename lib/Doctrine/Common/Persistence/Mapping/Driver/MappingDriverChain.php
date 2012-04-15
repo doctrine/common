@@ -33,6 +33,7 @@ use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver,
  * @author Jonathan H. Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
  */
+/** @noinspection PhpDocMissingThrowsInspection */
 class MappingDriverChain implements MappingDriver
 {
     /**
@@ -43,7 +44,7 @@ class MappingDriverChain implements MappingDriver
     /**
      * Add a nested driver.
      *
-     * @param Driver $nestedDriver
+     * @param MappingDriver $nestedDriver
      * @param string $namespace
      */
     public function addDriver(MappingDriver $nestedDriver, $namespace)
@@ -65,7 +66,10 @@ class MappingDriverChain implements MappingDriver
      * Loads the metadata for the specified class into the provided container.
      *
      * @param string $className
-     * @param ClassMetadataInfo $metadata
+     * @param ClassMetadata $metadata
+     *
+     * @throws MappingException
+     * @return
      */
     public function loadMetadataForClass($className, ClassMetadata $metadata)
     {

@@ -134,7 +134,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
     /**
      * Return the mapping driver implementation.
      *
-     * @return MappingDriver
+     * @return \Doctrine\Common\Persistence\Mapping\Driver\MappingDriver
      */
     abstract protected function getDriver();
 
@@ -151,7 +151,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
      * Initialize Reflection after ClassMetadata was constructed.
      *
      * @param ClassMetadata $class
-     * @param ReflectionSErvice $reflService
+     * @param ReflectionService $reflService
      * @return void
      */
     abstract protected function initializeReflection(ClassMetadata $class, ReflectionService $reflService);
@@ -160,7 +160,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
      * Gets the class metadata descriptor for a class.
      *
      * @param string $className The name of the class.
-     * @return Doctrine\Common\Persistence\Mapping\ClassMetadata
+     * @return \Doctrine\Common\Persistence\Mapping\ClassMetadata
      */
     public function getMetadataFor($className)
     {
@@ -251,7 +251,8 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
      * is still not loaded.
      *
      * @param string $name The name of the class for which the metadata should get loaded.
-     * @param array  $tables The metadata collection to which the loaded metadata is added.
+     *
+     * @return array
      */
     protected function loadMetadata($name)
     {
