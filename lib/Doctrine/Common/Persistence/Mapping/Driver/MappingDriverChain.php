@@ -33,7 +33,6 @@ use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver,
  * @author Jonathan H. Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
  */
-/** @noinspection PhpDocMissingThrowsInspection */
 class MappingDriverChain implements MappingDriver
 {
     /**
@@ -69,7 +68,6 @@ class MappingDriverChain implements MappingDriver
      * @param ClassMetadata $metadata
      *
      * @throws MappingException
-     * @return
      */
     public function loadMetadataForClass($className, ClassMetadata $metadata)
     {

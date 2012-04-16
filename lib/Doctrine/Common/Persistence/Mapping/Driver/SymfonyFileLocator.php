@@ -57,7 +57,7 @@ class SymfonyFileLocator implements FileLocator
      * Constructor
      *
      * @param array $prefixes
-     * @param null $fileExtension
+     * @param string|null $fileExtension
      */
     public function __construct(array $prefixes, $fileExtension = null)
     {

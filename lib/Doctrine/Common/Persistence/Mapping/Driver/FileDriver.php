@@ -37,7 +37,6 @@ use Doctrine\Common\Persistence\Mapping\MappingException;
  * @author      Jonathan H. Wage <jonwage@gmail.com>
  * @author      Roman Borschel <roman@code-factory.org>
  */
-/** @noinspection PhpDocMissingThrowsInspection */
 abstract class FileDriver implements MappingDriver
 {
     /**
@@ -74,7 +73,7 @@ abstract class FileDriver implements MappingDriver
     /**
      * Set global basename
      *
-     * @param $file
+     * @param string $file
      */
     public function setGlobalBasename($file)
     {
@@ -98,7 +97,7 @@ abstract class FileDriver implements MappingDriver
      * @param string $className
      *
      * @throws MappingException
-     * @return array $element  The element of schema meta data
+     * @return array The element of schema meta data
      */
     public function getElement($className)
     {

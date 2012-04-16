@@ -40,7 +40,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     private $name;
 
     /**
-     * @var \Doctrine\DBAL\Connection[]
+     * @var array
      */
     private $connections;
 
@@ -50,12 +50,12 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     private $managers;
 
     /**
-     * @var \Doctrine\DBAL\Connection
+     * @var string
      */
     private $defaultConnection;
 
     /**
-     * @var ObjectManager
+     * @var string
      */
     private $defaultManager;
 
@@ -70,8 +70,8 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
      * @param string $name
      * @param array $connections
      * @param array $managers
-     * @param \Doctrine\DBAL\Connection $defaultConnection
-     * @param ObjectManager $defaultManager
+     * @param string $defaultConnection
+     * @param string $defaultManager
      * @param string $proxyInterfaceName
      */
     public function __construct($name, array $connections, array $managers, $defaultConnection, $defaultManager, $proxyInterfaceName)
@@ -115,10 +115,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @param string|null $name
-     *
-     * @throws \InvalidArgumentException
-     * @return \Doctrine\DBAL\Connection
+     * {@inheritdoc}
      */
     public function getConnection($name = null)
     {
@@ -134,7 +131,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getConnectionNames()
     {
@@ -142,7 +139,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @return \Doctrine\DBAL\Connection[]
+     * {@inheritdoc}
      */
     public function getConnections()
     {
@@ -155,7 +152,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @return \Doctrine\DBAL\Connection
+     * {@inheritdoc}
      */
     public function getDefaultConnectionName()
     {
@@ -163,7 +160,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getDefaultManagerName()
     {

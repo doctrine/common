@@ -27,10 +27,9 @@ namespace Doctrine\Common\Persistence\Mapping;
 class MappingException extends \Exception
 {
     /**
-     * @static
      *
-     * @param $className
-     * @param $namespaces
+     * @param string $className
+     * @param array $namespaces
      *
      * @return \Doctrine\Common\Persistence\Mapping\MappingException
      */
@@ -41,7 +40,6 @@ class MappingException extends \Exception
     }
 
     /**
-     * @static
      * @return MappingException
      */
     public static function pathRequired()
@@ -51,8 +49,7 @@ class MappingException extends \Exception
     }
 
     /**
-     * @static
-     * @param null $path
+     * @param string|null $path
      * @return MappingException
      */
     public static function fileMappingDriversRequireConfiguredDirectoryPath($path = null)
@@ -68,9 +65,8 @@ class MappingException extends \Exception
     }
 
     /**
-     * @static
-     * @param $entityName
-     * @param $fileName
+     * @param string $entityName
+     * @param string $fileName
      * @return MappingException
      */
     public static function mappingFileNotFound($entityName, $fileName)
@@ -79,9 +75,8 @@ class MappingException extends \Exception
     }
 
     /**
-     * @static
-     * @param $entityName
-     * @param $fileName
+     * @param string $entityName
+     * @param string $fileName
      * @return MappingException
      */
     public static function invalidMappingFile($entityName, $fileName)
