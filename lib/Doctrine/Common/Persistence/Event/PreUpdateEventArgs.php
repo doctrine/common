@@ -64,7 +64,7 @@ class PreUpdateEventArgs extends LifecycleEventArgs
     /**
      * Check if field has a changeset.
      *
-     * @param $field
+     * @param string $field
      *
      * @return boolean
      */

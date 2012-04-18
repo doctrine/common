@@ -45,7 +45,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     private $connections;
 
     /**
-     * @var ObjectManager[]
+     * @var array
      */
     private $managers;
 

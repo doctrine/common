@@ -31,7 +31,7 @@ class MappingException extends \Exception
      * @param string $className
      * @param array $namespaces
      *
-     * @return \Doctrine\Common\Persistence\Mapping\MappingException
+     * @return MappingException
      */
     public static function classNotFoundInNamespaces($className, $namespaces)
     {
