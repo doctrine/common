@@ -31,7 +31,7 @@ namespace Doctrine\Common\Persistence\Event;
 class OnClearEventArgs extends \Doctrine\Common\EventArgs
 {
     /**
-     * @var ObjectManager
+     * @var \Doctrine\Common\Persistence\ObjectManager
      */
     private $objectManager;
 
@@ -43,7 +43,7 @@ class OnClearEventArgs extends \Doctrine\Common\EventArgs
     /**
      * Constructor.
      *
-     * @param ObjectManager $objectManager
+     * @param \Doctrine\Common\Persistence\ObjectManager $objectManager
      * @param string $entityClass Optional entity class
      */
     public function __construct($objectManager, $entityClass = null)
@@ -55,7 +55,7 @@ class OnClearEventArgs extends \Doctrine\Common\EventArgs
     /**
      * Retrieve associated ObjectManager.
      *
-     * @return ObjectManager
+     * @return \Doctrine\Common\Persistence\ObjectManager
      */
     public function getObjectManager()
     {

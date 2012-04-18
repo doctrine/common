@@ -70,7 +70,7 @@ interface ObjectManager
      * @param object $object
      */
     function merge($object);
-    
+
     /**
      * Clears the ObjectManager. All objects that are currently managed
      * by this ObjectManager become detached.
@@ -127,7 +127,7 @@ interface ObjectManager
     /**
      * Gets the metadata factory used to gather the metadata of classes.
      *
-     * @return Doctrine\Common\Persistence\Mapping\ClassMetadataFactory
+     * @return \Doctrine\Common\Persistence\Mapping\ClassMetadataFactory
      */
     function getMetadataFactory();
 

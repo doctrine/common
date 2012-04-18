@@ -145,7 +145,7 @@ abstract class Lexer
     /**
      * Tells the lexer to skip input tokens until it sees a token with the given value.
      *
-     * @param $type The token type to skip until.
+     * @param string $type The token type to skip until.
      */
     public function skipUntil($type)
     {

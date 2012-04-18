@@ -90,6 +90,8 @@ abstract class PersistentObject implements ObjectManagerAware
      *
      * @param ObjectManager $objectManager
      * @param ClassMetadata $classMetadata
+     *
+     * @throws \RuntimeException
      */
     public function injectObjectManager(ObjectManager $objectManager, ClassMetadata $classMetadata)
     {
@@ -104,10 +106,11 @@ abstract class PersistentObject implements ObjectManagerAware
     /**
      * Sets a persistent fields value.
      *
-     * @throws InvalidArgumentException - When the wrong target object type is passed to an association
-     * @throws BadMethodCallException - When no persistent field exists by that name.
      * @param string $field
      * @param array $args
+     *
+     * @throws \BadMethodCallException - When no persistent field exists by that name.
+     * @throws \InvalidArgumentException - When the wrong target object type is passed to an association
      * @return void
      */
     private function set($field, $args)
@@ -131,8 +134,10 @@ abstract class PersistentObject implements ObjectManagerAware
     /**
      * Get persistent field value.
      *
-     * @throws BadMethodCallException - When no persistent field exists by that name.
+     *
      * @param string $field
+     *
+     * @throws \BadMethodCallException - When no persistent field exists by that name.
      * @return mixed
      */
     private function get($field)
@@ -169,8 +174,11 @@ abstract class PersistentObject implements ObjectManagerAware
     /**
      * Add an object to a collection
      *
-     * @param type $field
-     * @param assoc $args
+     * @param string $field
+     * @param array $args
+     *
+     * @throws \BadMethodCallException
+     * @throws \InvalidArgumentException
      */
     private function add($field, $args)
     {
@@ -194,6 +202,7 @@ abstract class PersistentObject implements ObjectManagerAware
     /**
      * Initialize Doctrine Metadata for this class.
      *
+     * @throws \RuntimeException
      * @return void
      */
     private function initializeDoctrine()
@@ -214,6 +223,8 @@ abstract class PersistentObject implements ObjectManagerAware
      *
      * @param string $method
      * @param array $args
+     *
+     * @throws \BadMethodCallException
      * @return mixed
      */
     public function __call($method, $args)

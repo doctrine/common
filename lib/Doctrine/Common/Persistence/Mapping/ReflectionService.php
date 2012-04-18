@@ -55,7 +55,7 @@ interface ReflectionService
      * Return a reflection class instance or null
      *
      * @param string $class
-     * @return ReflectionClass|null
+     * @return \ReflectionClass|null
      */
     function getClass($class);
 
@@ -64,7 +64,7 @@ interface ReflectionService
      *
      * @param string $class
      * @param string $property
-     * @return ReflectionProperty|null
+     * @return \ReflectionProperty|null
      */
     function getAccessibleProperty($class, $property);
 

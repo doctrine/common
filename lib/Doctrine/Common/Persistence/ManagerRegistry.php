@@ -50,7 +50,7 @@ interface ManagerRegistry extends ConnectionRegistry
     /**
      * Gets an array of all registered object managers
      *
-     * @return array An array of ObjectManager instances
+     * @return \Doctrine\Common\Persistence\ObjectManager[] An array of ObjectManager instances
      */
     function getManagers();
 
