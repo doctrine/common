@@ -331,6 +331,12 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
             $this->initialize();
         }
 
+        // Check for namespace alias
+        if (strpos($class, ':') !== false) {
+            list($namespaceAlias, $simpleClassName) = explode(':', $class);
+            $class = $this->getFqcnFromAlias($namespaceAlias, $simpleClassName);
+        }
+
         return $this->getDriver()->isTransient($class);
     }
 
