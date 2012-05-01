@@ -43,7 +43,7 @@ class MappingDriverChain implements MappingDriver
     /**
      * Add a nested driver.
      *
-     * @param Driver $nestedDriver
+     * @param MappingDriver $nestedDriver
      * @param string $namespace
      */
     public function addDriver(MappingDriver $nestedDriver, $namespace)
@@ -65,7 +65,9 @@ class MappingDriverChain implements MappingDriver
      * Loads the metadata for the specified class into the provided container.
      *
      * @param string $className
-     * @param ClassMetadataInfo $metadata
+     * @param ClassMetadata $metadata
+     *
+     * @throws MappingException
      */
     public function loadMetadataForClass($className, ClassMetadata $metadata)
     {

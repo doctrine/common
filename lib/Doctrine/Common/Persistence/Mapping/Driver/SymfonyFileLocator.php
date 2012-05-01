@@ -53,18 +53,34 @@ class SymfonyFileLocator implements FileLocator
      */
     protected $fileExtension;
 
+    /**
+     * Constructor
+     *
+     * @param array $prefixes
+     * @param string|null $fileExtension
+     */
     public function __construct(array $prefixes, $fileExtension = null)
     {
         $this->addNamespacePrefixes($prefixes);
         $this->fileExtension = $fileExtension;
     }
 
+    /**
+     * Add Namespace Prefixes
+     *
+     * @param array $prefixes
+     */
     public function addNamespacePrefixes(array $prefixes)
     {
         $this->prefixes = array_merge($this->prefixes, $prefixes);
         $this->paths = array_merge($this->paths, array_keys($prefixes));
     }
 
+    /**
+     * Get Namespace Prefixes
+     *
+     * @return array
+     */
     public function getNamespacePrefixes()
     {
         return $this->prefixes;

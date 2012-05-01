@@ -34,13 +34,46 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  */
 abstract class AbstractManagerRegistry implements ManagerRegistry
 {
+    /**
+     * @var string
+     */
     private $name;
+
+    /**
+     * @var array
+     */
     private $connections;
+
+    /**
+     * @var array
+     */
     private $managers;
+
+    /**
+     * @var string
+     */
     private $defaultConnection;
+
+    /**
+     * @var string
+     */
     private $defaultManager;
+
+    /**
+     * @var string
+     */
     private $proxyInterfaceName;
 
+    /**
+     * Constructor
+     *
+     * @param string $name
+     * @param array $connections
+     * @param array $managers
+     * @param string $defaultConnection
+     * @param string $defaultManager
+     * @param string $proxyInterfaceName
+     */
     public function __construct($name, array $connections, array $managers, $defaultConnection, $defaultManager, $proxyInterfaceName)
     {
         $this->name = $name;
@@ -82,7 +115,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getConnection($name = null)
     {
@@ -98,7 +131,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getConnectionNames()
     {
@@ -106,7 +139,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getConnections()
     {
@@ -119,7 +152,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getDefaultConnectionName()
     {
@@ -127,7 +160,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getDefaultManagerName()
     {
@@ -135,7 +168,9 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
+     * @throws \InvalidArgumentException
      */
     public function getManager($name = null)
     {
@@ -151,7 +186,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getManagerForClass($class)
     {
@@ -170,7 +205,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getManagerNames()
     {
@@ -178,7 +213,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getManagers()
     {
@@ -191,7 +226,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getRepository($persistentObjectName, $persistentManagerName = null)
     {
@@ -199,7 +234,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function resetManager($name = null)
     {

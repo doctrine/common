@@ -44,7 +44,7 @@ class LoadClassMetadataEventArgs extends EventArgs
     /**
      * Constructor.
      *
-     * @param ClasseMetadata $classMetadata
+     * @param ClassMetadata $classMetadata
      * @param ObjectManager $objectManager
      */
     public function __construct(ClassMetadata $classMetadata, ObjectManager $objectManager)

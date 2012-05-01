@@ -41,7 +41,6 @@ final class Debug
     /**
      * Prints a dump of the public, protected and private properties of $var.
      *
-     * @static
      * @link http://xdebug.org/
      * @param mixed $var
      * @param integer $maxDepth Maximum nesting level for object properties
@@ -67,6 +66,13 @@ final class Debug
         ini_set('html_errors', 'Off');
     }
 
+    /**
+     * Export
+     *
+     * @param mixed $var
+     * @param int $maxDepth
+     * @return mixed
+     */
     public static function export($var, $maxDepth)
     {
         $return = null;
@@ -116,6 +122,12 @@ final class Debug
         return $return;
     }
 
+    /**
+     * Convert to string
+     *
+     * @param object $obj
+     * @return string
+     */
     public static function toString($obj)
     {
         return method_exists('__toString', $obj) ? (string) $obj : get_class($obj) . '@' . spl_object_hash($obj);

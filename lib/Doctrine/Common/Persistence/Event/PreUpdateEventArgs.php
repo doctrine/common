@@ -64,6 +64,8 @@ class PreUpdateEventArgs extends LifecycleEventArgs
     /**
      * Check if field has a changeset.
      *
+     * @param string $field
+     *
      * @return boolean
      */
     public function hasChangedField($field)
@@ -114,6 +116,8 @@ class PreUpdateEventArgs extends LifecycleEventArgs
      * Assert the field exists in changeset.
      *
      * @param string $field
+     *
+     * @throws \InvalidArgumentException
      */
     private function assertValidField($field)
     {

@@ -43,7 +43,7 @@ interface ConnectionRegistry
      *
      * @param string $name The connection name (null for the default one)
      *
-     * @return Connection
+     * @return object
      */
     function getConnection($name = null);
 

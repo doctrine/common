@@ -58,7 +58,7 @@ abstract class FileDriver implements MappingDriver
      * Initializes a new FileDriver that looks in the given path(s) for mapping
      * documents and operates in the specified operating mode.
      *
-     * @param string|array|FileLocator $paths A FileLocator or one/multiple paths where mapping documents can be found.
+     * @param string|array|FileLocator $locator A FileLocator or one/multiple paths where mapping documents can be found.
      * @param string $fileExtension
      */
     public function __construct($locator, $fileExtension = null)
@@ -70,11 +70,21 @@ abstract class FileDriver implements MappingDriver
         }
     }
 
+    /**
+     * Set global basename
+     *
+     * @param string $file
+     */
     public function setGlobalBasename($file)
     {
         $this->globalBasename = $file;
     }
 
+    /**
+     * Retrieve global basename
+     *
+     * @return string
+     */
     public function getGlobalBasename()
     {
         return $this->globalBasename;
@@ -84,8 +94,10 @@ abstract class FileDriver implements MappingDriver
      * Get the element of schema meta data for the class from the mapping file.
      * This will lazily load the mapping file if it is not loaded yet
      *
-     * @return array $element  The element of schema meta data
+     * @param string $className
+     *
      * @throws MappingException
+     * @return array The element of schema meta data
      */
     public function getElement($className)
     {

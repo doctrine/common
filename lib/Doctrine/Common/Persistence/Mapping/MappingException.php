@@ -26,18 +26,32 @@ namespace Doctrine\Common\Persistence\Mapping;
  */
 class MappingException extends \Exception
 {
+    /**
+     *
+     * @param string $className
+     * @param array $namespaces
+     *
+     * @return MappingException
+     */
     public static function classNotFoundInNamespaces($className, $namespaces)
     {
         return new self("The class '" . $className . "' was not found in the ".
             "chain configured namespaces " . implode(", ", $namespaces));
     }
 
+    /**
+     * @return MappingException
+     */
     public static function pathRequired()
     {
         return new self("Specifying the paths to your entities is required ".
             "in the AnnotationDriver to retrieve all class names.");
     }
 
+    /**
+     * @param string|null $path
+     * @return MappingException
+     */
     public static function fileMappingDriversRequireConfiguredDirectoryPath($path = null)
     {
         if ( ! empty($path)) {
@@ -50,11 +64,21 @@ class MappingException extends \Exception
         );
     }
 
+    /**
+     * @param string $entityName
+     * @param string $fileName
+     * @return MappingException
+     */
     public static function mappingFileNotFound($entityName, $fileName)
     {
         return new self("No mapping file found named '$fileName' for class '$entityName'.");
     }
 
+    /**
+     * @param string $entityName
+     * @param string $fileName
+     * @return MappingException
+     */
     public static function invalidMappingFile($entityName, $fileName)
     {
         return new self("Invalid mapping file '$fileName' for class '$entityName'.");
