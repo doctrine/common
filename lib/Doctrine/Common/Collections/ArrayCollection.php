@@ -385,6 +385,19 @@ class ArrayCollection implements Collection
     }
 
     /**
+     * Returns all the elements of this collection sorted by the 
+     * applied compare function c.
+     *
+     * @param Closure $c The sort function.
+     * @return This collection, now sorted.
+     */
+    public function sort(Closure $c)
+    {
+      uasort($this->_elements, $c);
+      return $this;
+    }
+
+    /**
      * Applies the given predicate p to all elements of this collection,
      * returning true, if the predicate yields true for all elements.
      *
