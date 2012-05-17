@@ -148,4 +148,11 @@ interface ObjectManager
      * @return bool
      */
     function contains($object);
+    
+    /**
+     * Gets the Configuration used by the ObjectManager.
+     *
+     * @return object Configuration
+     */
+    function getConfiguration();    
 }
