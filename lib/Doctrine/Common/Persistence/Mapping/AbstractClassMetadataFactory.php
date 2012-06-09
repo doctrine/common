@@ -19,7 +19,8 @@
 
 namespace Doctrine\Common\Persistence\Mapping;
 
-use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Cache\Cache,
+    Doctrine\Common\Util\ClassUtils;
 
 /**
  * The ClassMetadataFactory is used to create ClassMetadata objects that contain all the
@@ -164,41 +165,45 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
      */
     public function getMetadataFor($className)
     {
-        if ( ! isset($this->loadedMetadata[$className])) {
-            $realClassName = $className;
+        if (isset($this->loadedMetadata[$className])) {
+            return $this->loadedMetadata[$className];
+        }
 
-            // Check for namespace alias
-            if (strpos($className, ':') !== false) {
-                list($namespaceAlias, $simpleClassName) = explode(':', $className);
-                $realClassName = $this->getFqcnFromAlias($namespaceAlias, $simpleClassName);
+        $realClassName = $className;
 
-                if (isset($this->loadedMetadata[$realClassName])) {
-                    // We do not have the alias name in the map, include it
-                    $this->loadedMetadata[$className] = $this->loadedMetadata[$realClassName];
+        // Check for namespace alias
+        if (strpos($className, ':') !== false) {
+            list($namespaceAlias, $simpleClassName) = explode(':', $className);
+            $realClassName = $this->getFqcnFromAlias($namespaceAlias, $simpleClassName);
+        } else {
+            $realClassName = ClassUtils::getRealClass($realClassName);
+        }
 
-                    return $this->loadedMetadata[$realClassName];
-                }
-            }
+        if (isset($this->loadedMetadata[$realClassName])) {
+            // We do not have the alias name in the map, include it
+            $this->loadedMetadata[$className] = $this->loadedMetadata[$realClassName];
 
-            if ($this->cacheDriver) {
-                if (($cached = $this->cacheDriver->fetch($realClassName . $this->cacheSalt)) !== false) {
-                    $this->loadedMetadata[$realClassName] = $cached;
-                    $this->wakeupReflection($cached, $this->getReflectionService());
-                } else {
-                    foreach ($this->loadMetadata($realClassName) as $loadedClassName) {
-                        $this->cacheDriver->save(
-                            $loadedClassName . $this->cacheSalt, $this->loadedMetadata[$loadedClassName], null
-                        );
-                    }
-                }
+            return $this->loadedMetadata[$realClassName];
+        }
+
+        if ($this->cacheDriver) {
+            if (($cached = $this->cacheDriver->fetch($realClassName . $this->cacheSalt)) !== false) {
+                $this->loadedMetadata[$realClassName] = $cached;
+                $this->wakeupReflection($cached, $this->getReflectionService());
             } else {
-                $this->loadMetadata($realClassName);
+                foreach ($this->loadMetadata($realClassName) as $loadedClassName) {
+                    $this->cacheDriver->save(
+                        $loadedClassName . $this->cacheSalt, $this->loadedMetadata[$loadedClassName], null
+                    );
+                }
             }
+        } else {
+            $this->loadMetadata($realClassName);
+        }
 
-            if ($className != $realClassName) {
-                // We do not have the alias name in the map, include it
-                $this->loadedMetadata[$className] = $this->loadedMetadata[$realClassName];
-            }
+        if ($className != $realClassName) {
+            // We do not have the alias name in the map, include it
+            $this->loadedMetadata[$className] = $this->loadedMetadata[$realClassName];
         }
 
         return $this->loadedMetadata[$className];
