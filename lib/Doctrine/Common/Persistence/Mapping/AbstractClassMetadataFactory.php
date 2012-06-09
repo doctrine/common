@@ -288,7 +288,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
             $class = $this->newClassMetadataInstance($className);
             $this->initializeReflection($class, $reflService);
 
-            $this->doLoadMetadata($class, $parent, $rootEntityFound);
+            $this->doLoadMetadata($class, $parent, $rootEntityFound, $visited);
 
             $this->loadedMetadata[$className] = $class;
 
@@ -311,11 +311,12 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
      * Actually load the metadata from the underlying metadata
      *
      * @param ClassMetadata $class
-     * @param ClassMetadata $parent
+     * @param ClassMetadata|null $parent
      * @param bool $rootEntityFound
+     * @param array $nonSuperclassParents classnames all parent classes that are not marked as mapped superclasses
      * @return void
      */
-    abstract protected function doLoadMetadata($class, $parent, $rootEntityFound);
+    abstract protected function doLoadMetadata($class, $parent, $rootEntityFound, array $nonSuperclassParents);
 
     /**
      * Creates a new ClassMetadata instance for the given class name.
