@@ -27,28 +27,28 @@ use SplFileObject;
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Christian Kaps <christian.kaps@mohiva.com>
  */
-final class PhpParser
+class PhpParser
 {
     /**
      * The token list.
      *
      * @var array
      */
-    private $tokens;
+    protected $tokens;
 
     /**
      * The number of tokens.
      *
      * @var int
      */
-    private $numTokens = 0;
+    protected $numTokens = 0;
 
     /**
      * The current array pointer.
      *
      * @var int
      */
-    private $pointer = 0;
+    protected $pointer = 0;
 
     /**
      * Parses a class.
@@ -102,13 +102,18 @@ final class PhpParser
      *
      * @return array The token if exists, null otherwise.
      */
-    private function next()
+    protected function next($skipDoxygen = TRUE)
     {
         for ($i = $this->pointer; $i < $this->numTokens; $i++) {
             $this->pointer++;
-            if ($this->tokens[$i][0] === T_WHITESPACE ||
-                $this->tokens[$i][0] === T_COMMENT ||
-                $this->tokens[$i][0] === T_DOC_COMMENT) {
+            $token = $this->tokens[$i];
+            // No need to test for array because the token is never empty,
+            // and the 0th character of a string is never an int while the
+            // T_ constants are ints. This is faster because supposedly most
+            // tokens are arrays anyways.
+            if ($token[0] === T_WHITESPACE ||
+                $token[0] === T_COMMENT ||
+                ($skipDoxygen && $token[0] === T_DOC_COMMENT)) {
 
                 continue;
             }
@@ -169,7 +174,7 @@ final class PhpParser
      *
      * @return array A list with all found class names for a use statement.
      */
-    private function parseUseStatement()
+    protected function parseUseStatement()
     {
         $class = '';
         $alias = '';

@@ -58,7 +58,7 @@ final class DocParser
      *
      * @var string
      */
-    private $target;
+    private $target = 0;
 
     /**
      * Doc Parser used to collect annotation target
