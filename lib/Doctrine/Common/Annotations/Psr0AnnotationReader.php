@@ -306,7 +306,7 @@ class Psr0AnnotationReader extends PhpParser {
      */
     protected function getParentAnnotationReader()
     {
-        if (empty($this->parent)) {
+        if (empty($this->parentAnnotationReader)) {
             $class = get_class($this);
             $this->parentAnnotationReader = new $class($this->includePath, $this->parentClass);
         }
