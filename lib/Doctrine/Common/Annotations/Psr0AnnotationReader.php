@@ -186,6 +186,16 @@ class Psr0AnnotationReader extends PhpParser {
     }
 
     /**
+     * Add a new annotation to the globally ignored annotation names with regard to exception handling.
+     *
+     * @param string $name
+     */
+    static public function addGlobalIgnoredName($name)
+    {
+        self::$globalIgnoredNames[$name] = true;
+    }
+
+    /**
      * Gets a specific annotation.
      */
     protected function getAnnotation($annotations, $annotationName) {
