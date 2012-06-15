@@ -38,4 +38,11 @@ abstract class EventSubscriber implements EventSubscriberInterface
      * @api
      */
     abstract public function addEventListeners(EventTarget $target);
+
+    /**
+     * @see EventSubscriberInterface::removeEventListeners
+     *
+     * @api
+     */
+    abstract public function removeEventListeners(EventTarget $target);
 }
