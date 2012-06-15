@@ -81,6 +81,16 @@ final class AnnotationReader implements Reader
     }
 
     /**
+     * Gets the global ignored names.
+     *
+     * @return array
+     */
+    static public function getGlobalIgnoredNames()
+    {
+        return self::$globalIgnoredNames;
+    }
+
+    /**
      * Annotations Parser
      *
      * @var \Doctrine\Common\Annotations\DocParser
