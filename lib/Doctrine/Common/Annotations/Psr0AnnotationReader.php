@@ -198,7 +198,8 @@ class Psr0AnnotationReader extends PhpParser {
     /**
      * Gets a specific annotation.
      */
-    protected function getAnnotation($annotations, $annotationName) {
+    protected function getAnnotation($annotations, $annotationName)
+    {
         foreach ($annotations as $annotation) {
             if ($annotation instanceof $annotationName) {
                 return $annotation;
@@ -211,7 +212,8 @@ class Psr0AnnotationReader extends PhpParser {
      *
      * @return array
      */
-    public function getClassAnnotations() {
+    public function getClassAnnotations()
+    {
       return $this->classAnnotations;
     }
 
@@ -221,7 +223,8 @@ class Psr0AnnotationReader extends PhpParser {
      * @param string $annotationName The name of the annotation.
      * @return mixed The Annotation or NULL, if the requested annotation does not exist.
      */
-    public function getClassAnnotation($annotationName) {
+    public function getClassAnnotation($annotationName)
+    {
         return $this->getAnnotation($this->classAnnotations, $annotationName);
     }
 
@@ -301,7 +304,8 @@ class Psr0AnnotationReader extends PhpParser {
      * reader or null if the
      *    class doesn't extend anything.
      */
-    protected function getParentAnnotationReader() {
+    protected function getParentAnnotationReader()
+    {
         if (empty($this->parent)) {
             $class = get_class($this);
             $this->parentAnnotationReader = new $class($this->includePath, $this->parentClass);
@@ -309,7 +313,8 @@ class Psr0AnnotationReader extends PhpParser {
         return $this->parentAnnotationReader;
     }
 
-    protected function passUseStatements($imports) {
+    protected function passUseStatements($imports)
+    {
         if (!$this->passedUse) {
             $this->passedUse = TRUE;
             $imports['__NAMESPACE__'] = $this->ns;
