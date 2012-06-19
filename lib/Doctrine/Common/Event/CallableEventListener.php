@@ -77,7 +77,7 @@ class CallableEventListener extends EventListener
         $event->setCurrentTarget($this->getTarget());
 
         // Automatically prevent default if return is used in callable
-        if (call_user_func($this->handler, $event)) {
+        if ( ! call_user_func($this->handler, $event) && $event->isCancellable()) {
             $event->preventDefault();
         }
     }

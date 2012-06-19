@@ -40,16 +40,16 @@ interface EventSubscriberInterface
      *
      * @api
      *
-     * @param \Doctrine\Common\Event\EventTarget $target Event target subclass
+     * @param \Doctrine\Common\Event\EventTargetInterface $target Event target subclass
      */
-    function addEventListeners(EventTarget $target);
+    function addEventListeners(EventTargetInterface $target);
 
     /**
      * This method allows the removal of event listeners on the event target.
      *
      * @api
      *
-     * @param \Doctrine\Common\Event\EventTarget $target Event target subclass
+     * @param \Doctrine\Common\Event\EventTargetInterface $target Event target subclass
      */
-    function removeEventListeners(EventTarget $target);
+    function removeEventListeners(EventTargetInterface $target);
 }

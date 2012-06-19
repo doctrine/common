@@ -31,7 +31,7 @@ namespace Doctrine\Common\Event;
  * @since       2.3
  * @author      Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-abstract class EventTarget
+abstract class EventTarget implements EventTargetInterface
 {
     /**
      * @var array List of EventListeners

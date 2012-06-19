@@ -176,6 +176,18 @@ class Event
     }
 
     /**
+     * Retrieve information whether the event is able to be cancelled, which means the developer
+     * have the ability to prevent the default action normally taken by the implementation to be
+     * executed.
+     *
+     * @return boolean
+     */
+    public function isCancellable()
+    {
+        return $this->cancellable;
+    }
+
+    /**
      * The stopPropagation method is used prevent further propagation of an event during event
      * flow. If this method is called by any EventListener the event will cease propagating through
      * the tree. The event will complete dispatch to all listeners on the current EventTarget
@@ -199,7 +211,7 @@ class Event
 
     /**
      * If an event is cancelable, the preventDefault method is used to signify that the event is to
-     * be canceled, meaning any default action normally taken by the implementation as a result of
+     * be cancelled, meaning any default action normally taken by the implementation as a result of
      * the event will not occur. If, during any stage of event flow, the preventDefault method is
      * called the event is canceled. Any default action associated with the event will not occur.
      * Calling this method for a non-cancelable event has no effect. Once preventDefault has been
