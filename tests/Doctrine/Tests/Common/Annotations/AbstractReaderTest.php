@@ -326,6 +326,21 @@ abstract class AbstractReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $reader->getPropertyAnnotations($class->getProperty('foo')));
     }
 
+    public function testSupportWildcardIgnoredAnnotation()
+    {
+        $reader = $this->getReader();
+        AnnotationReader::addGlobalIgnoredName('Foo\\*');
+        
+        $class  = new \ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\IgnoreAnnotationWithWildcard');
+        $annots = $reader->getClassAnnotations($class);
+        
+        if (!empty($annots)) {
+            $this->assertEquals('foo', $annots[0]->bar);
+        } else {
+            $this->markTestSkipped('Skipped support wildcard ignored annotation');
+        }    
+    }
+    
     abstract protected function getReader();
 }
 

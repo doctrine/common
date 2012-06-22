@@ -71,12 +71,22 @@ final class AnnotationReader implements Reader
     );
 
     /**
+     * Specify to ignore wildcard namespace (*) in annotation
+     * 
+     * @var boolean 
+     */
+    private static $ignoreWildcardNamespace = true;
+    
+    /**
      * Add a new annotation to the globally ignored annotation names with regard to exception handling.
      *
      * @param string $name
      */
     static public function addGlobalIgnoredName($name)
     {
+        if (self::$ignoreWildcardNamespace && false !== strpos($name, '\\*')) {
+            self::$ignoreWildcardNamespace = false;
+        }
         self::$globalIgnoredNames[$name] = true;
     }
 
@@ -145,7 +155,8 @@ final class AnnotationReader implements Reader
         $this->parser->setTarget(Target::TARGET_CLASS);
         $this->parser->setImports($this->getImports($class));
         $this->parser->setIgnoredAnnotationNames($this->getIgnoredAnnotationNames($class));
-
+        $this->parser->setIgnoreWildcardNamespace(self::$ignoreWildcardNamespace);
+        
         return $this->parser->parse($class->getDocComment(), 'class ' . $class->getName());
     }
 
