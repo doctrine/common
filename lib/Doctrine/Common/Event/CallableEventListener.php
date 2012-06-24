@@ -31,6 +31,11 @@ namespace Doctrine\Common\Event;
 class CallableEventListener extends EventListener
 {
     /**
+     * @var mixed Listened event target (scope).
+     */
+    protected $target;
+
+    /**
      * @var callable
      */
     protected $handler;
@@ -50,13 +55,11 @@ class CallableEventListener extends EventListener
     }
 
     /**
-     * Define the event listener execution priority.
-     *
-     * @param integer $priority
+     * {@inheritdoc}
      */
-    public function setPriority($priority)
+    public function getTarget()
     {
-        $this->priority = $priority;
+        return $this->target;
     }
 
     /**
@@ -77,7 +80,7 @@ class CallableEventListener extends EventListener
         $event->setCurrentTarget($this->getTarget());
 
         // Automatically prevent default if return is used in callable
-        if ( ! call_user_func($this->handler, $event) && $event->isCancellable()) {
+        if (false === call_user_func($this->handler, $event) && $event->isCancelable()) {
             $event->preventDefault();
         }
     }

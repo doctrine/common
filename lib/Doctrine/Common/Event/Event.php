@@ -43,14 +43,14 @@ class Event
      * @var float Used to specify the time (in microsseconds relative to the epoch) at which the
      *            event was created.
      */
-    protected $timestamp;
+    protected $timeStamp;
 
     /**
      * @var boolean Used to indicate whether or not an event can have its default action prevented.
      *              If the default action can be prevented the value is true, else the value is
      *              false.
      */
-    protected $cancellable;
+    protected $cancelable = false;
 
     /**
      * @var \Doctrine\Common\Event\EventTarget Used to indicate the EventTarget to which the event
@@ -73,14 +73,14 @@ class Event
      *
      * @var boolean Flag holding if event is currently preventing the default execution.
      */
-    protected $defaultPrevented;
+    protected $defaultPrevented = false;
 
     /**
      * @see Event::stopPropagation
      *
      * @var boolean Flag holding if event is assigned to stop propagating to other EventListeners.
      */
-    protected $propagationStopped;
+    protected $propagationStopped = false;
 
     /**
      * Constructor.
@@ -90,9 +90,9 @@ class Event
      */
     public function __construct($type, $cancellable = false)
     {
-        $this->type        = $type;
-        $this->timestamp   = microtime(true);
-        $this->cancellable = $cancellable;
+        $this->type       = $type;
+        $this->timeStamp  = microtime(true);
+        $this->cancelable = $cancellable;
     }
 
     /**
@@ -106,13 +106,13 @@ class Event
     }
 
     /**
-     * Retrieve the event timestamp.
+     * Retrieve the event time stamp.
      *
      * @return float
      */
-    public function getTimestamp()
+    public function getTimeStamp()
     {
-        return $this->timestamp;
+        return $this->timeStamp;
     }
 
     /**
@@ -182,9 +182,9 @@ class Event
      *
      * @return boolean
      */
-    public function isCancellable()
+    public function isCancelable()
     {
-        return $this->cancellable;
+        return $this->cancelable;
     }
 
     /**
@@ -221,7 +221,7 @@ class Event
      */
     public function preventDefault()
     {
-        if ($this->cancellable) {
+        if ($this->cancelable) {
             $this->defaultPrevented = true;
         }
     }

@@ -34,16 +34,25 @@ namespace Doctrine\Common\Event;
 abstract class EventTarget implements EventTargetInterface
 {
     /**
-     * @var array List of EventListeners
+     * @var \Doctrine\Common\Event\EventListenerList
      */
-    protected $listeners = array();
+    protected $listenerList;
+
+    /**
+     * Constructor.
+     *
+     */
+    public function __construct(EventListenerListInterface $listenerList = null)
+    {
+        $this->listenerList = $listenerList ?: new EventListenerList();
+    }
 
     /**
      * {@inheritdoc}
      */
     public function addEventSubscriber(EventSubscriberInterface $subscriber)
     {
-        $subscriber->addEventListeners($this);
+        $subscriber->subscribe($this);
     }
 
     /**
@@ -51,7 +60,7 @@ abstract class EventTarget implements EventTargetInterface
      */
     public function removeEventSubscriber(EventSubscriberInterface $subscriber)
     {
-        $subscriber->removeEventListeners($target);
+        $subscriber->unsubscribe($this);
     }
 
     /**
@@ -59,11 +68,13 @@ abstract class EventTarget implements EventTargetInterface
      */
     public function addEventListener(EventListenerInterface $listener)
     {
-        $hash = spl_object_hash($listener);
         $type = $listener->getType();
 
-        $this->listeners[$type]['sorted']           = false;
-        $this->listeners[$type]['listeners'][$hash] = $listener;
+        if (empty($type)) {
+            throw new EventException('Unspecified event type', EventException::UNSPECIFIED_EVENT_TYPE_ERR);
+        }
+
+        $this->listenerList->add($listener);
     }
 
     /**
@@ -73,17 +84,11 @@ abstract class EventTarget implements EventTargetInterface
     {
         $type = $listener->getType();
 
-        if ( ! isset($this->listeners[$type])) {
-            return;
+        if (empty($type)) {
+            throw new EventException('Unspecified event type', EventException::UNSPECIFIED_EVENT_TYPE_ERR);
         }
 
-        $hash = spl_object_hash($listener);
-
-        if (isset($this->listeners[$type]['listeners'][$hash])) {
-            unset($this->listeners[$type]['listeners'][$hash]);
-
-            $this->listeners[$type]['sorted'] = false;
-        }
+        $this->listenerList->remove($listener);
     }
 
     /**
@@ -93,13 +98,16 @@ abstract class EventTarget implements EventTargetInterface
     {
         $type = $event->getType();
 
-        if ( ! isset($this->listeners[$type])) {
-            return $event->isDefaultPrevented();
+        if (empty($type)) {
+            throw new EventException('Unspecified event type', EventException::UNSPECIFIED_EVENT_TYPE_ERR);
         }
 
-        $event->setTarget($this);
+        $listenerList = $this->listenerList->get($type);
 
-        foreach ($this->getEventListeners($type) as $listener) {
+        foreach ($listenerList as $listener) {
+            // Listeners may want to modify the target. Reset every iteration
+            $event->setTarget($this);
+
             $listener->handleEvent($event);
 
             if ($event->isPropagationStopped()) {
@@ -113,42 +121,12 @@ abstract class EventTarget implements EventTargetInterface
     /**
      * {@inheritdoc}
      */
-    public function hasListeners($type)
+    public function hasEventListener($type)
     {
-        return isset($this->listeners[$type]) && count($this->listeners[$type]['listeners']) > 0;
-    }
-
-    /**
-     * Retrieve the ordered event listeners subscribed to a given event type.
-     *
-     * @param string $type Event type
-     *
-     * @return array List of event listeners
-     */
-    protected function getEventListeners($type)
-    {
-        if ( ! isset($this->listeners[$type])) {
-            return array();
+        if (empty($type)) {
+            throw new EventException('Unspecified event type', EventException::UNSPECIFIED_EVENT_TYPE_ERR);
         }
 
-        if ( ! $this->listeners[$type]['sorted']) {
-            uasort($this->listeners[$type]['listeners'], function ($listenerA, $listenerB) {
-                $priorityA = $listenerA->getPriority();
-                $priorityB = $listenerB->getPriority();
-
-                if ($priorityA === $priorityB) {
-                    return 0;
-                }
-
-                // Higher the priority, first to be executed
-                return ($priorityA > $priorityB) ? -1 : 0;
-            });
-
-            $this->listeners[$type]['sorted'] = true;
-        }
-
-        $listeners = array_values($this->listeners[$type]['listeners']);
-
-        return $listeners;
+        return $this->listenerList->size($type) > 0;
     }
 }

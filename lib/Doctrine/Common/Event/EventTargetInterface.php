@@ -110,5 +110,5 @@ interface EventTargetInterface
      *
      * @return boolean
      */
-    function hasEventListeners($type);
+    function hasEventListener($type);
 }

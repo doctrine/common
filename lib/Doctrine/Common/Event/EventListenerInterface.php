@@ -34,22 +34,13 @@ namespace Doctrine\Common\Event;
 interface EventListenerInterface
 {
     /**
-     * Retrieve the listened Event type.
+     * Retrieve the event listener type.
      *
      * @api
      *
      * @return string
      */
     function getType();
-
-    /**
-     * Retrieve the listened Event target.
-     *
-     * @api
-     *
-     * @return mixed
-     */
-    function getTarget();
 
     /**
      * Retrieve the execution priority this EventListener.

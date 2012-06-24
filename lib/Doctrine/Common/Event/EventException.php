@@ -20,60 +20,19 @@
 namespace Doctrine\Common\Event;
 
 /**
- * Abstract implementation of an EventListener.
+ * Event operations may throw an EventException as specified in their method descriptions.
  *
  * @api
  *
- * @abstract
  * @link        www.doctrine-project.org
  * @since       2.3
  * @author      Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-abstract class EventListener implements EventListenerInterface
+class EventException extends \RuntimeException
 {
     /**
-     * @var string Listened event type.
+     * @const If the Event's type was not specified by initializing the event before the method
+     *        was called.
      */
-    protected $type;
-
-    /**
-     * @var integer Execution priority of event.
-     */
-    protected $priority = 0;
-
-    /**
-     * Define the event listener type.
-     *
-     * @param string $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * Define the event listener execution priority.
-     *
-     * @param integer $priority
-     */
-    public function setPriority($priority)
-    {
-        $this->priority = $priority;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
-    {
-        return $this->priority;
-    }
+    const UNSPECIFIED_EVENT_TYPE_ERR = 0;
 }

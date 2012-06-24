@@ -20,60 +20,48 @@
 namespace Doctrine\Common\Event;
 
 /**
- * Abstract implementation of an EventListener.
+ * An EventListenerList aholds a list of EventListeners. A single instance can be used to hold all
+ * listeners (of all types) for the instance using the list. It is the responsiblity of the class
+ * using the EventListenerList to provide type-safe API and methods which dispatch event
+ * notification methods to appropriate Event Listeners on the list.
  *
  * @api
  *
- * @abstract
  * @link        www.doctrine-project.org
  * @since       2.3
  * @author      Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-abstract class EventListener implements EventListenerInterface
+interface EventListenerListInterface
 {
     /**
-     * @var string Listened event type.
+     * Add the listener as a listener of the specified type.
+     *
+     * @param \Doctrine\Common\Event\EventListenerInterface $listener   The listener to be added
      */
-    protected $type;
+    function add(EventListenerInterface $listener);
 
     /**
-     * @var integer Execution priority of event.
+     * Remove the listener as a listener of the specified type.
+     *
+     * @param \Doctrine\Common\Event\EventListenerInterface $listener   The listener to be removed
      */
-    protected $priority = 0;
+    function remove(EventListenerInterface $listener);
 
     /**
-     * Define the event listener type.
+     * Return the total number of listeners of the supplied type for this listener list.
+     *
+     * @param string $type The type of listener to be counted.
+     *
+     * @return integer
+     */
+    function size($type);
+
+    /**
+     * Return an array of all the listeners of the given type.
      *
      * @param string $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * Define the event listener execution priority.
      *
-     * @param integer $priority
+     * @return array
      */
-    public function setPriority($priority)
-    {
-        $this->priority = $priority;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
-    {
-        return $this->priority;
-    }
+    function get($type);
 }

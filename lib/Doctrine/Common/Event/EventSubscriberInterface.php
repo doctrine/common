@@ -42,7 +42,7 @@ interface EventSubscriberInterface
      *
      * @param \Doctrine\Common\Event\EventTargetInterface $target Event target subclass
      */
-    function addEventListeners(EventTargetInterface $target);
+    function subscribe(EventTargetInterface $target);
 
     /**
      * This method allows the removal of event listeners on the event target.
@@ -51,5 +51,5 @@ interface EventSubscriberInterface
      *
      * @param \Doctrine\Common\Event\EventTargetInterface $target Event target subclass
      */
-    function removeEventListeners(EventTargetInterface $target);
+    function unsubscribe(EventTargetInterface $target);
 }
