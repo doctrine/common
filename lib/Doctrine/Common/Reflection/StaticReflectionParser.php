@@ -38,11 +38,11 @@ class StaticReflectionParser
     protected $className;
 
     /**
-     * The short name of the class (the part after the namespace).
+     * The last position of the namespace separator in the class name.
      *
-     * @var string
+     * @var int
      */
-    protected $classShortName = '';
+    protected $lastNsPos;
 
     /**
      * The filename of the class.
@@ -52,11 +52,11 @@ class StaticReflectionParser
     protected $fileName = '';
 
     /**
-     * The include paths.
+     * The PSR-0 prefixes.
      *
      * @var string
      */
-    protected $includePaths;
+    protected $prefixes;
 
     /**
      * TRUE if the caller only wants class annotations.
@@ -87,11 +87,11 @@ class StaticReflectionParser
     protected $useStatements = array();
 
     /**
-     * The doxygen of the class.
+     * The docComment of the class.
      *
      * @var string
      */
-    protected $doxygen = array(
+    protected $docComment = array(
         'class' => '',
         'property' => array(),
         'method' => array(),
@@ -116,27 +116,26 @@ class StaticReflectionParser
      *
      * @param string $class
      *     The full, namespaced class name.
-     * @param string $includePaths
-     *     An array of base include paths. Each key is a PHP namespace and
-     *     each value is a list of directories.
+     * @param string $prefixes
+     *     An array of prefixes. Each key is a PHP namespace and each value is
+     *     a list of directories.
      * @param boolean $classAnnotationOptimize
-     *     Only retrieve the class doxygen. Presumes there is only one
+     *     Only retrieve the class docComment. Presumes there is only one
      *     statement per line.
      */
-    public function __construct($className, $includePaths, $classAnnotationOptimize = false)
+    public function __construct($className, $prefixes, $classAnnotationOptimize = false)
     {
         $this->className = ltrim($className, '\\');
-        $this->includePaths  = $includePaths;
-        if ($lastNsPos = strrpos($this->className, '\\')) {
-            $this->classShortName = substr($this->className, $lastNsPos + 1);
-            $this->ns = substr($this->className, 0, $lastNsPos);
+        $this->prefixes  = $prefixes;
+        if ($this->lastNsPos = strrpos($this->className, '\\')) {
+            $this->ns = substr($this->className, 0, $this->lastNsPos);
         }
         $this->classAnnotationOptimize = $classAnnotationOptimize;
     }
 
     protected function parse()
     {
-        if ($this->parsed || !$this->fileName = $this->findClassFile($this->includePaths, $this->ns, $this->classShortName)) {
+        if ($this->parsed || !$this->fileName = $this->findFile()) {
             return;
         }
         $this->parsed = true;
@@ -147,7 +146,7 @@ class StaticReflectionParser
             }
         }
         $tokenParser = new TokenParser($contents);
-        $doxygen = '';
+        $docComment = '';
         while ($token = $tokenParser->next(false)) {
             if (is_array($token)) {
                 switch ($token[0]) {
@@ -155,11 +154,11 @@ class StaticReflectionParser
                         $this->useStatements = array_merge($this->useStatements, $tokenParser->parseUseStatement());
                         break;
                     case T_DOC_COMMENT:
-                        $doxygen = $token[1];
+                        $docComment = $token[1];
                         break;
                     case T_CLASS:
-                        $this->doxygen['class'] = $doxygen;
-                        $doxygen = '';
+                        $this->docComment['class'] = $docComment;
+                        $docComment = '';
                         break;
                     case T_VAR:
                     case T_PRIVATE:
@@ -168,7 +167,7 @@ class StaticReflectionParser
                         $token = $tokenParser->next();
                         if ($token[0] === T_VARIABLE) {
                             $propertyName = substr($token[1], 1);
-                            $this->doxygen['property'][$propertyName] = $doxygen;
+                            $this->docComment['property'][$propertyName] = $docComment;
                             continue 2;
                         }
                         if ($token[0] !== T_FUNCTION) {
@@ -182,8 +181,8 @@ class StaticReflectionParser
                         // string.
                         while (($token = $tokenParser->next()) && $token[0] !== T_STRING);
                         $methodName = $token[1];
-                        $this->doxygen['method'][$methodName] = $doxygen;
-                        $doxygen = '';
+                        $this->docComment['method'][$methodName] = $docComment;
+                        $docComment = '';
                         break;
                     case T_EXTENDS:
                         $this->parentClassName = $tokenParser->parseClass();
@@ -215,15 +214,30 @@ class StaticReflectionParser
         }
     }
 
-    protected function findClassFile($includePaths, $namespace, $classShortName)
+    public function findFile()
     {
-        $normalizedClass = str_replace('\\', DIRECTORY_SEPARATOR, $namespace).DIRECTORY_SEPARATOR.$classShortName.'.php';
-        foreach ($includePaths as $ns => $dirs) {
-            if (strpos($namespace, $ns) === 0) {
+        $class = $this->className;
+        if ('\\' == $class[0]) {
+            $class = substr($class, 1);
+        }
+
+        if (false !== $this->lastNsPos) {
+            // namespaced class name
+            $classPath = str_replace('\\', DIRECTORY_SEPARATOR, substr($class, 0, $this->lastNsPos)) . DIRECTORY_SEPARATOR;
+            $className = substr($class, $this->lastNsPos + 1);
+        } else {
+            // PEAR-like class name
+            $classPath = null;
+            $className = $class;
+        }
+
+        $classPath .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+
+        foreach ($this->prefixes as $prefix => $dirs) {
+            if (0 === strpos($class, $prefix)) {
                 foreach ($dirs as $dir) {
-                    $file = $dir.DIRECTORY_SEPARATOR.$normalizedClass;
-                    if (is_file($file)) {
-                        return $file;
+                    if (file_exists($dir . DIRECTORY_SEPARATOR . $classPath)) {
+                        return $dir . DIRECTORY_SEPARATOR . $classPath;
                     }
                 }
             }
@@ -233,8 +247,7 @@ class StaticReflectionParser
     protected function getParentStaticReflectionParser()
     {
         if (empty($this->parentStaticReflectionParser)) {
-            $class = get_class($this);
-            $this->parentStaticReflectionParser = new $class($this->parentClassName, $this->includePaths);
+            $this->parentStaticReflectionParser = new static($this->parentClassName, $this->prefixes);
         }
 
         return $this->parentStaticReflectionParser;
@@ -285,18 +298,18 @@ class StaticReflectionParser
     }
 
     /**
-     * Get doxygen.
+     * Get docComment.
      *
      * @param string $type class, property or method.
      * @param string $name Name of the property or method, not needed for class.
      *
-     * @return string the doxygen or empty string if none.
+     * @return string the doc comment or empty string if none.
      */
-    public function getDoxygen($type = 'class', $name = '')
+    public function getDocComment($type = 'class', $name = '')
     {
         $this->parse();
 
-        return $name ? $this->doxygen[$type][$name] : $this->doxygen[$type];
+        return $name ? $this->docComment[$type][$name] : $this->docComment[$type];
     }
 
     /**
@@ -310,7 +323,7 @@ class StaticReflectionParser
     public function getStaticReflectionParserForDeclaringClass($type, $name)
     {
         $this->parse();
-        if (isset($this->doxygen[$type][$name])) {
+        if (isset($this->docComment[$type][$name])) {
             return $this;
         }
         if (!empty($this->parentClassName)) {
