@@ -1,11 +1,11 @@
 <?php
 
-namespace Doctrine\Common\Annotations;
+namespace Doctrine\Common\Reflection;
 
 use ReflectionClass;
 use ReflectionException;
 
-class Psr0ClassReflection extends ReflectionClass
+class StaticReflectionClass extends ReflectionClass
 {
     public function __construct($psr0Parser)
     {
@@ -33,11 +33,11 @@ class Psr0ClassReflection extends ReflectionClass
     }
 
     public function getMethod($name) {
-        return $this->psr0Parser->getMethodReflection($name);
+        return $this->psr0Parser->getReflectionMethod($name);
     }
 
     public function getProperty($name) {
-        return $this->psr0Parser->getPropertyReflection($name);
+        return $this->psr0Parser->getReflectionProperty($name);
     }
 
     public static function export($argument, $return = false) { throw new ReflectionException('Method not implemented'); }

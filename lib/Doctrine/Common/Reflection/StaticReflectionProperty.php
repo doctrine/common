@@ -1,17 +1,18 @@
 <?php
 
-namespace Doctrine\Common\Annotations;
+namespace Doctrine\Common\Reflection;
 
 use ReflectionProperty;
+use ReflectionException;
 
-class Psr0PropertyReflection extends ReflectionProperty
+class StaticReflectionProperty extends ReflectionProperty
 {
     /**
      * The PSR-0 parser object.
      *
-     * @var Psr0Parser
+     * @var StaticReflectionParser
      */
-    protected $psr0Parser;
+    protected $staticReflectionParser;
 
     /**
      * The name of the property.
@@ -20,30 +21,30 @@ class Psr0PropertyReflection extends ReflectionProperty
      */
     protected $propertyName;
 
-    public function __construct($psr0Parser, $propertyName)
+    public function __construct($StaticReflectionParser, $propertyName)
     {
-        $this->psr0Parser = $psr0Parser;
+        $this->staticReflectionParser = $StaticReflectionParser;
         $this->propertyName = $propertyName;
     }
     public function getName()
     {
         return $this->propertyName;
     }
-    protected function getPsr0Parser()
+    protected function getStaticReflectionParser()
     {
-        return $this->psr0Parser->getPsr0ParserForDeclaringClass('property', $this->propertyName);
+        return $this->staticReflectionParser->getStaticReflectionParserForDeclaringClass('property', $this->propertyName);
     }
     public function getDeclaringClass()
     {
-        return $this->getPsr0Parser()->getClassReflection();
+        return $this->getStaticReflectionParser()->getReflectionClass();
     }
     public function getDocComment()
     {
-        return $this->getPsr0Parser()->getDoxygen('property', $this->propertyName);
+        return $this->getStaticReflectionParser()->getDoxygen('property', $this->propertyName);
     }
     public function getUseStatements()
     {
-        return $this->getPsr0Parser()->getUseStatements();
+        return $this->getStaticReflectionParser()->getUseStatements();
     }
     public static function export ($class, $name, $return = false) { throw new ReflectionException('Method not implemented'); }
     public function getModifiers() { throw new ReflectionException('Method not implemented'); }

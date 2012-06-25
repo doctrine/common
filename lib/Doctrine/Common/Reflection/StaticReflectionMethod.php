@@ -1,18 +1,18 @@
 <?php
 
-namespace Doctrine\Common\Annotations;
+namespace Doctrine\Common\Reflection;
 
 use ReflectionMethod;
 use ReflectionException;
 
-class Psr0MethodReflection extends ReflectionMethod
+class StaticReflectionMethod extends ReflectionMethod
 {
     /**
      * The PSR-0 parser object.
      *
-     * @var Psr0Parser
+     * @var StaticReflectionParser
      */
-    protected $psr0Parser;
+    protected $staticReflectionParser;
 
     /**
      * The name of the method.
@@ -21,34 +21,34 @@ class Psr0MethodReflection extends ReflectionMethod
      */
     protected $methodName;
 
-    public function __construct($psr0Parser, $methodName)
+    public function __construct($StaticReflectionParser, $methodName)
     {
-        $this->psr0Parser = $psr0Parser;
+        $this->staticReflectionParser = $StaticReflectionParser;
         $this->methodName = $methodName;
     }
     public function getName()
     {
         return $this->methodName;
     }
-    protected function getPsr0Parser()
+    protected function getStaticReflectionParser()
     {
-        return $this->psr0Parser->getPsr0ParserForDeclaringClass('method', $this->methodName);
+        return $this->staticReflectionParser->getStaticReflectionParserForDeclaringClass('method', $this->methodName);
     }
     public function getDeclaringClass()
     {
-        return $this->getPsr0Parser()->getClassReflection();
+        return $this->getStaticReflectionParser()->getReflectionClass();
     }
     public function getNamespaceName()
     {
-        return $this->getPsr0Parser()->getNamespaceName();
+        return $this->getStaticReflectionParser()->getNamespaceName();
     }
     public function getDocComment()
     {
-        return $this->getPsr0Parser()->getDoxygen('method', $this->methodName);
+        return $this->getStaticReflectionParser()->getDoxygen('method', $this->methodName);
     }
     public function getUseStatements()
     {
-        return $this->getPsr0Parser()->getUseStatements();
+        return $this->getStaticReflectionParser()->getUseStatements();
     }
     public static function export($class, $name, $return = false) { throw new ReflectionException('Method not implemented'); }
     public function getClosure($object) { throw new ReflectionException('Method not implemented'); }

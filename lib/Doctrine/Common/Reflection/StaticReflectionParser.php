@@ -17,16 +17,17 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Common\Annotations;
+namespace Doctrine\Common\Reflection;
 
 use ReflectionException;
+use Doctrine\Common\Annotations\TokenParser;
 
 /**
  * Parses a file for namespaces/use/class declarations.
  *
  * @author Karoly Negyesi <karoly@negyesi.net>
  */
-class Psr0Parser extends TokenParser
+class StaticReflectionParser
 {
 
     /**
@@ -106,9 +107,9 @@ class Psr0Parser extends TokenParser
     /**
      * The parent PSR-0 Parser.
      *
-     * @var \Doctrine\Common\Annotations\Psr0Parser
+     * @var \Doctrine\Common\Annotations\StaticReflectionParser
      */
-    protected $parentPsr0Parser;
+    protected $parentStaticReflectionParser;
 
     /**
      * Parses a class residing in a PSR-0 hierarchy.
@@ -145,17 +146,13 @@ class Psr0Parser extends TokenParser
                 $contents = $matches[1];
             }
         }
-        $this->tokens = token_get_all($contents);
-        $this->numTokens = count($this->tokens);
-        $this->pointer = 0;
-        $annotations = array();
-        $statements = array();
+        $tokenParser = new TokenParser($contents);
         $doxygen = '';
-        while ($token = $this->next(false)) {
+        while ($token = $tokenParser->next(false)) {
             if (is_array($token)) {
                 switch ($token[0]) {
                     case T_USE:
-                        $this->useStatements = array_merge($this->useStatements, $this->parseUseStatement());
+                        $this->useStatements = array_merge($this->useStatements, $tokenParser->parseUseStatement());
                         break;
                     case T_DOC_COMMENT:
                         $doxygen = $token[1];
@@ -168,7 +165,7 @@ class Psr0Parser extends TokenParser
                     case T_PRIVATE:
                     case T_PROTECTED:
                     case T_PUBLIC:
-                        $token = $this->next();
+                        $token = $tokenParser->next();
                         if ($token[0] === T_VARIABLE) {
                             $propertyName = substr($token[1], 1);
                             $this->doxygen['property'][$propertyName] = $doxygen;
@@ -183,16 +180,13 @@ class Psr0Parser extends TokenParser
                         // The next string after function is the name, but
                         // there can be & before the function name so find the
                         // string.
-                        while (($token = $this->next()) && $token[0] !== T_STRING);
+                        while (($token = $tokenParser->next()) && $token[0] !== T_STRING);
                         $methodName = $token[1];
                         $this->doxygen['method'][$methodName] = $doxygen;
                         $doxygen = '';
                         break;
                     case T_EXTENDS:
-                        $this->parentClassName = '';
-                        while (($token = $this->next()) && ($token[0] === T_STRING || $token[0] === T_NS_SEPARATOR)) {
-                            $this->parentClassName .= $token[1];
-                        }
+                        $this->parentClassName = $tokenParser->parseClass();
                         $nsPos = strpos($this->parentClassName, '\\');
                         $fullySpecified = false;
                         if ($nsPos === 0) {
@@ -219,8 +213,6 @@ class Psr0Parser extends TokenParser
                 }
             }
         }
-        // Drop the tokens to save memory.
-        $this->tokens = array();
     }
 
     protected function findClassFile($includePaths, $namespace, $classShortName)
@@ -238,14 +230,14 @@ class Psr0Parser extends TokenParser
         }
     }
 
-    protected function getParentPsr0Parser()
+    protected function getParentStaticReflectionParser()
     {
-        if (empty($this->parentPsr0Parser)) {
+        if (empty($this->parentStaticReflectionParser)) {
             $class = get_class($this);
-            $this->parentPsr0Parser = new $class($this->parentClassName, $this->includePaths);
+            $this->parentStaticReflectionParser = new $class($this->parentClassName, $this->includePaths);
         }
 
-        return $this->parentPsr0Parser;
+        return $this->parentStaticReflectionParser;
     }
 
     public function getClassName()
@@ -261,25 +253,25 @@ class Psr0Parser extends TokenParser
     /**
      * Get the ReflectionClass equivalent for this file / class.
      */
-    public function getClassReflection()
+    public function getReflectionClass()
     {
-        return new Psr0ClassReflection($this);
+        return new StaticReflectionClass($this);
     }
 
     /**
      * Get the ReflectionMethod equivalent for the method of this file / class.
      */
-    public function getMethodReflection($methodName)
+    public function getReflectionMethod($methodName)
     {
-        return new Psr0MethodReflection($this, $methodName);
+        return new StaticReflectionMethod($this, $methodName);
     }
 
     /**
      * Get the ReflectionProperty equivalent for the method of this file / class.
      */
-    public function getPropertyReflection($propertyName)
+    public function getReflectionProperty($propertyName)
     {
-        return new Psr0PropertyReflection($this, $propertyName);
+        return new StaticReflectionProperty($this, $propertyName);
     }
 
     /**
@@ -313,16 +305,16 @@ class Psr0Parser extends TokenParser
      * @param string $type property or method.
      * @param string $name Name of the property or method.
      *
-     * @return Psr0Parser A PSR-0 for the declaring class.
+     * @return StaticReflectionParser A static reflection parser for the declaring class.
      */
-    public function getPsr0ParserForDeclaringClass($type, $name)
+    public function getStaticReflectionParserForDeclaringClass($type, $name)
     {
         $this->parse();
         if (isset($this->doxygen[$type][$name])) {
             return $this;
         }
         if (!empty($this->parentClassName)) {
-            return $this->getParentPsr0Parser()->getPsr0ParserForDeclaringClass($type, $name);
+            return $this->getParentStaticReflectionParser()->getStaticReflectionParserForDeclaringClass($type, $name);
         }
         throw new ReflectionException('Invalid ' . $type . ' "' . $name . '"');
     }
