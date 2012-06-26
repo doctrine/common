@@ -11,22 +11,23 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $cache = $this->_getCacheDriver();
 
         // Test save
-        $cache->save('test_key', 'testing this out');
+        $this->assertTrue($cache->save('test_key', 'testing this out'));
 
         // Test contains to test that save() worked
         $this->assertTrue($cache->contains('test_key'));
 
         // Test fetch
         $this->assertEquals('testing this out', $cache->fetch('test_key'));
-        
+        $this->assertFalse($cache->fetch('missing_test_key'));
+
         // Test delete
         $cache->save('test_key2', 'test2');
-        $cache->delete('test_key2');
+        $this->assertTrue($cache->delete('test_key2'));
         $this->assertFalse($cache->contains('test_key2'));
-        
+
         // Fetch/save test with objects (Is cache driver serializes/unserializes objects correctly ?)
         $cache->save('test_object_key', new \ArrayObject());
-        $this->assertTrue($cache->fetch('test_object_key') instanceof \ArrayObject);        
+        $this->assertTrue($cache->fetch('test_object_key') instanceof \ArrayObject);
     }
 
     public function testDeleteAll()
