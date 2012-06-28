@@ -24,7 +24,8 @@ namespace Doctrine\Common\Reflection;
  *
  * @author Karoly Negyesi <karoly@negyesi.net>
  */
-interface ClassFinderInterface {
+interface ClassFinderInterface
+{
     /**
      * Finds a class.
      *
