@@ -27,7 +27,7 @@ use Doctrine\Common\Annotations\TokenParser;
  *
  * @author Karoly Negyesi <karoly@negyesi.net>
  */
-class StaticReflectionParser
+class StaticReflectionParser implements ReflectionInterface
 {
 
     /**
