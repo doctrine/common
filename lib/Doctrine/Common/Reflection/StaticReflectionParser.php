@@ -101,7 +101,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
      *     Only retrieve the class docComment. Presumes there is only one
      *     statement per line.
      */
-    public function __construct($className, $finder, $classAnnotationOptimize = FALSE)
+    public function __construct($className, $finder, $classAnnotationOptimize = false)
     {
         $this->className = ltrim($className, '\\');
         if ($lastNsPos = strrpos($this->className, '\\')) {
