@@ -5,9 +5,10 @@ namespace Doctrine\Tests\Common\Reflection;
 use Doctrine\Tests\DoctrineTestCase;
 use Doctrine\Common\Reflection\StaticReflectionParser;
 
-class StaticReflectionParserTest extends DoctrineTestCase {
-
-    public function testParentClass() {
+class StaticReflectionParserTest extends DoctrineTestCase
+{
+    public function testParentClass()
+    {
         $testsRoot = substr(__DIR__, 0, -strlen(__NAMESPACE__) - 1);
         $paths = array(
             'Doctrine\\Tests' => array($testsRoot),

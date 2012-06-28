@@ -2,6 +2,7 @@
 
 namespace Doctrine\Tests\Common\Reflection\Dummies;
 
-class NoParent {
+class NoParent
+{
     public $test;
 }
