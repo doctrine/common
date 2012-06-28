@@ -1,5 +1,4 @@
 <?php
-
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -20,26 +19,19 @@
 
 namespace Doctrine\Common\Reflection;
 
-interface ReflectionProviderInterface
-{
+/**
+ * Finds a class in a PSR-0 structure.
+ *
+ * @author Karoly Negyesi <karoly@negyesi.net>
+ */
+interface ClassFinderInterface {
     /**
-     * Get the ReflectionClass equivalent for this class.
+     * Finds a class.
      *
-     * @return ReflectionClass
-     */
-    public function getReflectionClass();
-
-    /**
-     * Get the ReflectionClass equivalent for this class.
+     * @param string $class The name of the class.
      *
-     * @return ReflectionMethod
+     * @return
+     *     The name of the class or NULL if not found.
      */
-    public function getReflectionMethod($name);
-
-    /**
-     * Get the ReflectionClass equivalent for this class.
-     *
-     * @return ReflectionMethod
-     */
-    public function getReflectionProperty($name);
+    public function findFile($class);
 }

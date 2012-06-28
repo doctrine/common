@@ -27,7 +27,7 @@ use Doctrine\Common\Annotations\TokenParser;
  *
  * @author Karoly Negyesi <karoly@negyesi.net>
  */
-class StaticReflectionParser implements ReflectionInterface
+class StaticReflectionParser implements ReflectionProviderInterface
 {
 
     /**
@@ -36,27 +36,6 @@ class StaticReflectionParser implements ReflectionInterface
      * @var string
      */
     protected $className;
-
-    /**
-     * The last position of the namespace separator in the class name.
-     *
-     * @var int
-     */
-    protected $lastNsPos;
-
-    /**
-     * The filename of the class.
-     *
-     * @var string
-     */
-    protected $fileName = '';
-
-    /**
-     * The PSR-0 prefixes.
-     *
-     * @var string
-     */
-    protected $prefixes;
 
     /**
      * TRUE if the caller only wants class annotations.
@@ -77,7 +56,7 @@ class StaticReflectionParser implements ReflectionInterface
      *
      * @var string
      */
-    protected $ns = '';
+    protected $namespace = '';
 
     /**
      * The use statements of this class.
@@ -116,30 +95,29 @@ class StaticReflectionParser implements ReflectionInterface
      *
      * @param string $class
      *     The full, namespaced class name.
-     * @param string $prefixes
-     *     An array of prefixes. Each key is a PHP namespace and each value is
-     *     a list of directories.
+     * @param ClassFinder $finder
+     *     A ClassFinder object which finds the class.
      * @param boolean $classAnnotationOptimize
      *     Only retrieve the class docComment. Presumes there is only one
      *     statement per line.
      */
-    public function __construct($className, $prefixes, $classAnnotationOptimize = false)
+    public function __construct($className, $finder, $classAnnotationOptimize = FALSE)
     {
         $this->className = ltrim($className, '\\');
-        $this->prefixes  = $prefixes;
-        if ($this->lastNsPos = strrpos($this->className, '\\')) {
-            $this->ns = substr($this->className, 0, $this->lastNsPos);
+        if ($lastNsPos = strrpos($this->className, '\\')) {
+            $this->namespace = substr($this->className, 0, $lastNsPos);
         }
+        $this->finder = $finder;
         $this->classAnnotationOptimize = $classAnnotationOptimize;
     }
 
     protected function parse()
     {
-        if ($this->parsed || !$this->fileName = $this->findFile()) {
+        if ($this->parsed || !$fileName = $this->finder->findFile($this->className)) {
             return;
         }
         $this->parsed = true;
-        $contents = file_get_contents($this->fileName);
+        $contents = file_get_contents($fileName);
         if ($this->classAnnotationOptimize) {
             if (preg_match("/(\A.*)^\s+(abstract|final)?\s+class\s+$className\s+{/sm", $contents, $matches)) {
                 $contents = $matches[1];
@@ -206,39 +184,9 @@ class StaticReflectionParser implements ReflectionInterface
                             }
                         }
                         if (!$fullySpecified) {
-                            $this->parentClassName = '\\' . $this->ns . '\\' . $this->parentClassName;
+                            $this->parentClassName = '\\' . $this->namespace . '\\' . $this->parentClassName;
                         }
                         break;
-                }
-            }
-        }
-    }
-
-    public function findFile()
-    {
-        $class = $this->className;
-        if ('\\' == $class[0]) {
-            $class = substr($class, 1);
-        }
-
-        if (false !== $this->lastNsPos) {
-            // namespaced class name
-            $classPath = str_replace('\\', DIRECTORY_SEPARATOR, substr($class, 0, $this->lastNsPos)) . DIRECTORY_SEPARATOR;
-            $className = substr($class, $this->lastNsPos + 1);
-        } else {
-            // PEAR-like class name
-            $classPath = null;
-            $className = $class;
-        }
-
-        $classPath .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
-
-        foreach ($this->prefixes as $prefix => $dirs) {
-            if (0 === strpos($class, $prefix)) {
-                foreach ($dirs as $dir) {
-                    if (file_exists($dir . DIRECTORY_SEPARATOR . $classPath)) {
-                        return $dir . DIRECTORY_SEPARATOR . $classPath;
-                    }
                 }
             }
         }
@@ -247,7 +195,7 @@ class StaticReflectionParser implements ReflectionInterface
     protected function getParentStaticReflectionParser()
     {
         if (empty($this->parentStaticReflectionParser)) {
-            $this->parentStaticReflectionParser = new static($this->parentClassName, $this->prefixes);
+            $this->parentStaticReflectionParser = new static($this->parentClassName, $this->finder);
         }
 
         return $this->parentStaticReflectionParser;
@@ -260,7 +208,7 @@ class StaticReflectionParser implements ReflectionInterface
 
     public function getNamespaceName()
     {
-        return $this->ns;
+        return $this->namespace;
     }
 
     /**
