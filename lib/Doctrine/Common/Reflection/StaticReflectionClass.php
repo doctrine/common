@@ -31,7 +31,7 @@ class StaticReflectionClass extends ReflectionClass
      */
     private $staticReflectionParser;
 
-    public function __construct($staticReflectionParser)
+    public function __construct(StaticReflectionParser $staticReflectionParser)
     {
         $this->staticReflectionParser = $staticReflectionParser;
     }
@@ -56,11 +56,13 @@ class StaticReflectionClass extends ReflectionClass
         return $this->staticReflectionParser->getUseStatements();
     }
 
-    public function getMethod($name) {
+    public function getMethod($name)
+    {
         return $this->staticReflectionParser->getReflectionMethod($name);
     }
 
-    public function getProperty($name) {
+    public function getProperty($name)
+    {
         return $this->staticReflectionParser->getReflectionProperty($name);
     }
 

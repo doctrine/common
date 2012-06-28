@@ -38,7 +38,7 @@ class StaticReflectionMethod extends ReflectionMethod
      */
     protected $methodName;
 
-    public function __construct($staticReflectionParser, $methodName)
+    public function __construct(StaticReflectionParser $staticReflectionParser, $methodName)
     {
         $this->staticReflectionParser = $staticReflectionParser;
         $this->methodName = $methodName;

@@ -20,7 +20,8 @@
 
 namespace Doctrine\Common\Reflection;
 
-interface ReflectionInterface {
+interface ReflectionInterface
+{
     /**
      * Get the ReflectionClass equivalent for this class.
      *
