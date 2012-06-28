@@ -27,19 +27,19 @@ interface ReflectionProviderInterface
      *
      * @return ReflectionClass
      */
-    function getReflectionClass();
+    public function getReflectionClass();
 
     /**
      * Get the ReflectionClass equivalent for this class.
      *
      * @return ReflectionMethod
      */
-    function getReflectionMethod();
+    public function getReflectionMethod();
 
     /**
      * Get the ReflectionClass equivalent for this class.
      *
      * @return ReflectionMethod
      */
-    function getReflectionProperty();
+    public function getReflectionProperty();
 }
