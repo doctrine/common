@@ -3,6 +3,8 @@
 namespace Doctrine\Tests\Common\Annotations;
 
 use Doctrine\Common\Annotations\DoctrineReader;
+use Doctrine\Common\Reflection\StaticReflectionParser;
+use Doctrine\Common\Reflection\Psr0FindFile;
 use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
 use Doctrine\Common\Annotations\Annotation\IgnorePhpDoc;
 use ReflectionClass, Doctrine\Common\Annotations\AnnotationReader;
@@ -19,11 +21,26 @@ require_once __DIR__ . '/TopLevelAnnotation.php';
 
 abstract class AbstractReaderTest extends \PHPUnit_Framework_TestCase
 {
-    public function testAnnotations()
+    public function getReflectionClass()
+    {
+        $className = 'Doctrine\Tests\Common\Annotations\DummyClass';
+        $testsRoot = substr(__DIR__, 0, -strlen(__NAMESPACE__) - 1);
+        $paths = array(
+            'Doctrine\\Tests' => array($testsRoot),
+        );
+        $staticReflectionParser = new StaticReflectionParser($className, new Psr0FindFile($paths));
+        return array(
+            'native' => array(new ReflectionClass($className)),
+            'static' => array($staticReflectionParser->getReflectionClass()),
+        );
+    }
+
+    /**
+     * @dataProvider getReflectionClass
+     */
+    public function testAnnotations($class)
     {
         $reader = $this->getReader();
-
-        $class = new ReflectionClass('Doctrine\Tests\Common\Annotations\DummyClass');
         $this->assertEquals(1, count($reader->getClassAnnotations($class)));
         $this->assertInstanceOf($annotName = 'Doctrine\Tests\Common\Annotations\DummyAnnotation', $annot = $reader->getClassAnnotation($class, $annotName));
         $this->assertEquals("hello", $annot->dummyValue);
@@ -396,44 +413,6 @@ class TestImportWithConcreteAnnotation
      * @DummyAnnotation(dummyValue = "bar")
      */
     private $field;
-}
-
-/**
- * A description of this class.
- *
- * Let's see if the parser recognizes that this @ is not really referring to an
- * annotation. Also make sure that @var \ is not concated to "@var\is".
- *
- * @author robo
- * @since 2.0
- * @DummyAnnotation(dummyValue="hello")
- */
-class DummyClass {
-    /**
-     * A nice property.
-     *
-     * @var mixed
-     * @DummyAnnotation(dummyValue="fieldHello")
-     */
-    private $field1;
-
-    /**
-     * @DummyJoinTable(name="join_table",
-     *      joinColumns={@DummyJoinColumn(name="col1", referencedColumnName="col2")},
-     *      inverseJoinColumns={
-     *          @DummyJoinColumn(name="col3", referencedColumnName="col4")
-     *      })
-     */
-    private $field2;
-
-    /**
-     * Gets the value of field1.
-     *
-     * @return mixed
-     * @DummyAnnotation({1,2,"three"})
-     */
-    public function getField1() {
-    }
 }
 
 /**
