@@ -68,6 +68,7 @@ interface ObjectManager
      * The object passed to merge will not become associated/managed with this ObjectManager.
      *
      * @param object $object
+     * @return object
      */
     function merge($object);
 
