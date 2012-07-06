@@ -160,7 +160,8 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
     /**
      * Checks whether the class metadata is an entity.
      *
-     * this method should
+     * This method should false for mapped superclasses or
+     * embedded classes.
      *
      * @param ClassMetadata $class
      * @return boolean
