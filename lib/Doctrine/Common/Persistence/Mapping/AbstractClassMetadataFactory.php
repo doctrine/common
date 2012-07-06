@@ -158,6 +158,16 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
     abstract protected function initializeReflection(ClassMetadata $class, ReflectionService $reflService);
 
     /**
+     * Checks whether the class metadata is an entity.
+     *
+     * this method should
+     *
+     * @param ClassMetadata $class
+     * @return boolean
+     */
+    abstract protected function isEntity(ClassMetadata $class);
+
+    /**
      * Gets the class metadata descriptor for a class.
      *
      * @param string $className The name of the class.
@@ -278,7 +288,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         foreach ($parentClasses as $className) {
             if (isset($this->loadedMetadata[$className])) {
                 $parent = $this->loadedMetadata[$className];
-                if (isset($parent->isMappedSuperclass) && $parent->isMappedSuperclass === false) {
+                if ($this->isEntity($parent)) {
                     $rootEntityFound = true;
                     array_unshift($visited, $className);
                 }
@@ -294,7 +304,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
 
             $parent = $class;
 
-            if (isset($parent->isMappedSuperclass) && $class->isMappedSuperclass === false) {
+            if ($this->isEntity($class)) {
                 $rootEntityFound = true;
                 array_unshift($visited, $className);
             }

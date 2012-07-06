@@ -121,6 +121,11 @@ class TestClassMetadataFactory extends AbstractClassMetadataFactory
     protected function initializeReflection(ClassMetadata $class, ReflectionService $reflService)
     {
     }
+
+    protected function isEntity(ClassMetadata $class)
+    {
+        return isset($class->isMappedSuperclass) && $class->isMappedSuperclass === false;
+    }
 }
 
 class RootEntity
