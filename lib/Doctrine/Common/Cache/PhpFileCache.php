@@ -36,6 +36,30 @@ class PhpFileCache extends FileCache
     protected $extension = self::EXTENSION;
 
     /**
+     * @var boolean Flag used to signal if __set_state is called.
+     */
+    private $useSetState = false;
+
+    /**
+     * @return boolean
+     */
+    public function getUseSetState()
+    {
+        return $this->useSetState;
+    }
+
+    /**
+     * @param   boolean $useSetState
+     * @return  PhpFileCache
+     */
+    public function setUseSetState($useSetState = true)
+    {
+        $this->useSetState = $useSetState;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function doFetch($id)
@@ -81,8 +105,8 @@ class PhpFileCache extends FileCache
         }
 
         $filename   = $this->getFilename($id);
+        $serialize  = $this->useSetState === false;
         $filepath   = pathinfo($filename, PATHINFO_DIRNAME);
-        $serialize  = is_object($data) && ! method_exists($data, '__set_state');
 
         if ( ! is_dir($filepath)) {
             mkdir($filepath, 0777, true);

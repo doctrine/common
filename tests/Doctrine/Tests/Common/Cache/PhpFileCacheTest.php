@@ -60,7 +60,8 @@ class PhpFileCacheTest extends CacheTest
 
     public function testImplementsSetState()
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->_getCacheDriver()
+                ->setUseSetState();
 
         // Test save
         $cache->save('test_set_state', new SetStateClass(array(1,2,3)));
@@ -94,6 +95,23 @@ class PhpFileCacheTest extends CacheTest
 
         // Test contains
         $this->assertTrue($cache->contains('test_not_set_state'));
+    }
+
+    public function testMixedDataSetState()
+    {
+        $cache = $this->_getCacheDriver();
+
+        // Test save
+        $cache->save('test_mixed_set_state', new SetStateClass(new NotSetStateClass(array(1,2,3))));
+
+        // Test fetch
+        $value = $cache->fetch('test_mixed_set_state');
+        $this->assertInstanceOf('Doctrine\Tests\Common\Cache\SetStateClass', $value);
+        $this->assertInstanceOf('Doctrine\Tests\Common\Cache\NotSetStateClass', $value->getValue());
+        $this->assertEquals(array(1,2,3), $value->getValue()->getValue());
+
+        // Test contains
+        $this->assertTrue($cache->contains('test_mixed_set_state'));
     }
 
     public function testGetStats()
