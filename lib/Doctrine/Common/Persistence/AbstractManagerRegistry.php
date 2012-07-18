@@ -155,6 +155,12 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
      */
     public function getManagerForClass($class)
     {
+        // Check for namespace alias
+        if (strpos($class, ':') !== false) {
+            list($namespaceAlias, $simpleClassName) = explode(':', $class);
+            $class = $this->getAliasNamespace($namespaceAlias) . '\\' . $simpleClassName;
+        }
+
         $proxyClass = new \ReflectionClass($class);
         if ($proxyClass->implementsInterface($this->proxyInterfaceName)) {
             $class = $proxyClass->getParentClass()->getName();
