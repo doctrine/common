@@ -94,6 +94,18 @@ abstract class EventTarget implements EventTargetInterface
     /**
      * {@inheritdoc}
      */
+    public function hasEventListener($type)
+    {
+        if (empty($type)) {
+            throw new EventException('Unspecified event type', EventException::UNSPECIFIED_EVENT_TYPE_ERR);
+        }
+
+        return $this->listenerList->size($type) > 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function dispatchEvent(Event $event)
     {
         $type = $event->getType();
@@ -116,17 +128,5 @@ abstract class EventTarget implements EventTargetInterface
         }
 
         return $event->isDefaultPrevented();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasEventListener($type)
-    {
-        if (empty($type)) {
-            throw new EventException('Unspecified event type', EventException::UNSPECIFIED_EVENT_TYPE_ERR);
-        }
-
-        return $this->listenerList->size($type) > 0;
     }
 }

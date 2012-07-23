@@ -89,6 +89,17 @@ interface EventTargetInterface
     function removeEventListener(EventListenerInterface $listener);
 
     /**
+     * Check if EventTarget contains subscribed event listeners to the given event type.
+     *
+     * @api
+     *
+     * @param string $type Event type
+     *
+     * @return boolean
+     */
+    function hasEventListener($type);
+
+    /**
      * This method allows the dispatch of events into their specific implementations.
      * The target of the event is the EventTarget on which dispatchEvent is called.
      *
@@ -102,13 +113,4 @@ interface EventTargetInterface
      *                 the value is false, else the value is true.
      */
     function dispatchEvent(Event $event);
-
-    /**
-     * Check if EventTarget contains subscribed event listeners to the given event type.
-     *
-     * @param string $type Event type
-     *
-     * @return boolean
-     */
-    function hasEventListener($type);
 }
