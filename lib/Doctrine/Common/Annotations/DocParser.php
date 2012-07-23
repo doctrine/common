@@ -115,6 +115,13 @@ final class DocParser
     private $ignoredAnnotationNames = array();
 
     /**
+     * Specify to ignore wildcard namespace (*) in annotation
+     * 
+     * @var boolean 
+     */
+    private $ignoreWildcardNamespace = true;
+    
+    /**
      * @var string
      */
     private $context = '';
@@ -223,6 +230,16 @@ final class DocParser
         $this->ignoredAnnotationNames = $names;
     }
 
+    /**
+     * Sets ignore wildcard namespace in annotation
+     * 
+     * @param boolean $bool 
+     */
+    public function setIgnoreWildcardNamespace ($bool)
+    {
+        $this->ignoreWildcardNamespace = (Boolean) $bool;
+    }
+    
     /**
      * Sets ignore on not-imported annotations
      *
@@ -588,7 +605,12 @@ final class DocParser
                 if ($this->ignoreNotImportedAnnotations || isset($this->ignoredAnnotationNames[$name])) {
                     return false;
                 }
-
+                if (!$this->ignoreWildcardNamespace) {
+                    $namespace = explode('\\', $name, 2);
+                    if (isset($this->ignoredAnnotationNames[$namespace[0].'\\*'])) {
+                        return false;
+                    }
+                }
                 throw AnnotationException::semanticalError(sprintf('The annotation "@%s" in %s was never imported. Did you maybe forget to add a "use" statement for this annotation?', $name, $this->context));
             }
         }
