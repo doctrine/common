@@ -47,7 +47,7 @@ class ArrayCollection implements Collection, Selectable
      */
     public function __construct(array $elements = array())
     {
-        $this->_elements = $elements;
+        $this->fromArray($elements);
     }
 
     /**
@@ -58,6 +58,18 @@ class ArrayCollection implements Collection, Selectable
     public function toArray()
     {
         return $this->_elements;
+    }
+
+    /**
+     * Reinitialize the ArrayCollection.
+     *
+     * @param array $values
+     * @return boolean Always TRUE.
+     */
+    public function fromArray(array $values = array())
+    {
+        $this->_elements = $values;
+        return true;
     }
 
     /**
@@ -337,6 +349,18 @@ class ArrayCollection implements Collection, Selectable
     public function add($value)
     {
         $this->_elements[] = $value;
+        return true;
+    }
+
+    /**
+     * Append an array of values to the collection.
+     *
+     * @param array $values Array to append
+     * @return boolean Always TRUE.
+     */
+    public function addArray(array $values)
+    {
+        $this->_elements = array_merge($this->_elements, array_values($values));
         return true;
     }
 

@@ -248,4 +248,27 @@ class CollectionTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals(1, count($col));
         $this->assertEquals('baz', $col[0]->foo);
     }
+
+    public function testAddArray()
+    {
+        $this->_coll[] = 'foo';
+        $values = array('bar', 'baz');
+
+        $this->_coll->addArray($values);
+
+        $this->assertEquals(array('foo', 'bar', 'baz'), $this->_coll->getValues());
+    }
+
+    public function textFromArray()
+    {
+        $this->_coll[] = 'foo';
+        $this->_coll[] = 'bar';
+        $this->_coll[] = 'baz';
+
+        $newValues = array('one', 'two', 'three');
+
+        $this->_coll->fromArray($newValues);
+
+        $this->assertEquals(array('one', 'two', 'three'), $this->_coll->getValues());
+    }
 }
