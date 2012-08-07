@@ -50,6 +50,7 @@ interface ObjectManager
      * this ObjectManager as NEW. Do not pass detached objects to the persist operation.
      *
      * @param object $object The instance to make managed and persistent.
+     * @return ObjectManager
      */
     function persist($object);
 
@@ -59,6 +60,7 @@ interface ObjectManager
      * A removed object will be removed from the database as a result of the flush operation.
      *
      * @param object $object The object instance to remove.
+     * @return ObjectManager
      */
     function remove($object);
 
@@ -77,6 +79,7 @@ interface ObjectManager
      * by this ObjectManager become detached.
      *
      * @param string $objectName if given, only objects of this type will get detached
+     * @return ObjectManager
      */
     function clear($objectName = null);
 
@@ -88,6 +91,7 @@ interface ObjectManager
      * reference it.
      *
      * @param object $object The object to detach.
+     * @return ObjectManager
      */
     function detach($object);
 
@@ -96,6 +100,7 @@ interface ObjectManager
      * overriding any local changes that have not yet been persisted.
      *
      * @param object $object The object to refresh.
+     * @return ObjectManager
      */
     function refresh($object);
 
@@ -103,6 +108,8 @@ interface ObjectManager
      * Flushes all changes to objects that have been queued up to now to the database.
      * This effectively synchronizes the in-memory state of managed objects with the
      * database.
+     *
+     * @return ObjectManager
      */
     function flush();
 
