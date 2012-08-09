@@ -31,11 +31,18 @@ class StaticReflectionParser implements ReflectionProviderInterface
 {
 
     /**
-     * The name of the class.
+     * The name of the class including the namespace.
      *
      * @var string
      */
     protected $className;
+
+    /**
+     * The name of the class without the namespace.
+     *
+     * @var string
+     */
+    protected $shortname;
 
     /**
      * TRUE if the caller only wants class annotations.
@@ -106,6 +113,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
         $this->className = ltrim($className, '\\');
         if ($lastNsPos = strrpos($this->className, '\\')) {
             $this->namespace = substr($this->className, 0, $lastNsPos);
+            $this->shortname = substr($this->className, $lastNsPos + 1);
         }
         $this->finder = $finder;
         $this->classAnnotationOptimize = $classAnnotationOptimize;
@@ -119,7 +127,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
         $this->parsed = true;
         $contents = file_get_contents($fileName);
         if ($this->classAnnotationOptimize) {
-            if (preg_match("/(\A.*)^\s+(abstract|final)?\s+class\s+$className\s+{/sm", $contents, $matches)) {
+            if (preg_match("/(\A.*)^(abstract |final )?class\s+$this->shortname/sm", $contents, $matches)) {
                 $contents = $matches[1];
             }
         }
