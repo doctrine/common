@@ -68,6 +68,8 @@ final class AnnotationReader implements Reader
         'codeCoverageIgnore' => true, 'codeCoverageIgnoreStart' => true, 'codeCoverageIgnoreEnd' => true,
         'Required' => true, 'Attribute' => true, 'Attributes' => true,
         'Target' => true, 'SuppressWarnings' => true,
+        'ingroup' => true, 'code' => true, 'endcode' => true,
+        'package_version' => true,
     );
 
     /**
