@@ -51,14 +51,14 @@ class Criteria
     private $expression;
 
     /**
-     * @var array
+     * @var array|null
      */
-    private $orderings = array();
+    private $orderings;
 
     /**
-     * @var int
+     * @var int|null
      */
-    private $firstResult = 0;
+    private $firstResult;
 
     /**
      * @var int|null
@@ -169,7 +169,7 @@ class Criteria
     /**
      * Get current orderings of this Criteria
      *
-     * @return array
+     * @return array|null
      */
     public function getOrderings()
     {
@@ -206,7 +206,7 @@ class Criteria
     /**
      * Set number of first result that this criteria should return.
      *
-     * @param int $firstResult
+     * @param int $firstResult Result offset
      * @return Criteria
      */
     public function setFirstResult($firstResult)
