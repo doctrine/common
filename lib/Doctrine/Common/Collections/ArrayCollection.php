@@ -93,6 +93,16 @@ class ArrayCollection implements Collection, Selectable
     }
 
     /**
+     * Moves the internal iterator position to the previous element.
+     *
+     * @return mixed
+     */
+    public function prev()
+    {
+        return prev($this->_elements);
+    }
+
+    /**
      * Moves the internal iterator position to the next element.
      *
      * @return mixed
