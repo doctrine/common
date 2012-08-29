@@ -165,6 +165,11 @@ interface Collection extends Countable, IteratorAggregate, ArrayAccess
      *
      */
     function current();
+    
+    /**
+     * Moves the internal iterator position to the previous element.
+     */
+    function prev();
 
     /**
      * Moves the internal iterator position to the next element.
