@@ -12,4 +12,3 @@ The Doctrine Common project is a library that provides extensions to core PHP fu
 * [Downloads](http://github.com/doctrine/common/downloads)
 
 Test
-Test2
