@@ -41,11 +41,11 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
             require __DIR__ . '/ClassLoaderTest/ClassE.php';
         };
         $nonReturnLoader2 = function($className) {
-			if (class_exists($className, false)) {
-				\PHPUnit_Framework_Assert::fail('Class load called twice for same class.');
-			}
-			require __DIR__ . '/ClassLoaderTest/ClassE.php';
-		};
+            if (class_exists($className, false)) {
+                \PHPUnit_Framework_Assert::fail('Class load called twice for same class.');
+            }
+            require __DIR__ . '/ClassLoaderTest/ClassE.php';
+        };
 
         spl_autoload_register($nonReturnLoader);
         spl_autoload_register($nonReturnLoader2);
