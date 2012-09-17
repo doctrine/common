@@ -33,7 +33,26 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertTrue(ClassLoader::classExists('ClassLoaderTest\ClassD'));
         spl_autoload_unregister($badLoader);
     }
+    
+    public function testClassExistsWithMultipleNonReturningAutoloaders()
+    {
+        $this->assertFalse(ClassLoader::classExists('ClassLoaderTest\ClassE'));
+        $nonReturnLoader = function($className) {
+            if (class_exists($className, false)) {
+                \PHPUnit_Framework_Assert::fail('Class load called twice for same class.');
+            }
+            require __DIR__ . '/ClassLoaderTest/ClassE.php';
+        };
+        $nonReturnLoader2 = clone $nonReturnLoader;
 
+        spl_autoload_register($nonReturnLoader);
+        spl_autoload_register($nonReturnLoader2);
+
+        $this->assertTrue(ClassLoader::classExists('ClassLoaderTest\ClassE'));
+        spl_autoload_unregister($nonReturnLoader);
+        spl_autoload_unregister($nonReturnLoader2);
+    }
+    
     public function testGetClassLoader()
     {
         $cl = new ClassLoader('ClassLoaderTest', __DIR__);
