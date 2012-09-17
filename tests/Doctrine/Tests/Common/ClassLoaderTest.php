@@ -38,12 +38,14 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $this->assertFalse(ClassLoader::classExists('ClassLoaderTest\ClassE'));
         $nonReturnLoader = function($className) {
-            if (class_exists($className, false)) {
-                \PHPUnit_Framework_Assert::fail('Class load called twice for same class.');
-            }
             require __DIR__ . '/ClassLoaderTest/ClassE.php';
         };
-        $nonReturnLoader2 = clone $nonReturnLoader;
+        $nonReturnLoader2 = function($className) {
+			if (class_exists($className, false)) {
+				\PHPUnit_Framework_Assert::fail('Class load called twice for same class.');
+			}
+			require __DIR__ . '/ClassLoaderTest/ClassE.php';
+		};
 
         spl_autoload_register($nonReturnLoader);
         spl_autoload_register($nonReturnLoader2);
