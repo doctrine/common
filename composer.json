@@ -16,7 +16,7 @@
         "php": ">=5.3.2"
     },
     "autoload": {
-        "psr-0": { "Doctrine\\Common": "lib/" }
+        "psr-0": { "Doctrine\\Common\\": "lib/" }
     },
     "extra": {
         "branch-alias": {
