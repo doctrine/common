@@ -104,6 +104,10 @@ final class Debug
                         $return->__PROXY_INITIALIZED__ = $var->__isInitialized();
                     }
 
+                    if ($var instanceof \ArrayObject) {
+                        $return->__STORAGE__ = self::export($var->getArrayCopy(), $maxDepth - 1);
+                    }
+
                     foreach ($reflClass->getProperties() as $reflProperty) {
                         $name  = $reflProperty->getName();
 
