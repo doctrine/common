@@ -248,7 +248,7 @@ class ArrayCollection implements Collection, Selectable
     {
         foreach ($this->_elements as $key => $element) {
             if ($p($key, $element)) {
-                return true;
+                return $element;
             }
         }
         return false;
