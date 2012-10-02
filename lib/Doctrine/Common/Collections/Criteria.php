@@ -56,12 +56,12 @@ class Criteria
     private $orderings;
 
     /**
-     * @var int
+     * @var int|null
      */
     private $firstResult;
 
     /**
-     * @var int
+     * @var int|null
      */
     private $maxResults;
 
@@ -169,7 +169,7 @@ class Criteria
     /**
      * Get current orderings of this Criteria
      *
-     * @return array
+     * @return array|null
      */
     public function getOrderings()
     {
@@ -194,9 +194,9 @@ class Criteria
     }
 
     /**
-     * Get current first result option of the critera.
+     * Get current first result option of the criteria.
      *
-     * @return firstResult.
+     * @return int
      */
     public function getFirstResult()
     {
@@ -206,19 +206,19 @@ class Criteria
     /**
      * Set number of first result that this criteria should return.
      *
-     * @param firstResult the value to set.
+     * @param int $firstResult Result offset
      * @return Criteria
      */
     public function setFirstResult($firstResult)
     {
-        $this->firstResult = $firstResult;
+        $this->firstResult = (int) $firstResult;
         return $this;
     }
 
     /**
      * Get maxResults.
      *
-     * @return maxResults.
+     * @return int|null
      */
     public function getMaxResults()
     {
@@ -228,12 +228,12 @@ class Criteria
     /**
      * Set maxResults.
      *
-     * @param maxResults the value to set.
+     * @param int|null $maxResults
      * @return Criteria
      */
     public function setMaxResults($maxResults)
     {
-        $this->maxResults = $maxResults;
+        $this->maxResults = $maxResults !== null ? (int) $maxResults : null;
         return $this;
     }
 }
