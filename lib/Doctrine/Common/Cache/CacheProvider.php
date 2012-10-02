@@ -129,7 +129,7 @@ abstract class CacheProvider implements Cache
      * @param string $id  The id to namespace
      * @return string $id The namespaced id
      */
-    private function getNamespacedId($id)
+    protected function getNamespacedId($id)
     {
         $namespaceCacheKey = sprintf(self::DOCTRINE_NAMESPACE_CACHEKEY, $this->namespace);
         $namespaceVersion  = ($this->doContains($namespaceCacheKey)) ? $this->doFetch($namespaceCacheKey) : 1;
