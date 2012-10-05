@@ -109,7 +109,7 @@ abstract class AbstractReaderTest extends \PHPUnit_Framework_TestCase
         $reader = $this->getReader();
         $class  = new ReflectionClass('Doctrine\Tests\Common\Annotations\Fixtures\ClassWithAtInDescriptionAndAnnotation');
 
-        $this->assertEquals(1,count($fooAnnot = $reader->getPropertyAnnotations($class->getProperty('foo'))));
+        $this->assertCount(1, $fooAnnot = $reader->getPropertyAnnotations($class->getProperty('foo')));
 
         $this->assertInstanceOf('Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetPropertyMethod', $fooAnnot[0]);
     }
