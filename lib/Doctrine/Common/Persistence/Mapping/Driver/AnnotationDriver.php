@@ -189,7 +189,6 @@ abstract class AnnotationDriver implements MappingDriver
             );
 
             foreach ($iterator as $file) {
-
                 $sourceFile = realpath($file[0]);
 
                 require_once $sourceFile;
@@ -202,13 +201,13 @@ abstract class AnnotationDriver implements MappingDriver
         $mustFilter = sizeof($classes) > 0;
 
         foreach ($declared as $className) {
-            if ($mustFilter && !in_array($className, $classes)) {
-                continue;
-            }
-
             $rc = new \ReflectionClass($className);
             $sourceFile = $rc->getFileName();
             if (in_array($sourceFile, $includedFiles) && ! $this->isTransient($className)) {
+                if ($mustFilter && !in_array($className, $classes)) {
+                    continue;
+                }
+
                 $foundClasses[] = $className;
             }
         }
