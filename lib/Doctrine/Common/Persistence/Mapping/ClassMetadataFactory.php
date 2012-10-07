@@ -34,9 +34,11 @@ interface ClassMetadataFactory
      * Forces the factory to load the metadata of all classes known to the underlying
      * mapping driver.
      *
+     * @param array $classNames An array that will be used as a filter
+     *
      * @return array The ClassMetadata instances of all mapped classes.
      */
-    function getAllMetadata();
+    function getAllMetadata(array $classNames = array());
 
     /**
      * Gets the class metadata descriptor for a class.

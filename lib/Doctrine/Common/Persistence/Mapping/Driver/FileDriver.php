@@ -141,9 +141,11 @@ abstract class FileDriver implements MappingDriver
     /**
      * Gets the names of all mapped classes known to this driver.
      *
+     * @param array $classes An array of class names that will be used as a filter
+     *
      * @return array The names of all mapped classes known to this driver.
      */
-    public function getAllClassNames()
+    public function getAllClassNames(array $classes = array())
     {
         if ($this->classCache === null) {
             $this->initialize();
@@ -152,6 +154,12 @@ abstract class FileDriver implements MappingDriver
         $classNames = (array)$this->locator->getAllClassNames($this->globalBasename);
         if ($this->classCache) {
             $classNames = array_merge(array_keys($this->classCache), $classNames);
+
+            if (sizeof($classes) > 0) {
+                $classNames = array_filter($classNames, function($className) use ($classes) {
+                    return in_array($className, $classes);
+                });
+            }
         }
         return $classNames;
     }

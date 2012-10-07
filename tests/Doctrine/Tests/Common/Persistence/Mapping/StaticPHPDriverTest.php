@@ -24,6 +24,15 @@ class StaticPHPDriverTest extends DoctrineTestCase
         $this->assertContains(
             'Doctrine\Tests\Common\Persistence\Mapping\TestEntity', $classNames);
     }
+
+    public function testGetAllClassNamesFiltered()
+    {
+        $driver = new StaticPHPDriver(array(__DIR__));
+        $classNames = $driver->getAllClassNames(array('Doctrine\Tests\Common\Persistence\Mapping\TestEntity'));
+
+        $this->assertCount(1, $classNames);
+        $this->assertContains('Doctrine\Tests\Common\Persistence\Mapping\TestEntity', $classNames);
+    }
 }
 
 class TestEntity

@@ -75,6 +75,35 @@ class DriverChainTest extends DoctrineTestCase
         ), $chain->getAllClassNames());
     }
 
+    public function testGatherAllClassNamesFilteringResults()
+    {
+        $className = 'Doctrine\Tests\Common\Persistence\Mapping\DriverChainEntity';
+        $classMetadata = $this->getMock('Doctrine\Common\Peristence\ClassMetadata');
+
+        $chain = new MappingDriverChain();
+        $filter = array('Doctrine\Tests\Models\Company\Foo', 'Doctrine\Tests\ORM\Mapping\Bar');
+
+        $driver1 = $this->getMock('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver');
+        $driver1->expects($this->once())
+                ->method('getAllClassNames')
+                ->with($filter)
+                ->will($this->returnValue(array('Doctrine\Tests\Models\Company\Foo')));
+
+        $driver2 = $this->getMock('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver');
+        $driver2->expects($this->once())
+                ->method('getAllClassNames')
+                ->with($filter)
+                ->will($this->returnValue(array('Doctrine\Tests\ORM\Mapping\Bar')));
+
+        $chain->addDriver($driver1, 'Doctrine\Tests\Models\Company');
+        $chain->addDriver($driver2, 'Doctrine\Tests\ORM\Mapping');
+
+        $this->assertEquals(array(
+            'Doctrine\Tests\Models\Company\Foo',
+            'Doctrine\Tests\ORM\Mapping\Bar'
+        ), $chain->getAllClassNames($filter));
+    }
+
     /**
      * @group DDC-706
      */

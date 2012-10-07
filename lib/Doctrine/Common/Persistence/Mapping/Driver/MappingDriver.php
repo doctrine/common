@@ -38,11 +38,13 @@ interface MappingDriver
     function loadMetadataForClass($className, ClassMetadata $metadata);
 
     /**
-     * Gets the names of all mapped classes known to this driver.
+     * Gets the names of all mapped or a subset of classes known to this driver.
+     *
+     * @param array $classes An array of class names that will be used as a filter
      *
      * @return array The names of all mapped classes known to this driver.
      */
-    function getAllClassNames();
+    function getAllClassNames(array $classes = array());
 
     /**
      * Whether the class with the specified name should have its metadata loaded.

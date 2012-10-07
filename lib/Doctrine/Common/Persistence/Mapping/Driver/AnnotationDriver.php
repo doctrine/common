@@ -161,7 +161,7 @@ abstract class AnnotationDriver implements MappingDriver
     /**
      * {@inheritDoc}
      */
-    public function getAllClassNames()
+    public function getAllClassNames(array $classes = array())
     {
         if ($this->classNames !== null) {
             return $this->classNames;
@@ -171,7 +171,7 @@ abstract class AnnotationDriver implements MappingDriver
             throw MappingException::pathRequired();
         }
 
-        $classes = array();
+        $foundClasses = array();
         $includedFiles = array();
 
         foreach ($this->paths as $path) {
@@ -189,6 +189,7 @@ abstract class AnnotationDriver implements MappingDriver
             );
 
             foreach ($iterator as $file) {
+
                 $sourceFile = realpath($file[0]);
 
                 require_once $sourceFile;
@@ -198,17 +199,22 @@ abstract class AnnotationDriver implements MappingDriver
         }
 
         $declared = get_declared_classes();
+        $mustFilter = sizeof($classes) > 0;
 
         foreach ($declared as $className) {
+            if ($mustFilter && !in_array($className, $classes)) {
+                continue;
+            }
+
             $rc = new \ReflectionClass($className);
             $sourceFile = $rc->getFileName();
             if (in_array($sourceFile, $includedFiles) && ! $this->isTransient($className)) {
-                $classes[] = $className;
+                $foundClasses[] = $className;
             }
         }
 
-        $this->classNames = $classes;
+        $this->classNames = $foundClasses;
 
-        return $classes;
+        return $foundClasses;
     }
 }

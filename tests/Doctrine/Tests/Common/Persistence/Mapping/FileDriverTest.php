@@ -80,6 +80,23 @@ class FileDriverTest extends DoctrineTestCase
         $this->assertEquals(array('stdGlobal', 'stdGlobal2', 'stdClass'), $classNames);
     }
 
+    public function testGetAllClassNamesBothSourcesWithFilteredResults()
+    {
+        $locator = $this->newLocator();
+        $locator->expects($this->any())
+                ->method('getAllClassNames')
+                ->with($this->equalTo('global'))
+                ->will($this->returnValue(array('stdClass')));
+
+        $driver = new TestFileDriver($locator);
+        $driver->setGlobalBasename("global");
+
+        $classNames = $driver->getAllClassNames(array('stdGlobal', 'stdGlobal2'));
+
+        $this->assertCount(2, $classNames);
+        $this->assertEquals(array('stdGlobal', 'stdGlobal2'), $classNames);
+    }
+
     public function testIsNotTransient()
     {
         $locator = $this->newLocator();

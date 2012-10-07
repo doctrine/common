@@ -82,7 +82,7 @@ class StaticPHPDriver implements MappingDriver
      * {@inheritDoc}
      * @todo Same code exists in AnnotationDriver, should we re-use it somehow or not worry about it?
      */
-    public function getAllClassNames()
+    public function getAllClassNames(array $classNames = array())
     {
         if ($this->classNames !== null) {
             return $this->classNames;
@@ -117,11 +117,16 @@ class StaticPHPDriver implements MappingDriver
         }
 
         $declared = get_declared_classes();
+        $mustFilter = sizeof($classNames) > 0;
 
         foreach ($declared as $className) {
             $rc = new \ReflectionClass($className);
             $sourceFile = $rc->getFileName();
             if (in_array($sourceFile, $includedFiles) && !$this->isTransient($className)) {
+                if ($mustFilter && !in_array($className, $classNames)) {
+                    continue;
+                }
+
                 $classes[] = $className;
             }
         }
