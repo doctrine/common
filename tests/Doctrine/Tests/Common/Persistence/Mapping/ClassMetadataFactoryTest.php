@@ -3,7 +3,6 @@
 namespace Doctrine\Tests\Common\Persistence\Mapping;
 
 use Doctrine\Tests\DoctrineTestCase;
-use Doctrine\Common\Persistence\Mapping\Driver\DefaultFileLocator;
 use Doctrine\Common\Persistence\Mapping\ReflectionService;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\AbstractClassMetadataFactory;
@@ -21,14 +20,6 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
         $driver = $this->getMock('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver');
         $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
         $this->cmf = new TestClassMetadataFactory($driver, $metadata);
-    }
-
-    public function testGetCacheDriver()
-    {
-        $this->assertNull($this->cmf->getCacheDriver());
-        $cache = new ArrayCache();
-        $this->cmf->setCacheDriver($cache);
-        $this->assertSame($cache, $this->cmf->getCacheDriver());
     }
 
     public function testGetMetadataFor()
@@ -76,6 +67,43 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
 
         $this->assertTrue($this->cmf->hasMetadataFor(__NAMESPACE__ . '\ChildEntity'));
         $this->assertTrue($this->cmf->hasMetadataFor('prefix:ChildEntity'));
+    }
+
+    /**
+     * @covers Doctrine\Common\Persistence\Mapping\AbstractClassMetadataFactory::getAllMetadata
+     */
+    public function testGetAllMetadata()
+    {
+        $driver = $this->cmf->driver;
+        $driver
+            ->expects($this->once())
+            ->method($this->equalTo('getAllClassNames'))
+            ->will($this->returnValue(array(__NAMESPACE__ . '\RootEntity', __NAMESPACE__ . '\ChildEntity')))
+        ;
+
+        $metadata = $this->cmf->getAllMetadata();
+        $this->assertCount(2, $metadata);
+        $this->assertTrue($this->cmf->hasMetadataFor(__NAMESPACE__ . '\RootEntity'));
+        $this->assertTrue($this->cmf->hasMetadataFor(__NAMESPACE__ . '\ChildEntity'));
+    }
+
+    /**
+     * @covers Doctrine\Common\Persistence\Mapping\AbstractClassMetadataFactory::getAllMetadata
+     */
+    public function testGetAllMetadataWithFilter()
+    {
+        $driver = $this->cmf->driver;
+        $driver
+            ->expects($this->once())
+            ->method($this->equalTo('getAllClassNames'))
+            ->with($this->equalTo(array(__NAMESPACE__ . '\RootEntity')))
+            ->will($this->returnValue(array(__NAMESPACE__ . '\RootEntity')))
+        ;
+
+        $metadata = $this->cmf->getAllMetadata(array(__NAMESPACE__ . '\RootEntity'));
+        $this->assertCount(1, $metadata);
+        $this->assertTrue($this->cmf->hasMetadataFor(__NAMESPACE__ . '\RootEntity'));
+        $this->assertFalse($this->cmf->hasMetadataFor(__NAMESPACE__ . '\ChildEntity'));
     }
 }
 

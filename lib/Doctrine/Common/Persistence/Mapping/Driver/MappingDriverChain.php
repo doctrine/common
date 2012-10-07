@@ -117,9 +117,11 @@ class MappingDriverChain implements MappingDriver
     /**
      * Gets the names of all mapped classes known to this driver.
      *
+     * @param array $classes An array of class names that will be used as a filter
+     *
      * @return array The names of all mapped classes known to this driver.
      */
-    public function getAllClassNames()
+    public function getAllClassNames(array $classes = array())
     {
         $classNames = array();
         $driverClasses = array();
@@ -129,7 +131,7 @@ class MappingDriverChain implements MappingDriver
             $oid = spl_object_hash($driver);
 
             if (!isset($driverClasses[$oid])) {
-                $driverClasses[$oid] = $driver->getAllClassNames();
+                $driverClasses[$oid] = $driver->getAllClassNames($classes);
             }
 
             foreach ($driverClasses[$oid] AS $className) {
