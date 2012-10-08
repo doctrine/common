@@ -2,22 +2,10 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
-use Doctrine\Common\Cache\SQLite;
+use Doctrine\Common\Cache\SQLiteCache;
 
-class SQLiteTest extends CacheTest
+class SQLiteCacheTest extends CacheTest
 {
-    public static $path;
-
-    public static function setUpBeforeClass()
-    {
-        static::$path = sys_get_temp_dir().'/doctrine-common.db';
-    }
-
-    public static function tearDownAfterClass()
-    {
-        @unlink(static::$path);
-    }
-
     public function testGetStats()
     {
         $cache = $this->_getCacheDriver();
@@ -37,6 +25,6 @@ class SQLiteTest extends CacheTest
      */
     protected function _getCacheDriver()
     {
-        return new SQLite(static::$path);
+        return new SQLiteCache(':memory');
     }
 }

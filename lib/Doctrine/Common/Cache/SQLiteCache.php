@@ -28,7 +28,7 @@ namespace Doctrine\Common\Cache;
  * @since   2.4
  * @author Markus Bachmann <markus.bachmann@bachi.biz>
  */
-class SQLite extends CacheProvider
+class SQLiteCache extends CacheProvider
 {
     /**
      * @var \SQLite3
@@ -42,7 +42,11 @@ class SQLite extends CacheProvider
      */
     public function __construct($dsn)
     {
-        $this->db = new \SQLite3($dsn, SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
+        if (':memory:' === $dsn) {
+            $this->db = new \SQLite3($dsn);
+        } else {
+            $this->db = new \SQLite3($dsn, SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
+        }
 
         $this->initDb();
     }
@@ -78,10 +82,11 @@ class SQLite extends CacheProvider
     {
         $stmt = $this->db->prepare('SELECT cache_data FROM doctrine_cache WHERE cache_key = :id AND (cache_expired_at = 0 OR cache_expired_at >= :date)');
         $stmt->bindParam('id', $id);
-        $stmt->bindValue('date', date(DATE_ISO8601));
+        $stmt->bindValue('date', time());
 
         $data = $stmt->execute()->fetchArray(SQLITE3_NUM);
-        return unserialize(base64_decode($data[0]));
+
+        return unserialize($data[0]);
     }
 
     /**
@@ -97,12 +102,12 @@ class SQLite extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = false)
     {
-        $data = base64_encode(serialize($data));
+        $data = serialize($data);
 
         $stmt = $this->db->prepare('INSERT INTO doctrine_cache (cache_key, cache_data, cache_expired_at) VALUES(:id, :data, :lifetime)');
-        $stmt->bindParam('id', $id, SQLITE3_TEXT);
-        $stmt->bindParam('data', $data, SQLITE3_BLOB);
-        $stmt->bindParam('lifetime', $lifeTime, SQLITE3_INTEGER);
+        $stmt->bindParam('id', $id);
+        $stmt->bindParam('data', $data);
+        $stmt->bindParam('lifetime', $lifeTime);
 
         return $stmt->execute();
     }
