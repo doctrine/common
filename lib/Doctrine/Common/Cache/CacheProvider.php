@@ -34,6 +34,11 @@ abstract class CacheProvider implements Cache
 {
     const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
 
+    /** 
+     * @var string The cache id to store the index of cache ids under 
+     */
+    private $cacheKey = 'doctrine_cache_ids';
+    
     /**
      * @var string The namespace to prefix all cache ids with
      */
@@ -86,15 +91,123 @@ abstract class CacheProvider implements Cache
      */
     public function save($id, $data, $lifeTime = 0)
     {
-        return $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
+        $saved = $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
+        if($saved){
+             $this->saveCacheKey($id);
+        }
+        return $saved;
     }
-
-    /**
+    
+     /**
      * {@inheritdoc}
      */
     public function delete($id)
     {
-        return $this->doDelete($this->getNamespacedId($id));
+        $deleted = $this->doDelete($this->getNamespacedId($id));
+        if($deleted){
+            $this->deleteCacheKey($id);
+        }
+        return $deleted;
+    }
+    
+     /**
+     * Delete cache entries where the id matches a PHP regular expressions
+     *
+     * @param string $regex
+     * @return array $deleted  Array of the deleted cache ids
+     */
+    public function deleteByRegex($regex)
+    {
+        $deleted = array();
+        $ids = $this->getIds();
+        foreach ($ids as $id) {
+            if (preg_match($regex, $id)) {
+                $this->delete($id);
+                $deleted[] = $id;
+            }
+        }
+        return $deleted;
+    }
+
+    /**
+     * Delete cache entries where the id has the passed prefix
+     *
+     * @param string $prefix
+     * @return array $deleted  Array of the deleted cache ids
+     */
+    public function deleteByPrefix($prefix)
+    {
+        $deleted = array();
+        $ids = $this->getIds();
+        foreach ($ids as $id) {
+            if (preg_match('/^'.$prefix.'/', $id)) {
+                $this->delete($id);
+                $deleted[] = $id;
+            }
+        }
+        return $deleted;
+    }
+
+    /**
+     * Delete cache entries where the id has the passed suffix
+     *
+     * @param string $suffix 
+     * @return array $deleted  Array of the deleted cache ids
+     */
+    public function deleteBySuffix($suffix)
+    {
+        $deleted = array();
+        $ids = $this->getIds();
+        foreach ($ids as $id) {
+            if (substr($id, -1 * strlen($suffix)) == $suffix) {
+                $this->delete($id);
+                $deleted[] = $id;
+            }
+        }
+        return $deleted;
+    }
+    
+    /**
+     * Get an array of all the cache ids stored
+     *
+     * @return array $ids
+     */
+    public function getIds()
+    {
+        $ids = $this->fetch($this->cacheKey);
+        return $ids ? $ids : array();
+    }
+    
+    /**
+     * Save a cache id to the index of cache ids
+     *
+     * @param string $id
+     * @return boolean TRUE if the id was successfully stored in the cache, FALSE otherwise.
+     */
+    private function saveCacheKey($id, $lifeTime = 0){
+        $ids = $this->getIds();
+        if(in_array($id, $ids)){
+            return false;
+        }
+        $ids[] = $id;
+        return $this->save($this->cacheKey, $ids);
+    }
+    
+    /**
+     * Delete a cache id from the index of cache ids
+     *
+     * @param string $id 
+     * @return boolean TRUE if the entry was successfully removed from the cache, FALSE otherwise.
+     */
+    private function deleteCacheKey($id)
+    {
+        $ids = $this->getIds();
+        $key = array_search($id, $ids);
+        if ($key !== false) {
+            unset($ids[$key]);
+            return $this->save($this->cacheKey, $ids);
+        }
+        return false;
     }
 
     /**
