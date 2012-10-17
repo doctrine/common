@@ -150,7 +150,6 @@ class ClassLoader
      * Loads the given class or interface.
      *
      * @param string $className The name of the class to load.
-
      * @return boolean TRUE if the class has been successfully loaded, FALSE otherwise.
      */
     public function loadClass($className)
