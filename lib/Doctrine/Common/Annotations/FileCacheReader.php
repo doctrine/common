@@ -266,4 +266,16 @@ class FileCacheReader implements Reader
     {
         $this->loadedAnnotations = array();
     }
+
+    /**
+     * Proxy all methods to the underlying reader.
+     *
+     * @param string $method
+     * @param array $args
+     * @return mixed
+     */
+    public function __call($method, $args)
+    {
+        return call_user_func_array(array($this->reader, $method), $args);
+    }
 }
