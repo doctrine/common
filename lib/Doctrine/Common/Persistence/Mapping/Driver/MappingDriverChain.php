@@ -139,6 +139,18 @@ class MappingDriverChain implements MappingDriver
             }
         }
 
+        if (null !== $this->defaultDriver) {
+            $oid = spl_object_hash($this->defaultDriver);
+
+            if (!isset($driverClasses[$oid])) {
+                $driverClasses[$oid] = $this->defaultDriver->getAllClassNames();
+            }
+
+            foreach ($driverClasses[$oid] as $className) {
+                $classNames[$className] = true;
+            }
+        }
+
         return array_keys($classNames);
     }
 
