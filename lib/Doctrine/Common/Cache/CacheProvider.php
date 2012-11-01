@@ -29,6 +29,7 @@ namespace Doctrine\Common\Cache;
  * @author  Jonathan Wage <jonwage@gmail.com>
  * @author  Roman Borschel <roman@code-factory.org>
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * @author  Mitko Masarliev <mitko@masarliev.net>
  */
 abstract class CacheProvider implements Cache
 {
@@ -98,19 +99,19 @@ abstract class CacheProvider implements Cache
         return $saved;
     }
     
-     /**
+    /**
      * {@inheritdoc}
      */
     public function delete($id)
     {
         $deleted = $this->doDelete($this->getNamespacedId($id));
-        if($deleted){
+        if ($deleted){
             $this->deleteCacheKey($id);
         }
         return $deleted;
     }
     
-     /**
+    /**
      * Delete cache entries where the id matches a PHP regular expressions
      *
      * @param string $regex
@@ -122,8 +123,9 @@ abstract class CacheProvider implements Cache
         $ids = $this->getIds();
         foreach ($ids as $id) {
             if (preg_match($regex, $id)) {
-                $this->delete($id);
-                $deleted[] = $id;
+                if ($this->delete($id)){
+                    $deleted[] = $id;
+                }
             }
         }
         return $deleted;
@@ -141,8 +143,9 @@ abstract class CacheProvider implements Cache
         $ids = $this->getIds();
         foreach ($ids as $id) {
             if (preg_match('/^'.$prefix.'/', $id)) {
-                $this->delete($id);
-                $deleted[] = $id;
+                if ($this->delete($id)){
+                    $deleted[] = $id;
+                }
             }
         }
         return $deleted;
@@ -159,9 +162,10 @@ abstract class CacheProvider implements Cache
         $deleted = array();
         $ids = $this->getIds();
         foreach ($ids as $id) {
-            if (substr($id, -1 * strlen($suffix)) == $suffix) {
-                $this->delete($id);
-                $deleted[] = $id;
+            if (substr($id, -1 * strlen($suffix)) === $suffix) {
+                if ($this->delete($id)){
+                    $deleted[] = $id;
+                }
             }
         }
         return $deleted;
@@ -186,7 +190,7 @@ abstract class CacheProvider implements Cache
      */
     private function saveCacheKey($id, $lifeTime = 0){
         $ids = $this->getIds();
-        if(in_array($id, $ids)){
+        if (in_array($id, $ids)){
             return false;
         }
         $ids[] = $id;
