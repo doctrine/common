@@ -45,10 +45,7 @@ abstract class CacheProvider implements Cache
     private $namespaceVersion;
 
     /**
-     * Set the namespace to prefix all cache ids with.
-     *
-     * @param string $namespace
-     * @return void
+     * {@inheritdoc}
      */
     public function setNamespace($namespace)
     {
@@ -56,9 +53,7 @@ abstract class CacheProvider implements Cache
     }
 
     /**
-     * Retrieve the namespace that prefixes all cache ids.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getNamespace()
     {
@@ -106,9 +101,7 @@ abstract class CacheProvider implements Cache
     }
 
     /**
-     * Deletes all cache entries.
-     *
-     * @return boolean TRUE if the cache entries were successfully flushed, FALSE otherwise.
+     * {@inheritdoc}
      */
     public function flushAll()
     {
@@ -116,9 +109,7 @@ abstract class CacheProvider implements Cache
     }
 
     /**
-     * Delete all cache entries.
-     *
-     * @return boolean TRUE if the cache entries were successfully deleted, FALSE otherwise.
+     * {@inheritdoc}
      */
     public function deleteAll()
     {

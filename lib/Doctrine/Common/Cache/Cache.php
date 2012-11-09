@@ -42,6 +42,21 @@ interface Cache
     const STATS_MEMORY_AVAILIABLE   = 'memory_available';
 
     /**
+     * Set the namespace to prefix all cache ids with.
+     *
+     * @param string $namespace
+     * @return void
+     */
+    function setNamespace($namespace);
+
+    /**
+     * Retrieve the namespace that prefixes all cache ids.
+     *
+     * @return string
+     */
+    function getNamespace();
+
+    /**
      * Fetches an entry from the cache.
      *
      * @param string $id cache id The id of the cache entry to fetch.
@@ -74,6 +89,20 @@ interface Cache
      * @return boolean TRUE if the cache entry was successfully deleted, FALSE otherwise.
      */
     function delete($id);
+
+    /**
+     * Delete all cache entries.
+     *
+     * @return boolean TRUE if the cache entries were successfully deleted, FALSE otherwise.
+     */
+    function deleteAll();
+
+    /**
+     * Deletes all cache entries.
+     *
+     * @return boolean TRUE if the cache entries were successfully flushed, FALSE otherwise.
+     */
+    function flushAll();
 
     /**
      * Retrieves cached information from data store
