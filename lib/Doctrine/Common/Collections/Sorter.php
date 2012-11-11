@@ -55,8 +55,15 @@ class Sorter
      */
     private $resort = array();
     
-    public function __construct(Collection $collection) {
+        /**
+     * Boolean to indicate that the reorder should be ascending
+     * @var boolean
+     */
+    private $ascend;
+    
+    public function __construct(Collection $collection, $ascend = false) {
         $this->collection = $collection->toArray();
+        $this->ascend = $ascend;
     }
     
     public function sortBy(array $sortByValues)
@@ -227,7 +234,13 @@ class Sorter
         {
             return 0;
         }
-        return ($a_val > $b_val) ? 1 : -1;
+        
+        if($this->ascend == false)
+        {
+            return ($a_val > $b_val) ? 1 : -1;
+        }else{
+            return ($a_val < $b_val) ? 1 : -1;
+        }
     }
     
     /**

@@ -30,6 +30,39 @@ class SorterTest extends \Doctrine\Tests\DoctrineTestCase
     
     public function testMultiNumericalArray()
     {
+        $array = array();        
+        for($i = 0; $i < 1000; $i++)
+        {
+            $object = new \stdClass();
+            $object->firstValue = rand(1, 100);
+            $object->secondValue = rand(1, 100);
+            $object->thirdValue = rand(1, 100);
+            $array[] = $object;
+        }
+        
+        $collection = new ArrayCollection($array);
+
+        $collection->sort(array('firstValue', 'secondValue', 'thirdValue'));
+        
+        for($i = 1; $i < 1000; $i++)
+        {
+            
+            $previous = $collection->get($i - 1);
+            $current = $collection->get($i);
+            $this->assertGreaterThanOrEqual($previous->firstValue, $current->firstValue);
+            if($previous->firstValue == $current->firstValue)
+            {                
+                $this->assertGreaterThanOrEqual($previous->secondValue, $current->secondValue);
+                if($previous->thirdValue == $current->thirdValue)
+                {
+                    $this->assertGreaterThanOrEqual($previous->thirdValue, $current->thirdValue);
+                }
+            }
+        }
+    }
+    
+    public function testMultiNumericalArrayAscend()
+    {
         $array = array();
         for($i = 0; $i < 10; $i++)
         {
@@ -42,20 +75,20 @@ class SorterTest extends \Doctrine\Tests\DoctrineTestCase
         
         $collection = new ArrayCollection($array);
         
-        $collection->sort(array('firstValue', 'secondValue', 'thirdValue'));
+        $collection->sort(array('firstValue', 'secondValue', 'thirdValue'), true);
 
         for($i = 1; $i < 10; $i++)
         {
             
             $previous = $collection->get($i - 1);
             $current = $collection->get($i);
-            $this->assertGreaterThanOrEqual($previous->firstValue, $current->firstValue);
+            $this->assertLessThanOrEqual($previous->firstValue, $current->firstValue);
             if($previous->firstValue == $current->firstValue)
             {                
-                $this->assertGreaterThanOrEqual($previous->secondValue, $current->secondValue);
+                $this->assertLessThanOrEqual($previous->secondValue, $current->secondValue);
                 if($previous->thirdValue == $current->thirdValue)
                 {
-                    $this->assertGreaterThanOrEqual($previous->thirdValue, $current->thirdValue);
+                    $this->assertLessThanOrEqual($previous->thirdValue, $current->thirdValue);
                 }
             }
         }
