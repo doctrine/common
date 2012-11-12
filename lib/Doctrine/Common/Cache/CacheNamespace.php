@@ -48,9 +48,9 @@ class CacheNamespace implements Cache
      * @param string $namespace
      * @param Cache  $cache
      */
-    function __construct($namespace, Cache $cache)
+    public function __construct($namespace, Cache $cache)
     {
-        $this->namespace = $namespace;
+        $this->namespace = (string) $namespace;
         $this->cache = $cache;
     }
 
