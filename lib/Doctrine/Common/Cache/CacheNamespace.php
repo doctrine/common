@@ -59,7 +59,7 @@ class CacheNamespace implements Cache
      *
      * @return string
      */
-    function getNamespace()
+    public function getNamespace()
     {
         return $this->namespace;
     }
@@ -67,7 +67,7 @@ class CacheNamespace implements Cache
     /**
      * {@inheritdoc}
      */
-    function contains($id)
+    public function contains($id)
     {
         return $this->cache->contains($this->getNamespaceId($id));
     }
@@ -75,7 +75,7 @@ class CacheNamespace implements Cache
     /**
      * {@inheritdoc}
      */
-    function fetch($id)
+    public function fetch($id)
     {
         return $this->cache->fetch($this->getNamespaceId($id));
     }
@@ -83,7 +83,7 @@ class CacheNamespace implements Cache
     /**
      * {@inheritdoc}
      */
-    function save($id, $data, $lifeTime = 0)
+    public function save($id, $data, $lifeTime = 0)
     {
         return $this->cache->save(
             $this->getNamespaceId($id),
@@ -95,7 +95,7 @@ class CacheNamespace implements Cache
     /**
      * {@inheritdoc}
      */
-    function delete($id)
+    public function delete($id)
     {
         return $this->cache->delete($this->getNamespaceId($id));
     }
@@ -103,7 +103,7 @@ class CacheNamespace implements Cache
     /**
      * {@inheritdoc}
      */
-    function getStats()
+    public function getStats()
     {
         return $this->cache->getStats();
     }
@@ -113,7 +113,7 @@ class CacheNamespace implements Cache
      *
      * @return void
      */
-    function incrementNamespaceVersion()
+    public function incrementNamespaceVersion()
     {
         $version = $this->getNamespaceVersion();
         $version += 1;

@@ -7,7 +7,7 @@ use Doctrine\Common\Cache\ArrayCache;
 
 class CacheNamespaceTest extends \PHPUnit_Framework_TestCase
 {
-    function testKeysDoNotInterfere()
+    public function testKeysDoNotInterfere()
     {
         $cache = new ArrayCache;
 
@@ -19,7 +19,7 @@ class CacheNamespaceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('bar', $ns->fetch('foo'));
     }
 
-    function testIncrementVersionInvalidatesKeys()
+    public function testIncrementVersionInvalidatesKeys()
     {
         $cache = new ArrayCache;
 
