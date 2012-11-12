@@ -142,7 +142,7 @@ class CacheNamespace implements Cache
      */
     protected function getNamespaceCacheKey($namespace)
     {
-        return sprintf(self::NAMESPACE_CACHE_KEY, $namespace);
+        return sprintf(static::NAMESPACE_CACHE_KEY, $namespace);
     }
 
     protected function getNamespaceVersion()
