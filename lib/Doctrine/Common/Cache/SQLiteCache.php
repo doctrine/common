@@ -56,8 +56,9 @@ class SQLiteCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        $stmt = $this->db->prepare('SELECT COUNT(*) FROM doctrine_cache WHERE cache_key = :id');
+        $stmt = $this->db->prepare('SELECT COUNT(*) FROM doctrine_cache WHERE cache_key = :id AND (cache_expired_at = 0 OR cache_expired_at >= :date)');
         $stmt->bindParam('id', $id);
+        $stmt->bindValue('date', time());
 
         $data = $stmt->execute()->fetchArray(SQLITE3_NUM);
         return $data[0] > 0;
@@ -104,12 +105,17 @@ class SQLiteCache extends CacheProvider
     {
         $data = serialize($data);
 
-        $stmt = $this->db->prepare('INSERT INTO doctrine_cache (cache_key, cache_data, cache_expired_at) VALUES(:id, :data, :lifetime)');
-        $stmt->bindParam('id', $id);
+        $stmt = $this->db->prepare('UPDATE doctrine_cache SET cache_data = :data, cache_expired_at = :lifetime WHERE cache_key = :id');
         $stmt->bindParam('data', $data);
         $stmt->bindParam('lifetime', $lifeTime);
+        $stmt->bindParam('id', $id);
+        $stmt->execute();
 
-        return $stmt->execute();
+        if (!$this->db->changes()) {
+            return $this->createCacheEntry($id, $data, $lifeTime);
+        }
+
+        return true;
     }
 
     /**
@@ -120,6 +126,28 @@ class SQLiteCache extends CacheProvider
         return null;
     }
 
+    /**
+     * Create a cache entry
+     *
+     * @param string  $id       The cache key
+     * @param string  $data     The serialized data
+     * @param integer $lifeTime The lifetime
+     *
+     * @return boolean
+     */
+    private function createCacheEntry($id, $data, $lifeTime)
+    {
+        $stmt = $this->db->prepare('INSERT INTO doctrine_cache (cache_key, cache_data, cache_expired_at) VALUES (:id, :data, :lifetime)');
+        $stmt->bindParam('id', $id);
+        $stmt->bindParam('data', $data);
+        $stmt->bindParam('lifetime', $lifeTime);
+
+        return false !== $stmt->execute();
+    }
+
+    /**
+     * Initialize the sqlite table
+     */
     private function initDb()
     {
         $this->db->exec(<<<SQL
