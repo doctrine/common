@@ -38,8 +38,8 @@ interface Cache
     const STATS_HITS    = 'hits';
     const STATS_MISSES  = 'misses';
     const STATS_UPTIME  = 'uptime';
-    const STATS_MEMORY_USAGE        = 'memory_usage';
-    const STATS_MEMORY_AVAILIABLE   = 'memory_available';
+    const STATS_MEMORY_USAGE = 'memory_usage';
+    const STATS_MEMORY_AVAILABLE = 'memory_available';
 
     /**
      * Fetches an entry from the cache.
