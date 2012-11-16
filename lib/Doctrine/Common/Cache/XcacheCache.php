@@ -104,7 +104,7 @@ class XcacheCache extends CacheProvider
             Cache::STATS_MISSES => $info['misses'],
             Cache::STATS_UPTIME => null,
             Cache::STATS_MEMORY_USAGE       => $info['size'],
-            Cache::STATS_MEMORY_AVAILIABLE  => $info['avail'],
+            Cache::STATS_MEMORY_AVAILABLE  => $info['avail'],
         );
     }
 }
