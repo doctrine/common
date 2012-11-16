@@ -68,7 +68,7 @@ abstract class FileCache extends CacheProvider
 
     /**
      * Gets the cache directory.
-     * 
+     *
      * @return string
      */
     public function getDirectory()
@@ -78,7 +78,7 @@ abstract class FileCache extends CacheProvider
 
     /**
      * Gets the cache file extension.
-     * 
+     *
      * @return string
      */
     public function getExtension()
@@ -102,7 +102,13 @@ abstract class FileCache extends CacheProvider
      */
     protected function doDelete($id)
     {
-        return @unlink($this->getFilename($id));
+        $file = $this->getFilename($id);
+
+        if (is_file($file)) {
+            return unlink($file);
+        }
+
+        return false;
     }
 
     /**
@@ -116,7 +122,9 @@ abstract class FileCache extends CacheProvider
         $iterator = new \RegexIterator($iterator, $pattern);
 
         foreach ($iterator as $name => $file) {
-            @unlink($name);
+            if(is_file($name)) {
+                unlink($name);
+            }
         }
 
         return true;
