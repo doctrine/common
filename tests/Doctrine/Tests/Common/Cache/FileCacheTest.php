@@ -54,6 +54,35 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals($expected, $actual);
     }
 
+    public function testFilenameCollision()
+    {
+        $data['key:0']  = 'key0';
+        $data['key\0']  = 'key0';
+        $data['key/0']  = 'key0';
+        $data['key<0']  = 'key0';
+        $data['key>0']  = 'key0';
+        $data['key"0']  = 'key0';
+        $data['key*0']  = 'key0';
+        $data['key?0']  = 'key0';
+        $data['key|0']  = 'key0';
+
+        $paths  = array();
+        $cache  = $this->driver;
+        $method = new \ReflectionMethod($cache, 'getFilename');
+
+        $method->setAccessible(true);
+
+        foreach ($data as $key => $expected) {
+            $path   = $method->invoke($cache, $key);
+            $actual = pathinfo($path, PATHINFO_FILENAME);
+
+            $this->assertArrayNotHasKey($path, $paths);
+            $this->assertEquals($expected, $actual);
+
+            $paths[] = $path;
+        }
+    }
+
     public function testFilenameShouldCreateThePathWithFourSubDirectories()
     {
         $cache          = $this->driver;
