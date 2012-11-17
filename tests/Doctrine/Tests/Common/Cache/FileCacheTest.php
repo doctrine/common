@@ -76,7 +76,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
             $path   = $method->invoke($cache, $key);
             $actual = pathinfo($path, PATHINFO_FILENAME);
 
-            $this->assertArrayNotHasKey($path, $paths);
+            $this->assertNotContains($path, $paths);
             $this->assertEquals($expected, $actual);
 
             $paths[] = $path;
