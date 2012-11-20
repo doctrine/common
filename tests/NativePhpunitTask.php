@@ -124,7 +124,7 @@ class NativePhpunitTask extends Task
                 "failures (".$result->skippedCount()." skipped, ".$result->notImplementedCount()." not implemented)");
 
             // Hudson for example doesn't like the backslash in class names
-            if (file_exists($this->coverageClover)) {
+            if (is_file($this->coverageClover)) {
                 $this->log("Generated Clover Coverage XML to: ".$this->coverageClover);
                 $content = file_get_contents($this->coverageClover);
                 $content = str_replace("\\", ".", $content);
