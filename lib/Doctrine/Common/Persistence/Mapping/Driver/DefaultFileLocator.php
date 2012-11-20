@@ -109,7 +109,7 @@ class DefaultFileLocator implements FileLocator
 
         // Check whether file exists
         foreach ($this->paths as $path) {
-            if (file_exists($path . DIRECTORY_SEPARATOR . $fileName)) {
+            if (is_file($path . DIRECTORY_SEPARATOR . $fileName)) {
                 return $path . DIRECTORY_SEPARATOR . $fileName;
             }
         }
@@ -160,7 +160,7 @@ class DefaultFileLocator implements FileLocator
 
         // Check whether file exists
         foreach ((array) $this->paths as $path) {
-            if (file_exists($path . DIRECTORY_SEPARATOR . $fileName)) {
+            if (is_file($path . DIRECTORY_SEPARATOR . $fileName)) {
                 return true;
             }
         }

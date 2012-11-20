@@ -73,7 +73,7 @@ class Psr0FindFile implements ClassFinderInterface
         foreach ($this->prefixes as $prefix => $dirs) {
             if (0 === strpos($class, $prefix)) {
                 foreach ($dirs as $dir) {
-                    if (file_exists($dir . DIRECTORY_SEPARATOR . $classPath)) {
+                    if (is_file($dir . DIRECTORY_SEPARATOR . $classPath)) {
                         return $dir . DIRECTORY_SEPARATOR . $classPath;
                     }
                 }
