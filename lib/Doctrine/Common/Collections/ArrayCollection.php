@@ -496,5 +496,17 @@ class ArrayCollection implements Collection, Selectable
 
         return new static($filtered);
     }
+    
+    /**
+     * Reorder the elements by a series of methods to reorganise the elements.
+     *  
+     * @param array $sortBy An array of method names to regoraise by.
+     * @param boolean $ascend [Optional] True if the order should be ascending
+     */
+    public function sort(array $sortBy, $ascend = false)
+    {
+        $sorter = new Sorter($this, $ascend);
+        $this->_elements = $sorter->sortBy($sortBy);
+    }
 }
 

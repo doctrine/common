@@ -2,3 +2,5 @@ build/
 logs/
 reports/
 dist/
+/nbproject/private/
+/nbproject
