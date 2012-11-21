@@ -184,7 +184,7 @@ abstract class AnnotationDriver implements MappingDriver
                     new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS),
                     \RecursiveIteratorIterator::LEAVES_ONLY
                 ),
-                '/^.+' . str_replace('.', '\.', $this->fileExtension) . '$/i',
+                '/^.+' . preg_quote($this->fileExtension) . '$/i',
                 \RecursiveRegexIterator::GET_MATCH
             );
 
