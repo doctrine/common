@@ -36,12 +36,12 @@ class LifecycleEventArgs extends EventArgs
     /**
      * @var ObjectManager
      */
-    protected $objectManager;
+    private $objectManager;
 
     /**
      * @var object
      */
-    protected $object;
+    private $object;
 
     /**
      * Constructor
