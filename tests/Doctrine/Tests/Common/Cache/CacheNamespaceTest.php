@@ -1,6 +1,6 @@
 <?php
 
-namespace CHH\Silex\Test;
+namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\CacheNamespace;
 use Doctrine\Common\Cache\ArrayCache;
