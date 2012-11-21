@@ -27,6 +27,9 @@ namespace Doctrine\Common\Cache;
  */
 class CacheNamespace implements Cache
 {
+    /** @const Key to store the namespace's version */
+    const NAMESPACE_CACHE_KEY = "DoctrineCacheNamespaceVersion[%s]";
+
     /** @var \Doctrine\Common\Cache\Cache */
     protected $cache;
 
@@ -38,9 +41,6 @@ class CacheNamespace implements Cache
 
     /** @var int Current Namespace version */
     protected $namespaceVersion;
-
-    /** @const Key to store the namespace's version */
-    const NAMESPACE_CACHE_KEY = "DoctrineCacheNamespaceVersion[%s]";
 
     /**
      * Constructor
@@ -159,7 +159,7 @@ class CacheNamespace implements Cache
             $this->cache->save($namespaceCacheKey, $namespaceVersion);
         }
 
-        $this->namespaceVersion = $namespaceVersion;
+        $this->namespaceVersion = (int) $namespaceVersion;
 
         return $this->namespaceVersion;
     }
