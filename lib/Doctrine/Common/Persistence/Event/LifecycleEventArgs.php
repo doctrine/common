@@ -59,7 +59,7 @@ class LifecycleEventArgs extends EventArgs
      * Retrieve associated entity.
      * @deprecated
      *
-     * @return entity
+     * @return object
      */
     public function getEntity()
     {
