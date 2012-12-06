@@ -55,6 +55,33 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($cache->contains('test_key1'));
         $this->assertFalse($cache->contains('test_key2'));
     }
+    
+    public function testDeleteByRegex(){
+        $cache = $this->_getCacheDriver();
+        $cache->save('test_key1', '1');
+        $cache->save('test_key2', '2');
+        $cache->deleteByRegex('/key1/i');
+        $this->assertFalse($cache->contains('test_key1'));
+        $this->assertTrue($cache->contains('test_key2'));
+    }
+    
+    public function testDeleteByPrefix(){
+        $cache = $this->_getCacheDriver();
+        $cache->save('key1_test', '1');
+        $cache->save('key2_test', '2');
+        $cache->deleteByPrefix('key1');
+        $this->assertFalse($cache->contains('key1_test'));
+        $this->assertTrue($cache->contains('key2_test'));
+    }
+
+    public function testDeleteBySuffix(){
+        $cache = $this->_getCacheDriver();
+        $cache->save('test_key1', '1');
+        $cache->save('test_key2', '2');
+        $cache->deleteBySuffix('key1');
+        $this->assertFalse($cache->contains('test_key1'));
+        $this->assertTrue($cache->contains('test_key2'));
+    }
 
     public function testNamespace()
     {
