@@ -8,4 +8,6 @@ php:
   - 5.3
   - 5.4
 
-before_script: php ./bin/travis-setup.php $OPCODE_CACHE
+before_script:
+    - composer --prefer-source --dev install
+    - php ./bin/travis-setup.php $OPCODE_CACHE
