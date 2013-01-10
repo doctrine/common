@@ -21,6 +21,7 @@ namespace Doctrine\Common\Persistence\Mapping;
 
 use ReflectionClass;
 use ReflectionProperty;
+use Doctrine\Common\Reflection\RuntimePublicReflectionProperty;
 
 /**
  * PHP Runtime Reflection Service
@@ -30,10 +31,7 @@ use ReflectionProperty;
 class RuntimeReflectionService implements ReflectionService
 {
     /**
-     * Return an array of the parent classes (not interfaces) for the given class.
-     *
-     * @param string $class
-     * @return array
+     * {@inheritDoc}
      */
     public function getParentClasses($class)
     {
@@ -41,32 +39,27 @@ class RuntimeReflectionService implements ReflectionService
     }
 
     /**
-     * Return the shortname of a class.
-     *
-     * @param string $class
-     * @return string
+     * {@inheritDoc}
      */
     public function getClassShortName($class)
     {
-        $r = new ReflectionClass($class);
-        return $r->getShortName();
+        $reflectionClass = new ReflectionClass($class);
+
+        return $reflectionClass->getShortName();
     }
 
     /**
-     * @param string $class
-     * @return string
+     * {@inheritDoc}
      */
     public function getClassNamespace($class)
     {
-        $r = new ReflectionClass($class);
-        return $r->getNamespaceName();
+        $reflectionClass = new ReflectionClass($class);
+
+        return $reflectionClass->getNamespaceName();
     }
 
     /**
-     * Return a reflection class instance or null
-     *
-     * @param string $class
-     * @return ReflectionClass|null
+     * {@inheritDoc}
      */
     public function getClass($class)
     {
@@ -74,25 +67,23 @@ class RuntimeReflectionService implements ReflectionService
     }
 
     /**
-     * Return an accessible property (setAccessible(true)) or null.
-     *
-     * @param string $class
-     * @param string $property
-     * @return ReflectionProperty|null
+     * {@inheritDoc}
      */
     public function getAccessibleProperty($class, $property)
     {
-        $property = new ReflectionProperty($class, $property);
-        $property->setAccessible(true);
-        return $property;
+        $reflectionProperty = new ReflectionProperty($class, $property);
+
+        if ($reflectionProperty->isPublic()) {
+            $reflectionProperty = new RuntimePublicReflectionProperty($class, $property);
+        }
+
+        $reflectionProperty->setAccessible(true);
+
+        return $reflectionProperty;
     }
 
     /**
-     * Check if the class have a public method with the given name.
-     *
-     * @param mixed $class
-     * @param mixed $method
-     * @return bool
+     * {@inheritDoc}
      */
     public function hasPublicMethod($class, $method)
     {

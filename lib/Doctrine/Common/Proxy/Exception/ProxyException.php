@@ -1,5 +1,4 @@
 <?php
-
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -18,43 +17,15 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\Common\Persistence;
+namespace Doctrine\Common\Proxy\Exception;
 
 /**
- * Interface for proxy classes.
+ * Base exception interface for proxy exceptions
  *
- * @author Roman Borschel <roman@code-factory.org>
- * @since 2.2
+ * @link        www.doctrine-project.com
+ * @since       2.4
+ * @author      Marco Pivetta <ocramius@gmail.com>
  */
-interface Proxy
+interface ProxyException
 {
-    /**
-     * Marker for Proxy class names.
-     *
-     * @var string
-     */
-    const MARKER = '__CG__';
-
-    /**
-     * Length of the proxy marker
-     *
-     * @var integer
-     */
-    const MARKER_LENGTH = 6;
-
-    /**
-     * Initialize this proxy if its not yet initialized.
-     *
-     * Acts as a no-op if already initialized.
-     *
-     * @return void
-     */
-    public function __load();
-
-    /**
-     * Is this proxy initialized or not.
-     *
-     * @return bool
-     */
-    public function __isInitialized();
 }
