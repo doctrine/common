@@ -234,9 +234,13 @@ class ClassLoader
             } else if (is_string($loader) && $loader($className)) { // "MyClass::loadClass"
                 return true;
             }
+
+            if (class_exists($className, false) || interface_exists($className, false)) {
+                return true;
+            }
         }
 
-        return class_exists($className, false) || interface_exists($className, false);
+        return false;
     }
 
     /**

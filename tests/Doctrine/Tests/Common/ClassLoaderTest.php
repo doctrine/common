@@ -42,4 +42,23 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertNull(ClassLoader::getClassLoader('This\Class\Does\Not\Exist'));
         $cl->unregister();
     }
+
+    public function testClassExistsWithSilentAutoloader()
+    {
+        $test = $this;
+        $silentLoader = function ($className) use ($test) {
+            $test->assertSame('ClassLoaderTest\ClassE', $className);
+            require __DIR__ . '/ClassLoaderTest/ClassE.php';
+        };
+        $additionalLoader = function () use ($test) {
+            $test->fail('Should not call this loader, class was already loaded');
+        };
+
+        $this->assertFalse(ClassLoader::classExists('ClassLoaderTest\ClassE'));
+        spl_autoload_register($silentLoader);
+        spl_autoload_register($additionalLoader);
+        $this->assertTrue(ClassLoader::classExists('ClassLoaderTest\ClassE'));
+        spl_autoload_unregister($additionalLoader);
+        spl_autoload_unregister($silentLoader);
+    }
 }
