@@ -4,6 +4,7 @@ env:
   - OPCODE_CACHE=apc
 
 php:
+  - 5.3.3
   - 5.3
   - 5.4
 
