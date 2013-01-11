@@ -92,6 +92,10 @@ class ClosureExpressionVisitor extends ExpressionVisitor
 
         switch ($comparison->getOperator()) {
             case Comparison::EQ:
+                return function ($object) use ($field, $value) {
+                    return ClosureExpressionVisitor::getObjectFieldValue($object, $field) == $value;
+                };
+
             case Comparison::IS:
                 return function ($object) use ($field, $value) {
                     return ClosureExpressionVisitor::getObjectFieldValue($object, $field) === $value;
