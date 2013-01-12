@@ -17,7 +17,8 @@
         "doctrine/inflector": "1.*",
         "doctrine/cache": "1.*",
         "doctrine/collections": "1.*",
-        "doctrine/lexer": "1.*"
+        "doctrine/lexer": "1.*",
+        "doctrine/annotations": "1.*"
     },
     "autoload": {
         "psr-0": { "Doctrine\\Common\\": "lib/" }
