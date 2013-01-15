@@ -78,6 +78,7 @@ final class Debug
         }
         
         echo $dumpText;
+        ini_set('html_errors', 'Off');
     }
 
     /**
