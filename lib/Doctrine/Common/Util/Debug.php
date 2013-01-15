@@ -45,8 +45,9 @@ final class Debug
      * @param mixed $var
      * @param integer $maxDepth Maximum nesting level for object properties
      * @param boolean $stripTags Flag that indicate if output should strip HTML tags
+     * @param boolean $return returns the information rather than print it
      */
-    public static function dump($var, $maxDepth = 2, $stripTags = true)
+    public static function dump($var, $maxDepth = 2, $stripTags = true, $return = false)
     {
         ini_set('html_errors', 'On');
 
@@ -61,9 +62,15 @@ final class Debug
         $dump = ob_get_contents();
         ob_end_clean();
 
-        echo ($stripTags ? strip_tags(html_entity_decode($dump)) : $dump);
-
+        $dumpText =  ($stripTags ? strip_tags(html_entity_decode($dump)) : $dump);
         ini_set('html_errors', 'Off');
+        
+        if ($return) {
+            
+            return $dumpText;
+        }
+        
+        echo $dumpText;
     }
 
     /**
