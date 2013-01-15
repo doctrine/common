@@ -63,12 +63,14 @@ final class Debug
         ob_end_clean();
 
         $dumpText =  ($stripTags ? strip_tags(html_entity_decode($dump)) : $dump);
-        if($return){
-            ini_set('html_errors', 'Off');
+        ini_set('html_errors', 'Off');
+        
+        if ($return) {
+            
             return $dumpText;
         }
+        
         echo $dumpText;
-        ini_set('html_errors', 'Off');
     }
 
     /**
