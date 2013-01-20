@@ -17,22 +17,20 @@
  * <http://www.doctrine-project.org>.
  */
 
-
 namespace Doctrine\Common;
 
 /**
  * Comparable interface that allows to compare two value objects to each other for similarity.
  *
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.com
- * @since       2.2
- * @author      Benjamin Eberlei <kontakt@beberlei.de>
- * @author      Guilherme Blanco <guilhermeblanco@hotmail.com>
+ * @link   www.doctrine-project.org
+ * @since  2.2
+ * @author Benjamin Eberlei <kontakt@beberlei.de>
+ * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
 interface Comparable
 {
     /**
-     * Compare the current object to the passed $other.
+     * Compares the current object to the passed $other.
      *
      * Returns 0 if they are semantically equal, 1 if the other object
      * is less than the current one, or -1 if its more than the current one.
@@ -46,4 +44,3 @@ interface Comparable
      */
     public function compareTo($other);
 }
-

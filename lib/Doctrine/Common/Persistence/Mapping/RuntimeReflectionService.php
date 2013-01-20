@@ -25,7 +25,7 @@ use Doctrine\Common\Reflection\RuntimePublicReflectionProperty;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 
 /**
- * PHP Runtime Reflection Service
+ * PHP Runtime Reflection Service.
  *
  * @author Benjamin Eberlei <kontakt@beberlei.de>
  */
@@ -95,4 +95,3 @@ class RuntimeReflectionService implements ReflectionService
         return method_exists($class, $method) && is_callable(array($class, $method));
     }
 }
-

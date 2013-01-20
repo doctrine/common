@@ -22,11 +22,10 @@ namespace Doctrine\Common\Persistence\Mapping;
 /**
  * Contract for a Doctrine persistence layer ClassMetadata class to implement.
  *
- * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link    www.doctrine-project.org
- * @since   2.1
- * @author  Benjamin Eberlei <kontakt@beberlei.de>
- * @author  Jonathan Wage <jonwage@gmail.com>
+ * @link   www.doctrine-project.org
+ * @since  2.1
+ * @author Benjamin Eberlei <kontakt@beberlei.de>
+ * @author Jonathan Wage <jonwage@gmail.com>
  */
 interface ClassMetadataFactory
 {
@@ -42,6 +41,7 @@ interface ClassMetadataFactory
      * Gets the class metadata descriptor for a class.
      *
      * @param string $className The name of the class.
+     *
      * @return ClassMetadata
      */
     public function getMetadataFor($className);
@@ -50,6 +50,7 @@ interface ClassMetadataFactory
      * Checks whether the factory has the metadata for a class loaded already.
      *
      * @param string $className
+     *
      * @return boolean TRUE if the metadata of the class in question is already loaded, FALSE otherwise.
      */
     public function hasMetadataFor($className);
@@ -58,16 +59,17 @@ interface ClassMetadataFactory
      * Sets the metadata descriptor for a specific class.
      *
      * @param string $className
+     *
      * @param ClassMetadata $class
      */
     public function setMetadataFor($className, $class);
 
     /**
-     * Whether the class with the specified name should have its metadata loaded.
-     * This is only the case if it is either mapped directly or as a
-     * MappedSuperclass.
+     * Returns whether the class with the specified name should have its metadata loaded.
+     * This is only the case if it is either mapped directly or as a MappedSuperclass.
      *
      * @param string $className
+     *
      * @return boolean
      */
     public function isTransient($className);

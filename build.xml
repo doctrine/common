@@ -46,7 +46,7 @@
            <lead user="guilhermeblanco" name="Guilherme Blanco" email="guilhermeblanco@gmail.com" />
            <lead user="romanb" name="Roman Borschel" email="roman@code-factory.org" />
            <lead user="beberlei" name="Benjamin Eberlei" email="kontakt@beberlei.de" />
-           <license>LGPL</license>
+           <license>MIT</license>
            <version release="${pear.version}" api="${pear.version}" />
            <stability release="${pear.stability}" api="${pear.stability}" />
            <notes>-</notes>

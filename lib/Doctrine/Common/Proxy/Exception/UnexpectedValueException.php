@@ -22,11 +22,11 @@ namespace Doctrine\Common\Proxy\Exception;
 use UnexpectedValueException as BaseUnexpectedValueException;
 
 /**
- * Proxy Unexpected Value Exception
+ * Proxy Unexpected Value Exception.
  *
- * @link        www.doctrine-project.com
- * @since       2.4
- * @author      Marco Pivetta <ocramius@gmail.com>
+ * @link   www.doctrine-project.org
+ * @since  2.4
+ * @author Marco Pivetta <ocramius@gmail.com>
  */
 class UnexpectedValueException extends BaseUnexpectedValueException implements ProxyException
 {
@@ -39,9 +39,10 @@ class UnexpectedValueException extends BaseUnexpectedValueException implements P
     }
 
     /**
-     * @param string $className
-     * @param string $methodName
-     * @param string $parameterName
+     * @param string     $className
+     * @param string     $methodName
+     * @param string     $parameterName
+     * @param \Exception $previous
      *
      * @return self
      */

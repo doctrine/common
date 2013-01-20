@@ -15,14 +15,14 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the MIT license. For more information, see
  * <http://www.doctrine-project.org>.
-*/
+ */
 
 namespace Doctrine\Common\Persistence\Mapping\Driver;
 
 use Doctrine\Common\Persistence\Mapping\MappingException;
 
 /**
- * Locate the file that contains the metadata information for a given class name.
+ * Locates the file that contains the metadata information for a given class name.
  *
  * This behavior is independent of the actual content of the file. It just detects
  * the file which is responsible for the given class name.
@@ -42,7 +42,7 @@ class DefaultFileLocator implements FileLocator
     /**
      * The file extension of mapping documents.
      *
-     * @var string
+     * @var string|null
      */
     protected $fileExtension;
 
@@ -50,8 +50,8 @@ class DefaultFileLocator implements FileLocator
      * Initializes a new FileDriver that looks in the given path(s) for mapping
      * documents and operates in the specified operating mode.
      *
-     * @param string|array $paths One or multiple paths where mapping documents can be found.
-     * @param string|null $fileExtension
+     * @param string|array $paths         One or multiple paths where mapping documents can be found.
+     * @param string|null  $fileExtension The file extension of mapping documents.
      */
     public function __construct($paths, $fileExtension = null)
     {
@@ -60,9 +60,11 @@ class DefaultFileLocator implements FileLocator
     }
 
     /**
-     * Append lookup paths to metadata driver.
+     * Appends lookup paths to metadata driver.
      *
      * @param array $paths
+     *
+     * @return void
      */
     public function addPaths(array $paths)
     {
@@ -70,7 +72,7 @@ class DefaultFileLocator implements FileLocator
     }
 
     /**
-     * Retrieve the defined metadata lookup paths.
+     * Retrieves the defined metadata lookup paths.
      *
      * @return array
      */
@@ -80,9 +82,9 @@ class DefaultFileLocator implements FileLocator
     }
 
     /**
-     * Get the file extension used to look for mapping files under
+     * Gets the file extension used to look for mapping files under.
      *
-     * @return string
+     * @return string|null
      */
     public function getFileExtension()
     {
@@ -90,9 +92,10 @@ class DefaultFileLocator implements FileLocator
     }
 
     /**
-     * Set the file extension used to look for mapping files under
+     * Sets the file extension used to look for mapping files under.
      *
-     * @param string $fileExtension The file extension to set
+     * @param string|null $fileExtension The file extension to set.
+     *
      * @return void
      */
     public function setFileExtension($fileExtension)

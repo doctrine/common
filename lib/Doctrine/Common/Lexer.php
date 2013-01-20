@@ -27,10 +27,10 @@ use Doctrine\Common\Lexer\AbstractLexer;
  * Lexer moved into its own Component Doctrine\Common\Lexer. This class
  * only stays for being BC.
  *
- * @since   2.0
- * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author  Jonathan Wage <jonwage@gmail.com>
- * @author  Roman Borschel <roman@code-factory.org>
+ * @since  2.0
+ * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
+ * @author Jonathan Wage <jonwage@gmail.com>
+ * @author Roman Borschel <roman@code-factory.org>
  */
 abstract class Lexer extends AbstractLexer
 {

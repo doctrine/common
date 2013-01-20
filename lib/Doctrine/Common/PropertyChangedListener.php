@@ -1,7 +1,5 @@
 <?php
 /*
- *  $Id$
- *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -25,24 +23,23 @@ namespace Doctrine\Common;
  * Contract for classes that are potential listeners of a <tt>NotifyPropertyChanged</tt>
  * implementor.
  *
- * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link    www.doctrine-project.org
- * @since   2.0
- * @version $Revision: 3938 $
- * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author  Jonathan Wage <jonwage@gmail.com>
- * @author  Roman Borschel <roman@code-factory.org>
+ * @link   www.doctrine-project.org
+ * @since  2.0
+ * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
+ * @author Jonathan Wage <jonwage@gmail.com>
+ * @author Roman Borschel <roman@code-factory.org>
  */
 interface PropertyChangedListener
 {
     /**
      * Notifies the listener of a property change.
      *
-     * @param object $sender The object on which the property changed.
+     * @param object $sender       The object on which the property changed.
      * @param string $propertyName The name of the property that changed.
-     * @param mixed $oldValue The old value of the property that changed.
-     * @param mixed $newValue The new value of the property that changed.
+     * @param mixed  $oldValue     The old value of the property that changed.
+     * @param mixed  $newValue     The new value of the property that changed.
+     *
+     * @return void
      */
     function propertyChanged($sender, $propertyName, $oldValue, $newValue);
 }
-
