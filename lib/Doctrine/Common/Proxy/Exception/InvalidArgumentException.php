@@ -67,6 +67,11 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements P
         return new self('You must configure a proxy namespace');
     }
 
+    public static function unitializedProxyExpected()
+    {
+        return new self('Provided proxy must not be initialized.');
+    }
+
     /**
      * @param  mixed $callback
      *
