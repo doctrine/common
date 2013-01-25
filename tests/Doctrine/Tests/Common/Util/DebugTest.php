@@ -25,11 +25,16 @@ class DebugTest extends DoctrineTestCase
         $this->assertEquals( "DateTime", $var->__CLASS__ );
     }
 
-    public function testExportArrayObject()
+    public function testExportArrayTraversable()
     {
         $obj = new \ArrayObject(array('foobar'));
 
         $var = Debug::export($obj, 2);
+        $this->assertContains('foobar', $var->__STORAGE__);
+
+        $it = new \ArrayIterator(array('foobar'));
+
+        $var = Debug::export($it, 5);
         $this->assertContains('foobar', $var->__STORAGE__);
     }
 }
