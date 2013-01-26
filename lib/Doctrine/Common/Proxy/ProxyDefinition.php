@@ -30,27 +30,31 @@ class ProxyDefinition
      * @var string
      */
     public $proxyClassName;
+
     /**
      * @var array
      */
     public $identifierFields;
+
     /**
-     * @var array
+     * @var \ReflectionProperty[]
      */
     public $reflectionFields;
+
     /**
      * @var callable
      */
     public $initializer;
+
     /**
      * @var callable
      */
     public $cloner;
 
     /**
-     * @param string $proxyClassName
-     * @param array $identifierFields
-     * @param array $reflectionFields
+     * @param string   $proxyClassName
+     * @param array    $identifierFields
+     * @param array    $reflectionFields
      * @param callable $initializer
      * @param callable $cloner
      */
