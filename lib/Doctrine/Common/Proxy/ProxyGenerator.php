@@ -260,20 +260,17 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
         foreach ($placeholderMatches as $placeholder => $name) {
             $placeholders[$placeholder] = isset($this->placeholders[$name])
                 ? $this->placeholders[$name]
-                : array($this, "generate" . $name);
+                : array($this, 'generate' . $name);
         }
 
-        $placeholders = array_map(function ($value) use ($class) {
-            if (is_callable($value)) {
-                return call_user_func($value, $class);
+        foreach ($placeholders as & $placeholder) {
+            if (is_callable($placeholder)) {
+                $placeholder = call_user_func($placeholder, $class);
             }
+        }
 
-            return $value;
-        }, $placeholders);
-
-        $fileName  = $fileName ?: $this->getProxyFileName($class->getName());
-        $proxyCode = strtr($this->proxyClassTemplate, $placeholders);
-
+        $proxyCode       = strtr($this->proxyClassTemplate, $placeholders);
+        $fileName        = $fileName ?: $this->getProxyFileName($class->getName());
         $parentDirectory = dirname($fileName);
 
         if ( ! is_dir($parentDirectory) && (false === @mkdir($parentDirectory, 0775, true))) {
