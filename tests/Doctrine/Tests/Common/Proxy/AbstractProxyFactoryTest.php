@@ -5,10 +5,6 @@ namespace Doctrine\Tests\Common\Proxy;
 use Doctrine\Tests\DoctrineTestCase;
 use Doctrine\Common\Proxy\ProxyDefinition;
 
-/**
- * @covers \Doctrine\Common\Proxy\AbstractPRoxyFactory
- * @covers \Doctrine\Common\Proxy\ProxyDefinition
- */
 class AbstractProxyFactoryTest extends DoctrineTestCase
 {
     public function testGenerateProxyClasses()
@@ -16,17 +12,23 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
         $metadata       = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
         $proxyGenerator = $this->getMock('Doctrine\Common\Proxy\ProxyGenerator', array(), array(), '', false);
 
-        $proxyGenerator->expects($this->once())->method('getProxyFileName');
-        $proxyGenerator->expects($this->once())->method('generateProxyClass');
+        $proxyGenerator
+            ->expects($this->once())
+            ->method('getProxyFileName');
+        $proxyGenerator
+            ->expects($this->once())
+            ->method('generateProxyClass');
 
         $metadataFactory = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadataFactory');
-        $proxyFactory    = $this->getMock(
+        $proxyFactory    = $this->getMockForAbstractClass(
             'Doctrine\Common\Proxy\AbstractProxyFactory',
-            array('skipClass', 'createProxyDefinition'),
             array($proxyGenerator, $metadataFactory, true)
         );
 
-        $proxyFactory->expects($this->any())->method('skipClass')->will($this->returnValue(false));
+        $proxyFactory
+            ->expects($this->any())
+            ->method('skipClass')
+            ->will($this->returnValue(false));
 
         $generated = $proxyFactory->generateProxyClasses(array($metadata), sys_get_temp_dir());
 
@@ -41,15 +43,20 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
         $proxyGenerator  = $this->getMock('Doctrine\Common\Proxy\ProxyGenerator', array(), array(), '', false);
         $metadataFactory = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadataFactory');
 
-        $metadataFactory->expects($this->once())->method('getMetadataFor')->will($this->returnValue($metadata));
+        $metadataFactory
+            ->expects($this->once())
+            ->method('getMetadataFor')
+            ->will($this->returnValue($metadata));
 
-        $proxyFactory = $this->getMock(
+        $proxyFactory = $this->getMockForAbstractClass(
             'Doctrine\Common\Proxy\AbstractProxyFactory',
-            array('skipClass', 'createProxyDefinition'),
             array($proxyGenerator, $metadataFactory, true)
         );
 
-        $proxyFactory->expects($this->any())->method('createProxyDefinition')->will($this->returnValue($definition));
+        $proxyFactory
+            ->expects($this->any())
+            ->method('createProxyDefinition')
+            ->will($this->returnValue($definition));
 
         $generatedProxy = $proxyFactory->getProxy('Class', array('id' => 1));
 
@@ -64,38 +71,47 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
         $proxyGenerator  = $this->getMock('Doctrine\Common\Proxy\ProxyGenerator', array(), array(), '', false);
         $metadataFactory = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadataFactory');
 
-        $metadataFactory->expects($this->once())->method('getMetadataFor')->will($this->returnValue($metadata));
+        $metadataFactory
+            ->expects($this->once())
+            ->method('getMetadataFor')
+            ->will($this->returnValue($metadata));
 
-        $proxyFactory = $this->getMock(
+        $proxyFactory = $this->getMockForAbstractClass(
             'Doctrine\Common\Proxy\AbstractProxyFactory',
-            array('skipClass', 'createProxyDefinition'),
             array($proxyGenerator, $metadataFactory, true)
         );
 
-        $proxyFactory->expects($this->any())->method('createProxyDefinition')->will($this->returnValue($definition));
+        $proxyFactory
+            ->expects($this->any())
+            ->method('createProxyDefinition')
+            ->will($this->returnValue($definition));
 
-        $proxy->expects($this->once())->method('__isInitialized')->will($this->returnValue(false));
-        $proxy->expects($this->once())->method('__setInitializer');
-        $proxy->expects($this->once())->method('__setCloner');
+        $proxy
+            ->expects($this->once())
+            ->method('__isInitialized')
+            ->will($this->returnValue(false));
+        $proxy
+            ->expects($this->once())
+            ->method('__setInitializer');
+        $proxy
+            ->expects($this->once())
+            ->method('__setCloner');
 
         $proxyFactory->resetUninitializedProxy($proxy);
     }
 
     public function testDisallowsResettingInitializedProxy()
     {
-        $proxy           = $this->getMock('Doctrine\Common\Proxy\Proxy');
+        $proxyFactory = $this->getMockForAbstractClass('Doctrine\Common\Proxy\AbstractProxyFactory',  array(), '', false);
+        $proxy        = $this->getMock('Doctrine\Common\Proxy\Proxy');
 
-        $proxy->expects($this->any())->method('__isInitialized')->will($this->returnValue(true));
-
-        $proxyFactory = $this->getMock(
-            'Doctrine\Common\Proxy\AbstractProxyFactory',
-            array('skipClass', 'createProxyDefinition'),
-            array(),
-            '',
-            false
-        );
+        $proxy
+            ->expects($this->any())
+            ->method('__isInitialized')
+            ->will($this->returnValue(true));
 
         $this->setExpectedException('Doctrine\Common\Proxy\Exception\InvalidArgumentException');
+
         $proxyFactory->resetUninitializedProxy($proxy);
     }
 }

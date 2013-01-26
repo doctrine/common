@@ -75,7 +75,8 @@ abstract class AbstractProxyFactory
     public function getProxy($className, array $identifier)
     {
         $definition = isset($this->definitions[$className])
-            ? $this->definitions[$className] : $this->getProxyDefinition($className);
+            ? $this->definitions[$className]
+            : $this->getProxyDefinition($className);
         $fqcn       = $definition->proxyClassName;
         $proxy      = new $fqcn($definition->initializer, $definition->cloner);
 
@@ -132,7 +133,8 @@ abstract class AbstractProxyFactory
 
         $className  = ClassUtils::getClass($proxy);
         $definition = isset($this->definitions[$className])
-            ? $this->definitions[$className] : $this->getProxyDefinition($className);
+            ? $this->definitions[$className]
+            : $this->getProxyDefinition($className);
 
         $proxy->__setInitializer($definition->initializer);
         $proxy->__setCloner($definition->cloner);
@@ -147,12 +149,9 @@ abstract class AbstractProxyFactory
      */
     private function getProxyDefinition($className)
     {
-        if (isset($this->definitions[$className])) {
-            return $this->definitions[$className];
-        }
+        $classMetadata = $this->metadataFactory->getMetadataFor($className);
+        $className     = $classMetadata->getName(); // aliases and case sensitivity
 
-        $classMetadata                 = $this->metadataFactory->getMetadataFor($className);
-        $className                     = $classMetadata->getName(); // aliases and case sensitivity
         $this->definitions[$className] = $this->createProxyDefinition($className);
         $proxyClassName                = $this->definitions[$className]->proxyClassName;
 
