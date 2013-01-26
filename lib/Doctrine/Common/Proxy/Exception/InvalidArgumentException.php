@@ -19,6 +19,7 @@
 
 namespace Doctrine\Common\Proxy\Exception;
 
+use Doctrine\Common\Persistence\Proxy;
 use InvalidArgumentException as BaseInvalidArgumentException;
 
 /**
@@ -65,6 +66,14 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements P
     public static function proxyNamespaceRequired()
     {
         return new self('You must configure a proxy namespace');
+    }
+
+    /**
+     * @return self
+     */
+    public static function unitializedProxyExpected(Proxy $proxy)
+    {
+        return new self(sprintf('Provided proxy of type "%s" must not be initialized.', get_class($proxy)));
     }
 
     /**
