@@ -119,7 +119,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
         $this->parsed = true;
         $contents = file_get_contents($fileName);
         if ($this->classAnnotationOptimize) {
-            if (preg_match("/(\A.*)^\s+(abstract|final)?\s+class\s+$className\s+{/sm", $contents, $matches)) {
+            if (preg_match("/(\A.*)^\s+(abstract|final)?\s+class\s+{$this->className}\s+{/sm", $contents, $matches)) {
                 $contents = $matches[1];
             }
         }
