@@ -19,9 +19,9 @@
 
 namespace Doctrine\Common\Proxy;
 
+use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
 use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
 /**
@@ -32,9 +32,9 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 abstract class AbstractProxyFactory
 {
     /**
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var \Doctrine\Common\Persistence\Mapping\ClassMetadataFactory
      */
-    private $objectManager;
+    private $metadataFactory;
 
     /**
      * @var \Doctrine\Common\Proxy\ProxyGenerator the proxy generator responsible for creating the proxy classes/files.
@@ -47,19 +47,20 @@ abstract class AbstractProxyFactory
     private $autoGenerate;
 
     /**
-     * @var array
+     * @var \Doctrine\Common\Proxy\ProxyDefinition[]
      */
     private $definitions = array();
 
     /**
-     * @param ProxyGenerator $proxyGenerator
-     * @param ObjectManager $objectManager
+     * @param \Doctrine\Common\Proxy\ProxyGenerator                     $proxyGenerator
+     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadataFactory $metadataFactory
+     * @param bool                                                      $autoGenerate
      */
-    public function __construct(ProxyGenerator $proxyGenerator, ObjectManager $objectManager, $autoGenerate)
+    public function __construct(ProxyGenerator $proxyGenerator, ClassMetadataFactory $metadataFactory, $autoGenerate)
     {
-        $this->proxyGenerator = $proxyGenerator;
-        $this->objectManager  = $objectManager;
-        $this->autoGenerate   = $autoGenerate;
+        $this->proxyGenerator  = $proxyGenerator;
+        $this->metadataFactory = $metadataFactory;
+        $this->autoGenerate    = $autoGenerate;
     }
 
     /**
@@ -67,13 +68,14 @@ abstract class AbstractProxyFactory
      * the given identifier.
      *
      * @param  string $className
-     * @param  mixed  $identifier
+     * @param  array  $identifier
      *
      * @return \Doctrine\Common\Proxy\Proxy
      */
-    public function getProxy($className, $identifier)
+    public function getProxy($className, array $identifier)
     {
-        $definition = $this->getProxyDefinition($className);
+        $definition = isset($this->definitions[$className])
+            ? $this->definitions[$className] : $this->getProxyDefinition($className);
         $fqcn       = $definition->proxyClassName;
         $proxy      = new $fqcn($definition->initializer, $definition->cloner);
 
@@ -99,7 +101,6 @@ abstract class AbstractProxyFactory
         $generated = 0;
 
         foreach ($classes as $class) {
-            /* @var $class \Doctrine\Common\Persistence\Mapping\ClassMetadata */
             if ($this->skipClass($class)) {
                 continue;
             }
@@ -126,11 +127,12 @@ abstract class AbstractProxyFactory
     public function resetUninitializedProxy(Proxy $proxy)
     {
         if ($proxy->__isInitialized()) {
-            throw InvalidArgumentException::unitializedProxyExpected();
+            throw InvalidArgumentException::unitializedProxyExpected($proxy);
         }
 
         $className  = ClassUtils::getClass($proxy);
-        $definition = $this->getProxyDefinition($className);
+        $definition = isset($this->definitions[$className])
+            ? $this->definitions[$className] : $this->getProxyDefinition($className);
 
         $proxy->__setInitializer($definition->initializer);
         $proxy->__setCloner($definition->cloner);
@@ -145,23 +147,23 @@ abstract class AbstractProxyFactory
      */
     private function getProxyDefinition($className)
     {
-        if ( ! isset($this->definitions[$className])) {
-            $classMetadata = $this->objectManager->getClassMetadata($className);
-            $className     = $classMetadata->getName(); // make sure case-sensitivy is correct
+        if (isset($this->definitions[$className])) {
+            return $this->definitions[$className];
+        }
 
-            $this->definitions[$className] = $this->createProxyDefinition($className);
+        $classMetadata                 = $this->metadataFactory->getMetadataFor($className);
+        $className                     = $classMetadata->getName(); // aliases and case sensitivity
+        $this->definitions[$className] = $this->createProxyDefinition($className);
+        $proxyClassName                = $this->definitions[$className]->proxyClassName;
 
-            $proxyClassName = $this->definitions[$className]->proxyClassName;
+        if ( ! class_exists($proxyClassName, false)) {
+            $fileName  = $this->proxyGenerator->getProxyFileName($className);
 
-            if ( ! class_exists($proxyClassName, false)) {
-                $fileName  = $this->proxyGenerator->getProxyFileName($className);
-
-                if ($this->autoGenerate) {
-                    $this->proxyGenerator->generateProxyClass($classMetadata);
-                }
-
-                require $fileName;
+            if ($this->autoGenerate) {
+                $this->proxyGenerator->generateProxyClass($classMetadata);
             }
+
+            require $fileName;
         }
 
         return $this->definitions[$className];
