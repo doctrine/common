@@ -426,7 +426,7 @@ EOT;
             $magicGet .= <<<'EOT'
         $this->__initializer__ && $this->__initializer__->__invoke($this, '__get', array($name));
 
-        return parent::__get($name)
+        return parent::__get($name);
 
 EOT;
         } else {
@@ -487,7 +487,7 @@ EOT;
             $magicSet .= <<<'EOT'
         $this->__initializer__ && $this->__initializer__->__invoke($this, '__set', array($name, $value));
 
-        return parent::__set(\$name, \$value)
+        return parent::__set($name, $value);
 EOT;
         } else {
             $magicSet .= "        \$this->\$name = \$value;";
