@@ -542,7 +542,7 @@ EOT;
             $magicIsset .= <<<'EOT'
         $this->__initializer__ && $this->__initializer__->__invoke($this, '__isset', array($name));
 
-        return parent::__isset($name)
+        return parent::__isset($name);
 
 EOT;
         } else {
