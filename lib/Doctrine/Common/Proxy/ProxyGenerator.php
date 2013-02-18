@@ -542,7 +542,7 @@ EOT;
             $magicIsset .= <<<'EOT'
         $this->__initializer__ && $this->__initializer__->__invoke($this, '__isset', array($name));
 
-        return parent::__isset($name)
+        return parent::__isset($name);
 
 EOT;
         } else {
@@ -683,7 +683,7 @@ EOT;
     {
         $hasParentClone  = $class->getReflectionClass()->hasMethod('__clone');
         $inheritDoc      = $hasParentClone ? '{@inheritDoc}' : '';
-        $callParentClone = $hasParentClone ? "\n        parent::__clone();" : '';
+        $callParentClone = $hasParentClone ? "\n        parent::__clone();\n" : '';
 
         return <<<EOT
     /**
