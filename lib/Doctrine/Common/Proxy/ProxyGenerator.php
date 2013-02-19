@@ -683,7 +683,7 @@ EOT;
     {
         $hasParentClone  = $class->getReflectionClass()->hasMethod('__clone');
         $inheritDoc      = $hasParentClone ? '{@inheritDoc}' : '';
-        $callParentClone = $hasParentClone ? "\n        parent::__clone();" : '';
+        $callParentClone = $hasParentClone ? "\n        parent::__clone();\n" : '';
 
         return <<<EOT
     /**
