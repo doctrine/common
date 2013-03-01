@@ -173,6 +173,7 @@ abstract class AnnotationDriver implements MappingDriver
 
         $classes = array();
         $includedFiles = array();
+        $beforeDeclaration = get_declared_classes();
 
         foreach ($this->paths as $path) {
             if ( ! is_dir($path)) {
@@ -197,12 +198,13 @@ abstract class AnnotationDriver implements MappingDriver
             }
         }
 
-        $declared = get_declared_classes();
+        $afterDeclaration = get_declared_classes();
+        $declared = array_diff($afterDeclaration, $beforeDeclaration);
 
         foreach ($declared as $className) {
             $rc = new \ReflectionClass($className);
             $sourceFile = $rc->getFileName();
-            if (in_array($sourceFile, $includedFiles) && ! $this->isTransient($className)) {
+            if (in_array($sourceFile, $includedFiles) && !$this->isTransient($className)) {
                 $classes[] = $className;
             }
         }
