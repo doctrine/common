@@ -35,11 +35,26 @@ namespace Doctrine\Common\Cache;
 class ApcCache extends CacheProvider
 {
     /**
+     * @var string prefix
+     */
+    protected $prefix;
+
+    /**
+     * @param string $prefix Optional prefix.
+     */
+    function __construct($prefix = '')
+    {
+        $this->prefix = $prefix;
+
+        parent::__construct();
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function doFetch($id)
     {
-        return apc_fetch($id);
+        return apc_fetch($this->prefix . $id);
     }
 
     /**
@@ -47,7 +62,7 @@ class ApcCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return apc_exists($id);
+        return apc_exists($this->prefix . $id);
     }
 
     /**
@@ -55,7 +70,7 @@ class ApcCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return (bool) apc_store($id, $data, (int) $lifeTime);
+        return (bool) apc_store($this->prefix . $id, $data, (int) $lifeTime);
     }
 
     /**
@@ -63,7 +78,7 @@ class ApcCache extends CacheProvider
      */
     protected function doDelete($id)
     {
-        return apc_delete($id);
+        return apc_delete($this->prefix . $id);
     }
 
     /**
