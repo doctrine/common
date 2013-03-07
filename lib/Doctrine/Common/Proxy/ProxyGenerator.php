@@ -772,6 +772,8 @@ EOT;
                     $parameterString .= '\\' . $paramClass->getName() . ' ';
                 } elseif ($param->isArray()) {
                     $parameterString .= 'array ';
+                } elseif (method_exists($param, 'isCallable') && $param->isCallable()) {
+                    $parameterString .= 'callable ';
                 }
 
                 if ($param->isPassedByReference()) {

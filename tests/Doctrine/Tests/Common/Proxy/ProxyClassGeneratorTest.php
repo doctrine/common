@@ -124,6 +124,10 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
 
     public function testClassWithCallableTypeHintOnProxiedMethod()
     {
+        if (PHP_VERSION_ID < 50400) {
+            $this->markTestSkipped('`callable` is only supported in PHP >=5.4.0');
+        }
+
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\CallableTypeHintClass', false)) {
             $metadata       = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
             $reflClass      = new ReflectionClass('Doctrine\Tests\Common\Proxy\CallableTypeHintClass');
