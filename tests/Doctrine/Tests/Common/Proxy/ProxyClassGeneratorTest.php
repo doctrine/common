@@ -122,6 +122,26 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'parent::__sleep()'));
     }
 
+    public function testClassWithCallableTypeHintOnProxiedMethod()
+    {
+        if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\CallableTypeHintClass', false)) {
+            $metadata       = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+            $reflClass      = new ReflectionClass('Doctrine\Tests\Common\Proxy\CallableTypeHintClass');
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
+
+            $metadata->expects($this->any())->method('getReflectionClass')->will($this->returnValue($reflClass));
+            $metadata->expects($this->any())->method('getIdentifierFieldNames')->will($this->returnValue(array('id')));
+            $metadata->expects($this->any())->method('getName')->will($this->returnValue($reflClass->getName()));
+
+            $proxyGenerator->generateProxyClass($metadata);
+            require_once $proxyGenerator->getProxyFileName($metadata->getName());
+        }
+
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyCallableTypeHintClass.php');
+
+        $this->assertEquals(1, substr_count($classCode, 'call(callable $foo)'));
+    }
+
     public function testClassWithInvalidTypeHintOnProxiedMethod()
     {
         $className = 'Doctrine\Tests\Common\Proxy\InvalidTypeHintClass';
