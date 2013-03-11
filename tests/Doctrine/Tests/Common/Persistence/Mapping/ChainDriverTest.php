@@ -51,7 +51,7 @@ class DriverChainTest extends DoctrineTestCase
     public function testGatherAllClassNames()
     {
         $className = 'Doctrine\Tests\Common\Persistence\Mapping\DriverChainEntity';
-        $classMetadata = $this->getMock('Doctrine\Common\Peristence\ClassMetadata');
+        $classMetadata = $this->getMock('Doctrine\Common\Persistence\ClassMetadata');
 
         $chain = new MappingDriverChain();
 
@@ -93,7 +93,7 @@ class DriverChainTest extends DoctrineTestCase
     public function testDefaultDriver()
     {
         $companyDriver      = $this->getMock('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver');
-        $dafaultDriver      = $this->getMock('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver');
+        $defaultDriver      = $this->getMock('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver');
         $entityClassName    = 'Doctrine\Tests\ORM\Mapping\DriverChainEntity';
         $managerClassName   = 'Doctrine\Tests\Models\Company\CompanyManager';
         $chain              = new MappingDriverChain();
@@ -105,19 +105,19 @@ class DriverChainTest extends DoctrineTestCase
             ->with($this->equalTo($managerClassName))
             ->will($this->returnValue(false));
 
-        $dafaultDriver->expects($this->never())
+        $defaultDriver->expects($this->never())
             ->method('loadMetadataForClass');
-        $dafaultDriver->expects($this->once())
+        $defaultDriver->expects($this->once())
             ->method('isTransient')
             ->with($this->equalTo($entityClassName))
             ->will($this->returnValue(true));
 
         $this->assertNull($chain->getDefaultDriver());
 
-        $chain->setDefaultDriver($dafaultDriver);
+        $chain->setDefaultDriver($defaultDriver);
         $chain->addDriver($companyDriver, 'Doctrine\Tests\Models\Company');
 
-        $this->assertSame($dafaultDriver, $chain->getDefaultDriver());
+        $this->assertSame($defaultDriver, $chain->getDefaultDriver());
 
         $this->assertTrue($chain->isTransient($entityClassName));
         $this->assertFalse($chain->isTransient($managerClassName));

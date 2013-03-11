@@ -84,7 +84,7 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertSame($parent, $this->object->getParent($parent));
     }
 
-    public function testSetInvalidToOneAssocation()
+    public function testSetInvalidToOneAssociation()
     {
         $parent = new \stdClass();
 
@@ -100,7 +100,7 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertNull($this->object->getParent());
     }
 
-    public function testAddToManyAssocation()
+    public function testAddToManyAssociation()
     {
         $child = new TestObject();
         $this->object->addChildren($child);
@@ -114,7 +114,7 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals(2, count($this->object->getChildren()));
     }
 
-    public function testAddInvalidToManyAssocation()
+    public function testAddInvalidToManyAssociation()
     {
         $this->setExpectedException('InvalidArgumentException');
         $this->object->addChildren(new \stdClass());
