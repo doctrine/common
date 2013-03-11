@@ -10,5 +10,5 @@ php:
   - 5.5
 
 before_script:
-    - composer --prefer-source --dev install
+    - composer --prefer-source install
     - php ./bin/travis-setup.php $OPCODE_CACHE
