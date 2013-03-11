@@ -38,7 +38,7 @@ use Doctrine\Common\Collections\Collection;
  *    This is either done on `postLoad` of an object or by accessing the global object manager.
  * 3. There are no hooks for setters/getters. Just implement the method yourself instead of relying on __call().
  * 4. Slower than handcoded implementations: An average of 7 method calls per access to a field and 11 for an association.
- * 5. Only the inverse side associations get autoset on the owning side aswell. Setting objects on the owning side
+ * 5. Only the inverse side associations get autoset on the owning side as well. Setting objects on the owning side
  *    will not set the inverse side associations.
  *
  * @example
@@ -160,7 +160,7 @@ abstract class PersistentObject implements ObjectManagerAware
      */
     private function completeOwningSide($field, $targetClass, $targetObject)
     {
-        // add this object on the owning side aswell, for obvious infinite recursion
+        // add this object on the owning side as well, for obvious infinite recursion
         // reasons this is only done when called on the inverse side.
         if ($this->cm->isAssociationInverseSide($field)) {
             $mappedByField = $this->cm->getAssociationMappedByTargetField($field);
