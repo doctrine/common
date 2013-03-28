@@ -276,7 +276,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
             return;
         }
 
-        $proxyCode = '<?php ' . $proxyCode;
+        $proxyCode = '<?php' . PHP_EOL . PHP_EOL . $proxyCode;
 
         $fileName        = $fileName ?: $this->getProxyFileName($class->getName());
         $parentDirectory = dirname($fileName);
