@@ -185,9 +185,14 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
 
     public function testEvalProxy()
     {
-        $this->proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy2', true);
+        $metadata       = new EvalTestClassMetadata();
+        $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'ProxyEval', true);
 
-        $this->proxyGenerator->generateProxyClass($this->metadata, null, true);
-        $this->assertTrue(class_exists('Doctrine\Tests\Common\ProxyProxy2\__CG__\Doctrine\Tests\Common\Proxy\LazyLoadableObject'));
+        $this->assertFileNotExists($proxyGenerator->getProxyFileName($metadata->getName()));
+
+        $proxyGenerator->generateProxyClass($metadata, null, true);
+
+        $this->assertFileNotExists($proxyGenerator->getProxyFileName($metadata->getName()));
+        $this->assertTrue(class_exists('Doctrine\Tests\Common\ProxyProxyEval\__CG__\Doctrine\Tests\Common\Proxy\EvalTestClass'));
     }
 }
