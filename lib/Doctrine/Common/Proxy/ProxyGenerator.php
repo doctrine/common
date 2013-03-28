@@ -60,8 +60,7 @@ class ProxyGenerator
     /**
      * @var string template used as a blueprint to generate proxies
      */
-    protected $proxyClassTemplate = '<?php
-
+    protected $proxyClassTemplate = '
 namespace <namespace>;
 
 /**
@@ -245,12 +244,13 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     /**
      * Generates a proxy class file.
      *
-     * @param  \Doctrine\Common\Persistence\Mapping\ClassMetadata  $class    Metadata for the original class
-     * @param  string         $fileName Filename (full path) for the generated class
+     * @param  \Doctrine\Common\Persistence\Mapping\ClassMetadata $class    Metadata for the original class
+     * @param  string                                             $fileName Filename (full path) for the generated class
+     * @param  boolean                                            $eval     If true, eval the code rather than write it to disk
      *
      * @throws UnexpectedValueException
      */
-    public function generateProxyClass(ClassMetadata $class, $fileName = null)
+    public function generateProxyClass(ClassMetadata $class, $fileName = null, $eval = false)
     {
         preg_match_all('(<([a-zA-Z]+)>)', $this->proxyClassTemplate, $placeholderMatches);
 
@@ -269,7 +269,15 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
             }
         }
 
-        $proxyCode       = strtr($this->proxyClassTemplate, $placeholders);
+        $proxyCode = strtr($this->proxyClassTemplate, $placeholders);
+
+        if ($eval) {
+            eval($proxyCode);
+            return;
+        }
+
+        $proxyCode = '<?php ' . $proxyCode;
+
         $fileName        = $fileName ?: $this->getProxyFileName($class->getName());
         $parentDirectory = dirname($fileName);
 
