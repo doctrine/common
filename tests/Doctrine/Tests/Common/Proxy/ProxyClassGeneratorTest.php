@@ -113,8 +113,8 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
             $metadata->expects($this->any())->method('getIdentifierFieldNames')->will($this->returnValue(array('id')));
             $metadata->expects($this->any())->method('getName')->will($this->returnValue($reflClass->getName()));
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
-                $proxyGenerator->generateProxyClass($metadata);
-                require_once $proxyGenerator->getProxyFileName($metadata->getName());
+            $proxyGenerator->generateProxyClass($metadata);
+            require_once $proxyGenerator->getProxyFileName($metadata->getName());
         }
 
         $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxySleepClass.php');
