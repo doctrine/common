@@ -1,0 +1,8 @@
+/bin export-ignore
+/tests export-ignore
+phpunit.xml.dist export-ignore
+build.properties export-ignore
+build.xml export-ignore
+.gitignore export-ignore
+.gitmodules export-ignore
+.travis.yml export-ignore
