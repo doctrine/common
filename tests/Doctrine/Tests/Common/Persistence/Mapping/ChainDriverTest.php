@@ -122,6 +122,28 @@ class DriverChainTest extends DoctrineTestCase
         $this->assertTrue($chain->isTransient($entityClassName));
         $this->assertFalse($chain->isTransient($managerClassName));
     }
+
+    public function testDefaultDriverGetAllClassNames()
+    {
+        $companyDriver = $this->getMock('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver');
+        $defaultDriver = $this->getMock('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver');
+        $chain         = new MappingDriverChain();
+
+        $companyDriver->expects($this->once())
+            ->method('getAllClassNames')
+            ->will($this->returnValue(array('Doctrine\Tests\Models\Company\Foo')));
+
+        $defaultDriver->expects($this->once())
+            ->method('getAllClassNames')
+            ->will($this->returnValue(array('Other\Class')));
+
+        $chain->setDefaultDriver($defaultDriver);
+        $chain->addDriver($companyDriver, 'Doctrine\Tests\Models\Company');
+
+        $classNames = $chain->getAllClassNames();
+
+        $this->assertEquals(array('Doctrine\Tests\Models\Company\Foo', 'Other\Class'), $classNames);
+    }
 }
 
 class DriverChainEntity
