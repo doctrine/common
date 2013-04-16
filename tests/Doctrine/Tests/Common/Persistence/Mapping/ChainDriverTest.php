@@ -131,16 +131,18 @@ class DriverChainTest extends DoctrineTestCase
 
         $companyDriver->expects($this->once())
             ->method('getAllClassNames')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue(array('Doctrine\Tests\Models\Company\Foo')));
 
         $defaultDriver->expects($this->once())
             ->method('getAllClassNames')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue(array('Other\Class')));
 
         $chain->setDefaultDriver($defaultDriver);
         $chain->addDriver($companyDriver, 'Doctrine\Tests\Models\Company');
 
-        $chain->getAllClassNames();
+        $classNames = $chain->getAllClassNames();
+
+        $this->assertEquals(array('Doctrine\Tests\Models\Company\Foo', 'Other\Class'), $classNames);
     }
 }
 
