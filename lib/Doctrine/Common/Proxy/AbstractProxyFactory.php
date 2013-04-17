@@ -156,13 +156,14 @@ abstract class AbstractProxyFactory
         $proxyClassName                = $this->definitions[$className]->proxyClassName;
 
         if ( ! class_exists($proxyClassName, false)) {
-            $fileName  = $this->proxyGenerator->getProxyFileName($className);
 
             if ($this->autoGenerate) {
-                $this->proxyGenerator->generateProxyClass($classMetadata);
+                $this->proxyGenerator->generateProxyClass($classMetadata, null, true);
+            } else {
+                $fileName = $this->proxyGenerator->getProxyFileName($className);
+                require $fileName;
             }
 
-            require $fileName;
         }
 
         return $this->definitions[$className];

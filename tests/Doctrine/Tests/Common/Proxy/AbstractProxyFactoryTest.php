@@ -17,7 +17,8 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
             ->method('getProxyFileName');
         $proxyGenerator
             ->expects($this->once())
-            ->method('generateProxyClass');
+            ->method('generateProxyClass')
+            ->with($metadata, null, false);
 
         $metadataFactory = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadataFactory');
         $proxyFactory    = $this->getMockForAbstractClass(
@@ -61,6 +62,39 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
         $generatedProxy = $proxyFactory->getProxy('Class', array('id' => 1));
 
         $this->assertInstanceOf(get_class($proxy), $generatedProxy);
+    }
+
+    public function testAutoGenerateProxyClass()
+    {
+        $className       = 'Doctrine\Tests\Common\Proxy\AbstractFactoryProxyClass';
+        $metadata        = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $definition      = new ProxyDefinition($className, array(), array(), null, null);
+        $proxyGenerator  = $this->getMock('Doctrine\Common\Proxy\ProxyGenerator', array(), array(), '', false);
+        $metadataFactory = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadataFactory');
+
+        $metadataFactory
+            ->expects($this->once())
+            ->method('getMetadataFor')
+            ->will($this->returnValue($metadata));
+
+        $proxyFactory = $this->getMockForAbstractClass(
+            'Doctrine\Common\Proxy\AbstractProxyFactory',
+            array($proxyGenerator, $metadataFactory, true)
+        );
+
+        $proxyFactory
+            ->expects($this->any())
+            ->method('createProxyDefinition')
+            ->will($this->returnValue($definition));
+
+        $proxyGenerator
+            ->expects($this->once())
+            ->method('generateProxyClass')
+            ->with($metadata, null, true);
+
+        $generatedProxy = $proxyFactory->getProxy('Class', array('id' => 1));
+
+        $this->assertInstanceOf($className, $generatedProxy);
     }
 
     public function testResetUnitializedProxy()
