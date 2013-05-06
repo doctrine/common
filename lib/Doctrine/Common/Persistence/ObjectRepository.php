@@ -36,14 +36,14 @@ interface ObjectRepository
      * @param int $id The identifier.
      * @return object The object.
      */
-    function find($id);
+    public function find($id);
 
     /**
      * Finds all objects in the repository.
      *
      * @return mixed The objects.
      */
-    function findAll();
+    public function findAll();
 
     /**
      * Finds objects by a set of criteria.
@@ -59,7 +59,7 @@ interface ObjectRepository
      * @param int|null $offset
      * @return mixed The objects.
      */
-    function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null);
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null);
 
     /**
      * Finds a single object by a set of criteria.
@@ -67,12 +67,12 @@ interface ObjectRepository
      * @param array $criteria
      * @return object The object.
      */
-    function findOneBy(array $criteria);
+    public function findOneBy(array $criteria);
 
     /**
      * Returns the class name of the object managed by the repository
      *
      * @return string
      */
-    function getClassName();
+    public function getClassName();
 }
