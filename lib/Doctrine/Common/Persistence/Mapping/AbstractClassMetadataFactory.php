@@ -272,7 +272,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
      */
     protected function loadMetadata($name)
     {
-        if (!class_exists($name)) {
+        if ( !class_exists($name) ) {
             throw new \RuntimeException(
                 sprintf('Failed to load metadata for class "%s" because class does not exists.', $name)
             );
