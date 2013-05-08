@@ -83,4 +83,14 @@ class MappingException extends \Exception
     {
         return new self("Invalid mapping file '$fileName' for class '$entityName'.");
     }
+
+    /**
+     * @param string $className
+     *
+     * @return \Doctrine\Common\Persistence\Mapping\MappingException
+     */
+    public static function nonExistingClass($className)
+    {
+        return new self("Class '$className' does not exists");
+    }
 }

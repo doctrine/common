@@ -19,8 +19,9 @@
 
 namespace Doctrine\Common\Persistence\Mapping;
 
-use Doctrine\Common\Cache\Cache,
-    Doctrine\Common\Util\ClassUtils;
+use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Util\ClassUtils;
+use Doctrine\Common\Persistence\Mapping\MappingException;
 
 /**
  * The ClassMetadataFactory is used to create ClassMetadata objects that contain all the
@@ -268,10 +269,16 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
      *
      * @param string $name The name of the class for which the metadata should get loaded.
      *
+     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
+     *
      * @return array
      */
     protected function loadMetadata($name)
     {
+        if ( ! class_exists($name)) {
+            throw MappingException::nonExistingClass($name);
+        }
+
         if ( ! $this->initialized) {
             $this->initialize();
         }
