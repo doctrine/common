@@ -39,6 +39,12 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
         $this->assertTrue($this->cmf->hasMetadataFor('stdClass'));
     }
 
+    public function testGetMetadataForAbsentClass()
+    {
+        $this->setExpectedException('Doctrine\Common\Persistence\Mapping\MappingException');
+        $this->cmf->getMetadataFor(__NAMESPACE__ . '\AbsentClass');
+    }
+
     public function testGetParentMetadata()
     {
         $metadata = $this->cmf->getMetadataFor(__NAMESPACE__ . '\ChildEntity');
