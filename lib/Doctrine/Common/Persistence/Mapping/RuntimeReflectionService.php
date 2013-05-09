@@ -22,6 +22,7 @@ namespace Doctrine\Common\Persistence\Mapping;
 use ReflectionClass;
 use ReflectionProperty;
 use Doctrine\Common\Reflection\RuntimePublicReflectionProperty;
+use Doctrine\Common\Persistence\Mapping\MappingException;
 
 /**
  * PHP Runtime Reflection Service
@@ -35,6 +36,10 @@ class RuntimeReflectionService implements ReflectionService
      */
     public function getParentClasses($class)
     {
+        if ( ! class_exists($class)) {
+            throw MappingException::nonExistingClass($class);
+        }
+
         return class_parents($class);
     }
 
