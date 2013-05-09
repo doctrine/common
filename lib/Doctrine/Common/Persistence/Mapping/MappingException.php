@@ -86,8 +86,7 @@ class MappingException extends \Exception
 
     /**
      * @param string $className
-     *
-     * @return \Doctrine\Common\Persistence\Mapping\MappingException
+     * @return MappingException
      */
     public static function nonExistingClass($className)
     {
