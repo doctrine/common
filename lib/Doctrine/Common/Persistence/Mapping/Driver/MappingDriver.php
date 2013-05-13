@@ -35,14 +35,14 @@ interface MappingDriver
      * @param string $className
      * @param ClassMetadata $metadata
      */
-    function loadMetadataForClass($className, ClassMetadata $metadata);
+    public function loadMetadataForClass($className, ClassMetadata $metadata);
 
     /**
      * Gets the names of all mapped classes known to this driver.
      *
      * @return array The names of all mapped classes known to this driver.
      */
-    function getAllClassNames();
+    public function getAllClassNames();
 
     /**
      * Whether the class with the specified name should have its metadata loaded.
@@ -52,5 +52,5 @@ interface MappingDriver
      * @param string $className
      * @return boolean
      */
-    function isTransient($className);
+    public function isTransient($className);
 }
