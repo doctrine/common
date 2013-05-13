@@ -15,6 +15,9 @@
     "require": {
         "php": ">=5.3.2"
     },
+    "replace": {
+        "doctrine/cache": "0.9"
+    },
     "autoload": {
         "psr-0": { "Doctrine\\Common": "lib/" }
     }
