@@ -36,7 +36,7 @@ interface ManagerRegistry extends ConnectionRegistry
      *
      * @return string The default object manager name
      */
-    function getDefaultManagerName();
+    public function getDefaultManagerName();
 
     /**
      * Gets a named object manager.
@@ -45,14 +45,14 @@ interface ManagerRegistry extends ConnectionRegistry
      *
      * @return \Doctrine\Common\Persistence\ObjectManager
      */
-    function getManager($name = null);
+    public function getManager($name = null);
 
     /**
      * Gets an array of all registered object managers
      *
      * @return \Doctrine\Common\Persistence\ObjectManager[] An array of ObjectManager instances
      */
-    function getManagers();
+    public function getManagers();
 
     /**
      * Resets a named object manager.
@@ -71,7 +71,7 @@ interface ManagerRegistry extends ConnectionRegistry
      *
      * @return \Doctrine\Common\Persistence\ObjectManager
      */
-    function resetManager($name = null);
+    public function resetManager($name = null);
 
     /**
      * Resolves a registered namespace alias to the full namespace.
@@ -82,14 +82,14 @@ interface ManagerRegistry extends ConnectionRegistry
      *
      * @return string The full namespace
      */
-    function getAliasNamespace($alias);
+    public function getAliasNamespace($alias);
 
     /**
      * Gets all connection names.
      *
      * @return array An array of connection names
      */
-    function getManagerNames();
+    public function getManagerNames();
 
     /**
      * Gets the ObjectRepository for an persistent object.
@@ -99,7 +99,7 @@ interface ManagerRegistry extends ConnectionRegistry
      *
      * @return \Doctrine\Common\Persistence\ObjectRepository
      */
-    function getRepository($persistentObject, $persistentManagerName = null);
+    public function getRepository($persistentObject, $persistentManagerName = null);
 
     /**
      * Gets the object manager associated with a given class.
@@ -108,5 +108,5 @@ interface ManagerRegistry extends ConnectionRegistry
      *
      * @return \Doctrine\Common\Persistence\ObjectManager|null
      */
-    function getManagerForClass($class);
+    public function getManagerForClass($class);
 }

@@ -36,7 +36,7 @@ interface FileLocator
      * @param string $className
      * @return string
      */
-    function findMappingFile($className);
+    public function findMappingFile($className);
 
     /**
      * Get all class names that are found with this file locator.
@@ -44,7 +44,7 @@ interface FileLocator
      * @param string $globalBasename Passed to allow excluding the basename
      * @return array
      */
-    function getAllClassNames($globalBasename);
+    public function getAllClassNames($globalBasename);
 
     /**
      * Check if a file can be found for this class name.
@@ -53,19 +53,19 @@ interface FileLocator
      *
      * @return bool
      */
-    function fileExists($className);
+    public function fileExists($className);
 
     /**
      * Get all the paths that this file locator looks for mapping files.
      *
      * @return array
      */
-    function getPaths();
+    public function getPaths();
 
     /**
      * Get the file extension that mapping files are suffixed with.
      *
      * @return string
      */
-    function getFileExtension();
+    public function getFileExtension();
 }
