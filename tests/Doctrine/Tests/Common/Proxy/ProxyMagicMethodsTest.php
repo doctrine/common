@@ -94,6 +94,29 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
         $this->assertSame(3, $counter);
     }
 
+    public function testInheritedMagicGetByRef()
+    {
+        $proxyClassName = $this->generateProxyClass(__NAMESPACE__ . '\\MagicGetByRefClass');
+        $proxy          = new $proxyClassName();
+
+        $proxy->valueField = 123;
+
+        $this->assertSame(123, $proxy->valueField);
+        $this->assertSame(123, $proxy->value);
+
+        $proxy->valueField = array(1, 2);
+
+        $this->assertSame(1, $proxy->value[0]);
+        $this->assertSame(2, $proxy->value[1]);
+
+        $proxy->value[0] = 3;
+        $proxy->value[2] = 1;
+
+        $this->assertSame(3, $proxy->value[0]);
+        $this->assertSame(2, $proxy->value[1]);
+        $this->assertSame(1, $proxy->value[2]);
+    }
+
     public function testInheritedMagicSet()
     {
         $proxyClassName = $this->generateProxyClass(__NAMESPACE__ . '\\MagicSetClass');

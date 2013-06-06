@@ -400,12 +400,25 @@ EOT;
         }
 
         $inheritDoc = $hasParentGet ? '{@inheritDoc}' : '';
+
+
         $magicGet = <<<EOT
     /**
      * $inheritDoc
      * @param string \$name
      */
-    public function __get(\$name)
+    public function
+EOT;
+
+        $magicGet .= ' ';
+
+
+        if ($hasParentGet && $class->getReflectionClass()->getMethod('__get')->returnsReference()) {
+            $magicGet .= '&';
+        }
+
+$magicGet .= <<<EOT
+__get(\$name)
     {
 
 EOT;
