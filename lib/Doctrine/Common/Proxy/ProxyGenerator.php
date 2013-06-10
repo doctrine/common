@@ -393,19 +393,30 @@ EOT;
     private function generateMagicGet(ClassMetadata $class)
     {
         $lazyPublicProperties = array_keys($this->getLazyLoadedPublicProperties($class));
-        $hasParentGet         = $class->getReflectionClass()->hasMethod('__get');
+        $reflectionClass      = $class->getReflectionClass();
+        $hasParentGet         = false;
+        $returnReference      = '';
+        $inheritDoc           = '';
+
+        if ($reflectionClass->hasMethod('__get')) {
+            $hasParentGet = true;
+            $inheritDoc   = '{@inheritDoc}';
+
+            if ($reflectionClass->getMethod('__get')->returnsReference()) {
+                $returnReference = '& ';
+            }
+        }
 
         if (empty($lazyPublicProperties) && ! $hasParentGet) {
             return '';
         }
 
-        $inheritDoc = $hasParentGet ? '{@inheritDoc}' : '';
         $magicGet = <<<EOT
     /**
      * $inheritDoc
      * @param string \$name
      */
-    public function __get(\$name)
+    public function {$returnReference}__get(\$name)
     {
 
 EOT;
