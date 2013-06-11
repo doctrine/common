@@ -40,7 +40,7 @@ class DefaultFileLocatorTest extends DoctrineTestCase
 
         $locator = new DefaultFileLocator(array($path), ".yml");
 
-        $this->assertEquals(__DIR__ . '/_files/stdClass.yml', $locator->findMappingFile('stdClass'));
+        $this->assertEquals(__DIR__ . '/_files' . DIRECTORY_SEPARATOR . 'stdClass.yml', $locator->findMappingFile('stdClass'));
     }
 
     public function testFindMappingFileNotFound()
