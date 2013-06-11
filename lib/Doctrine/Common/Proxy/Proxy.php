@@ -1,5 +1,4 @@
 <?php
-
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -36,21 +35,26 @@ interface Proxy extends BaseProxy
      * Marks the proxy as initialized or not.
      *
      * @param boolean $initialized
+     *
+     * @return void
      */
     public function __setInitialized($initialized);
 
     /**
-     * Set the initializer callback to be used when initializing the proxy. That
+     * Sets the initializer callback to be used when initializing the proxy. That
      * initializer should accept 3 parameters: $proxy, $method and $params. Those
      * are respectively the proxy object that is being initialized, the method name
-     * that triggered initialization and the parameters passed to that method
+     * that triggered initialization and the parameters passed to that method.
      *
-     * @param Closure $initializer
+     * @param Closure|null $initializer
+     *
+     * @return void
      */
     public function __setInitializer(Closure $initializer = null);
 
     /**
      * Retrieves the initializer callback used to initialize the proxy.
+     *
      * @see __setInitializer
      *
      * @return Closure|null
@@ -58,15 +62,18 @@ interface Proxy extends BaseProxy
     public function __getInitializer();
 
     /**
-     * Set the callback to be used when cloning the proxy. That initializer should accept
-     * a single parameter, which is the cloned proxy instance itself
+     * Sets the callback to be used when cloning the proxy. That initializer should accept
+     * a single parameter, which is the cloned proxy instance itself.
      *
-     * @param Closure $cloner
+     * @param Closure|null $cloner
+     *
+     * @return void
      */
     public function __setCloner(Closure $cloner = null);
 
     /**
      * Retrieves the callback to be used when cloning the proxy.
+     *
      * @see __setCloner
      *
      * @return Closure|null
@@ -76,8 +83,8 @@ interface Proxy extends BaseProxy
     /**
      * Retrieves the list of lazy loaded properties for a given proxy
      *
-     * @return array with keys being the property names, and values being the default values
-     *               for those properties
+     * @return array Keys are the property names, and values are the default values
+     *               for those properties.
      */
     public function __getLazyProperties();
 }

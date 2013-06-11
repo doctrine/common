@@ -31,13 +31,13 @@ class Autoloader
     /**
      * Resolves proxy class name to a filename based on the following pattern.
      *
-     * 1. Remove Proxy namespace from class name
+     * 1. Remove Proxy namespace from class name.
      * 2. Remove namespace separators from remaining class name.
      * 3. Return PHP filename from proxy-dir with the result from 2.
      *
-     * @param  string $proxyDir
-     * @param  string $proxyNamespace
-     * @param  string $className
+     * @param string $proxyDir
+     * @param string $proxyNamespace
+     * @param string $className
      *
      * @return string
      *
@@ -55,12 +55,11 @@ class Autoloader
     }
 
     /**
-     * Register and return autoloader callback for the given proxy dir and
-     * namespace.
+     * Registers and returns autoloader callback for the given proxy dir and namespace.
      *
-     * @param  string  $proxyDir
-     * @param  string  $proxyNamespace
-     * @param  callable $notFoundCallback Invoked when the proxy file is not found.
+     * @param string        $proxyDir
+     * @param string        $proxyNamespace
+     * @param callable|null $notFoundCallback Invoked when the proxy file is not found.
      *
      * @return \Closure
      *

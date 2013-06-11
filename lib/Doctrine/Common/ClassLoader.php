@@ -34,22 +34,30 @@ namespace Doctrine\Common;
 class ClassLoader
 {
     /**
-     * @var string PHP file extension
+     * PHP file extension.
+     *
+     * @var string
      */
     protected $fileExtension = '.php';
 
     /**
-     * @var string Current namespace
+     * Current namespace.
+     *
+     * @var string|null
      */
     protected $namespace;
 
     /**
-     * @var string Current include path
+     * Current include path.
+     *
+     * @var string|null
      */
     protected $includePath;
 
     /**
-     * @var string PHP namespace separator
+     * PHP namespace separator.
+     *
+     * @var string
      */
     protected $namespaceSeparator = '\\';
 
@@ -61,8 +69,8 @@ class ClassLoader
      * If neither a namespace nor an include path is given, the ClassLoader will
      * be responsible for loading all classes, thereby relying on the PHP include_path.
      *
-     * @param string $ns The namespace of the classes to load.
-     * @param string $includePath The base include path to use.
+     * @param string|null $ns          The namespace of the classes to load.
+     * @param string|null $includePath The base include path to use.
      */
     public function __construct($ns = null, $includePath = null)
     {
@@ -74,6 +82,8 @@ class ClassLoader
      * Sets the namespace separator used by classes in the namespace of this ClassLoader.
      *
      * @param string $sep The separator to use.
+     *
+     * @return void
      */
     public function setNamespaceSeparator($sep)
     {
@@ -93,7 +103,9 @@ class ClassLoader
     /**
      * Sets the base include path for all class files in the namespace of this ClassLoader.
      *
-     * @param string $includePath
+     * @param string|null $includePath
+     *
+     * @return void
      */
     public function setIncludePath($includePath)
     {
@@ -103,7 +115,7 @@ class ClassLoader
     /**
      * Gets the base include path for all class files in the namespace of this ClassLoader.
      *
-     * @return string
+     * @return string|null
      */
     public function getIncludePath()
     {
@@ -114,6 +126,8 @@ class ClassLoader
      * Sets the file extension of class files in the namespace of this ClassLoader.
      *
      * @param string $fileExtension
+     *
+     * @return void
      */
     public function setFileExtension($fileExtension)
     {
@@ -132,6 +146,8 @@ class ClassLoader
 
     /**
      * Registers this ClassLoader on the SPL autoload stack.
+     *
+     * @return void
      */
     public function register()
     {
@@ -140,6 +156,8 @@ class ClassLoader
 
     /**
      * Removes this ClassLoader from the SPL autoload stack.
+     *
+     * @return void
      */
     public function unregister()
     {
@@ -150,6 +168,7 @@ class ClassLoader
      * Loads the given class or interface.
      *
      * @param string $className The name of the class to load.
+     *
      * @return boolean TRUE if the class has been successfully loaded, FALSE otherwise.
      */
     public function loadClass($className)
@@ -170,6 +189,7 @@ class ClassLoader
      * the given name.
      *
      * @param string $className The fully-qualified name of the class.
+     *
      * @return boolean TRUE if this ClassLoader can load the class, FALSE otherwise.
      */
     public function canLoadClass($className)
@@ -206,6 +226,7 @@ class ClassLoader
      * these responsibilities.
      *
      * @param string $className The fully-qualified name of the class.
+     *
      * @return boolean TRUE if the class exists as per the definition given above, FALSE otherwise.
      */
     public static function classExists($className)
@@ -248,6 +269,7 @@ class ClassLoader
      * for (and is able to load) the class with the given name.
      *
      * @param string $className The name of the class.
+     *
      * @return ClassLoader The <tt>ClassLoader</tt> for the class or NULL if no such <tt>ClassLoader</tt> exists.
      */
     public static function getClassLoader($className)

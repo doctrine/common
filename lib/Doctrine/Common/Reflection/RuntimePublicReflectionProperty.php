@@ -23,7 +23,7 @@ use ReflectionProperty;
 use Doctrine\Common\Proxy\Proxy;
 
 /**
- * PHP Runtime Reflection Public Property - special overrides for public properties
+ * PHP Runtime Reflection Public Property - special overrides for public properties.
  *
  * @author Marco Pivetta <ocramius@gmail.com>
  * @since  2.4
