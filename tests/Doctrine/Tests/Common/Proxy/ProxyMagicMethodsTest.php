@@ -230,6 +230,9 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($cloned->cloned);
     }
 
+    /**
+     * @group DCOM-175
+     */
     public function testClonesPrivateProperties()
     {
         $proxyClassName = $this->generateProxyClass(__NAMESPACE__ . '\\SerializedClass');
@@ -238,7 +241,7 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
 
         $proxy->setFoo(1);
         $proxy->setBar(2);
-        $proxy->setBaz(2);
+        $proxy->setBaz(3);
 
         $unserialized = unserialize(serialize($proxy));
 
