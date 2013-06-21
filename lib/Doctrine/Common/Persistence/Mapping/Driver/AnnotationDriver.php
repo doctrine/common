@@ -19,15 +19,14 @@
 
 namespace Doctrine\Common\Persistence\Mapping\Driver;
 
-use Doctrine\Common\Cache\ArrayCache,
-    Doctrine\Common\Annotations\AnnotationReader,
-    Doctrine\Common\Annotations\AnnotationRegistry,
-    Doctrine\Common\Persistence\Mapping\MappingException;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
+use Doctrine\Common\Persistence\Mapping\MappingException;
 
 /**
  * The AnnotationDriver reads the mapping metadata from docblock annotations.
  *
- * @since 2.2
+ * @since  2.2
  * @author Benjamin Eberlei <kontakt@beberlei.de>
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author Jonathan H. Wage <jonwage@gmail.com>
@@ -57,14 +56,14 @@ abstract class AnnotationDriver implements MappingDriver
     protected $fileExtension = '.php';
 
     /**
-     * Cache for AnnotationDriver#getAllClassNames()
+     * Cache for AnnotationDriver#getAllClassNames().
      *
-     * @var array
+     * @var array|null
      */
     protected $classNames;
 
     /**
-     * Name of the entity annotations as keys
+     * Name of the entity annotations as keys.
      *
      * @var array
      */
@@ -74,8 +73,8 @@ abstract class AnnotationDriver implements MappingDriver
      * Initializes a new AnnotationDriver that uses the given AnnotationReader for reading
      * docblock annotations.
      *
-     * @param AnnotationReader $reader The AnnotationReader to use, duck-typed.
-     * @param string|array $paths One or multiple paths where mapping classes can be found.
+     * @param AnnotationReader  $reader The AnnotationReader to use, duck-typed.
+     * @param string|array|null $paths  One or multiple paths where mapping classes can be found.
      */
     public function __construct($reader, $paths = null)
     {
@@ -86,9 +85,11 @@ abstract class AnnotationDriver implements MappingDriver
     }
 
     /**
-     * Append lookup paths to metadata driver.
+     * Appends lookup paths to metadata driver.
      *
      * @param array $paths
+     *
+     * @return void
      */
     public function addPaths(array $paths)
     {
@@ -96,7 +97,7 @@ abstract class AnnotationDriver implements MappingDriver
     }
 
     /**
-     * Retrieve the defined metadata lookup paths.
+     * Retrieves the defined metadata lookup paths.
      *
      * @return array
      */
@@ -106,7 +107,7 @@ abstract class AnnotationDriver implements MappingDriver
     }
 
     /**
-     * Retrieve the current annotation reader
+     * Retrieves the current annotation reader.
      *
      * @return AnnotationReader
      */
@@ -116,7 +117,7 @@ abstract class AnnotationDriver implements MappingDriver
     }
 
     /**
-     * Get the file extension used to look for mapping files under
+     * Gets the file extension used to look for mapping files under.
      *
      * @return string
      */
@@ -126,9 +127,10 @@ abstract class AnnotationDriver implements MappingDriver
     }
 
     /**
-     * Set the file extension used to look for mapping files under
+     * Sets the file extension used to look for mapping files under.
      *
-     * @param string $fileExtension The file extension to set
+     * @param string $fileExtension The file extension to set.
+     *
      * @return void
      */
     public function setFileExtension($fileExtension)
@@ -137,13 +139,14 @@ abstract class AnnotationDriver implements MappingDriver
     }
 
     /**
-     * Whether the class with the specified name is transient. Only non-transient
+     * Returns whether the class with the specified name is transient. Only non-transient
      * classes, that is entities and mapped superclasses, should have their metadata loaded.
      *
      * A class is non-transient if it is annotated with an annotation
      * from the {@see AnnotationDriver::entityAnnotationClasses}.
      *
      * @param string $className
+     *
      * @return boolean
      */
     public function isTransient($className)

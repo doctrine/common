@@ -31,9 +31,10 @@ use Doctrine\Common\Persistence\Proxy;
 class ClassUtils
 {
     /**
-     * Get the real class name of a class name that could be a proxy.
+     * Gets the real class name of a class name that could be a proxy.
      *
-     * @param string
+     * @param string $class
+     *
      * @return string
      */
     public static function getRealClass($class)
@@ -46,9 +47,10 @@ class ClassUtils
     }
 
     /**
-     * Get the real class name of an object (even if its a proxy)
+     * Gets the real class name of an object (even if its a proxy).
      *
-     * @param object
+     * @param object $object
+     *
      * @return string
      */
     public static function getClass($object)
@@ -57,9 +59,10 @@ class ClassUtils
     }
 
     /**
-     * Get the real parent class name of a class or object
+     * Gets the real parent class name of a class or object.
      *
-     * @param string
+     * @param string $className
+     *
      * @return string
      */
     public static function getParentClass($className)
@@ -68,9 +71,10 @@ class ClassUtils
     }
 
     /**
-     * Create a new reflection class
+     * Creates a new reflection class.
      *
-     * @param string
+     * @param string $class
+     *
      * @return \ReflectionClass
      */
     public static function newReflectionClass($class)
@@ -79,9 +83,10 @@ class ClassUtils
     }
 
     /**
-     * Create a new reflection object
+     * Creates a new reflection object.
      *
-     * @param object
+     * @param object $object
+     *
      * @return \ReflectionObject
      */
     public static function newReflectionObject($object)
@@ -90,10 +95,11 @@ class ClassUtils
     }
 
     /**
-     * Given a class name and a proxy namespace return the proxy name.
+     * Given a class name and a proxy namespace returns the proxy name.
      *
      * @param string $className
      * @param string $proxyNamespace
+     *
      * @return string
      */
     public static function generateProxyClassName($className, $proxyNamespace)

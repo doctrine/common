@@ -29,7 +29,6 @@ use Doctrine\Common\Annotations\TokenParser;
  */
 class StaticReflectionParser implements ReflectionProviderInterface
 {
-
     /**
      * The fully qualified class name.
      *
@@ -45,28 +44,28 @@ class StaticReflectionParser implements ReflectionProviderInterface
     protected $shortClassName;
 
     /**
-     * TRUE if the caller only wants class annotations.
+     * Whether the caller only wants class annotations.
      *
      * @var boolean.
      */
     protected $classAnnotationOptimize;
 
     /**
-     * TRUE when the parser has ran.
+     * Whether the parser has run.
      *
      * @var boolean
      */
     protected $parsed = false;
 
     /**
-     * The namespace of the class
+     * The namespace of the class.
      *
      * @var string
      */
     protected $namespace = '';
 
     /**
-     * The use statements of this class.
+     * The use statements of the class.
      *
      * @var array
      */
@@ -80,7 +79,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
     protected $docComment = array(
         'class' => '',
         'property' => array(),
-        'method' => array(),
+        'method' => array()
     );
 
     /**
@@ -93,20 +92,17 @@ class StaticReflectionParser implements ReflectionProviderInterface
     /**
      * The parent PSR-0 Parser.
      *
-     * @var \Doctrine\Common\Annotations\StaticReflectionParser
+     * @var \Doctrine\Common\Reflection\StaticReflectionParser
      */
     protected $parentStaticReflectionParser;
 
     /**
      * Parses a class residing in a PSR-0 hierarchy.
      *
-     * @param string $class
-     *     The full, namespaced class name.
-     * @param ClassFinder $finder
-     *     A ClassFinder object which finds the class.
-     * @param boolean $classAnnotationOptimize
-     *     Only retrieve the class docComment. Presumes there is only one
-     *     statement per line.
+     * @param string               $className               The full, namespaced class name.
+     * @param ClassFinderInterface $finder                  A ClassFinder object which finds the class.
+     * @param boolean              $classAnnotationOptimize Only retrieve the class docComment.
+     *                                                      Presumes there is only one statement per line.
      */
     public function __construct($className, $finder, $classAnnotationOptimize = false)
     {
@@ -124,6 +120,9 @@ class StaticReflectionParser implements ReflectionProviderInterface
         $this->classAnnotationOptimize = $classAnnotationOptimize;
     }
 
+    /**
+     * @return void
+     */
     protected function parse()
     {
         if ($this->parsed || !$fileName = $this->finder->findFile($this->className)) {
@@ -205,6 +204,9 @@ class StaticReflectionParser implements ReflectionProviderInterface
         }
     }
 
+    /**
+     * @return StaticReflectionParser
+     */
     protected function getParentStaticReflectionParser()
     {
         if (empty($this->parentStaticReflectionParser)) {
@@ -214,18 +216,24 @@ class StaticReflectionParser implements ReflectionProviderInterface
         return $this->parentStaticReflectionParser;
     }
 
+    /**
+     * @return string
+     */
     public function getClassName()
     {
         return $this->className;
     }
 
+    /**
+     * @return string
+     */
     public function getNamespaceName()
     {
         return $this->namespace;
     }
 
     /**
-     * Get the ReflectionClass equivalent for this file / class.
+     * {@inheritDoc}
      */
     public function getReflectionClass()
     {
@@ -233,7 +241,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
     }
 
     /**
-     * Get the ReflectionMethod equivalent for the method of this file / class.
+     * {@inheritDoc}
      */
     public function getReflectionMethod($methodName)
     {
@@ -241,7 +249,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
     }
 
     /**
-     * Get the ReflectionProperty equivalent for the method of this file / class.
+     * {@inheritDoc}
      */
     public function getReflectionProperty($propertyName)
     {
@@ -249,7 +257,9 @@ class StaticReflectionParser implements ReflectionProviderInterface
     }
 
     /**
-     * Get the use statements from this file.
+     * Gets the use statements from this file.
+     *
+     * @return array
      */
     public function getUseStatements()
     {
@@ -259,12 +269,12 @@ class StaticReflectionParser implements ReflectionProviderInterface
     }
 
     /**
-     * Get docComment.
+     * Gets the doc comment.
      *
-     * @param string $type class, property or method.
-     * @param string $name Name of the property or method, not needed for class.
+     * @param string $type The type: 'class', 'property' or 'method'.
+     * @param string $name The name of the property or method, not needed for 'class'.
      *
-     * @return string the doc comment or empty string if none.
+     * @return string The doc comment, empty string if none.
      */
     public function getDocComment($type = 'class', $name = '')
     {
@@ -274,12 +284,14 @@ class StaticReflectionParser implements ReflectionProviderInterface
     }
 
     /**
-     * Get the PSR-0 parser for the declaring class.
+     * Gets the PSR-0 parser for the declaring class.
      *
-     * @param string $type property or method.
-     * @param string $name Name of the property or method.
+     * @param string $type The type: 'property' or 'method'.
+     * @param string $name The name of the property or method.
      *
      * @return StaticReflectionParser A static reflection parser for the declaring class.
+     *
+     * @throws ReflectionException
      */
     public function getStaticReflectionParserForDeclaringClass($type, $name)
     {

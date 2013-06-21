@@ -22,16 +22,15 @@ namespace Doctrine\Common\Persistence\Mapping;
 /**
  * Contract for a Doctrine persistence layer ClassMetadata class to implement.
  *
- * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link    www.doctrine-project.org
- * @since   2.1
- * @author  Benjamin Eberlei <kontakt@beberlei.de>
- * @author  Jonathan Wage <jonwage@gmail.com>
+ * @link   www.doctrine-project.org
+ * @since  2.1
+ * @author Benjamin Eberlei <kontakt@beberlei.de>
+ * @author Jonathan Wage <jonwage@gmail.com>
  */
 interface ClassMetadata
 {
     /**
-     * Get fully-qualified class name of this persistent class.
+     * Gets the fully-qualified class name of this persistent class.
      *
      * @return string
      */
@@ -57,6 +56,7 @@ interface ClassMetadata
      * Checks if the given field name is a mapped identifier for this class.
      *
      * @param string $fieldName
+     *
      * @return boolean
      */
     public function isIdentifier($fieldName);
@@ -65,6 +65,7 @@ interface ClassMetadata
      * Checks if the given field is a mapped property for this class.
      *
      * @param string $fieldName
+     *
      * @return boolean
      */
     public function hasField($fieldName);
@@ -73,6 +74,7 @@ interface ClassMetadata
      * Checks if the given field is a mapped association for this class.
      *
      * @param string $fieldName
+     *
      * @return boolean
      */
     public function hasAssociation($fieldName);
@@ -81,6 +83,7 @@ interface ClassMetadata
      * Checks if the given field is a mapped single valued association for this class.
      *
      * @param string $fieldName
+     *
      * @return boolean
      */
     public function isSingleValuedAssociation($fieldName);
@@ -89,6 +92,7 @@ interface ClassMetadata
      * Checks if the given field is a mapped collection valued association for this class.
      *
      * @param string $fieldName
+     *
      * @return boolean
      */
     public function isCollectionValuedAssociation($fieldName);
@@ -110,7 +114,7 @@ interface ClassMetadata
     public function getIdentifierFieldNames();
 
     /**
-     * A numerically indexed list of association names of this persistent class.
+     * Returns a numerically indexed list of association names of this persistent class.
      *
      * This array includes identifier associations if present on this class.
      *
@@ -125,6 +129,7 @@ interface ClassMetadata
      * integer, string, boolean, float/double, datetime.
      *
      * @param string $fieldName
+     *
      * @return string
      */
     public function getTypeOfField($fieldName);
@@ -133,32 +138,36 @@ interface ClassMetadata
      * Returns the target class name of the given association.
      *
      * @param string $assocName
+     *
      * @return string
      */
     public function getAssociationTargetClass($assocName);
 
     /**
-     * Checks if the association is the inverse side of a bidirectional association
+     * Checks if the association is the inverse side of a bidirectional association.
      *
      * @param string $assocName
+     *
      * @return boolean
      */
     public function isAssociationInverseSide($assocName);
 
     /**
-     * Returns the target field of the owning side of the association
+     * Returns the target field of the owning side of the association.
      *
      * @param string $assocName
+     *
      * @return string
      */
     public function getAssociationMappedByTargetField($assocName);
 
     /**
-     * Return the identifier of this object as an array with field name as key.
+     * Returns the identifier of this object as an array with field name as key.
      *
      * Has to return an empty array if no identifier isset.
      *
      * @param object $object
+     *
      * @return array
      */
     public function getIdentifierValues($object);

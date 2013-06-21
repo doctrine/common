@@ -20,9 +20,10 @@
 namespace Doctrine\Common;
 
 /**
- * Base exception class for package Doctrine\Common
- * @author heinrich
+ * Base exception class for package Doctrine\Common.
  *
+ * @author heinrich
  */
-class CommonException extends \Exception {
+class CommonException extends \Exception
+{
 }

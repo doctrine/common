@@ -19,16 +19,18 @@
 
 namespace Doctrine\Common\Persistence\Event;
 
+use Doctrine\Common\EventArgs;
+use Doctrine\Common\Persistence\ObjectManager;
+
 /**
  * Provides event arguments for the onClear event.
  *
- * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link        www.doctrine-project.org
- * @since       2.2
- * @author      Roman Borschel <roman@code-factory.de>
- * @author      Benjamin Eberlei <kontakt@beberlei.de>
+ * @link   www.doctrine-project.org
+ * @since  2.2
+ * @author Roman Borschel <roman@code-factory.de>
+ * @author Benjamin Eberlei <kontakt@beberlei.de>
  */
-class OnClearEventArgs extends \Doctrine\Common\EventArgs
+class OnClearEventArgs extends EventArgs
 {
     /**
      * @var \Doctrine\Common\Persistence\ObjectManager
@@ -36,15 +38,15 @@ class OnClearEventArgs extends \Doctrine\Common\EventArgs
     private $objectManager;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $entityClass;
 
     /**
      * Constructor.
      *
-     * @param \Doctrine\Common\Persistence\ObjectManager $objectManager
-     * @param string $entityClass Optional entity class
+     * @param ObjectManager $objectManager The object manager.
+     * @param string|null   $entityClass   The optional entity class.
      */
     public function __construct($objectManager, $entityClass = null)
     {
@@ -53,7 +55,7 @@ class OnClearEventArgs extends \Doctrine\Common\EventArgs
     }
 
     /**
-     * Retrieve associated ObjectManager.
+     * Retrieves the associated ObjectManager.
      *
      * @return \Doctrine\Common\Persistence\ObjectManager
      */
@@ -63,9 +65,9 @@ class OnClearEventArgs extends \Doctrine\Common\EventArgs
     }
 
     /**
-     * Name of the entity class that is cleared, or empty if all are cleared.
+     * Returns the name of the entity class that is cleared, or null if all are cleared.
      *
-     * @return string
+     * @return string|null
      */
     public function getEntityClass()
     {
@@ -73,7 +75,7 @@ class OnClearEventArgs extends \Doctrine\Common\EventArgs
     }
 
     /**
-     * Check if event clears all entities.
+     * Returns whether this event clears all entities.
      *
      * @return bool
      */

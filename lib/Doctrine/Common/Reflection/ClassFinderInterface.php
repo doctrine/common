@@ -31,8 +31,7 @@ interface ClassFinderInterface
      *
      * @param string $class The name of the class.
      *
-     * @return
-     *     The name of the class or NULL if not found.
+     * @return string|null The name of the class or NULL if not found.
      */
     public function findFile($class);
 }
