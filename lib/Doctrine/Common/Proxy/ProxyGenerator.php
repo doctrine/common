@@ -619,7 +619,9 @@ EOT;
 
         /* @var $prop \ReflectionProperty */
         foreach ($class->getReflectionClass()->getProperties() as $prop) {
-            $allProperties[] = $prop->getName();
+            $allProperties[] = $prop->isPrivate()
+                ? "\0" . $prop->getDeclaringClass()->getName() . "\0" . $prop->getName()
+                : $prop->getName();
         }
 
         $lazyPublicProperties = array_keys($this->getLazyLoadedPublicProperties($class));
