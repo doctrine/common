@@ -51,7 +51,11 @@ final class Debug
      */
     public static function dump($var, $maxDepth = 2, $stripTags = true)
     {
-        ini_set('html_errors', 'On');
+        $html = ini_get('html_errors');
+
+        if ($html !== true) {
+            ini_set('html_errors', true);
+        }
 
         if (extension_loaded('xdebug')) {
             ini_set('xdebug.var_display_max_depth', $maxDepth);
@@ -66,7 +70,7 @@ final class Debug
 
         echo ($stripTags ? strip_tags(html_entity_decode($dump)) : $dump);
 
-        ini_set('html_errors', 'Off');
+        ini_set('html_errors', $html);
     }
 
     /**
