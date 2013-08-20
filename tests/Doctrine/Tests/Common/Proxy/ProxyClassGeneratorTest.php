@@ -61,8 +61,7 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
             return;
         }
 
-        $this->proxyGenerator->generateProxyClass($this->metadata);
-        require_once $this->proxyGenerator->getProxyFileName($this->metadata->getName());
+        $this->generateAndRequire($this->proxyGenerator, $this->metadata);
     }
 
     public function testReferenceProxyRespectsMethodsParametersTypeHinting()
@@ -107,19 +106,23 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
     public function testClassWithSleepProxyGeneration()
     {
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\SleepClass', false)) {
-            $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
-            $reflClass = new ReflectionClass('Doctrine\Tests\Common\Proxy\SleepClass');
-            $metadata->expects($this->any())->method('getReflectionClass')->will($this->returnValue($reflClass));
-            $metadata->expects($this->any())->method('getIdentifierFieldNames')->will($this->returnValue(array('id')));
-            $metadata->expects($this->any())->method('getName')->will($this->returnValue($reflClass->getName()));
+            $className = 'Doctrine\Tests\Common\Proxy\SleepClass';
+            $metadata = $this->createClassMetadata($className, array('id'));
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
-            $proxyGenerator->generateProxyClass($metadata);
-            require_once $proxyGenerator->getProxyFileName($metadata->getName());
+
+            $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
         $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxySleepClass.php');
         $this->assertEquals(1, substr_count($classCode, 'function __sleep'));
         $this->assertEquals(1, substr_count($classCode, 'parent::__sleep()'));
+    }
+
+    private function generateAndRequire($proxyGenerator, $metadata)
+    {
+        $proxyGenerator->generateProxyClass($metadata, $proxyGenerator->getProxyFileName($metadata->getName()));
+
+        require_once $proxyGenerator->getProxyFileName($metadata->getName());
     }
 
     public function testClassWithCallableTypeHintOnProxiedMethod()
@@ -129,16 +132,11 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
         }
 
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\CallableTypeHintClass', false)) {
-            $metadata       = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
-            $reflClass      = new ReflectionClass('Doctrine\Tests\Common\Proxy\CallableTypeHintClass');
+            $className = 'Doctrine\Tests\Common\Proxy\CallableTypeHintClass';
+            $metadata = $this->createClassMetadata($className, array('id'));
+
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
-
-            $metadata->expects($this->any())->method('getReflectionClass')->will($this->returnValue($reflClass));
-            $metadata->expects($this->any())->method('getIdentifierFieldNames')->will($this->returnValue(array('id')));
-            $metadata->expects($this->any())->method('getName')->will($this->returnValue($reflClass->getName()));
-
-            $proxyGenerator->generateProxyClass($metadata);
-            require_once $proxyGenerator->getProxyFileName($metadata->getName());
+            $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
         $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyCallableTypeHintClass.php');
@@ -149,11 +147,7 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
     public function testClassWithInvalidTypeHintOnProxiedMethod()
     {
         $className = 'Doctrine\Tests\Common\Proxy\InvalidTypeHintClass';
-        $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
-        $reflClass = new ReflectionClass($className);
-        $metadata->expects($this->any())->method('getReflectionClass')->will($this->returnValue($reflClass));
-        $metadata->expects($this->any())->method('getIdentifierFieldNames')->will($this->returnValue(array()));
-        $metadata->expects($this->any())->method('getName')->will($this->returnValue($className));
+        $metadata = $this->createClassMetadata($className, array('id'));
         $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
 
         $this->setExpectedException(
@@ -182,4 +176,34 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
         $generator = new ProxyGenerator(__DIR__ . '/generated', 'SomeNamespace');
         $generator->setPlaceholder('<somePlaceholder>', array());
     }
+
+    public function testUseEvalIfNoFilenameIsGiven()
+    {
+        $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
+
+        $className = __NAMESPACE__ . '\\EvalBase';
+
+        $metadata = $this->createClassMetadata($className, array('id'));
+
+        $proxyGenerator->generateProxyClass($metadata);
+
+        $reflClass = new ReflectionClass('Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\EvalBase');
+
+        $this->assertContains("eval()'d code", $reflClass->getFileName());
+    }
+
+    private function createClassMetadata($className, array $ids)
+    {
+        $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $reflClass = new ReflectionClass($className);
+        $metadata->expects($this->any())->method('getReflectionClass')->will($this->returnValue($reflClass));
+        $metadata->expects($this->any())->method('getIdentifierFieldNames')->will($this->returnValue($ids));
+        $metadata->expects($this->any())->method('getName')->will($this->returnValue($className));
+
+        return $metadata;
+    }
+}
+
+class EvalBase
+{
 }

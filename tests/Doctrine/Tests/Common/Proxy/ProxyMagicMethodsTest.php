@@ -299,7 +299,7 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
             ->method('getTypeOfField')
             ->will($this->returnValue('string'));
 
-        $this->proxyGenerator->generateProxyClass($metadata);
+        $this->proxyGenerator->generateProxyClass($metadata, $this->proxyGenerator->getProxyFileName($className));
         require_once $this->proxyGenerator->getProxyFileName($className);
 
         return $proxyClassName;
