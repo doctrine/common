@@ -201,7 +201,7 @@ abstract class AbstractProxyFactory
                     break;
 
                 case self::AUTOGENERATE_FILE_NOT_EXISTS:
-                    if (!file_not_exists($fileName)) {
+                    if (!file_exists($fileName)) {
                         $this->proxyGenerator->generateProxyClass($classMetadata, $fileName);
                     }
                     require $fileName;
