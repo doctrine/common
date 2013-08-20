@@ -61,7 +61,7 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
             return;
         }
 
-        $this->generateAndReqiure($this->proxyGenerator, $this->metadata);
+        $this->generateAndRequire($this->proxyGenerator, $this->metadata);
     }
 
     public function testReferenceProxyRespectsMethodsParametersTypeHinting()
@@ -110,7 +110,7 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
             $metadata = $this->createClassMetadata($className, array('id'));
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
 
-            $this->generateAndReqiure($proxyGenerator, $metadata);
+            $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
         $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxySleepClass.php');
@@ -118,9 +118,10 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'parent::__sleep()'));
     }
 
-    private function generateAndReqiure($proxyGenerator, $metadata)
+    private function generateAndRequire($proxyGenerator, $metadata)
     {
         $proxyGenerator->generateProxyClass($metadata, $proxyGenerator->getProxyFileName($metadata->getName()));
+
         require_once $proxyGenerator->getProxyFileName($metadata->getName());
     }
 
@@ -135,7 +136,7 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
             $metadata = $this->createClassMetadata($className, array('id'));
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
-            $this->generateAndReqiure($proxyGenerator, $metadata);
+            $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
         $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyCallableTypeHintClass.php');
