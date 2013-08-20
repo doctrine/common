@@ -279,14 +279,13 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
 
         $proxyCode = strtr($this->proxyClassTemplate, $placeholders);
 
-        if (!$fileName) {
+        if ( ! $fileName) {
             $proxyClassName = $this->generateNamespace($class) . '\\' . $this->generateProxyShortClassName($class);
 
-            if (class_exists($proxyClassName)) {
-                return;
+            if ( ! class_exists($proxyClassName)) {
+                eval(substr($proxyCode, 5));
             }
 
-            eval(substr($proxyCode, 5));
             return;
         }
 
