@@ -44,13 +44,17 @@ class RuntimePublicReflectionProperty extends ReflectionProperty
         if ($object instanceof Proxy && ! $object->__isInitialized()) {
             $originalInitializer = $object->__getInitializer();
             $object->__setInitializer(null);
-            $val = isset($object->$name) ? $object->$name : null;
+            $val = null;
+            if(property_exists($object, $name)) {
+                $rftp = new \ReflectionProperty($object, $name);
+                $val = $rftp->getValue();
+            }
             $object->__setInitializer($originalInitializer);
 
             return $val;
         }
 
-        return isset($object->$name) ? parent::getValue($object) : null;
+        return property_exists($object, $name) ? parent::getValue($object) : null;
     }
 
     /**
