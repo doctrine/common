@@ -58,7 +58,7 @@
         <git-commit file="${project.version_file}" message="Release ${doctrine.current_version}" />
         <git-tag version="${doctrine.current_version}" />
         <replace file="${project.version_file}" token="${doctrine.current_version}" value="${doctrine.next_version}-DEV" />
-        <git-commit file="${project.version_file}" message="Bump version to ${doctrine.current_version}" />
+        <git-commit file="${project.version_file}" message="Bump version to ${doctrine.next_version}" />
     </target>
 
     <target name="check-git-checkout-clean">
