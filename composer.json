@@ -27,5 +27,8 @@
         "branch-alias": {
             "dev-master": "2.4.x-dev"
         }
+    },
+    "archive": {
+        "exclude": ["!vendor", "tests", "*phpunit.xml", ".travis.yml", "build.xml", "build.properties", "composer.phar"]
     }
 }
