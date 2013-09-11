@@ -118,6 +118,25 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'parent::__sleep()'));
     }
 
+    /**
+     * Check that the proxy doesn't serialize static properties (in __sleep() method)
+     * @group DCOM-212
+     */
+    public function testClassWithStaticPropertyProxyGeneration()
+    {
+        if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\StaticPropertyClass', false)) {
+            $className = 'Doctrine\Tests\Common\Proxy\StaticPropertyClass';
+            $metadata = $this->createClassMetadata($className, array());
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
+
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyStaticPropertyClass.php');
+        $this->assertEquals(1, substr_count($classCode, 'function __sleep'));
+        $this->assertNotContains('protectedStaticProperty', $classCode);
+    }
+
     private function generateAndRequire($proxyGenerator, $metadata)
     {
         $proxyGenerator->generateProxyClass($metadata, $proxyGenerator->getProxyFileName($metadata->getName()));
