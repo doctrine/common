@@ -120,6 +120,7 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
 
     /**
      * Check that the proxy doesn't serialize static properties (in __sleep() method)
+     * @group DCOM-212
      */
     public function testClassWithStaticPropertyProxyGeneration()
     {
