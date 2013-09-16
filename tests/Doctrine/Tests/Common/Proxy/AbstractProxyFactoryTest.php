@@ -114,5 +114,33 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
 
         $proxyFactory->resetUninitializedProxy($proxy);
     }
+
+    public function testMissingPrimaryKeyValue()
+    {
+        $metadata        = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $proxy           = $this->getMock('Doctrine\Common\Proxy\Proxy');
+        $definition      = new ProxyDefinition(get_class($proxy), array('missingKey'), array(), null, null);
+        $proxyGenerator  = $this->getMock('Doctrine\Common\Proxy\ProxyGenerator', array(), array(), '', false);
+        $metadataFactory = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadataFactory');
+
+        $metadataFactory
+            ->expects($this->once())
+            ->method('getMetadataFor')
+            ->will($this->returnValue($metadata));
+
+        $proxyFactory = $this->getMockForAbstractClass(
+            'Doctrine\Common\Proxy\AbstractProxyFactory',
+            array($proxyGenerator, $metadataFactory, true)
+        );
+
+        $proxyFactory
+            ->expects($this->any())
+            ->method('createProxyDefinition')
+            ->will($this->returnValue($definition));
+
+        $this->setExpectedException('\OutOfBoundsException');
+
+        $generatedProxy = $proxyFactory->getProxy('Class', array());
+    }
 }
 
