@@ -99,7 +99,7 @@ class MappingDriverChain implements MappingDriver
     {
         /* @var $driver MappingDriver */
         foreach ($this->drivers as $namespace => $driver) {
-            if (strpos($className, $namespace) === 0) {
+            if (strpos($className, $namespace) === 0 || $namespace === "\\") {
                 $driver->loadMetadataForClass($className, $metadata);
                 return;
             }
