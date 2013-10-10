@@ -19,6 +19,8 @@
 
 namespace Doctrine\Common\Persistence\Mapping;
 
+use ReflectionClass;
+
 /**
  * PHP Runtime Reflection Service.
  *
@@ -78,6 +80,12 @@ class StaticReflectionService implements ReflectionService
      */
     public function hasPublicMethod($class, $method)
     {
-        return method_exists($class, $method) && is_callable(array($class, $method));
+        $reflectionClass = new ReflectionClass($class);
+
+        if ( ! $reflectionClass->hasMethod($method)) {
+            return false;
+        }
+
+        return $reflectionClass->getMethod($method)->isPublic();
     }
 }
