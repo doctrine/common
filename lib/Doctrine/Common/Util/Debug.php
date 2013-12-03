@@ -48,8 +48,11 @@ final class Debug
      * @param mixed   $var       The variable to dump.
      * @param integer $maxDepth  The maximum nesting level for object properties.
      * @param boolean $stripTags Whether output should strip HTML tags.
+     * @param boolean $echo      Send the dumped value to the output buffer
+     *
+     * @return string
      */
-    public static function dump($var, $maxDepth = 2, $stripTags = true)
+    public static function dump($var, $maxDepth = 2, $stripTags = true, $echo = true)
     {
         $html = ini_get('html_errors');
 
@@ -65,12 +68,20 @@ final class Debug
 
         ob_start();
         var_dump($var);
+
         $dump = ob_get_contents();
+
         ob_end_clean();
 
-        echo ($stripTags ? strip_tags(html_entity_decode($dump)) : $dump);
+        $dumpText = ($stripTags ? strip_tags(html_entity_decode($dump)) : $dump);
 
         ini_set('html_errors', $html);
+        
+        if ($echo) {
+            echo $dumpText;
+        }
+        
+        return $dumpText;
     }
 
     /**
