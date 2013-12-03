@@ -49,6 +49,8 @@ final class Debug
      * @param integer $maxDepth  The maximum nesting level for object properties.
      * @param boolean $stripTags Whether output should strip HTML tags.
      * @param boolean $return    returns the information rather than print it
+     *
+     * @return string
      */
     public static function dump($var, $maxDepth = 2, $stripTags = true, $return = false)
     {
@@ -73,7 +75,7 @@ final class Debug
 
         ini_set('html_errors', $html);
         
-        if($return){
+        if ($return) {
             return $dumpText;
         }
         
