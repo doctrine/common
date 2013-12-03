@@ -37,4 +37,29 @@ class DebugTest extends DoctrineTestCase
         $var = Debug::export($it, 5);
         $this->assertContains('foobar', $var->__STORAGE__);
     }
+
+    public function testReturnsOutput()
+    {
+        ob_start();
+
+        $dump        = Debug::dump('foo');
+        $outputValue = ob_get_contents();
+
+        ob_end_clean();
+
+        $this->assertSame($outputValue, $dump);
+    }
+
+    public function testDisablesOutput()
+    {
+        ob_start();
+
+        $dump        = Debug::dump('foo', 2, true, false);
+        $outputValue = ob_get_contents();
+
+        ob_end_clean();
+
+        $this->assertEmpty($outputValue);
+        $this->assertNotSame($outputValue, $dump);
+    }
 }
