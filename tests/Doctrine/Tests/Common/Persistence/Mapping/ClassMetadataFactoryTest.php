@@ -83,6 +83,18 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
         $this->assertTrue($this->cmf->hasMetadataFor(__NAMESPACE__ . '\ChildEntity'));
         $this->assertTrue($this->cmf->hasMetadataFor('prefix:ChildEntity'));
     }
+
+    /**
+     * @group DCOM-224
+     */
+    public function testGetClassWithDuplicateBackslashes()
+    {
+        $metadata = $this->cmf->getMetadataFor(__NAMESPACE__ . '\ChildEntity');
+
+        $this->assertSame($metadata, $this->cmf->getMetadataFor(__NAMESPACE__ . '\\ChildEntity'));
+        $this->assertSame($metadata, $this->cmf->getMetadataFor(__NAMESPACE__ . '\\\\ChildEntity'));
+        $this->assertSame($metadata, $this->cmf->getMetadataFor(__NAMESPACE__ . '\\\\\\\\\\\\\\\\ChildEntity'));
+    }
 }
 
 class TestClassMetadataFactory extends AbstractClassMetadataFactory
