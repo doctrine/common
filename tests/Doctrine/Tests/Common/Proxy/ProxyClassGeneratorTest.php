@@ -183,6 +183,23 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
         new ProxyGenerator(null, null);
     }
 
+    public function testProxyDirNotWritableThrowsException()
+    {
+        $className = 'Doctrine\Tests\Common\Proxy\StaticPropertyClass';
+        $metadata = $this->createClassMetadata($className, array('id'));
+        $this->setExpectedException('Doctrine\Common\Proxy\Exception\UnexpectedValueException', 'must be writable');
+        $readOnlyDir = __DIR__ . '/readonly';
+        mkdir($readOnlyDir, 0555, true);
+        try {
+          $proxyGenerator = new ProxyGenerator($readOnlyDir, true);
+          $this->generateAndRequire($proxyGenerator, $metadata);
+        } catch(UnexpectedValueException $e){
+          chmod($readOnlyDir, 0777);
+          rmdir($readOnlyDir);
+          throw($e);
+        }
+    }
+
     public function testNoNamespaceThrowsException()
     {
         $this->setExpectedException('Doctrine\Common\Proxy\Exception\InvalidArgumentException');
