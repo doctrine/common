@@ -5,5 +5,6 @@ dist/
 tests/Doctrine/Tests/Common/Proxy/generated/
 vendor/
 .idea
+composer.lock
 doctrine-common-*.tar
 doctrine-common-*.tar.gz
