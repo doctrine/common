@@ -192,7 +192,10 @@ abstract class AnnotationDriver implements MappingDriver
             );
 
             foreach ($iterator as $file) {
-                $sourceFile = realpath($file[0]);
+                $sourceFile = str_replace('\\', '/', $file[0]);
+                if (!preg_match('#^phar://#i', $sourceFile)) {
+                    $sourceFile = realpath($sourceFile);
+                }
 
                 require_once $sourceFile;
 
