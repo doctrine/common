@@ -228,6 +228,7 @@ abstract class AnnotationDriver implements MappingDriver
                 foreach ($this->excludePaths as $excludePath) {
                     $exclude = str_replace('\\', '/', realpath($excludePath));
                     $current = str_replace('\\', '/', $sourceFile);
+
                     if (strpos($current, $exclude) !== false) {
                         continue 2;
                     }
