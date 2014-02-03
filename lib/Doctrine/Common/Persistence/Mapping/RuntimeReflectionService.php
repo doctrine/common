@@ -21,6 +21,9 @@ namespace Doctrine\Common\Persistence\Mapping;
 
 use ReflectionClass;
 use ReflectionProperty;
+use ReflectionMethod;
+use ReflectionException;
+
 use Doctrine\Common\Reflection\RuntimePublicReflectionProperty;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 
@@ -92,6 +95,12 @@ class RuntimeReflectionService implements ReflectionService
      */
     public function hasPublicMethod($class, $method)
     {
-        return method_exists($class, $method) && is_callable(array($class, $method));
+        try {
+            $reflectionMethod = new ReflectionMethod($class, $method);
+        } catch (ReflectionException $e) {
+            return false;
+        }
+
+        return $reflectionMethod->isPublic();
     }
 }
