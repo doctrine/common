@@ -219,7 +219,11 @@ abstract class AnnotationDriver implements MappingDriver
             );
 
             foreach ($iterator as $file) {
-                $sourceFile = realpath($file[0]);
+                $sourceFile = $file[0];
+
+                if ( ! preg_match('(^phar:)i', $sourceFile)) {
+                    $sourceFile = realpath($sourceFile);
+                }
 
                 foreach ($this->excludePaths as $excludePath) {
                     $exclude = str_replace('\\', '/', realpath($excludePath));
