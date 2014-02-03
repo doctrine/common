@@ -58,7 +58,7 @@ class StaticReflectionServiceTest extends \PHPUnit_Framework_TestCase
     public function testGetMethods()
     {
         $this->assertTrue($this->reflectionService->hasPublicMethod(__CLASS__, "testGetMethods"));
-        $this->assertFalse($this->reflectionService->hasPublicMethod(__CLASS__, "testGetMethods2"));
+        $this->assertTrue($this->reflectionService->hasPublicMethod(__CLASS__, "testGetMethods2"));
     }
 
     public function testGetAccessibleProperty()
