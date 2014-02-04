@@ -45,14 +45,15 @@ final class Debug
      *
      * @link http://xdebug.org/
      *
-     * @param mixed   $var       The variable to dump.
-     * @param integer $maxDepth  The maximum nesting level for object properties.
-     * @param boolean $stripTags Whether output should strip HTML tags.
-     * @param boolean $echo      Send the dumped value to the output buffer
-     *
+     * @param mixed    $var       The variable to dump.
+     * @param integer  $maxDepth  The maximum nesting level for object properties.
+     * @param boolean  $stripTags Whether output should strip HTML tags.
+     * @param boolean  $echo      Send the dumped value to the output buffer
+     * @param callable $dumper    The function which will provide the dump output
+     * 
      * @return string
      */
-    public static function dump($var, $maxDepth = 2, $stripTags = true, $echo = true)
+    public static function dump($var, $maxDepth = 2, $stripTags = true, $echo = true, $dumpFunction = 'var_dump')
     {
         $html = ini_get('html_errors');
 
@@ -67,7 +68,7 @@ final class Debug
         $var = self::export($var, $maxDepth++);
 
         ob_start();
-        var_dump($var);
+        call_user_func($dumpFunction, $var);
 
         $dump = ob_get_contents();
 
