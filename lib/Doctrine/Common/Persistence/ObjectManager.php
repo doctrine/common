@@ -27,7 +27,7 @@ namespace Doctrine\Common\Persistence;
  * @author Benjamin Eberlei <kontakt@beberlei.de>
  * @author Jonathan Wage <jonwage@gmail.com>
  */
-interface ObjectManager
+interface ObjectManager extends ObjectManagerPersister
 {
     /**
      * Finds an object by its identifier.
@@ -40,20 +40,6 @@ interface ObjectManager
      * @return object The found object.
      */
     public function find($className, $id);
-
-    /**
-     * Tells the ObjectManager to make an instance managed and persistent.
-     *
-     * The object will be entered into the database as a result of the flush operation.
-     *
-     * NOTE: The persist operation always considers objects that are not yet known to
-     * this ObjectManager as NEW. Do not pass detached objects to the persist operation.
-     *
-     * @param object $object The instance to make managed and persistent.
-     *
-     * @return void
-     */
-    public function persist($object);
 
     /**
      * Removes an object instance.
@@ -109,15 +95,6 @@ interface ObjectManager
      * @return void
      */
     public function refresh($object);
-
-    /**
-     * Flushes all changes to objects that have been queued up to now to the database.
-     * This effectively synchronizes the in-memory state of managed objects with the
-     * database.
-     *
-     * @return void
-     */
-    public function flush();
 
     /**
      * Gets the repository for a class.
