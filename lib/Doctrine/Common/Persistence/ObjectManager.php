@@ -27,7 +27,7 @@ namespace Doctrine\Common\Persistence;
  * @author Benjamin Eberlei <kontakt@beberlei.de>
  * @author Jonathan Wage <jonwage@gmail.com>
  */
-interface ObjectManager extends ObjectManagerPersister
+interface ObjectManager extends ObjectPersisterInterface
 {
     /**
      * Finds an object by its identifier.
