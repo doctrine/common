@@ -196,6 +196,8 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
             $realClassName = ClassUtils::getRealClass($realClassName);
         }
 
+        $realClassName = preg_replace('/[\\\\]+/', '\\', $realClassName);
+
         if (isset($this->loadedMetadata[$realClassName])) {
             // We do not have the alias name in the map, include it
             $this->loadedMetadata[$className] = $this->loadedMetadata[$realClassName];
