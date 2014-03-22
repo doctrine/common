@@ -163,4 +163,17 @@ class MappingDriverChain implements MappingDriver
 
         return true;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMetadataLastModified($className)
+    {
+        /* @var $driver MappingDriver */
+        foreach ($this->drivers AS $namespace => $driver) {
+            if (strpos($className, $namespace) === 0) {
+                return $driver->getMetadataLastModified($className);
+            }
+        }
+    }
 }

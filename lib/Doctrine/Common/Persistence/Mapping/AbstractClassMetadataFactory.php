@@ -50,6 +50,11 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
     private $cacheDriver;
 
     /**
+     * @var bool
+     */
+    private $checkLastModified;
+
+    /**
      * @var array
      */
     private $loadedMetadata = array();
@@ -84,6 +89,26 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
     public function getCacheDriver()
     {
         return $this->cacheDriver;
+    }
+
+    /**
+     * Sets whether cache entries should be checked for freshness.
+     *
+     * @param bool $checkLastModified
+     */
+    public function setCheckLastModified($checkLastModified)
+    {
+        $this->checkLastModified = $checkLastModified;
+    }
+
+    /**
+     * Gets whether cache entries should be checked for freshness.
+     *
+     * @return bool
+     */
+    public function getCheckLastModified()
+    {
+        return $this->checkLastModified;
     }
 
     /**
@@ -204,18 +229,37 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         }
 
         if ($this->cacheDriver) {
-            if (($cached = $this->cacheDriver->fetch($realClassName . $this->cacheSalt)) !== false) {
-                $this->loadedMetadata[$realClassName] = $cached;
-                $this->wakeupReflection($cached, $this->getReflectionService());
-            } else {
-                foreach ($this->loadMetadata($realClassName) as $loadedClassName) {
+            $cached = $this->cacheDriver->fetch($realClassName . $this->cacheSalt);
+            if ($cached) {
+                if ($this->checkLastModified) {
+                    if ( ! $this->initialized) {
+                        $this->initialize();
+                    }
+                    $lastModified = $this->getDriver()->getMetadataLastModified($realClassName);
+                    $useCached = $cached->getLastModified() == $lastModified;
+                } else {
+                    $useCached = true;
+                }
+
+                // $lastModified is false if last modified checking is disabled,
+                // or if the driver does not support last modified checking.
+                if ($useCached) {
+                    $this->loadedMetadata[$realClassName] = $cached;
+                    $this->wakeupReflection($cached, $this->getReflectionService());
+                }
+            }
+        }
+
+        if (!isset($this->loadedMetadata[$realClassName])) {                                                             
+            $loadedClassNames = $this->loadMetadata($realClassName);
+
+            if ($this->cacheDriver) {
+                foreach ($loadedClassNames as $loadedClassName) {
                     $this->cacheDriver->save(
                         $loadedClassName . $this->cacheSalt, $this->loadedMetadata[$loadedClassName], null
                     );
                 }
             }
-        } else {
-            $this->loadMetadata($realClassName);
         }
 
         if ($className != $realClassName) {

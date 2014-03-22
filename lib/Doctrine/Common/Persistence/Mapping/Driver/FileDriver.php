@@ -71,6 +71,14 @@ abstract class FileDriver implements MappingDriver
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getMetadataLastModified($className)
+    {
+        return filemtime($this->locator->findMappingFile($className));
+    }
+
+    /**
      * Sets the global basename.
      *
      * @param string $file

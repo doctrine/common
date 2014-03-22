@@ -152,6 +152,10 @@ class TestObject extends PersistentObject
 
 class TestObjectMetadata implements ClassMetadata
 {
+    public function getLastModified()
+    {
+        return 1234567890;
+    }
 
     public function getAssociationMappedByTargetField($assocName)
     {

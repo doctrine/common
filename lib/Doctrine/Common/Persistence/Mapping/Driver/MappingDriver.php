@@ -55,4 +55,15 @@ interface MappingDriver
      * @return boolean
      */
     public function isTransient($className);
+
+    /**
+     * Returns the time of the last modification of the class metadata.
+     *
+     * This reflects the modification time of the file containing the metadata
+     * definition, not necessarily a modification of the metadata itself.
+     *
+     * @return int|false  A Unix timestamp, or false if the modification time
+     *                    cannot be determined.
+     */
+    public function getMetadataLastModified($className);
 }

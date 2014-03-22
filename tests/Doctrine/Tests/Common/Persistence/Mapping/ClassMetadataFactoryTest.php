@@ -76,6 +76,53 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
         $this->assertSame($loadedMetadata, $cache->fetch(__NAMESPACE__. '\ChildEntity$CLASSMETADATA'));
     }
 
+    protected function setUpLastModified(ArrayCache $cache, $lastModified)
+    {
+        $driver = $this->getMock('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver');
+        $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+
+        $driver->expects($this->any())
+            ->method('getMetadataLastModified')
+            ->with(__NAMESPACE__ . '\RootEntity')
+            ->will($this->returnValue($lastModified));
+        $metadata->expects($this->any())
+            ->method('getLastModified')
+            ->will($this->returnValue($lastModified));
+
+        $this->cmf = new TestClassMetadataFactory($driver, $metadata);
+        $this->cmf->setCacheDriver($cache);
+    }
+
+    public function testLastModified()
+    {
+        $cache = new ArrayCache();
+
+        $this->setUpLastModified($cache, 1000); 
+        $this->cmf->setCheckLastModified(true);
+        $loadedMetadata1 = $this->cmf->getMetadataFor(__NAMESPACE__ . '\RootEntity');
+        $this->assertEquals(1000, $loadedMetadata1->getLastModified());
+
+        $this->setUpLastModified($cache, 1001);
+        $this->cmf->driver->expects($this->never())->method('loadMetadataForClass');
+        $loadedMetadata2 = $this->cmf->getMetadataFor(__NAMESPACE__ . '\RootEntity');
+        $this->assertEquals(1000, $loadedMetadata2->getLastModified());
+        $this->assertSame($loadedMetadata1, $loadedMetadata2);
+
+        $this->setUpLastModified($cache, 1001);
+        $this->cmf->driver->expects($this->once())->method('loadMetadataForClass');
+        $this->cmf->setCheckLastModified(true);
+        $loadedMetadata3 = $this->cmf->getMetadataFor(__NAMESPACE__ . '\RootEntity');
+        $this->assertEquals(1001, $loadedMetadata3->getLastModified());
+        $this->assertNotSame($loadedMetadata2, $loadedMetadata3);
+
+        $this->setUpLastModified($cache, 1001);
+        $this->cmf->driver->expects($this->never())->method('loadMetadataForClass');
+        $this->cmf->setCheckLastModified(true);
+        $loadedMetadata4 = $this->cmf->getMetadataFor(__NAMESPACE__ . '\RootEntity');
+        $this->assertEquals(1001, $loadedMetadata3->getLastModified());
+        $this->assertSame($loadedMetadata3, $loadedMetadata4);
+    }
+
     public function testGetAliasedMetadata()
     {
         $loadedMetadata = $this->cmf->getMetadataFor('prefix:ChildEntity');
@@ -98,7 +145,7 @@ class TestClassMetadataFactory extends AbstractClassMetadataFactory
 
     protected function doLoadMetadata($class, $parent, $rootEntityFound, array $nonSuperclassParents)
     {
-
+        $this->driver->loadMetadataForClass($class->getName(), $class);
     }
 
     protected function getFqcnFromAlias($namespaceAlias, $simpleClassName)
@@ -113,7 +160,7 @@ class TestClassMetadataFactory extends AbstractClassMetadataFactory
 
     protected function newClassMetadataInstance($className)
     {
-        return $this->metadata;
+        return clone $this->metadata;
     }
 
     protected function getDriver()

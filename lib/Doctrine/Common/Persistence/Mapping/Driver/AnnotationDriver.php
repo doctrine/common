@@ -92,6 +92,16 @@ abstract class AnnotationDriver implements MappingDriver
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getMetadataLastModified($className)
+    {
+        $class = new \ReflectionClass($className);
+        $file = $class->getFileName();
+        return is_file($file) ? filemtime($file) : false;
+    }
+
+    /**
      * Appends lookup paths to metadata driver.
      *
      * @param array $paths
