@@ -24,35 +24,17 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 /**
  * Contract for metadata drivers.
  *
- * @since  2.2
- * @author Jonathan H. Wage <jonwage@gmail.com>
+ * @since  2.5
  */
-interface MappingDriver
+interface LastModifiedMappingDriver extends MappingDriver
 {
     /**
-     * Loads the metadata for the specified class into the provided container.
+     * Returns the time of the last modification of the class metadata.
      *
-     * @param string        $className
-     * @param ClassMetadata $metadata
+     * This reflects the modification time of the file containing the metadata
+     * definition, not necessarily a modification of the metadata itself.
      *
-     * @return void
+     * @return int  A Unix timestamp.
      */
-    public function loadMetadataForClass($className, ClassMetadata $metadata);
-
-    /**
-     * Gets the names of all mapped classes known to this driver.
-     *
-     * @return array The names of all mapped classes known to this driver.
-     */
-    public function getAllClassNames();
-
-    /**
-     * Returns whether the class with the specified name should have its metadata loaded.
-     * This is only the case if it is either mapped as an Entity or a MappedSuperclass.
-     *
-     * @param string $className
-     *
-     * @return boolean
-     */
-    public function isTransient($className);
+    public function getMetadataLastModified($className);
 }

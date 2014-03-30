@@ -36,7 +36,7 @@ use Doctrine\Common\Persistence\Mapping\MappingException;
  * @author Jonathan H. Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
  */
-abstract class FileDriver implements MappingDriver
+abstract class FileDriver implements LastModifiedMappingDriver
 {
     /**
      * @var FileLocator
@@ -68,14 +68,6 @@ abstract class FileDriver implements MappingDriver
         } else {
             $this->locator = new DefaultFileLocator((array)$locator, $fileExtension);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getMetadataLastModified($className)
-    {
-        return filemtime($this->locator->findMappingFile($className));
     }
 
     /**
@@ -158,6 +150,14 @@ abstract class FileDriver implements MappingDriver
             $classNames = array_merge(array_keys($this->classCache), $classNames);
         }
         return $classNames;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMetadataLastModified($className)
+    {
+        return filemtime($this->locator->findMappingFile($className));
     }
 
     /**

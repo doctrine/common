@@ -32,7 +32,7 @@ use Doctrine\Common\Persistence\Mapping\MappingException;
  * @author Jonathan H. Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
  */
-abstract class AnnotationDriver implements MappingDriver
+abstract class AnnotationDriver implements LastModifiedMappingDriver
 {
     /**
      * The AnnotationReader.
@@ -98,7 +98,7 @@ abstract class AnnotationDriver implements MappingDriver
     {
         $class = new \ReflectionClass($className);
         $file = $class->getFileName();
-        return is_file($file) ? filemtime($file) : false;
+        return is_file($file) ? filemtime($file) : 0;
     }
 
     /**

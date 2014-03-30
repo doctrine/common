@@ -64,14 +64,6 @@ class LazyLoadableObjectClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function getLastModified()
-    {
-        return 1234567890;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function getName()
     {
         return $this->getReflectionClass()->getName();

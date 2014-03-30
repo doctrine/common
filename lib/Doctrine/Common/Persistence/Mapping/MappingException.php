@@ -95,4 +95,14 @@ class MappingException extends \Exception
     {
         return new self("Class '$className' does not exist");
     }
+
+    /**
+     * @param string $className
+     *
+     * @return \Doctrine\Common\Persistence\Mapping\MappingException
+     */
+    public static function lastModifiedNotSupported($className)
+    {
+        return new self("Last modified checking is not supported by '$className'.");
+    }
 }

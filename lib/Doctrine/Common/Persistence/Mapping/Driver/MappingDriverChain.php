@@ -33,7 +33,7 @@ use Doctrine\Common\Persistence\Mapping\MappingException;
  * @author Jonathan H. Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
  */
-class MappingDriverChain implements MappingDriver
+class MappingDriverChain implements LastModifiedMappingDriver
 {
     /**
      * The default driver.
@@ -172,6 +172,9 @@ class MappingDriverChain implements MappingDriver
         /* @var $driver MappingDriver */
         foreach ($this->drivers AS $namespace => $driver) {
             if (strpos($className, $namespace) === 0) {
+                if (!$driver instanceof LastModifiedMappingDriver) {
+                    throw MappingException::lastModifiedNotSupported(get_class($this->getDriver()));
+                }
                 return $driver->getMetadataLastModified($className);
             }
         }
