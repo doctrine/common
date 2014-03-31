@@ -172,11 +172,13 @@ class MappingDriverChain implements LastModifiedMappingDriver
         /* @var $driver MappingDriver */
         foreach ($this->drivers AS $namespace => $driver) {
             if (strpos($className, $namespace) === 0) {
-                if (!$driver instanceof LastModifiedMappingDriver) {
-                    throw MappingException::lastModifiedNotSupported(get_class($this->getDriver()));
+                if ($driver instanceof LastModifiedMappingDriver) {
+                    return $driver->getMetadataLastModified($className);
+                } else {
+                    return time();
                 }
-                return $driver->getMetadataLastModified($className);
             }
         }
+        return 0;
     }
 }

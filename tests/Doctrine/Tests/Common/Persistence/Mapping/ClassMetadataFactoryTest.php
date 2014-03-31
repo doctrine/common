@@ -77,20 +77,18 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
         $this->assertSame($loadedMetadata, $entry['metadata']);
     }
 
-    public function testCheckMetadataLastModifiedNotSupported()
+    public function testGetMetadataLastModifiedAbsentClass()
     {
-        $cache = new ArrayCache();
-        $this->cmf->setCacheDriver($cache);
-        $this->cmf->setCheckMetadataLastModified(true);
-
         $this->setExpectedException('Doctrine\Common\Persistence\Mapping\MappingException');
-        $loadedMetadata = $this->cmf->getMetadataFor(__NAMESPACE__ . '\ChildEntity');
+        $this->cmf->getMetadataLastModified(__NAMESPACE__ . '\AbsentClass');
     }
 
     public function testGetMetadataLastModifiedNotSupported()
     {
-        $this->setExpectedException('Doctrine\Common\Persistence\Mapping\MappingException');
+        $now = time();
         $lastModified = $this->cmf->getMetadataLastModified(__NAMESPACE__ . '\ChildEntity');
+        $this->assertGreaterThanOrEqual($now, $lastModified);
+        $this->assertLessThanOrEqual(time(), $lastModified);
     }
 
     public function testGetMetadataLastModified()

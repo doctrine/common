@@ -98,7 +98,7 @@ abstract class AnnotationDriver implements LastModifiedMappingDriver
     {
         $class = new \ReflectionClass($className);
         $file = $class->getFileName();
-        return is_file($file) ? filemtime($file) : 0;
+        return is_file($file) ? filemtime($file) : time();
     }
 
     /**
