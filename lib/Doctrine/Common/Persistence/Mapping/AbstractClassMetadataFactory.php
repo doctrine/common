@@ -346,7 +346,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
      */
     public function getMetadataLastModified($className)
     {
-        $parentClasses = $this->getParentClasses($className);
+        $parentClasses = array_reverse($this->getReflectionService()->getParentClasses($className));
         $parentClasses[] = $className;
 
         if (!$this->getDriver() instanceof LastModifiedMappingDriver) {
@@ -355,10 +355,16 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
 
         $lastModified = 0;
         foreach ($parentClasses as $className) {
-            if (!isset($this->metadataLastModified[$className])) {
-                $this->metadataLastModified[$className] = $this->getDriver()->getMetadataLastModified($className);
+            if ( ! $this->getDriver()->isTransient($className)) {
+                if (!isset($this->metadataLastModified[$className])) {
+                    $this->metadataLastModified[$className] = $this->getDriver()->getMetadataLastModified($className);
+                }
+                $lastModified = max($lastModified, $this->metadataLastModified[$className]);
             }
-            $lastModified = max($lastModified, $this->metadataLastModified[$className]);
+            $class = $this->getReflectionService()->getClass($className);
+            if ($class && is_file($class->getFileName())) {
+                $lastModified = max($lastModified, filemtime($class->getFileName()));
+            }
         }
 
         return $lastModified;
