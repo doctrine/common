@@ -33,9 +33,9 @@ class UnexpectedValueException extends BaseUnexpectedValueException implements P
     /**
      * @return self
      */
-    public static function proxyDirectoryNotWritable()
+    public static function proxyDirectoryNotWritable($proxyDirectory)
     {
-        return new self('Your proxy directory must be writable');
+        return new self(sprintf('Your proxy directory "%s" must be writable', $proxyDirectory));
     }
 
     /**
