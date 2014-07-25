@@ -302,6 +302,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
         $tmpFileName = $fileName . '.' . uniqid('', true);
 
         file_put_contents($tmpFileName, $proxyCode);
+        usleep(250000);
         rename($tmpFileName, $fileName);
     }
 
