@@ -19,8 +19,8 @@
 
 namespace Doctrine\Common\Reflection;
 
-use ReflectionMethod;
 use ReflectionException;
+use ReflectionMethod;
 
 class StaticReflectionMethod extends ReflectionMethod
 {

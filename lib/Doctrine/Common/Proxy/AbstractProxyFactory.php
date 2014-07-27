@@ -19,11 +19,11 @@
 
 namespace Doctrine\Common\Proxy;
 
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
 use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Doctrine\Common\Proxy\Exception\OutOfBoundsException;
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
 /**
  * Abstract factory for proxy objects.

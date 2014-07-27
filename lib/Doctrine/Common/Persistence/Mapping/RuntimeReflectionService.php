@@ -19,13 +19,11 @@
 
 namespace Doctrine\Common\Persistence\Mapping;
 
-use ReflectionClass;
-use ReflectionProperty;
-use ReflectionMethod;
-use ReflectionException;
-
 use Doctrine\Common\Reflection\RuntimePublicReflectionProperty;
-use Doctrine\Common\Persistence\Mapping\MappingException;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
+use ReflectionProperty;
 
 /**
  * PHP Runtime Reflection Service.
