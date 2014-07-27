@@ -789,11 +789,12 @@ EOT;
                 $methods .= '        }' . "\n\n";
             }
 
+            $callParamsString = implode(', ', $this->getParameterNames($method->getParameters()));
+
             $methods .= "\n        \$this->__initializer__ "
                 . "&& \$this->__initializer__->__invoke(\$this, " . var_export($name, true)
-                . ", array(" . implode(', ', $this->getParameterNames($method->getParameters())) . "));"
-                . "\n\n        return parent::" . $name
-                . '(' . implode(', ', $this->getParameterNames($method->getParameters())) . ');'
+                . ", array(" . $callParamsString . "));"
+                . "\n\n        return parent::" . $name . '(' . $callParamsString . ');'
                 . "\n" . '    }' . "\n";
         }
 
@@ -892,12 +893,10 @@ EOT;
     private function buildParametersString(ClassMetadata $class, \ReflectionMethod $method, array $parameters)
     {
         $parameterDefinitions = array();
-        $argumentString  = '';
 
         /* @var $param \ReflectionParameter */
         foreach ($parameters as $param) {
             $parameterDefinition = '';
-            $argumentString  .= ', ';
 
             if ($parameterType = $this->getParameterType($class, $method, $param)) {
                 $parameterDefinition .= $parameterType . ' ';
@@ -909,7 +908,6 @@ EOT;
 
             $parameters[]     = '$' . $param->getName();
             $parameterDefinition .= '$' . $param->getName();
-            $argumentString  .= '$' . $param->getName();
 
             if ($param->isDefaultValueAvailable()) {
                 $parameterDefinition .= ' = ' . var_export($param->getDefaultValue(), true);
