@@ -19,8 +19,6 @@
 
 namespace Doctrine\Common\Persistence;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 /**
  * Abstract implementation of the ManagerRegistry contract.
  *

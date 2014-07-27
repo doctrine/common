@@ -19,8 +19,8 @@
 
 namespace Doctrine\Common\Reflection;
 
-use ReflectionException;
 use Doctrine\Common\Annotations\TokenParser;
+use ReflectionException;
 
 /**
  * Parses a file for namespaces/use/class declarations.

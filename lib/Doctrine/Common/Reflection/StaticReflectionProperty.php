@@ -19,8 +19,8 @@
 
 namespace Doctrine\Common\Reflection;
 
-use ReflectionProperty;
 use ReflectionException;
+use ReflectionProperty;
 
 class StaticReflectionProperty extends ReflectionProperty
 {

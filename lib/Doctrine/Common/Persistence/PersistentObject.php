@@ -19,9 +19,9 @@
 
 namespace Doctrine\Common\Persistence;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
 /**
  * PersistentObject base class that implements getter/setter methods for all mapped fields and associations
