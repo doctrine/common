@@ -776,55 +776,7 @@ EOT;
                 $methods .= '&';
             }
 
-            $methods .= $name . '(';
-
-            $firstParam      = true;
-            $parameterString = '';
-            $argumentString  = '';
-            $parameters      = array();
-
-            foreach ($method->getParameters() as $param) {
-                if ($firstParam) {
-                    $firstParam = false;
-                } else {
-                    $parameterString .= ', ';
-                    $argumentString  .= ', ';
-                }
-
-                try {
-                    $paramClass = $param->getClass();
-                } catch (\ReflectionException $previous) {
-                    throw UnexpectedValueException::invalidParameterTypeHint(
-                        $class->getName(),
-                        $method->getName(),
-                        $param->getName(),
-                        $previous
-                    );
-                }
-
-                // We need to pick the type hint class too
-                if (null !== $paramClass) {
-                    $parameterString .= '\\' . $paramClass->getName() . ' ';
-                } elseif ($param->isArray()) {
-                    $parameterString .= 'array ';
-                } elseif (method_exists($param, 'isCallable') && $param->isCallable()) {
-                    $parameterString .= 'callable ';
-                }
-
-                if ($param->isPassedByReference()) {
-                    $parameterString .= '&';
-                }
-
-                $parameters[] = '$' . $param->getName();
-                $parameterString .= '$' . $param->getName();
-                $argumentString  .= '$' . $param->getName();
-
-                if ($param->isDefaultValueAvailable()) {
-                    $parameterString .= ' = ' . var_export($param->getDefaultValue(), true);
-                }
-            }
-
-            $methods .= $parameterString . ')';
+            $methods .= $name . '(' . $this->buildParametersString($class, $method, $method->getParameters()) . ')';
             $methods .= "\n" . '    {' . "\n";
 
             if ($this->isShortIdentifierGetter($method, $class)) {
@@ -837,10 +789,12 @@ EOT;
                 $methods .= '        }' . "\n\n";
             }
 
+            $callParamsString = implode(', ', $this->getParameterNames($method->getParameters()));
+
             $methods .= "\n        \$this->__initializer__ "
                 . "&& \$this->__initializer__->__invoke(\$this, " . var_export($name, true)
-                . ", array(" . implode(', ', $parameters) . "));"
-                . "\n\n        return parent::" . $name . '(' . $argumentString . ');'
+                . ", array(" . $callParamsString . "));"
+                . "\n\n        return parent::" . $name . '(' . $callParamsString . ');'
                 . "\n" . '    }' . "\n";
         }
 
@@ -928,5 +882,92 @@ EOT;
 
         return $properties;
     }
-}
 
+    /**
+     * @param ClassMetadata          $class
+     * @param \ReflectionMethod      $method
+     * @param \ReflectionParameter[] $parameters
+     *
+     * @return string
+     */
+    private function buildParametersString(ClassMetadata $class, \ReflectionMethod $method, array $parameters)
+    {
+        $parameterDefinitions = array();
+
+        /* @var $param \ReflectionParameter */
+        foreach ($parameters as $param) {
+            $parameterDefinition = '';
+
+            if ($parameterType = $this->getParameterType($class, $method, $param)) {
+                $parameterDefinition .= $parameterType . ' ';
+            }
+
+            if ($param->isPassedByReference()) {
+                $parameterDefinition .= '&';
+            }
+
+            $parameters[]     = '$' . $param->getName();
+            $parameterDefinition .= '$' . $param->getName();
+
+            if ($param->isDefaultValueAvailable()) {
+                $parameterDefinition .= ' = ' . var_export($param->getDefaultValue(), true);
+            }
+
+            $parameterDefinitions[] = $parameterDefinition;
+        }
+
+        return implode(', ', $parameterDefinitions);
+    }
+
+    /**
+     * @param ClassMetadata $class
+     * @param \ReflectionMethod $method
+     * @param \ReflectionParameter $parameter
+     *
+     * @return string|null
+     */
+    private function getParameterType(ClassMetadata $class, \ReflectionMethod $method, \ReflectionParameter $parameter)
+    {
+
+        // We need to pick the type hint class too
+        if ($parameter->isArray()) {
+            return 'array';
+        }
+
+        if (method_exists($parameter, 'isCallable') && $parameter->isCallable()) {
+            return 'callable';
+        }
+
+        try {
+            $parameterClass = $parameter->getClass();
+
+            if ($parameterClass) {
+                return '\\' . $parameterClass->getName();
+            }
+        } catch (\ReflectionException $previous) {
+            throw UnexpectedValueException::invalidParameterTypeHint(
+                $class->getName(),
+                $method->getName(),
+                $parameter->getName(),
+                $previous
+            );
+        }
+
+        return null;
+    }
+
+    /**
+     * @param \ReflectionParameter[] $parameters
+     *
+     * @return string[]
+     */
+    private function getParameterNames(array $parameters)
+    {
+        return array_map(
+            function (\ReflectionParameter $parameter) {
+                return '$' . $parameter->getName();
+            },
+            $parameters
+        );
+    }
+}
