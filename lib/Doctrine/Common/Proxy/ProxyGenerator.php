@@ -899,26 +899,8 @@ EOT;
             $parameterDefinition = '';
             $argumentString  .= ', ';
 
-            // We need to pick the type hint class too
-            if ($param->isArray()) {
-                $parameterDefinition .= 'array ';
-            } elseif (method_exists($param, 'isCallable') && $param->isCallable()) {
-                $parameterDefinition .= 'callable ';
-            } else {
-                try {
-                    $parameterClass = $param->getClass();
-
-                    if ($parameterClass) {
-                        $parameterDefinition .= '\\' . $parameterClass->getName() . ' ';
-                    }
-                } catch (\ReflectionException $previous) {
-                    throw UnexpectedValueException::invalidParameterTypeHint(
-                        $class->getName(),
-                        $method->getName(),
-                        $param->getName(),
-                        $previous
-                    );
-                }
+            if ($parameterType = $this->getParameterType($class, $method, $param)) {
+                $parameterDefinition .= $parameterType . ' ';
             }
 
             if ($param->isPassedByReference()) {
@@ -937,6 +919,43 @@ EOT;
         }
 
         return implode(', ', $parameterDefinitions);
+    }
+
+    /**
+     * @param ClassMetadata $class
+     * @param \ReflectionMethod $method
+     * @param \ReflectionParameter $parameter
+     *
+     * @return string|null
+     */
+    private function getParameterType(ClassMetadata $class, \ReflectionMethod $method, \ReflectionParameter $parameter)
+    {
+
+        // We need to pick the type hint class too
+        if ($parameter->isArray()) {
+            return 'array';
+        }
+
+        if (method_exists($parameter, 'isCallable') && $parameter->isCallable()) {
+            return 'callable';
+        }
+
+        try {
+            $parameterClass = $parameter->getClass();
+
+            if ($parameterClass) {
+                return '\\' . $parameterClass->getName();
+            }
+        } catch (\ReflectionException $previous) {
+            throw UnexpectedValueException::invalidParameterTypeHint(
+                $class->getName(),
+                $method->getName(),
+                $parameter->getName(),
+                $previous
+            );
+        }
+
+        return null;
     }
 
     /**
