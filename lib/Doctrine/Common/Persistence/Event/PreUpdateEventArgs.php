@@ -20,6 +20,7 @@
 namespace Doctrine\Common\Persistence\Event;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Util\ClassUtils;
 
 /**
  * Class that holds event arguments for a preUpdate event.
@@ -113,6 +114,10 @@ class PreUpdateEventArgs extends LifecycleEventArgs
         $this->assertValidField($field);
 
         $this->entityChangeSet[$field][1] = $value;
+
+        $object = $this->getObject();
+        $metadata = $this->getObjectManager()->getClassMetadata(ClassUtils::getClass($object));
+        $metadata->reflFields[$field]->setValue($object, $value);
     }
 
     /**
