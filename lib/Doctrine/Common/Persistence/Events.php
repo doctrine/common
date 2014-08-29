@@ -20,7 +20,7 @@
 namespace Doctrine\Common\Persistence;
 
 /**
- * Container for all ORM events.
+ * Container for all persistence events.
  *
  * @author Julien Deniau <julien.deniau@gmail.com>
  */
