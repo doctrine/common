@@ -30,6 +30,11 @@ trait IdentifierTrait
     /**
      * @var string
      */
+    public $publicTraitedIdentifierField;
+
+    /**
+     * @var string
+     */
     protected $protectedTraitedIdentifierField;
 
     /**
