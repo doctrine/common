@@ -50,7 +50,6 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
     protected $identifier = array(
         'publicIdentifierField' => 'publicIdentifierFieldValue',
         'protectedIdentifierField' => 'protectedIdentifierFieldValue',
-        'protectedTraitedIdentifierField' => 'protectedTraitedIdentifierFieldValue',
     );
 
     /**
@@ -126,7 +125,6 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
         $this->configureInitializerMock(0);
 
         $this->assertSame('protectedIdentifierFieldValue', $this->lazyObject->getProtectedIdentifierField());
-        $this->assertSame('protectedTraitedIdentifierFieldValue', $this->lazyObject->getProtectedTraitedIdentifierField());
     }
 
     public function testCallingMethodCausesLazyLoading()
@@ -295,7 +293,6 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
                 array(
                     'publicIdentifierField' => 'publicIdentifierFieldValue',
                     'protectedIdentifierField' => 'protectedIdentifierFieldValue',
-                    'protectedTraitedIdentifierField' => 'protectedTraitedIdentifierFieldValue',
                 ),
                 $this->lazyObject
             )
@@ -330,7 +327,6 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
             ->with(array(
                 'publicIdentifierField'    => 'publicIdentifierFieldValue',
                 'protectedIdentifierField' => 'protectedIdentifierFieldValue',
-                'protectedTraitedIdentifierField' => 'protectedTraitedIdentifierFieldValue',
             ))
             ->will($this->returnCallback(function () {
                 $blueprint = new LazyLoadableObject();

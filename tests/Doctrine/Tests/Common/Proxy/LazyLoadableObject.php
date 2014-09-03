@@ -23,13 +23,10 @@ namespace Doctrine\Tests\Common\Proxy;
  * Test asset representing a lazy loadable object
  *
  * @author Marco Pivetta <ocramius@gmail.com>
- * @author Doron Gutman <doron@gutman.me>
  * @since  2.4
  */
 class LazyLoadableObject
 {
-    use IdentifierTrait;
-
     /**
      * @var string
      */
