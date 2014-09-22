@@ -841,8 +841,7 @@ EOT;
         $cheapCheck = (
             $method->getNumberOfParameters() == 0
             && substr($method->getName(), 0, 3) == 'get'
-            && in_array($identifier, $class->getIdentifier(), true)
-            && $class->hasField($identifier)
+            && $class->isIdentifier($identifier)
             && (($endLine - $startLine) <= 4)
         );
 
