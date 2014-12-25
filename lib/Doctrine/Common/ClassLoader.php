@@ -62,6 +62,11 @@ class ClassLoader
     protected $namespaceSeparator = '\\';
 
     /**
+     * @var bool[] indexed by class name
+     */
+    private $unknownClasses = array();
+
+    /**
      * Creates a new <tt>ClassLoader</tt> that loads classes of the
      * specified namespace from the specified include path.
      *
@@ -236,23 +241,7 @@ class ClassLoader
         }
 
         foreach (spl_autoload_functions() as $loader) {
-            if (is_array($loader)) { // array(???, ???)
-                if (is_object($loader[0])) {
-                    if ($loader[0] instanceof ClassLoader) { // array($obj, 'methodName')
-                        if ($loader[0]->canLoadClass($className)) {
-                            return true;
-                        }
-                    } else if (is_callable($loader) && $loader[0]->{$loader[1]}($className)) {
-                        return true;
-                    }
-                } else if (is_callable($loader) && $loader[0]::$loader[1]($className)) { // array('ClassName', 'methodName')
-                    return true;
-                }
-            } else if ($loader instanceof \Closure) { // function($className) {..}
-                if ($loader($className)) {
-                    return true;
-                }
-            } else if (is_string($loader) && is_callable($loader) && $loader($className)) { // "MyClass::loadClass"
+            if (is_callable($loader) && call_user_func($loader, $className)) {
                 return true;
             }
 
