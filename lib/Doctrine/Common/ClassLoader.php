@@ -236,7 +236,7 @@ class ClassLoader
         }
 
         foreach (spl_autoload_functions() as $loader) {
-            if (is_array($loader)) { // array(???, ???)
+            if (is_array($loader) && is_callable($loader)) { // array(???, ???)
                 if (is_object($loader[0])) {
                     if ($loader[0] instanceof ClassLoader) { // array($obj, 'methodName')
                         if ($loader[0]->canLoadClass($className)) {
@@ -252,7 +252,7 @@ class ClassLoader
                 if ($loader($className)) {
                     return true;
                 }
-            } else if (is_string($loader) && $loader($className)) { // "MyClass::loadClass"
+            } else if (is_string($loader) && is_callable($loader) && $loader($className)) { // "MyClass::loadClass"
                 return true;
             }
 
