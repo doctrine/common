@@ -64,11 +64,6 @@ class ClassLoader
     protected $namespaceSeparator = '\\';
 
     /**
-     * @var bool[] indexed by class name
-     */
-    private $unknownClasses = array();
-
-    /**
      * Creates a new <tt>ClassLoader</tt> that loads classes of the
      * specified namespace from the specified include path.
      *
