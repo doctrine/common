@@ -242,17 +242,17 @@ class ClassLoader
                         if ($loader[0]->canLoadClass($className)) {
                             return true;
                         }
-                    } else if ($loader[0]->{$loader[1]}($className)) {
+                    } else if (is_callable($loader) && $loader[0]->{$loader[1]}($className)) {
                         return true;
                     }
-                } else if ($loader[0]::$loader[1]($className)) { // array('ClassName', 'methodName')
+                } else if (is_callable($loader) && $loader[0]::$loader[1]($className)) { // array('ClassName', 'methodName')
                     return true;
                 }
             } else if ($loader instanceof \Closure) { // function($className) {..}
                 if ($loader($className)) {
                     return true;
                 }
-            } else if (is_string($loader) && $loader($className)) { // "MyClass::loadClass"
+            } else if (is_string($loader) && is_callable($loader) && $loader($className)) { // "MyClass::loadClass"
                 return true;
             }
 

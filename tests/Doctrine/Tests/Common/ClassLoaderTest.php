@@ -61,4 +61,20 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
         spl_autoload_unregister($additionalLoader);
         spl_autoload_unregister($silentLoader);
     }
+
+    public function testClassExistsWhenLoaderIsProtected()
+    {
+        require_once __DIR__ . '/ClassLoaderTest/ExternalLoader.php';
+
+        // Test static call
+        \ClassLoaderTest\ExternalLoader::registerStatic();
+        $this->assertFalse(ClassLoader::classExists('ClassLoaderTest\Class\That\Does\Not\Exist'));
+        \ClassLoaderTest\ExternalLoader::unregisterStatic();
+
+        // Test object
+        $loader = new \ClassLoaderTest\ExternalLoader();
+        $loader->register();
+        $this->assertFalse(ClassLoader::classExists('ClassLoaderTest\Class\That\Does\Not\Exist'));
+        $loader->unregister();
+    }
 }
