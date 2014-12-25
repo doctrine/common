@@ -236,16 +236,16 @@ class ClassLoader
         }
 
         foreach (spl_autoload_functions() as $loader) {
-            if (is_array($loader) && is_callable($loader)) { // array(???, ???)
+            if (is_array($loader)) { // array(???, ???)
                 if (is_object($loader[0])) {
                     if ($loader[0] instanceof ClassLoader) { // array($obj, 'methodName')
                         if ($loader[0]->canLoadClass($className)) {
                             return true;
                         }
-                    } else if ($loader[0]->{$loader[1]}($className)) {
+                    } else if (is_callable($loader) && $loader[0]->{$loader[1]}($className)) {
                         return true;
                     }
-                } else if ($loader[0]::$loader[1]($className)) { // array('ClassName', 'methodName')
+                } else if (is_callable($loader) && $loader[0]::$loader[1]($className)) { // array('ClassName', 'methodName')
                     return true;
                 }
             } else if ($loader instanceof \Closure) { // function($className) {..}

@@ -66,8 +66,15 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
     {
         require_once __DIR__ . '/ClassLoaderTest/ExternalLoader.php';
 
-        \ClassLoaderTest\ExternalLoader::register();
+        // Test static call
+        \ClassLoaderTest\ExternalLoader::registerStatic();
         $this->assertFalse(ClassLoader::classExists('ClassLoaderTest\Class\That\Does\Not\Exist'));
-        \ClassLoaderTest\ExternalLoader::unregister();
+        \ClassLoaderTest\ExternalLoader::unregisterStatic();
+
+        // Test object
+        $loader = new \ClassLoaderTest\ExternalLoader();
+        $loader->register();
+        $this->assertFalse(ClassLoader::classExists('ClassLoaderTest\Class\That\Does\Not\Exist'));
+        $loader->unregister();
     }
 }
