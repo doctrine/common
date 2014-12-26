@@ -266,7 +266,7 @@ class ClassLoader
                 && $classLoader instanceof ClassLoader
                 && $classLoader->canLoadClass($className)
             ) {
-                return $loader[0];
+                return $classLoader;
             }
         }
 
