@@ -30,6 +30,8 @@ namespace Doctrine\Common;
  *
  * @author Roman Borschel <roman@code-factory.org>
  * @since 2.0
+ *
+ * @deprecated the ClassLoader is deprecated and will be removed in version 3.0 of doctrine/common.
  */
 class ClassLoader
 {
@@ -236,23 +238,7 @@ class ClassLoader
         }
 
         foreach (spl_autoload_functions() as $loader) {
-            if (is_array($loader)) { // array(???, ???)
-                if (is_object($loader[0])) {
-                    if ($loader[0] instanceof ClassLoader) { // array($obj, 'methodName')
-                        if ($loader[0]->canLoadClass($className)) {
-                            return true;
-                        }
-                    } else if (is_callable($loader) && $loader[0]->{$loader[1]}($className)) {
-                        return true;
-                    }
-                } else if (is_callable($loader) && $loader[0]::$loader[1]($className)) { // array('ClassName', 'methodName')
-                    return true;
-                }
-            } else if ($loader instanceof \Closure) { // function($className) {..}
-                if ($loader($className)) {
-                    return true;
-                }
-            } else if (is_string($loader) && is_callable($loader) && $loader($className)) { // "MyClass::loadClass"
+            if (is_callable($loader) && call_user_func($loader, $className)) {
                 return true;
             }
 
@@ -276,10 +262,11 @@ class ClassLoader
     {
          foreach (spl_autoload_functions() as $loader) {
             if (is_array($loader)
-                && $loader[0] instanceof ClassLoader
-                && $loader[0]->canLoadClass($className)
+                && ($classLoader = reset($loader))
+                && $classLoader instanceof ClassLoader
+                && $classLoader->canLoadClass($className)
             ) {
-                return $loader[0];
+                return $classLoader;
             }
         }
 
