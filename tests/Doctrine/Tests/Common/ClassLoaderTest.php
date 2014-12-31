@@ -84,4 +84,13 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
 
         $this->assertFalse($classLoader->loadClass('ClassLoaderTest\Non\Existing\ClassName'));
     }
+
+    public function testLoadFileNotContainingClassClass()
+    {
+        $classLoader = new ClassLoader('ClassLoaderTest', __DIR__);
+
+        $classLoader->setFileExtension('.class.php');
+
+        $this->assertFalse($classLoader->loadClass('ClassLoaderTest\EmptyFile'));
+    }
 }
