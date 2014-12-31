@@ -183,7 +183,7 @@ class ClassLoader
                . str_replace($this->namespaceSeparator, DIRECTORY_SEPARATOR, $className)
                . $this->fileExtension;
 
-        return true;
+        return class_exists($className, false) || interface_exists($className, false);
     }
 
     /**
