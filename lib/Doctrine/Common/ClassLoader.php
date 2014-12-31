@@ -175,10 +175,6 @@ class ClassLoader
      */
     public function loadClass($className)
     {
-        if ($this->namespace !== null && strpos($className, $this->namespace.$this->namespaceSeparator) !== 0) {
-            return false;
-        }
-
         if (! $this->canLoadClass($className)) {
             return false;
         }
