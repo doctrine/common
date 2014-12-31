@@ -77,4 +77,11 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse(ClassLoader::classExists('ClassLoaderTest\Class\That\Does\Not\Exist'));
         $loader->unregister();
     }
+
+    public function testLoadNonExistingClass()
+    {
+        $classLoader = new ClassLoader('ClassLoaderTest', __DIR__);
+
+        $this->assertFalse($classLoader->loadClass('ClassLoaderTest\Non\Existing\ClassName'));
+    }
 }
