@@ -179,6 +179,10 @@ class ClassLoader
             return false;
         }
 
+        if (! $this->canLoadClass($className)) {
+            return false;
+        }
+
         require ($this->includePath !== null ? $this->includePath . DIRECTORY_SEPARATOR : '')
                . str_replace($this->namespaceSeparator, DIRECTORY_SEPARATOR, $className)
                . $this->fileExtension;
