@@ -175,7 +175,11 @@ class ClassLoader
      */
     public function loadClass($className)
     {
-        if ($this->namespace !== null && strpos($className, $this->namespace.$this->namespaceSeparator) !== 0) {
+        if (self::typeExists($className)) {
+            return true;
+        }
+
+        if (! $this->canLoadClass($className)) {
             return false;
         }
 
@@ -183,7 +187,7 @@ class ClassLoader
                . str_replace($this->namespaceSeparator, DIRECTORY_SEPARATOR, $className)
                . $this->fileExtension;
 
-        return true;
+        return self::typeExists($className);
     }
 
     /**
@@ -233,21 +237,7 @@ class ClassLoader
      */
     public static function classExists($className)
     {
-        if (class_exists($className, false) || interface_exists($className, false)) {
-            return true;
-        }
-
-        foreach (spl_autoload_functions() as $loader) {
-            if (is_callable($loader) && call_user_func($loader, $className)) {
-                return true;
-            }
-
-            if (class_exists($className, false) || interface_exists($className, false)) {
-                return true;
-            }
-        }
-
-        return false;
+        return self::typeExists($className, true);
     }
 
     /**
@@ -271,5 +261,20 @@ class ClassLoader
         }
 
         return null;
+    }
+
+    /**
+     * Checks whether a given type exists
+     *
+     * @param string $type
+     * @param bool   $autoload
+     *
+     * @return bool
+     */
+    private static function typeExists($type, $autoload = false)
+    {
+        return class_exists($type, $autoload)
+            || interface_exists($type, $autoload)
+            || (function_exists('trait_exists') && trait_exists($type, $autoload));
     }
 }
