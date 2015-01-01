@@ -94,6 +94,17 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($classLoader->loadClass('ClassLoaderTest\EmptyFile'));
     }
 
+    public function testSupportsInterfaceAutoloading()
+    {
+        $classLoader = new ClassLoader();
+        $classLoader->setIncludePath(__DIR__);
+        $classLoader->setFileExtension('.class.php');
+        $classLoader->setNamespaceSeparator('_');
+
+        $this->assertTrue($classLoader->loadClass('ClassLoaderTest_InterfaceA'));
+        $this->assertTrue(interface_exists('ClassLoaderTest_InterfaceA', false));
+    }
+
     public function testSupportsTraitAutoloading()
     {
         if (! function_exists('trait_exists')) {
