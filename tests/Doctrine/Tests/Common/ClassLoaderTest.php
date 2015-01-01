@@ -93,4 +93,19 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
 
         $this->assertFalse($classLoader->loadClass('ClassLoaderTest\EmptyFile'));
     }
+
+    public function testSupportsTraitAutoloading()
+    {
+        if (! function_exists('trait_exists')) {
+            $this->markTestSkipped('You need a PHP version that supports traits in order to run this test');
+        }
+
+        $classLoader = new ClassLoader('ClassLoaderTest');
+        $classLoader->setIncludePath(__DIR__);
+        $classLoader->setFileExtension('.class.php');
+        $classLoader->setNamespaceSeparator('_');
+
+        $this->assertTrue($classLoader->loadClass('ClassLoaderTest_TraitA'));
+        $this->assertTrue(trait_exists('ClassLoaderTest_ClassA', false));
+    }
 }
