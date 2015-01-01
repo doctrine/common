@@ -119,4 +119,15 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertTrue($classLoader->loadClass('ClassLoaderTest_TraitA'));
         $this->assertTrue(trait_exists('ClassLoaderTest_TraitA', false));
     }
+
+    public function testMultipleAutoloadRequestsWillProduceSameResult()
+    {
+        $classLoader = new ClassLoader();
+        $classLoader->setIncludePath(__DIR__);
+        $classLoader->setFileExtension('.class.php');
+        $classLoader->setNamespaceSeparator('_');
+
+        $this->assertTrue($classLoader->loadClass('ClassLoaderTest_ClassA'));
+        $this->assertTrue($classLoader->loadClass('ClassLoaderTest_ClassA'));
+    }
 }
