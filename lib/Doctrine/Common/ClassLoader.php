@@ -175,6 +175,10 @@ class ClassLoader
      */
     public function loadClass($className)
     {
+        if (self::typeExists($className)) {
+            return true;
+        }
+
         if (! $this->canLoadClass($className)) {
             return false;
         }
