@@ -100,12 +100,12 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
             $this->markTestSkipped('You need a PHP version that supports traits in order to run this test');
         }
 
-        $classLoader = new ClassLoader('ClassLoaderTest');
+        $classLoader = new ClassLoader();
         $classLoader->setIncludePath(__DIR__);
         $classLoader->setFileExtension('.class.php');
         $classLoader->setNamespaceSeparator('_');
 
         $this->assertTrue($classLoader->loadClass('ClassLoaderTest_TraitA'));
-        $this->assertTrue(trait_exists('ClassLoaderTest_ClassA', false));
+        $this->assertTrue(trait_exists('ClassLoaderTest_TraitA', false));
     }
 }
