@@ -139,4 +139,14 @@ class StaticPHPDriver implements MappingDriver
     {
         return ! method_exists($className, 'loadMetadata');
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMetadataLastModified($className)
+    {
+        $class = new \ReflectionClass($className);
+        $file = $class->getFileName();
+        return is_file($file) ? filemtime($file) : time();
+    }
 }
