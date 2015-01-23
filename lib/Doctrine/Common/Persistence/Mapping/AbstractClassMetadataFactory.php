@@ -225,9 +225,11 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
                 $this->loadMetadata($realClassName);
             }
         } catch (MappingException $loadingException) {
-            if (! $this->loadedMetadata[$realClassName] = $this->onNotFoundMetadata($realClassName)) {
+            if (! $fallbackMetadataResponse = $this->onNotFoundMetadata($realClassName)) {
                 throw $loadingException;
             }
+
+            $this->loadedMetadata[$realClassName] = $fallbackMetadataResponse;
         }
 
         if ($className !== $realClassName) {
