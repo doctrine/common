@@ -192,7 +192,10 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
 
         // Check for namespace alias
         if (strpos($className, ':') !== false) {
-            list($namespaceAlias, $simpleClassName) = explode(':', $className);
+            if (2 < count($classNameAlias = explode(':', $className))) {
+                throw new \InvalidArgumentException(sprintf('Invalid classname "%s".', $className));
+            }
+            list($namespaceAlias, $simpleClassName) = $classNameAlias;
 
             $realClassName = $this->getFqcnFromAlias($namespaceAlias, $simpleClassName);
         } else {
@@ -395,7 +398,10 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
 
         // Check for namespace alias
         if (strpos($class, ':') !== false) {
-            list($namespaceAlias, $simpleClassName) = explode(':', $class);
+            if (2 < count($classNameAlias = explode(':', $class))) {
+                throw new \InvalidArgumentException(sprintf('Invalid classname "%s".', $class));
+            }
+            list($namespaceAlias, $simpleClassName) = $classNameAlias;
             $class = $this->getFqcnFromAlias($namespaceAlias, $simpleClassName);
         }
 
