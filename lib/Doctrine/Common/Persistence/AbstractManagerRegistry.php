@@ -190,10 +190,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     {
         // Check for namespace alias
         if (strpos($class, ':') !== false) {
-            if (2 < count($classNameAlias = explode(':', $class))) {
-                throw new \InvalidArgumentException(sprintf('Invalid classname "%s".', $class));
-            }
-            list($namespaceAlias, $simpleClassName) = $classNameAlias;
+            list($namespaceAlias, $simpleClassName) = explode(':', $class, 2);
             $class = $this->getAliasNamespace($namespaceAlias) . '\\' . $simpleClassName;
         }
 

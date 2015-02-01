@@ -84,6 +84,19 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
         $this->assertTrue($this->cmf->hasMetadataFor('prefix:ChildEntity'));
     }
 
+    /**
+     * @group DCOM-270
+     */
+    public function testGetInvalidAliasedMetadata()
+    {
+        $this->setExpectedException(
+            'Doctrine\Common\Persistence\Mapping\MappingException',
+            'Class \'Doctrine\Tests\Common\Persistence\Mapping\ChildEntity:Foo\' does not exist'
+        );
+
+        $this->cmf->getMetadataFor('prefix:ChildEntity:Foo');
+    }
+
     public function testWillFallbackOnNotLoadedMetadata()
     {
         $classMetadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
