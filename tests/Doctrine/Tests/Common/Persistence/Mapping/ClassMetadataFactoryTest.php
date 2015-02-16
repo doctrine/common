@@ -84,6 +84,27 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
         $this->assertTrue($this->cmf->hasMetadataFor('prefix:ChildEntity'));
     }
 
+    /**
+     * @group DCOM-270
+     */
+    public function testGetInvalidAliasedMetadata()
+    {
+        $this->setExpectedException(
+            'Doctrine\Common\Persistence\Mapping\MappingException',
+            'Class \'Doctrine\Tests\Common\Persistence\Mapping\ChildEntity:Foo\' does not exist'
+        );
+
+        $this->cmf->getMetadataFor('prefix:ChildEntity:Foo');
+    }
+
+    /**
+     * @group DCOM-270
+     */
+    public function testClassIsTransient()
+    {
+        $this->assertTrue($this->cmf->isTransient('prefix:ChildEntity:Foo'));
+    }
+
     public function testWillFallbackOnNotLoadedMetadata()
     {
         $classMetadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
@@ -169,6 +190,11 @@ class TestClassMetadataFactory extends AbstractClassMetadataFactory
         }
 
         return $fallback();
+    }
+
+    public function isTransient($class)
+    {
+        return true;
     }
 }
 
