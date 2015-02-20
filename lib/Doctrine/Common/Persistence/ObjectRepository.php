@@ -64,6 +64,24 @@ interface ObjectRepository
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null);
 
     /**
+     * Finds objects by a set of criteria with array hydrate mode.
+     *
+     * Optionally sorting and limiting details can be passed. An implementation may throw
+     * an UnexpectedValueException if certain values of the sorting or limiting details are
+     * not supported.
+     *
+     * @param array      $criteria
+     * @param array|null $orderBy
+     * @param int|null   $limit
+     * @param int|null   $offset
+     *
+     * @return array The Array Collection.
+     *
+     * @throws \UnexpectedValueException
+     */
+    public function findArrayResultBy(array $criteria, array $orderBy = null, $limit = null, $offset = null);
+
+    /**
      * Finds a single object by a set of criteria.
      *
      * @param array $criteria The criteria.
@@ -71,6 +89,15 @@ interface ObjectRepository
      * @return object The object.
      */
     public function findOneBy(array $criteria);
+
+    /**
+     * Finds a single object by a set of criteria.
+     *
+     * @param array $criteria The criteria.
+     *
+     * @return array The array.
+     */
+    public function findOneArrayResultBy(array $criteria);
 
     /**
      * Returns the class name of the object managed by the repository.
