@@ -62,6 +62,91 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
         $this->assertEquals(array("Foo\\stdClass"), $locator->getAllClassNames("global"));
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Namespace separator should not be empty
+     */
+    public function testInvalidCustomNamespaceSeparator()
+    {
+        $path = __DIR__ . "/_files";
+        $prefix = "Foo";
+
+        new SymfonyFileLocator(array($path => $prefix), ".yml", null);
+    }
+
+    public function customNamespaceSeparatorProvider()
+    {
+        return array(
+            'directory separator' => array(DIRECTORY_SEPARATOR, "/_custom_ns/dir"),
+            'default dot separator' => array('.', "/_custom_ns/dot"),
+        );
+    }
+
+    /**
+     * @dataProvider customNamespaceSeparatorProvider
+     *
+     * @param $separator string Directory separator to test against
+     * @param $dir       string Path to load mapping data from
+     *
+     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
+     */
+    public function testGetClassNamesWithCustomNsSeparator($separator, $dir)
+    {
+        $path = __DIR__ . $dir;
+        $prefix = "Foo";
+
+        $locator = new SymfonyFileLocator(array($path => $prefix), ".yml", $separator);
+        $classes = $locator->getAllClassNames(null);
+        sort($classes);
+
+        $this->assertEquals(array("Foo\\stdClass", "Foo\\sub\\subClass", "Foo\\sub\\subsub\\subSubClass"), $classes);
+    }
+
+    public function customNamespaceLookupQueryProvider()
+    {
+        return array(
+            'directory separator'  => array(
+                DIRECTORY_SEPARATOR,
+                "/_custom_ns/dir",
+                array(
+                    "stdClass.yml"               => "Foo\\stdClass",
+                    "sub/subClass.yml"           => "Foo\\sub\\subClass",
+                    "sub/subsub/subSubClass.yml" => "Foo\\sub\\subsub\\subSubClass",
+                )
+            ),
+            'default dot separator' => array(
+                '.',
+                "/_custom_ns/dot",
+                array(
+                    "stdClass.yml"               => "Foo\\stdClass",
+                    "sub.subClass.yml"           => "Foo\\sub\\subClass",
+                    "sub.subsub.subSubClass.yml" => "Foo\\sub\\subsub\\subSubClass",
+                )
+            ),
+        );
+    }
+
+    /** @dataProvider customNamespaceLookupQueryProvider
+     * @param $separator string Directory separator to test against
+     * @param $dir       string Path to load mapping data from
+     * @param $files     array  Files to lookup classnames
+     *
+     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
+     */
+    public function testFindMappingFileWithCustomNsSeparator($separator, $dir, $files)
+    {
+        $path   = __DIR__ . $dir;
+        $prefix = "Foo";
+
+        $locator = new SymfonyFileLocator(array($path => $prefix), ".yml", $separator);
+
+        foreach ($files as $filePath => $className) {
+            $this->assertEquals(realpath($path .'/'. $filePath), realpath($locator->findMappingFile($className)));
+        }
+
+    }
+
+
     public function testFindMappingFile()
     {
         $path = __DIR__ . "/_files";
