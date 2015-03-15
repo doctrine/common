@@ -35,7 +35,7 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 class PHPDriver extends FileDriver
 {
     /**
-     * {@inheritDoc}
+     * @var ClassMetadata
      */
     protected $metadata;
 
