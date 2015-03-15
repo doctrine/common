@@ -189,6 +189,8 @@ abstract class AbstractProxyFactory
     /**
      * Get a proxy definition for the given class name.
      *
+     * @param string $className
+     *
      * @return ProxyDefinition
      */
     private function getProxyDefinition($className)
@@ -232,13 +234,15 @@ abstract class AbstractProxyFactory
      * Determine if this class should be skipped during proxy generation.
      *
      * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $metadata
+     *
      * @return bool
      */
     abstract protected function skipClass(ClassMetadata $metadata);
 
     /**
+     * @param string $className
+     *
      * @return ProxyDefinition
      */
     abstract protected function createProxyDefinition($className);
 }
-
