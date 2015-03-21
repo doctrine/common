@@ -847,13 +847,16 @@ EOT;
         );
 
         if ($cheapCheck) {
-            $code = file($method->getDeclaringClass()->getFileName());
+            $methodFile = $method->getDeclaringClass()->getFileName();
+            $code = file($methodFile);
             $code = trim(implode(' ', array_slice($code, $startLine - 1, $endLine - $startLine + 1)));
 
             $pattern = sprintf(self::PATTERN_MATCH_ID_METHOD, $method->getName(), $identifier);
 
             if (preg_match($pattern, $code)) {
                 return true;
+            } else {
+                return $this->deepScanTraits($class->getReflectionClass()->getTraits(), $method, $identifier);
             }
         }
 
@@ -969,5 +972,41 @@ EOT;
             },
             $parameters
         );
+    }
+
+    /**
+     * @param \ReflectionClass[] $traits
+     * @param \ReflectionMethod  $method
+     * @param string             $identifier
+     *
+     * @return bool
+     */
+    private function deepScanTraits(array $traits, $method, $identifier)
+    {
+        $methodFile = $method->getFileName();
+        $methodStartLine = $method->getStartLine();
+        $methodEndLine = $method->getEndLine();
+
+        foreach ($traits as $trait) {
+            // If the trait has a method, is it the method we see?
+            if ($trait->getFileName() == $methodFile
+                && $trait->getStartLine() <= $methodStartLine
+                && $trait->getEndLine() >= $methodEndLine) {
+
+                $methodFile = $trait->getFileName();
+                $code = file($methodFile);
+                $code = trim(implode(' ', array_slice($code, $methodStartLine - 1, $methodEndLine - $methodStartLine + 1)));
+
+                $pattern = sprintf(self::PATTERN_MATCH_ID_METHOD, $method->getName(), $identifier);
+
+                if (preg_match($pattern, $code)) {
+                    return true;
+                }
+
+                return $this->deepScanTraits($trait->getTraits(), $method, $identifier);
+            }
+        }
+
+        return false;
     }
 }
