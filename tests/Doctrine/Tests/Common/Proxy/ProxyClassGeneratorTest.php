@@ -163,6 +163,27 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'call(callable $foo)'));
     }
 
+    public function testClassWithVariadicArgumentOnProxiedMethod()
+    {
+        if (PHP_VERSION_ID < 50600) {
+            $this->markTestSkipped('`...` is only supported in PHP >=5.6.0');
+        }
+
+        if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\VariadicTypeHintClass', false)) {
+            $className = 'Doctrine\Tests\Common\Proxy\VariadicTypeHintClass';
+            $metadata = $this->createClassMetadata($className, array('id'));
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyVariadicTypeHintClass.php');
+
+        $this->assertEquals(1, substr_count($classCode, 'function addType(...$types)'));
+        $this->assertEquals(1, substr_count($classCode, '__invoke($this, \'addType\', array($types))'));
+        $this->assertEquals(1, substr_count($classCode, 'parent::addType(...$types)'));
+    }
+
     public function testClassWithInvalidTypeHintOnProxiedMethod()
     {
         $className = 'Doctrine\Tests\Common\Proxy\InvalidTypeHintClass';

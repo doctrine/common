@@ -789,11 +789,12 @@ EOT;
                 $methods .= '        }' . "\n\n";
             }
 
-            $callParamsString = implode(', ', $this->getParameterNames($method->getParameters()));
+            $invokeParamsString = implode(', ', $this->getParameterNamesForInvoke($method->getParameters()));
+            $callParamsString = implode(', ', $this->getParameterNamesForParentCall($method->getParameters()));
 
             $methods .= "\n        \$this->__initializer__ "
                 . "&& \$this->__initializer__->__invoke(\$this, " . var_export($name, true)
-                . ", array(" . $callParamsString . "));"
+                . ", array(" . $invokeParamsString . "));"
                 . "\n\n        return parent::" . $name . '(' . $callParamsString . ');'
                 . "\n" . '    }' . "\n";
         }
@@ -906,6 +907,12 @@ EOT;
                 $parameterDefinition .= '&';
             }
 
+            if (method_exists($param, 'isVariadic')) {
+                if ($param->isVariadic()) {
+                    $parameterDefinition .= '...';
+                }
+            }
+
             $parameters[]     = '$' . $param->getName();
             $parameterDefinition .= '$' . $param->getName();
 
@@ -961,11 +968,36 @@ EOT;
      *
      * @return string[]
      */
-    private function getParameterNames(array $parameters)
+    private function getParameterNamesForInvoke(array $parameters)
     {
         return array_map(
             function (\ReflectionParameter $parameter) {
                 return '$' . $parameter->getName();
+            },
+            $parameters
+        );
+    }
+
+    /**
+     * @param \ReflectionParameter[] $parameters
+     *
+     * @return string[]
+     */
+    private function getParameterNamesForParentCall(array $parameters)
+    {
+        return array_map(
+            function (\ReflectionParameter $parameter) {
+                $name = '';
+
+                if (method_exists($parameter, 'isVariadic')) {
+                    if ($parameter->isVariadic()) {
+                        $name .= '...';
+                    }
+                }
+
+                $name .= '$' . $parameter->getName();
+
+                return $name;
             },
             $parameters
         );
