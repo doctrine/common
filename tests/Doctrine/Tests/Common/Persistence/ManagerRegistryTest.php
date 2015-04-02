@@ -2,10 +2,10 @@
 
 namespace Doctrine\Tests\Common\Persistence;
 
-use \PHPUnit_Framework_MockObject_Generator;
 use Doctrine\Common\Persistence\AbstractManagerRegistry;
 use Doctrine\Tests\Common\Persistence\Mapping\TestClassMetadataFactory;
 use Doctrine\Tests\DoctrineTestCase;
+use PHPUnit_Framework_TestCase;
 
 /**
  * @groups DCOM-270
@@ -64,12 +64,12 @@ class ManagerRegistryTest extends DoctrineTestCase
     }
 }
 
-class TestManager
+class TestManager extends PHPUnit_Framework_TestCase
 {
     public function getMetadataFactory()
     {
-        $driver = PHPUnit_Framework_MockObject_Generator::getMock('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver');
-        $metadata = PHPUnit_Framework_MockObject_Generator::getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $driver = $this->getMock('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver');
+        $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
 
         return new TestClassMetadataFactory($driver, $metadata);
     }
