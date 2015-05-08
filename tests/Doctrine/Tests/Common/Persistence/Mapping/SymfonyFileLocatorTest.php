@@ -174,7 +174,7 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
 
         $this->setExpectedException(
             "Doctrine\Common\Persistence\Mapping\MappingException",
-            "No mapping file found named '".__DIR__."/_files/stdClass2.yml' for class 'Foo\stdClass2'."
+            "No mapping file found named 'stdClass2.yml' for class 'Foo\stdClass2'."
         );
         $locator->findMappingFile("Foo\\stdClass2");
     }
