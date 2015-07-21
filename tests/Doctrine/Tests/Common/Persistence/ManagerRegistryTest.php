@@ -26,9 +26,9 @@ class ManagerRegistryTest extends DoctrineTestCase
         $this->mr = new TestManagerRegistry(
             'ORM',
             array('default_connection'),
-            array('default_manager'),
+            array('bar' => 'bar', 'default_manager' => 'default_manager', 'foo' => 'foo'),
             'default',
-            'default',
+            'foo',
             'Doctrine\Common\Persistence\ObjectManagerAware'
         );
     }
