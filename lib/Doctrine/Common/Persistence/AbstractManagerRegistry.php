@@ -200,9 +200,11 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
         }
 
         // First, try to retrieve the default one
-        $defaultManager = $this->getService($this->managers[$this->getDefaultManagerName()]);
-        if (!$defaultManager->getMetadataFactory()->isTransient($class)) {
-            return $defaultManager;
+        if (isset($this->managers[$this->getDefaultManagerName()])) {
+            $defaultManager = $this->getService($this->managers[$this->getDefaultManagerName()]);
+            if (!$defaultManager->getMetadataFactory()->isTransient($class)) {
+                return $defaultManager;
+            }
         }
 
         foreach ($this->managers as $id) {
