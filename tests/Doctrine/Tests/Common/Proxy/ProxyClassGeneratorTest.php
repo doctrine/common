@@ -184,6 +184,52 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'parent::addType(...$types)'));
     }
 
+    public function testClassWithScalarTypeHintsOnProxiedMethods()
+    {
+        if (PHP_VERSION_ID < 70000) {
+            $this->markTestSkipped('Scalar type hints are only supported in PHP >= 7.0.0.');
+        }
+
+        if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\ScalarTypeHintsClass', false)) {
+            $className = 'Doctrine\Tests\Common\Proxy\ScalarTypeHintsClass';
+            $metadata = $this->createClassMetadata($className, array('id'));
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyScalarTypeHintsClass.php');
+
+        $this->assertEquals(1, substr_count($classCode, 'function singleTypeHint(string $param)'));
+        $this->assertEquals(1, substr_count($classCode, 'function multipleTypeHints(int $a, float $b, bool $c, string $d)'));
+        $this->assertEquals(1, substr_count($classCode, 'function combinationOfTypeHintsAndNormal(\stdClass $a, $b, int $c)'));
+        $this->assertEquals(1, substr_count($classCode, 'function typeHintsWithVariadic(int ...$foo)'));
+    }
+
+    public function testClassWithReturnTypesOnProxiedMethods()
+    {
+        if (PHP_VERSION_ID < 70000) {
+            $this->markTestSkipped('Method return types are only supported in PHP >= 7.0.0.');
+        }
+
+        $className = 'Doctrine\Tests\Common\Proxy\ReturnTypesClass';
+        if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\ReturnTypesClass', false)) {
+            $metadata = $this->createClassMetadata($className, array('id'));
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyReturnTypesClass.php');
+
+        $this->assertEquals(1, substr_count($classCode, 'function returnsClass(): \stdClass'));
+        $this->assertEquals(1, substr_count($classCode, 'function returnsScalar(): int'));
+        $this->assertEquals(1, substr_count($classCode, 'function returnsArray(): array'));
+        $this->assertEquals(1, substr_count($classCode, 'function returnsCallable(): callable'));
+        $this->assertEquals(1, substr_count($classCode, 'function returnsSelf(): \\' . $className));
+        $this->assertEquals(1, substr_count($classCode, 'function returnsParent(): \stdClass'));
+    }
+
     public function testClassWithInvalidTypeHintOnProxiedMethod()
     {
         $className = 'Doctrine\Tests\Common\Proxy\InvalidTypeHintClass';

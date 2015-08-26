@@ -777,6 +777,7 @@ EOT;
             }
 
             $methods .= $name . '(' . $this->buildParametersString($class, $method, $method->getParameters()) . ')';
+            $methods .= $this->getMethodReturnType($method);
             $methods .= "\n" . '    {' . "\n";
 
             if ($this->isShortIdentifierGetter($method, $class)) {
@@ -945,6 +946,10 @@ EOT;
             return 'callable';
         }
 
+        if (PHP_VERSION_ID >= 70000 && $parameter->hasType() && $parameter->getType()->isBuiltin()) {
+            return (string) $parameter->getType();
+        }
+
         try {
             $parameterClass = $parameter->getClass();
 
@@ -1001,5 +1006,29 @@ EOT;
             },
             $parameters
         );
+    }
+
+    /**
+     * @Param \ReflectionMethod $method
+     *
+     * @return string
+     */
+    private function getMethodReturnType(\ReflectionMethod $method)
+    {
+        if (PHP_VERSION_ID < 70000 || !$method->hasReturnType()) {
+            return '';
+        }
+
+        $returnType = $method->getReturnType();
+        $nameLower = strtolower((string) $returnType);
+
+        if ($nameLower === 'self') {
+            return ': \\' . $method->getDeclaringClass()->getName();
+        }
+        if ($nameLower === 'parent') {
+            return ': \\' . $method->getDeclaringClass()->getParentClass()->getName();
+        }
+
+        return ': ' . (!$returnType->isBuiltin() ? '\\' : '') . (string) $returnType;
     }
 }
