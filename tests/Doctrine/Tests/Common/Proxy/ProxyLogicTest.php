@@ -591,6 +591,62 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
         $this->assertSame('newPersistentFieldValue', $this->lazyObject->publicPersistentField);
     }
 
+    public function testCallingVariadicMethodCausesLazyLoading()
+    {
+        if (PHP_VERSION_ID < 50600) {
+            $this->markTestSkipped('Test applies only to PHP 5.6+');
+        }
+
+        $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\VariadicTypeHintClass';
+
+        /* @var $metadata \Doctrine\Common\Persistence\Mapping\ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
+        $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+
+        $metadata
+            ->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('Doctrine\Tests\Common\Proxy\VariadicTypeHintClass'));
+        $metadata
+            ->expects($this->any())
+            ->method('getReflectionClass')
+            ->will($this->returnValue(new \ReflectionClass('Doctrine\Tests\Common\Proxy\VariadicTypeHintClass')));
+
+        // creating the proxy class
+        if (!class_exists($proxyClassName, false)) {
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
+            $proxyGenerator->generateProxyClass($metadata);
+            require_once $proxyGenerator->getProxyFileName($metadata->getName());
+        }
+
+        /* @var $invocationMock callable|\PHPUnit_Framework_MockObject_MockObject */
+        $invocationMock = $this->getMock('stdClass', array('__invoke'));
+
+        /* @var $lazyObject \Doctrine\Tests\Common\Proxy\VariadicTypeHintClass */
+        $lazyObject = new $proxyClassName(
+            function ($proxy, $method, $parameters) use ($invocationMock) {
+                $invocationMock($proxy, $method, $parameters);
+            },
+            function () {}
+        );
+
+        $invocationMock
+            ->expects($this->at(0))
+            ->method('__invoke')
+            ->with($lazyObject, 'addType', array(array('type1', 'type2')));
+        $invocationMock
+            ->expects($this->at(1))
+            ->method('__invoke')
+            ->with($lazyObject, 'addTypeWithMultipleParameters', array('foo', 'bar', array('baz1', 'baz2')));
+
+        $lazyObject->addType('type1', 'type2');
+        $this->assertSame(array('type1', 'type2'), $lazyObject->types);
+
+        $lazyObject->addTypeWithMultipleParameters('foo', 'bar', 'baz1', 'baz2');
+        $this->assertSame('foo', $lazyObject->foo);
+        $this->assertSame('bar', $lazyObject->bar);
+        $this->assertSame(array('baz1', 'baz2'), $lazyObject->baz);
+    }
+
     /**
      * Converts a given callable into a closure
      *

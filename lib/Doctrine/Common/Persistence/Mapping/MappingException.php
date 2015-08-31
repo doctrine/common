@@ -30,7 +30,7 @@ class MappingException extends \Exception
      * @param string $className
      * @param array  $namespaces
      *
-     * @return MappingException
+     * @return self
      */
     public static function classNotFoundInNamespaces($className, $namespaces)
     {
@@ -39,7 +39,7 @@ class MappingException extends \Exception
     }
 
     /**
-     * @return MappingException
+     * @return self
      */
     public static function pathRequired()
     {
@@ -50,7 +50,7 @@ class MappingException extends \Exception
     /**
      * @param string|null $path
      *
-     * @return MappingException
+     * @return self
      */
     public static function fileMappingDriversRequireConfiguredDirectoryPath($path = null)
     {
@@ -68,7 +68,7 @@ class MappingException extends \Exception
      * @param string $entityName
      * @param string $fileName
      *
-     * @return MappingException
+     * @return self
      */
     public static function mappingFileNotFound($entityName, $fileName)
     {
@@ -79,7 +79,7 @@ class MappingException extends \Exception
      * @param string $entityName
      * @param string $fileName
      *
-     * @return MappingException
+     * @return self
      */
     public static function invalidMappingFile($entityName, $fileName)
     {
@@ -89,7 +89,7 @@ class MappingException extends \Exception
     /**
      * @param string $className
      *
-     * @return \Doctrine\Common\Persistence\Mapping\MappingException
+     * @return self
      */
     public static function nonExistingClass($className)
     {

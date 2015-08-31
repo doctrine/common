@@ -20,8 +20,8 @@
 namespace Doctrine\Common\Persistence\Event;
 
 use Doctrine\Common\EventArgs;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Class that holds event arguments for a loadMetadata event.

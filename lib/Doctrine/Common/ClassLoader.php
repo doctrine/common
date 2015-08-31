@@ -30,6 +30,8 @@ namespace Doctrine\Common;
  *
  * @author Roman Borschel <roman@code-factory.org>
  * @since 2.0
+ *
+ * @deprecated the ClassLoader is deprecated and will be removed in version 3.0 of doctrine/common.
  */
 class ClassLoader
 {
@@ -173,7 +175,11 @@ class ClassLoader
      */
     public function loadClass($className)
     {
-        if ($this->namespace !== null && strpos($className, $this->namespace.$this->namespaceSeparator) !== 0) {
+        if (self::typeExists($className)) {
+            return true;
+        }
+
+        if (! $this->canLoadClass($className)) {
             return false;
         }
 
@@ -181,7 +187,7 @@ class ClassLoader
                . str_replace($this->namespaceSeparator, DIRECTORY_SEPARATOR, $className)
                . $this->fileExtension;
 
-        return true;
+        return self::typeExists($className);
     }
 
     /**
@@ -231,37 +237,7 @@ class ClassLoader
      */
     public static function classExists($className)
     {
-        if (class_exists($className, false) || interface_exists($className, false)) {
-            return true;
-        }
-
-        foreach (spl_autoload_functions() as $loader) {
-            if (is_array($loader)) { // array(???, ???)
-                if (is_object($loader[0])) {
-                    if ($loader[0] instanceof ClassLoader) { // array($obj, 'methodName')
-                        if ($loader[0]->canLoadClass($className)) {
-                            return true;
-                        }
-                    } else if ($loader[0]->{$loader[1]}($className)) {
-                        return true;
-                    }
-                } else if ($loader[0]::$loader[1]($className)) { // array('ClassName', 'methodName')
-                    return true;
-                }
-            } else if ($loader instanceof \Closure) { // function($className) {..}
-                if ($loader($className)) {
-                    return true;
-                }
-            } else if (is_string($loader) && $loader($className)) { // "MyClass::loadClass"
-                return true;
-            }
-
-            if (class_exists($className, false) || interface_exists($className, false)) {
-                return true;
-            }
-        }
-
-        return false;
+        return self::typeExists($className, true);
     }
 
     /**
@@ -276,13 +252,29 @@ class ClassLoader
     {
          foreach (spl_autoload_functions() as $loader) {
             if (is_array($loader)
-                && $loader[0] instanceof ClassLoader
-                && $loader[0]->canLoadClass($className)
+                && ($classLoader = reset($loader))
+                && $classLoader instanceof ClassLoader
+                && $classLoader->canLoadClass($className)
             ) {
-                return $loader[0];
+                return $classLoader;
             }
         }
 
         return null;
+    }
+
+    /**
+     * Checks whether a given type exists
+     *
+     * @param string $type
+     * @param bool   $autoload
+     *
+     * @return bool
+     */
+    private static function typeExists($type, $autoload = false)
+    {
+        return class_exists($type, $autoload)
+            || interface_exists($type, $autoload)
+            || (function_exists('trait_exists') && trait_exists($type, $autoload));
     }
 }

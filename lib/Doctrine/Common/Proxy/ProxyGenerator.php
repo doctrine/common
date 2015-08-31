@@ -20,9 +20,9 @@
 namespace Doctrine\Common\Proxy;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
+use Doctrine\Common\Util\ClassUtils;
 
 /**
  * This factory is used to generate proxy classes.
@@ -37,7 +37,7 @@ class ProxyGenerator
      * Used to match very simple id methods that don't need
      * to be decorated since the identifier is known.
      */
-    const PATTERN_MATCH_ID_METHOD = '((public\s)?(function\s{1,}%s\s?\(\)\s{1,})\s{0,}{\s{0,}return\s{0,}\$this->%s;\s{0,}})i';
+    const PATTERN_MATCH_ID_METHOD = '((public\s+)?(function\s+%s\s*\(\)\s*)\s*{\s*return\s*\$this->%s;\s*})i';
 
     /**
      * The namespace that contains all proxy classes.
@@ -777,55 +777,7 @@ EOT;
                 $methods .= '&';
             }
 
-            $methods .= $name . '(';
-
-            $firstParam      = true;
-            $parameterString = '';
-            $argumentString  = '';
-            $parameters      = array();
-
-            foreach ($method->getParameters() as $param) {
-                if ($firstParam) {
-                    $firstParam = false;
-                } else {
-                    $parameterString .= ', ';
-                    $argumentString  .= ', ';
-                }
-
-                try {
-                    $paramClass = $param->getClass();
-                } catch (\ReflectionException $previous) {
-                    throw UnexpectedValueException::invalidParameterTypeHint(
-                        $class->getName(),
-                        $method->getName(),
-                        $param->getName(),
-                        $previous
-                    );
-                }
-
-                // We need to pick the type hint class too
-                if (null !== $paramClass) {
-                    $parameterString .= '\\' . $paramClass->getName() . ' ';
-                } elseif ($param->isArray()) {
-                    $parameterString .= 'array ';
-                } elseif (method_exists($param, 'isCallable') && $param->isCallable()) {
-                    $parameterString .= 'callable ';
-                }
-
-                if ($param->isPassedByReference()) {
-                    $parameterString .= '&';
-                }
-
-                $parameters[] = '$' . $param->getName();
-                $parameterString .= '$' . $param->getName();
-                $argumentString  .= '$' . $param->getName();
-
-                if ($param->isDefaultValueAvailable()) {
-                    $parameterString .= ' = ' . var_export($param->getDefaultValue(), true);
-                }
-            }
-
-            $methods .= $parameterString . ')';
+            $methods .= $name . '(' . $this->buildParametersString($class, $method, $method->getParameters()) . ')';
             $methods .= "\n" . '    {' . "\n";
 
             if ($this->isShortIdentifierGetter($method, $class)) {
@@ -838,10 +790,13 @@ EOT;
                 $methods .= '        }' . "\n\n";
             }
 
+            $invokeParamsString = implode(', ', $this->getParameterNamesForInvoke($method->getParameters()));
+            $callParamsString = implode(', ', $this->getParameterNamesForParentCall($method->getParameters()));
+
             $methods .= "\n        \$this->__initializer__ "
                 . "&& \$this->__initializer__->__invoke(\$this, " . var_export($name, true)
-                . ", array(" . implode(', ', $parameters) . "));"
-                . "\n\n        return parent::" . $name . '(' . $argumentString . ');'
+                . ", array(" . $invokeParamsString . "));"
+                . "\n\n        return parent::" . $name . '(' . $callParamsString . ');'
                 . "\n" . '    }' . "\n";
         }
 
@@ -929,5 +884,123 @@ EOT;
 
         return $properties;
     }
-}
 
+    /**
+     * @param ClassMetadata          $class
+     * @param \ReflectionMethod      $method
+     * @param \ReflectionParameter[] $parameters
+     *
+     * @return string
+     */
+    private function buildParametersString(ClassMetadata $class, \ReflectionMethod $method, array $parameters)
+    {
+        $parameterDefinitions = array();
+
+        /* @var $param \ReflectionParameter */
+        foreach ($parameters as $param) {
+            $parameterDefinition = '';
+
+            if ($parameterType = $this->getParameterType($class, $method, $param)) {
+                $parameterDefinition .= $parameterType . ' ';
+            }
+
+            if ($param->isPassedByReference()) {
+                $parameterDefinition .= '&';
+            }
+
+            if (method_exists($param, 'isVariadic')) {
+                if ($param->isVariadic()) {
+                    $parameterDefinition .= '...';
+                }
+            }
+
+            $parameters[]     = '$' . $param->getName();
+            $parameterDefinition .= '$' . $param->getName();
+
+            if ($param->isDefaultValueAvailable()) {
+                $parameterDefinition .= ' = ' . var_export($param->getDefaultValue(), true);
+            }
+
+            $parameterDefinitions[] = $parameterDefinition;
+        }
+
+        return implode(', ', $parameterDefinitions);
+    }
+
+    /**
+     * @param ClassMetadata $class
+     * @param \ReflectionMethod $method
+     * @param \ReflectionParameter $parameter
+     *
+     * @return string|null
+     */
+    private function getParameterType(ClassMetadata $class, \ReflectionMethod $method, \ReflectionParameter $parameter)
+    {
+
+        // We need to pick the type hint class too
+        if ($parameter->isArray()) {
+            return 'array';
+        }
+
+        if (method_exists($parameter, 'isCallable') && $parameter->isCallable()) {
+            return 'callable';
+        }
+
+        try {
+            $parameterClass = $parameter->getClass();
+
+            if ($parameterClass) {
+                return '\\' . $parameterClass->getName();
+            }
+        } catch (\ReflectionException $previous) {
+            throw UnexpectedValueException::invalidParameterTypeHint(
+                $class->getName(),
+                $method->getName(),
+                $parameter->getName(),
+                $previous
+            );
+        }
+
+        return null;
+    }
+
+    /**
+     * @param \ReflectionParameter[] $parameters
+     *
+     * @return string[]
+     */
+    private function getParameterNamesForInvoke(array $parameters)
+    {
+        return array_map(
+            function (\ReflectionParameter $parameter) {
+                return '$' . $parameter->getName();
+            },
+            $parameters
+        );
+    }
+
+    /**
+     * @param \ReflectionParameter[] $parameters
+     *
+     * @return string[]
+     */
+    private function getParameterNamesForParentCall(array $parameters)
+    {
+        return array_map(
+            function (\ReflectionParameter $parameter) {
+                $name = '';
+
+                if (method_exists($parameter, 'isVariadic')) {
+                    if ($parameter->isVariadic()) {
+                        $name .= '...';
+                    }
+                }
+
+                $name .= '$' . $parameter->getName();
+
+                return $name;
+            },
+            $parameters
+        );
+    }
+}
