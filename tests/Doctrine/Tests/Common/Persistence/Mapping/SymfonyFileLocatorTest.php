@@ -55,11 +55,13 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
         $prefix = "Foo";
 
         $locator = new SymfonyFileLocator(array($path => $prefix), ".yml");
-        $classes = $locator->getAllClassNames(null);
-        sort($classes);
+        $allClasses = $locator->getAllClassNames(null);
+        sort($allClasses);
+        $globalClasses = $locator->getAllClassNames("global");
+        sort($globalClasses);
 
-        $this->assertEquals(array("Foo\\Bar\\subDirClass", "Foo\\global", "Foo\\stdClass"), $classes);
-        $this->assertEquals(array("Foo\\Bar\\subDirClass", "Foo\\stdClass"), $locator->getAllClassNames("global"));
+        $this->assertEquals(array("Foo\\Bar\\subDirClass", "Foo\\global", "Foo\\stdClass"), $allClasses);
+        $this->assertEquals(array("Foo\\Bar\\subDirClass", "Foo\\stdClass"), $globalClasses);
     }
 
     /**
