@@ -196,6 +196,9 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
 
         $proxyClass = new \ReflectionClass($class);
         if ($proxyClass->implementsInterface($this->proxyInterfaceName)) {
+            if (!$proxyClass->getParentClass()) {
+                return null;
+            }
             $class = $proxyClass->getParentClass()->getName();
         }
 
