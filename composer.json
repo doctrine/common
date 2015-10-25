@@ -24,7 +24,9 @@
         "phpunit/phpunit": "~4.7"
     },
     "autoload": {
-        "psr-0": { "Doctrine\\Common\\": "lib/" }
+        "psr-4": {
+            "Doctrine\\Common\\": "lib/Doctrine/Common"
+        }
     },
     "extra": {
         "branch-alias": {
