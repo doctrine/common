@@ -40,7 +40,7 @@ class ManagerRegistryTest extends DoctrineTestCase
 
     public function testGetManagerForProxyInterface()
     {
-        $this->mr->getManagerForClass('Doctrine\Common\Persistence\ObjectManagerAware');
+        $this->assertNull($this->mr->getManagerForClass('Doctrine\Common\Persistence\ObjectManagerAware'));
     }
 
     public function testGetManagerForInvalidClass()
