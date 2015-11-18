@@ -780,7 +780,7 @@ EOT;
             $methods .= $name . '(' . $this->buildParametersString($class, $method, $method->getParameters()) . ')';
             
             if (method_exists($method, 'hasReturnType') && $method->hasReturnType()) {
-                $methods .= ' : \\' . $method->getReturnType();
+                $methods .= ' : ' . $this->getReturnType($method);
             }
             
             $methods .= "\n" . '    {' . "\n";
@@ -806,6 +806,23 @@ EOT;
         }
 
         return $methods;
+    }
+    
+    /**
+     * Retrieves the Type if any
+     *
+     * @param ReflectionMethod $method
+     *
+     * @return string
+     */
+    protected function getReturnType(ReflectionMethod $method){
+        $returnType = $method->getReturnType();
+                
+        if (! $returnType->isBuildIn()) {
+            $returnType = '\\' . $returnType;
+        }
+        
+        return $returnType;
     }
 
     /**
