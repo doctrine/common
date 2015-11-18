@@ -815,13 +815,13 @@ EOT;
      *
      * @return string
      */
-    protected function getReturnType(ReflectionMethod $method){
+    protected function getReturnType(\ReflectionMethod $method){
         $returnType = $method->getReturnType();
-                
-        if (! $returnType->isBuildIn()) {
+
+        if (! $returnType->isBuiltin()) {
             $returnType = '\\' . $returnType;
         }
-        
+
         return $returnType;
     }
 
