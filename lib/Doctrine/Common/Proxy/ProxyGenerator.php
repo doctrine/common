@@ -780,7 +780,7 @@ EOT;
             $methods .= $name . '(' . $this->buildParametersString($class, $method, $method->getParameters()) . ')';
             
             if (method_exists($method, 'hasReturnType') && $method->hasReturnType()) {
-                $methods .= ' : ' . $method->getReturnType();
+                $methods .= ' : \\' . $method->getReturnType();
             }
             
             $methods .= "\n" . '    {' . "\n";
