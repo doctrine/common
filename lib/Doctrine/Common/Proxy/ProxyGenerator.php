@@ -950,6 +950,12 @@ EOT;
         if (method_exists($parameter, 'isCallable') && $parameter->isCallable()) {
             return 'callable';
         }
+        
+        $parameterType = (string) $parameter->getType();
+        
+        if (in_array($parameterType, ['int', 'bool', 'float', 'string'])) {
+            return $parameterType;
+        }
 
         try {
             $parameterClass = $parameter->getClass();
