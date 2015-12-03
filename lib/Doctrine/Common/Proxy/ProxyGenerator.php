@@ -778,6 +778,11 @@ EOT;
             }
 
             $methods .= $name . '(' . $this->buildParametersString($class, $method, $method->getParameters()) . ')';
+            
+            if (method_exists($method, 'hasReturnType') && $method->hasReturnType()) {
+                $methods .= ' : ' . $this->getReturnType($method);
+            }
+            
             $methods .= "\n" . '    {' . "\n";
 
             if ($this->isShortIdentifierGetter($method, $class)) {
@@ -801,6 +806,23 @@ EOT;
         }
 
         return $methods;
+    }
+    
+    /**
+     * Retrieves the Type if any
+     *
+     * @param ReflectionMethod $method
+     *
+     * @return string
+     */
+    protected function getReturnType(\ReflectionMethod $method){
+        $returnType = $method->getReturnType();
+
+        if (! $returnType->isBuiltin()) {
+            $returnType = '\\' . $returnType;
+        }
+
+        return $returnType;
     }
 
     /**
@@ -944,6 +966,12 @@ EOT;
 
         if (method_exists($parameter, 'isCallable') && $parameter->isCallable()) {
             return 'callable';
+        }
+        
+        $parameterType = (string) $parameter->getType();
+        
+        if (in_array($parameterType, ['int', 'bool', 'float', 'string'])) {
+            return $parameterType;
         }
 
         try {
