@@ -1023,7 +1023,7 @@ EOT;
         $returnType = $method->getReturnType();
 
         if ($returnType->isBuiltin()) {
-            return ':' . $returnType;
+            return ': ' . $returnType;
         }
 
         $nameLower = strtolower((string) $returnType);
@@ -1036,6 +1036,6 @@ EOT;
             return ': \\' . $method->getDeclaringClass()->getParentClass()->getName();
         }
 
-        return ': ' . (string) $returnType;
+        return ': \\' . (string) $returnType;
     }
 }
