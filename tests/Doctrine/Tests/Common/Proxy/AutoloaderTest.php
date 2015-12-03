@@ -19,6 +19,7 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
+use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
 use Doctrine\Common\Proxy\Autoloader;
 
@@ -62,7 +63,7 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase
     public function testRegisterWithInvalidCallback()
     {
         $this->setExpectedException(
-            'Doctrine\Common\Proxy\Exception\InvalidArgumentException',
+            InvalidArgumentException::class,
             'Invalid \$notFoundCallback given: must be a callable, "stdClass" given'
         );
 

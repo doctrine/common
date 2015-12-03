@@ -2,6 +2,8 @@
 
 namespace Doctrine\Tests\Common\Reflection;
 
+use Doctrine\Tests\Common\Reflection\NoParent;
+use Doctrine\Tests\Common\Reflection\Dummies\NoParent as NoParentDummy;
 use Doctrine\Tests\DoctrineTestCase;
 use Doctrine\Common\Reflection\StaticReflectionParser;
 use Doctrine\Common\Reflection\Psr0FindFile;
@@ -41,23 +43,23 @@ class StaticReflectionParserTest extends DoctrineTestCase
     public function parentClassData()
     {
         $data = array();
-        $noParentClassName = 'Doctrine\\Tests\\Common\\Reflection\\NoParent';
-        $dummyParentClassName = 'Doctrine\\Tests\\Common\\Reflection\\Dummies\\NoParent';
+        $noParentClassName = NoParent::class;
+        $dummyParentClassName = NoParentDummy::class;
         foreach (array(false, true) as $classAnnotationOptimize) {
             $data[] = array(
               $classAnnotationOptimize, $noParentClassName, $noParentClassName,
             );
             $data[] = array(
-              $classAnnotationOptimize, 'Doctrine\\Tests\\Common\\Reflection\\FullyClassifiedParent', $noParentClassName,
+              $classAnnotationOptimize, FullyClassifiedParent::class, $noParentClassName,
             );
             $data[] = array(
-              $classAnnotationOptimize, 'Doctrine\\Tests\\Common\\Reflection\\SameNamespaceParent', $noParentClassName,
+              $classAnnotationOptimize, SameNamespaceParent::class, $noParentClassName,
             );
             $data[] = array(
-              $classAnnotationOptimize, 'Doctrine\\Tests\\Common\\Reflection\\DeeperNamespaceParent', $dummyParentClassName,
+              $classAnnotationOptimize, DeeperNamespaceParent::class, $dummyParentClassName,
             );
             $data[] = array(
-              $classAnnotationOptimize, 'Doctrine\\Tests\\Common\\Reflection\\UseParent', $dummyParentClassName,
+              $classAnnotationOptimize, UseParent::class, $dummyParentClassName,
             );
         }
         return $data;
@@ -71,7 +73,7 @@ class StaticReflectionParserTest extends DoctrineTestCase
         $paths = array(
           'Doctrine\\Tests' => array($testsRoot),
         );
-        $staticReflectionParser = new StaticReflectionParser('Doctrine\\Tests\\Common\\Reflection\\ExampleAnnotationClass', new Psr0FindFile($paths), $classAnnotationOptimize);
+        $staticReflectionParser = new StaticReflectionParser(ExampleAnnotationClass::class, new Psr0FindFile($paths), $classAnnotationOptimize);
         $expectedDocComment = '/**
  * @Annotation(
  *   key = "value"

@@ -3,6 +3,9 @@
 namespace Doctrine\Tests\Common\Persistence;
 
 use Doctrine\Common\Persistence\AbstractManagerRegistry;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
+use Doctrine\Common\Persistence\ObjectManagerAware;
 use Doctrine\Tests\Common\Persistence\Mapping\TestClassMetadataFactory;
 use Doctrine\Tests\DoctrineTestCase;
 use PHPUnit_Framework_TestCase;
@@ -29,18 +32,18 @@ class ManagerRegistryTest extends DoctrineTestCase
             array('default_manager'),
             'default',
             'default',
-            'Doctrine\Common\Persistence\ObjectManagerAware'
+            ObjectManagerAware::class
         );
     }
 
     public function testGetManagerForClass()
     {
-        $this->mr->getManagerForClass('Doctrine\Tests\Common\Persistence\TestObject');
+        $this->mr->getManagerForClass(TestObject::class);
     }
 
     public function testGetManagerForProxyInterface()
     {
-        $this->assertNull($this->mr->getManagerForClass('Doctrine\Common\Persistence\ObjectManagerAware'));
+        $this->assertNull($this->mr->getManagerForClass(ObjectManagerAware::class));
     }
 
     public function testGetManagerForInvalidClass()
@@ -73,8 +76,8 @@ class TestManager extends PHPUnit_Framework_TestCase
 {
     public function getMetadataFactory()
     {
-        $driver = $this->getMock('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver');
-        $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $driver   = $this->getMock(MappingDriver::class);
+        $metadata = $this->getMock(ClassMetadata::class);
 
         return new TestClassMetadataFactory($driver, $metadata);
     }

@@ -20,12 +20,16 @@
 namespace Doctrine\Tests\Common\Persistence\Mapping;
 
 use Doctrine\Common\Persistence\Mapping\StaticReflectionService;
+use Doctrine\Tests\Common\Persistence\Mapping;
 
 /**
  * @group DCOM-93
  */
 class StaticReflectionServiceTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var StaticReflectionService
+     */
     private $reflectionService;
 
     public function setUp()
@@ -40,7 +44,7 @@ class StaticReflectionServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testClassNamespaceName()
     {
-        $this->assertEquals("Doctrine\Tests\Common\Persistence\Mapping", $this->reflectionService->getClassNamespace(__CLASS__));
+        $this->assertEquals(Mapping::class, $this->reflectionService->getClassNamespace(__CLASS__));
     }
 
     public function testGetParentClasses()

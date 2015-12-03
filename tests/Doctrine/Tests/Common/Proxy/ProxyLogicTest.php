@@ -599,17 +599,17 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
 
         $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\VariadicTypeHintClass';
 
-        /* @var $metadata \Doctrine\Common\Persistence\Mapping\ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
-        $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        /* @var $metadata ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
+        $metadata = $this->getMock(ClassMetadata::class);
 
         $metadata
             ->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue('Doctrine\Tests\Common\Proxy\VariadicTypeHintClass'));
+            ->will($this->returnValue(VariadicTypeHintClass::class));
         $metadata
             ->expects($this->any())
             ->method('getReflectionClass')
-            ->will($this->returnValue(new \ReflectionClass('Doctrine\Tests\Common\Proxy\VariadicTypeHintClass')));
+            ->will($this->returnValue(new \ReflectionClass(VariadicTypeHintClass::class)));
 
         // creating the proxy class
         if (!class_exists($proxyClassName, false)) {
@@ -621,7 +621,7 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
         /* @var $invocationMock callable|\PHPUnit_Framework_MockObject_MockObject */
         $invocationMock = $this->getMock('stdClass', array('__invoke'));
 
-        /* @var $lazyObject \Doctrine\Tests\Common\Proxy\VariadicTypeHintClass */
+        /* @var $lazyObject VariadicTypeHintClass */
         $lazyObject = new $proxyClassName(
             function ($proxy, $method, $parameters) use ($invocationMock) {
                 $invocationMock($proxy, $method, $parameters);

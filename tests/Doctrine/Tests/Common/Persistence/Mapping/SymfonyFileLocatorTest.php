@@ -2,6 +2,7 @@
 
 namespace Doctrine\Tests\Common\Persistence\Mapping;
 
+use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\Tests\DoctrineTestCase;
 use Doctrine\Common\Persistence\Mapping\Driver\SymfonyFileLocator;
 
@@ -96,7 +97,7 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
      * @param $separator string Directory separator to test against
      * @param $dir       string Path to load mapping data from
      *
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
+     * @throws MappingException
      */
     public function testGetClassNamesWithCustomNsSeparator($separator, $dir)
     {
@@ -139,7 +140,7 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
      * @param $dir       string Path to load mapping data from
      * @param $files     array  Files to lookup classnames
      *
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
+     * @throws MappingException
      */
     public function testFindMappingFileWithCustomNsSeparator($separator, $dir, $files)
     {
@@ -173,7 +174,7 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
         $locator = new SymfonyFileLocator(array($path => $prefix), ".yml");
 
         $this->setExpectedException(
-            "Doctrine\Common\Persistence\Mapping\MappingException",
+            MappingException::class,
             "No mapping file found named '".__DIR__."/_files/stdClass2.yml' for class 'Foo\stdClass2'."
         );
         $locator->findMappingFile("Foo\\stdClass2");

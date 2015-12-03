@@ -2,6 +2,7 @@
 
 namespace Doctrine\Tests\Common\Persistence\Mapping;
 
+use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\Tests\DoctrineTestCase;
 use Doctrine\Common\Persistence\Mapping\Driver\DefaultFileLocator;
 
@@ -50,7 +51,7 @@ class DefaultFileLocatorTest extends DoctrineTestCase
         $locator = new DefaultFileLocator(array($path), ".yml");
 
         $this->setExpectedException(
-            'Doctrine\Common\Persistence\Mapping\MappingException',
+            MappingException::class,
             "No mapping file found named 'stdClass2.yml' for class 'stdClass2'"
         );
         $locator->findMappingFile('stdClass2');

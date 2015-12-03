@@ -145,11 +145,14 @@ abstract class FileDriver implements MappingDriver
             $this->initialize();
         }
 
-        $classNames = (array)$this->locator->getAllClassNames($this->globalBasename);
-        if ($this->classCache) {
-            $classNames = array_merge(array_keys($this->classCache), $classNames);
+        if (! $this->classCache) {
+            return (array) $this->locator->getAllClassNames($this->globalBasename);
         }
-        return $classNames;
+
+        return array_merge(
+            array_keys($this->classCache),
+            (array) $this->locator->getAllClassNames($this->globalBasename)
+        );
     }
 
     /**

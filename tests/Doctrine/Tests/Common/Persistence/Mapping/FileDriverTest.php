@@ -2,6 +2,7 @@
 
 namespace Doctrine\Tests\Common\Persistence\Mapping;
 
+use Doctrine\Common\Persistence\Mapping\Driver\FileLocator;
 use Doctrine\Tests\DoctrineTestCase;
 use Doctrine\Common\Persistence\Mapping\Driver\FileDriver;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
@@ -118,7 +119,7 @@ class FileDriverTest extends DoctrineTestCase
 
     private function newLocator()
     {
-        $locator = $this->getMock('Doctrine\Common\Persistence\Mapping\Driver\FileLocator');
+        $locator = $this->getMock(FileLocator::class);
         $locator->expects($this->any())->method('getFileExtension')->will($this->returnValue('.yml'));
         $locator->expects($this->any())->method('getPaths')->will($this->returnValue(array(__DIR__ . "/_files")));
         return $locator;

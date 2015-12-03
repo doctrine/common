@@ -20,6 +20,9 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
+use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\Common\Proxy\ProxyGenerator;
 use ReflectionClass;
 use ReflectionMethod;
@@ -106,7 +109,7 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
     public function testClassWithSleepProxyGeneration()
     {
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\SleepClass', false)) {
-            $className = 'Doctrine\Tests\Common\Proxy\SleepClass';
+            $className = SleepClass::class;
             $metadata = $this->createClassMetadata($className, array('id'));
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
 
@@ -125,7 +128,7 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
     public function testClassWithStaticPropertyProxyGeneration()
     {
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\StaticPropertyClass', false)) {
-            $className = 'Doctrine\Tests\Common\Proxy\StaticPropertyClass';
+            $className = StaticPropertyClass::class;
             $metadata = $this->createClassMetadata($className, array());
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
 
@@ -151,7 +154,7 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
         }
 
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\CallableTypeHintClass', false)) {
-            $className = 'Doctrine\Tests\Common\Proxy\CallableTypeHintClass';
+            $className = CallableTypeHintClass::class;
             $metadata = $this->createClassMetadata($className, array('id'));
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
@@ -170,7 +173,7 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
         }
 
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\VariadicTypeHintClass', false)) {
-            $className = 'Doctrine\Tests\Common\Proxy\VariadicTypeHintClass';
+            $className = VariadicTypeHintClass::class;
             $metadata = $this->createClassMetadata($className, array('id'));
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
@@ -191,7 +194,7 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
         }
 
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\ScalarTypeHintsClass', false)) {
-            $className = 'Doctrine\Tests\Common\Proxy\ScalarTypeHintsClass';
+            $className = ScalarTypeHintsClass::class;
             $metadata = $this->createClassMetadata($className, array('id'));
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
@@ -212,7 +215,7 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
             $this->markTestSkipped('Method return types are only supported in PHP >= 7.0.0.');
         }
 
-        $className = 'Doctrine\Tests\Common\Proxy\ReturnTypesClass';
+        $className = ReturnTypesClass::class;
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\ReturnTypesClass', false)) {
             $metadata = $this->createClassMetadata($className, array('id'));
 
@@ -232,12 +235,12 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
 
     public function testClassWithInvalidTypeHintOnProxiedMethod()
     {
-        $className = 'Doctrine\Tests\Common\Proxy\InvalidTypeHintClass';
+        $className = InvalidTypeHintClass::class;
         $metadata = $this->createClassMetadata($className, array('id'));
         $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
 
         $this->setExpectedException(
-            'Doctrine\Common\Proxy\Exception\UnexpectedValueException',
+            UnexpectedValueException::class,
             'The type hint of parameter "foo" in method "invalidTypeHintMethod"'
                 .' in class "' . $className . '" is invalid.'
         );
@@ -246,19 +249,19 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
 
     public function testNoConfigDirThrowsException()
     {
-        $this->setExpectedException('Doctrine\Common\Proxy\Exception\InvalidArgumentException');
+        $this->setExpectedException(InvalidArgumentException::class);
         new ProxyGenerator(null, null);
     }
 
     public function testNoNamespaceThrowsException()
     {
-        $this->setExpectedException('Doctrine\Common\Proxy\Exception\InvalidArgumentException');
+        $this->setExpectedException(InvalidArgumentException::class);
         new ProxyGenerator(__DIR__ . '/generated', null);
     }
 
     public function testInvalidPlaceholderThrowsException()
     {
-        $this->setExpectedException('Doctrine\Common\Proxy\Exception\InvalidArgumentException');
+        $this->setExpectedException(InvalidArgumentException::class);
         $generator = new ProxyGenerator(__DIR__ . '/generated', 'SomeNamespace');
         $generator->setPlaceholder('<somePlaceholder>', array());
     }
@@ -267,20 +270,22 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
     {
         $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
 
-        $className = __NAMESPACE__ . '\\EvalBase';
-
-        $metadata = $this->createClassMetadata($className, array('id'));
-
-        $proxyGenerator->generateProxyClass($metadata);
+        $proxyGenerator->generateProxyClass($this->createClassMetadata(EvalBase::class, array('id')));
 
         $reflClass = new ReflectionClass('Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\EvalBase');
 
         $this->assertContains("eval()'d code", $reflClass->getFileName());
     }
 
+    /**
+     * @param       $className
+     * @param array $ids
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject|ClassMetadata
+     */
     private function createClassMetadata($className, array $ids)
     {
-        $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $metadata = $this->getMock(ClassMetadata::class);
         $reflClass = new ReflectionClass($className);
         $metadata->expects($this->any())->method('getReflectionClass')->will($this->returnValue($reflClass));
         $metadata->expects($this->any())->method('getIdentifierFieldNames')->will($this->returnValue($ids));

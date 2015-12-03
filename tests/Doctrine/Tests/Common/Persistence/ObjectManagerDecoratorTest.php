@@ -15,18 +15,21 @@ class NullObjectManagerDecorator extends ObjectManagerDecorator
 
 class ObjectManagerDecoratorTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager
+     */
     private $wrapped;
     private $decorated;
 
     public function setUp()
     {
-        $this->wrapped = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->wrapped   = $this->getMock(ObjectManager::class);
         $this->decorated = new NullObjectManagerDecorator($this->wrapped);
     }
 
     public function getMethodParameters()
     {
-        $class = new \ReflectionClass('Doctrine\Common\Persistence\ObjectManager');
+        $class = new \ReflectionClass(ObjectManager::class);
 
         $methods = array();
         foreach ($class->getMethods() as $method) {

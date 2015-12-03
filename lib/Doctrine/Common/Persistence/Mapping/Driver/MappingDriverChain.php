@@ -39,7 +39,7 @@ class MappingDriverChain implements MappingDriver
      *
      * @var MappingDriver|null
      */
-    private $defaultDriver = null;
+    private $defaultDriver;
 
     /**
      * @var array

@@ -5,15 +5,15 @@ namespace ClassLoaderTest;
 class ExternalLoader
 {
     public static function registerStatic() {
-        spl_autoload_register(array('ClassLoaderTest\ExternalLoader', 'load1'));
-        spl_autoload_register(array('ClassLoaderTest\ExternalLoader', 'load2'));
-        spl_autoload_register('ClassLoaderTest\ExternalLoader::load3');
+        spl_autoload_register(array(ExternalLoader::class, 'load1'));
+        spl_autoload_register(array(ExternalLoader::class, 'load2'));
+        spl_autoload_register(ExternalLoader::class . '::load3');
     }
 
     public static function unregisterStatic() {
-        spl_autoload_unregister(array('ClassLoaderTest\ExternalLoader', 'load1'));
-        spl_autoload_unregister(array('ClassLoaderTest\ExternalLoader', 'load2'));
-        spl_autoload_unregister('ClassLoaderTest\ExternalLoader::load3');
+        spl_autoload_unregister(array(ExternalLoader::class, 'load1'));
+        spl_autoload_unregister(array(ExternalLoader::class, 'load2'));
+        spl_autoload_unregister(ExternalLoader::class . '::load3');
     }
 
     public static function load1() {}
