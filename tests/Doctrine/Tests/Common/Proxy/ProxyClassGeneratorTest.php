@@ -164,6 +164,10 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
 
     public function testClassWithVariadicArgumentOnProxiedMethod()
     {
+        if (PHP_VERSION_ID < 50600) {
+            $this->markTestSkipped('`...` is only supported in PHP >=5.6.0');
+        }
+
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\VariadicTypeHintClass', false)) {
             $className = VariadicTypeHintClass::class;
             $metadata = $this->createClassMetadata($className, array('id'));

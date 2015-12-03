@@ -909,7 +909,7 @@ EOT;
                 $parameterDefinition .= '&';
             }
 
-            if ($param->isVariadic()) {
+            if (method_exists($param, 'isVariadic') && $param->isVariadic()) {
                 $parameterDefinition .= '...';
             }
 
@@ -993,7 +993,7 @@ EOT;
             function (\ReflectionParameter $parameter) {
                 $name = '';
 
-                if ($parameter->isVariadic()) {
+                if (method_exists($parameter, 'isVariadic') && $parameter->isVariadic()) {
                     $name .= '...';
                 }
 
