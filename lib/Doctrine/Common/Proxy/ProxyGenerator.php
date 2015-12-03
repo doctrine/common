@@ -1012,7 +1012,7 @@ EOT;
      */
     private function getMethodReturnType(\ReflectionMethod $method)
     {
-        if (PHP_VERSION_ID < 70000 || ! $method->hasReturnType()) {
+        if (! (method_exists($method, 'hasReturnType') && $method->hasReturnType())) {
             return '';
         }
 
