@@ -593,10 +593,6 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
 
     public function testCallingVariadicMethodCausesLazyLoading()
     {
-        if (PHP_VERSION_ID < 50600) {
-            $this->markTestSkipped('Test applies only to PHP 5.6+');
-        }
-
         $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\VariadicTypeHintClass';
 
         /* @var $metadata ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
