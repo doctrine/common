@@ -1016,20 +1016,21 @@ EOT;
      */
     private function getMethodReturnType(\ReflectionMethod $method)
     {
-        if (PHP_VERSION_ID < 70000 || !$method->hasReturnType()) {
+        if (PHP_VERSION_ID < 70000 || ! $method->hasReturnType()) {
             return '';
         }
 
         $returnType = $method->getReturnType();
-        $nameLower = strtolower((string) $returnType);
+        $nameLower  = strtolower((string) $returnType);
 
-        if ($nameLower === 'self') {
+        if ('self' === $nameLower) {
             return ': \\' . $method->getDeclaringClass()->getName();
         }
-        if ($nameLower === 'parent') {
+
+        if ('parent' === $nameLower) {
             return ': \\' . $method->getDeclaringClass()->getParentClass()->getName();
         }
 
-        return ': ' . (!$returnType->isBuiltin() ? '\\' : '') . (string) $returnType;
+        return ': ' . ($returnType->isBuiltin() ? '' : '\\') . (string) $returnType;
     }
 }
