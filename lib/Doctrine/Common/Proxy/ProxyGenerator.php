@@ -945,7 +945,7 @@ EOT;
             return 'callable';
         }
 
-        if (PHP_VERSION_ID >= 70000 && $parameter->hasType() && $parameter->getType()->isBuiltin()) {
+        if (method_exists($parameter, 'hasType') && $parameter->hasType() && $parameter->getType()->isBuiltin()) {
             return (string) $parameter->getType();
         }
 
