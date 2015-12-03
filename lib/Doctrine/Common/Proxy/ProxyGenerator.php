@@ -909,10 +909,8 @@ EOT;
                 $parameterDefinition .= '&';
             }
 
-            if (method_exists($param, 'isVariadic')) {
-                if ($param->isVariadic()) {
-                    $parameterDefinition .= '...';
-                }
+            if ($param->isVariadic()) {
+                $parameterDefinition .= '...';
             }
 
             $parameters[]     = '$' . $param->getName();
@@ -943,7 +941,7 @@ EOT;
             return 'array';
         }
 
-        if (method_exists($parameter, 'isCallable') && $parameter->isCallable()) {
+        if ($parameter->isCallable()) {
             return 'callable';
         }
 
@@ -995,10 +993,8 @@ EOT;
             function (\ReflectionParameter $parameter) {
                 $name = '';
 
-                if (method_exists($parameter, 'isVariadic')) {
-                    if ($parameter->isVariadic()) {
-                        $name .= '...';
-                    }
+                if ($parameter->isVariadic()) {
+                    $name .= '...';
                 }
 
                 $name .= '$' . $parameter->getName();
