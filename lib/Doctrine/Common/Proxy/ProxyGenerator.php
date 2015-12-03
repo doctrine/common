@@ -1021,7 +1021,12 @@ EOT;
         }
 
         $returnType = $method->getReturnType();
-        $nameLower  = strtolower((string) $returnType);
+
+        if ($returnType->isBuiltin()) {
+            return ':' . $returnType;
+        }
+
+        $nameLower = strtolower((string) $returnType);
 
         if ('self' === $nameLower) {
             return ': \\' . $method->getDeclaringClass()->getName();
@@ -1031,6 +1036,6 @@ EOT;
             return ': \\' . $method->getDeclaringClass()->getParentClass()->getName();
         }
 
-        return ': ' . ($returnType->isBuiltin() ? '' : '\\') . (string) $returnType;
+        return ': ' . (string) $returnType;
     }
 }
