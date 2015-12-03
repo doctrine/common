@@ -21,7 +21,7 @@
         "doctrine/annotations": "1.*"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.7"
+        "phpunit/phpunit": "~5.0"
     },
     "autoload": {
         "psr-4": {
