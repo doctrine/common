@@ -61,11 +61,19 @@ class DefaultFileLocatorTest extends DoctrineTestCase
         $path = __DIR__ . "/_files";
 
         $locator = new DefaultFileLocator(array($path), ".yml");
-        $classes = $locator->getAllClassNames(null);
-        sort($classes);
+        $allClasses = $locator->getAllClassNames(null);
+        $globalClasses = $locator->getAllClassNames("global");
 
-        $this->assertEquals(array('global', 'stdClass'), $classes);
-        $this->assertEquals(array('stdClass'), $locator->getAllClassNames("global"));
+        $expectedAllClasses    = array('global', 'stdClass', 'subDirClass');
+        $expectedGlobalClasses = array('subDirClass', 'stdClass');
+
+        sort($allClasses);
+        sort($globalClasses);
+        sort($expectedAllClasses);
+        sort($expectedGlobalClasses);
+
+        $this->assertEquals($expectedAllClasses, $allClasses);
+        $this->assertEquals($expectedGlobalClasses, $globalClasses);
     }
 
     public function testGetAllClassNamesNonMatchingFileExtension()
