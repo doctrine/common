@@ -156,13 +156,13 @@ class TestObjectMetadata implements ClassMetadata
 
     public function getAssociationMappedByTargetField($assocName)
     {
-        $assoc = array('children' => 'parent');
+        $assoc = ['children' => 'parent'];
         return $assoc[$assocName];
     }
 
     public function getAssociationNames()
     {
-        return array('parent', 'children');
+        return ['parent', 'children'];
     }
 
     public function getAssociationTargetClass($assocName)
@@ -172,12 +172,12 @@ class TestObjectMetadata implements ClassMetadata
 
     public function getFieldNames()
     {
-        return array('id', 'name');
+        return ['id', 'name'];
     }
 
     public function getIdentifier()
     {
-        return array('id');
+        return ['id'];
     }
 
     public function getName()
@@ -192,18 +192,18 @@ class TestObjectMetadata implements ClassMetadata
 
     public function getTypeOfField($fieldName)
     {
-        $types = array('id' => 'integer', 'name' => 'string');
+        $types = ['id' => 'integer', 'name' => 'string'];
         return $types[$fieldName];
     }
 
     public function hasAssociation($fieldName)
     {
-        return in_array($fieldName, array('parent', 'children'));
+        return in_array($fieldName, ['parent', 'children']);
     }
 
     public function hasField($fieldName)
     {
-        return in_array($fieldName, array('id', 'name'));
+        return in_array($fieldName, ['id', 'name']);
     }
 
     public function isAssociationInverseSide($assocName)

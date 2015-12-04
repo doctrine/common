@@ -42,10 +42,10 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
      */
     protected $lazyObject;
 
-    protected $identifier = array(
+    protected $identifier = [
         'publicIdentifierField' => 'publicIdentifierFieldValue',
         'protectedIdentifierField' => 'protectedIdentifierFieldValue',
-    );
+    ];
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|Callable
@@ -70,7 +70,7 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
         $proxyClassName = $this->generateProxyClass(MagicGetClass::class);
         $proxy          = new $proxyClassName(
             function (Proxy $proxy, $method, $params) use (&$counter) {
-                if ( ! in_array($params[0], array('publicField', 'test', 'notDefined'))) {
+                if ( ! in_array($params[0], ['publicField', 'test', 'notDefined'])) {
                     throw new \InvalidArgumentException('Unexpected access to field "' . $params[0] . '"');
                 }
 
@@ -121,7 +121,7 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
         $proxyClassName = $this->generateProxyClass(MagicSetClass::class);
         $proxy          = new $proxyClassName(
             function (Proxy  $proxy, $method, $params) use (&$counter) {
-                if ( ! in_array($params[0], array('publicField', 'test', 'notDefined'))) {
+                if ( ! in_array($params[0], ['publicField', 'test', 'notDefined'])) {
                     throw new \InvalidArgumentException('Unexpected access to field "' . $params[0] . '"');
                 }
 
@@ -187,7 +187,7 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
     {
         $proxyClassName = $this->generateProxyClass(MagicIssetClass::class);
         $proxy          = new $proxyClassName(function (Proxy $proxy, $method, $params) use (&$counter) {
-            if (in_array($params[0], array('publicField', 'test', 'nonExisting'))) {
+            if (in_array($params[0], ['publicField', 'test', 'nonExisting'])) {
                 $initializer = $proxy->__getInitializer();
 
                 $proxy->__setInitializer(null);
@@ -273,7 +273,7 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
         $metadata
             ->expects($this->any())
             ->method('getIdentifier')
-            ->will($this->returnValue(array('id')));
+            ->will($this->returnValue(['id']));
 
         $metadata
             ->expects($this->any())
@@ -291,7 +291,7 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('hasField')
             ->will($this->returnCallback(function ($fieldName) {
-                return in_array($fieldName, array('id', 'publicField'));
+                return in_array($fieldName, ['id', 'publicField']);
             }));
 
         $metadata
@@ -302,17 +302,17 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
         $metadata
             ->expects($this->any())
             ->method('getFieldNames')
-            ->will($this->returnValue(array('id', 'publicField')));
+            ->will($this->returnValue(['id', 'publicField']));
 
         $metadata
             ->expects($this->any())
             ->method('getIdentifierFieldNames')
-            ->will($this->returnValue(array('id')));
+            ->will($this->returnValue(['id']));
 
         $metadata
             ->expects($this->any())
             ->method('getAssociationNames')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
         $metadata
             ->expects($this->any())

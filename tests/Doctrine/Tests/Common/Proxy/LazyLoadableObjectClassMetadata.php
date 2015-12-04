@@ -38,28 +38,28 @@ class LazyLoadableObjectClassMetadata implements ClassMetadata
     /**
      * @var array
      */
-    protected $identifier = array(
+    protected $identifier = [
         'publicIdentifierField'    => true,
         'protectedIdentifierField' => true,
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $fields = array(
+    protected $fields = [
         'publicIdentifierField'    => true,
         'protectedIdentifierField' => true,
         'publicPersistentField'    => true,
         'protectedPersistentField' => true,
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $associations = array(
+    protected $associations = [
         'publicAssociation'        => true,
         'protectedAssociation'     => true,
-    );
+    ];
 
     /**
      * {@inheritDoc}

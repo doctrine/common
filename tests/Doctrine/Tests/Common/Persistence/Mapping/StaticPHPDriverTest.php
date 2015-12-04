@@ -13,13 +13,13 @@ class StaticPHPDriverTest extends DoctrineTestCase
         $metadata = $this->getMock(ClassMetadata::class);
         $metadata->expects($this->once())->method('getFieldNames');
 
-        $driver = new StaticPHPDriver(array(__DIR__));
+        $driver = new StaticPHPDriver([__DIR__]);
         $driver->loadMetadataForClass(TestEntity::class, $metadata);
     }
 
     public function testGetAllClassNames()
     {
-        $driver = new StaticPHPDriver(array(__DIR__));
+        $driver = new StaticPHPDriver([__DIR__]);
         $classNames = $driver->getAllClassNames();
 
         $this->assertContains(TestEntity::class, $classNames);

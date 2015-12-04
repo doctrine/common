@@ -11,7 +11,7 @@ class FileDriverTest extends DoctrineTestCase
 {
     public function testGlobalBasename()
     {
-        $driver = new TestFileDriver(array());
+        $driver = new TestFileDriver([]);
 
         $this->assertNull($driver->getGlobalBasename());
 
@@ -49,7 +49,7 @@ class FileDriverTest extends DoctrineTestCase
 
         $classNames = $driver->getAllClassNames();
 
-        $this->assertEquals(array('stdGlobal', 'stdGlobal2'), $classNames);
+        $this->assertEquals(['stdGlobal', 'stdGlobal2'], $classNames);
     }
 
     public function testGetAllClassNamesFromMappingFile()
@@ -58,12 +58,12 @@ class FileDriverTest extends DoctrineTestCase
         $locator->expects($this->any())
                 ->method('getAllClassNames')
                 ->with($this->equalTo(null))
-                ->will($this->returnValue(array('stdClass')));
+                ->will($this->returnValue(['stdClass']));
         $driver = new TestFileDriver($locator);
 
         $classNames = $driver->getAllClassNames();
 
-        $this->assertEquals(array('stdClass'), $classNames);
+        $this->assertEquals(['stdClass'], $classNames);
     }
 
     public function testGetAllClassNamesBothSources()
@@ -72,13 +72,13 @@ class FileDriverTest extends DoctrineTestCase
         $locator->expects($this->any())
                 ->method('getAllClassNames')
                 ->with($this->equalTo('global'))
-                ->will($this->returnValue(array('stdClass')));
+                ->will($this->returnValue(['stdClass']));
         $driver = new TestFileDriver($locator);
         $driver->setGlobalBasename("global");
 
         $classNames = $driver->getAllClassNames();
 
-        $this->assertEquals(array('stdGlobal', 'stdGlobal2', 'stdClass'), $classNames);
+        $this->assertEquals(['stdGlobal', 'stdGlobal2', 'stdClass'], $classNames);
     }
 
     public function testIsNotTransient()
@@ -121,7 +121,7 @@ class FileDriverTest extends DoctrineTestCase
     {
         $locator = $this->getMock(FileLocator::class);
         $locator->expects($this->any())->method('getFileExtension')->will($this->returnValue('.yml'));
-        $locator->expects($this->any())->method('getPaths')->will($this->returnValue(array(__DIR__ . "/_files")));
+        $locator->expects($this->any())->method('getPaths')->will($this->returnValue([__DIR__ . "/_files"]));
         return $locator;
     }
 }
@@ -131,9 +131,9 @@ class TestFileDriver extends FileDriver
     protected function loadMappingFile($file)
     {
         if (strpos($file, "global.yml") !== false) {
-            return array('stdGlobal' => 'stdGlobal', 'stdGlobal2' => 'stdGlobal2');
+            return ['stdGlobal' => 'stdGlobal', 'stdGlobal2' => 'stdGlobal2'];
         }
-        return array('stdClass' => 'stdClass');
+        return ['stdClass' => 'stdClass'];
     }
 
     public function loadMetadataForClass($className, ClassMetadata $metadata)

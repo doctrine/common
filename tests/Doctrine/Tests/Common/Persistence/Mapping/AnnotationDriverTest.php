@@ -13,17 +13,17 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
     public function testGetAllClassNames()
     {
         $reader = new AnnotationReader();
-        $driver = new SimpleAnnotationDriver($reader, array(__DIR__ . '/_files/annotation'));
+        $driver = new SimpleAnnotationDriver($reader, [__DIR__ . '/_files/annotation']);
 
         $classes = $driver->getAllClassNames();
 
-        $this->assertEquals(array(TestClass::class), $classes);
+        $this->assertEquals([TestClass::class], $classes);
     }
 }
 
 class SimpleAnnotationDriver extends AnnotationDriver
 {
-    protected $entityAnnotationClasses = array(Entity::class => true);
+    protected $entityAnnotationClasses = [Entity::class => true];
 
     public function loadMetadataForClass($className, ClassMetadata $metadata)
     {

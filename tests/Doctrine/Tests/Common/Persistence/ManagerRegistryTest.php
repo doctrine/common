@@ -28,8 +28,8 @@ class ManagerRegistryTest extends DoctrineTestCase
     {
         $this->mr = new TestManagerRegistry(
             'ORM',
-            array('default_connection'),
-            array('default_manager'),
+            ['default_connection'],
+            ['default_manager'],
             'default',
             'default',
             ObjectManagerAware::class

@@ -102,7 +102,7 @@ final class Debug
 
         if ($maxDepth) {
             if (is_array($var)) {
-                $return = array();
+                $return = [];
 
                 foreach ($var as $k => $v) {
                     $return[$k] = self::export($v, $maxDepth - 1);

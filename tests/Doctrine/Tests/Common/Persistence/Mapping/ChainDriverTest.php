@@ -59,21 +59,21 @@ class DriverChainTest extends DoctrineTestCase
         $driver1 = $this->getMock(MappingDriver::class);
         $driver1->expects($this->once())
                 ->method('getAllClassNames')
-                ->will($this->returnValue(array('Doctrine\Tests\Models\Company\Foo')));
+                ->will($this->returnValue(['Doctrine\Tests\Models\Company\Foo']));
 
         $driver2 = $this->getMock(MappingDriver::class);
         $driver2->expects($this->once())
                 ->method('getAllClassNames')
-                ->will($this->returnValue(array('Doctrine\Tests\ORM\Mapping\Bar', 'Doctrine\Tests\ORM\Mapping\Baz', 'FooBarBaz')));
+                ->will($this->returnValue(['Doctrine\Tests\ORM\Mapping\Bar', 'Doctrine\Tests\ORM\Mapping\Baz', 'FooBarBaz']));
 
         $chain->addDriver($driver1, 'Doctrine\Tests\Models\Company');
         $chain->addDriver($driver2, 'Doctrine\Tests\ORM\Mapping');
 
-        $this->assertEquals(array(
+        $this->assertEquals([
             'Doctrine\Tests\Models\Company\Foo',
             'Doctrine\Tests\ORM\Mapping\Bar',
             'Doctrine\Tests\ORM\Mapping\Baz'
-        ), $chain->getAllClassNames());
+        ], $chain->getAllClassNames());
     }
 
     /**
@@ -132,18 +132,18 @@ class DriverChainTest extends DoctrineTestCase
 
         $companyDriver->expects($this->once())
             ->method('getAllClassNames')
-            ->will($this->returnValue(array('Doctrine\Tests\Models\Company\Foo')));
+            ->will($this->returnValue(['Doctrine\Tests\Models\Company\Foo']));
 
         $defaultDriver->expects($this->once())
             ->method('getAllClassNames')
-            ->will($this->returnValue(array('Other\Class')));
+            ->will($this->returnValue(['Other\Class']));
 
         $chain->setDefaultDriver($defaultDriver);
         $chain->addDriver($companyDriver, 'Doctrine\Tests\Models\Company');
 
         $classNames = $chain->getAllClassNames();
 
-        $this->assertEquals(array('Doctrine\Tests\Models\Company\Foo', 'Other\Class'), $classNames);
+        $this->assertEquals(['Doctrine\Tests\Models\Company\Foo', 'Other\Class'], $classNames);
     }
 }
 

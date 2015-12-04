@@ -40,7 +40,7 @@ class StaticPHPDriver implements MappingDriver
      *
      * @var array
      */
-    private $paths = array();
+    private $paths = [];
 
     /**
      * Map of all class names.
@@ -93,8 +93,8 @@ class StaticPHPDriver implements MappingDriver
             throw MappingException::pathRequired();
         }
 
-        $classes = array();
-        $includedFiles = array();
+        $classes = [];
+        $includedFiles = [];
 
         foreach ($this->paths as $path) {
             if (!is_dir($path)) {

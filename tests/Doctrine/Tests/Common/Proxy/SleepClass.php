@@ -14,6 +14,6 @@ class SleepClass
      */
     public function __sleep()
     {
-        return array('id');
+        return ['id'];
     }
 }
