@@ -55,10 +55,10 @@ class FileDriverTest extends DoctrineTestCase
         $driver = new TestFileDriver($locator);
 
         // not cached
-        $driver->getElement('stdClass');
+        $this->assertEquals('stdClass', $driver->getElement('stdClass'));
 
         // cached call
-        $driver->getElement('stdClass');
+        $this->assertEquals('stdClass', $driver->getElement('stdClass'));
     }
 
     public function testGetAllClassNamesGlobalBasename()
