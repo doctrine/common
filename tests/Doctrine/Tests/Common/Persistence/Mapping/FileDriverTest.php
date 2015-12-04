@@ -42,6 +42,25 @@ class FileDriverTest extends DoctrineTestCase
         $this->assertEquals('stdClass', $driver->getElement('stdClass'));
     }
 
+    public function testGetElementUpdatesClassCache()
+    {
+        $locator = $this->newLocator();
+
+        // findMappingFile should only be called once
+        $locator->expects($this->once())
+            ->method('findMappingFile')
+            ->with($this->equalTo('stdClass'))
+            ->will($this->returnValue(__DIR__ . '/_files/stdClass.yml'));
+
+        $driver = new TestFileDriver($locator);
+
+        // not cached
+        $driver->getElement('stdClass');
+
+        // cached call
+        $driver->getElement('stdClass');
+    }
+
     public function testGetAllClassNamesGlobalBasename()
     {
         $driver = new TestFileDriver($this->newLocator());
