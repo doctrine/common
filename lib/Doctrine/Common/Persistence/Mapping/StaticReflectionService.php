@@ -31,7 +31,7 @@ class StaticReflectionService implements ReflectionService
      */
     public function getParentClasses($class)
     {
-        return array();
+        return [];
     }
 
     /**

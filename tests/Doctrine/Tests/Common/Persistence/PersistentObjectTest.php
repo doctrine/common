@@ -2,6 +2,7 @@
 
 namespace Doctrine\Tests\Common\Persistence;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\PersistentObject;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\ReflectionService;
@@ -18,7 +19,7 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
     public function setUp()
     {
         $this->cm = new TestObjectMetadata;
-        $this->om = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->om = $this->getMock(ObjectManager::class);
         $this->om->expects($this->any())->method('getClassMetadata')
                  ->will($this->returnValue($this->cm));
         $this->object = new TestObject;
@@ -34,7 +35,7 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
     public function testNonMatchingObjectManager()
     {
         $this->setExpectedException('RuntimeException');
-        $om = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $om = $this->getMock(ObjectManager::class);
         $this->object->injectObjectManager($om, $this->cm);
     }
 
@@ -155,13 +156,13 @@ class TestObjectMetadata implements ClassMetadata
 
     public function getAssociationMappedByTargetField($assocName)
     {
-        $assoc = array('children' => 'parent');
+        $assoc = ['children' => 'parent'];
         return $assoc[$assocName];
     }
 
     public function getAssociationNames()
     {
-        return array('parent', 'children');
+        return ['parent', 'children'];
     }
 
     public function getAssociationTargetClass($assocName)
@@ -171,12 +172,12 @@ class TestObjectMetadata implements ClassMetadata
 
     public function getFieldNames()
     {
-        return array('id', 'name');
+        return ['id', 'name'];
     }
 
     public function getIdentifier()
     {
-        return array('id');
+        return ['id'];
     }
 
     public function getName()
@@ -191,18 +192,18 @@ class TestObjectMetadata implements ClassMetadata
 
     public function getTypeOfField($fieldName)
     {
-        $types = array('id' => 'integer', 'name' => 'string');
+        $types = ['id' => 'integer', 'name' => 'string'];
         return $types[$fieldName];
     }
 
     public function hasAssociation($fieldName)
     {
-        return in_array($fieldName, array('parent', 'children'));
+        return in_array($fieldName, ['parent', 'children']);
     }
 
     public function hasField($fieldName)
     {
-        return in_array($fieldName, array('id', 'name'));
+        return in_array($fieldName, ['id', 'name']);
     }
 
     public function isAssociationInverseSide($assocName)

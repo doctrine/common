@@ -9,13 +9,13 @@ namespace Doctrine\Tests\Common\Util
     {
         static public function dataGetClass()
         {
-            return array(
-                array('stdClass', 'stdClass'),
-                array('Doctrine\Common\Util\ClassUtils', 'Doctrine\Common\Util\ClassUtils'),
-                array( 'MyProject\Proxies\__CG__\stdClass', 'stdClass' ),
-                array( 'MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\stdClass', 'stdClass' ),
-                array( 'MyProject\Proxies\__CG__\Doctrine\Tests\Common\Util\ChildObject','Doctrine\Tests\Common\Util\ChildObject' )
-            );
+            return [
+                [\stdClass::class, \stdClass::class],
+                [\Doctrine\Common\Util\ClassUtils::class, \Doctrine\Common\Util\ClassUtils::class],
+                [ 'MyProject\Proxies\__CG__\stdClass', \stdClass::class],
+                [ 'MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\stdClass', \stdClass::class],
+                [ 'MyProject\Proxies\__CG__\Doctrine\Tests\Common\Util\ChildObject', ChildObject::class]
+            ];
         }
 
         /**

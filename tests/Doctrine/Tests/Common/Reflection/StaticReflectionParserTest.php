@@ -2,6 +2,8 @@
 
 namespace Doctrine\Tests\Common\Reflection;
 
+use Doctrine\Tests\Common\Reflection\NoParent;
+use Doctrine\Tests\Common\Reflection\Dummies\NoParent as NoParentDummy;
 use Doctrine\Tests\DoctrineTestCase;
 use Doctrine\Common\Reflection\StaticReflectionParser;
 use Doctrine\Common\Reflection\Psr0FindFile;
@@ -26,9 +28,9 @@ class StaticReflectionParserTest extends DoctrineTestCase
         }
 
         $testsRoot = substr(__DIR__, 0, -strlen(__NAMESPACE__) - 1);
-        $paths = array(
-            'Doctrine\\Tests' => array($testsRoot),
-        );
+        $paths = [
+            'Doctrine\\Tests' => [$testsRoot],
+        ];
         $staticReflectionParser = new StaticReflectionParser($parsedClassName, new Psr0FindFile($paths), $classAnnotationOptimize);
         $declaringClassName = $staticReflectionParser->getStaticReflectionParserForDeclaringClass('property', 'test')->getClassName();
         $this->assertEquals($expectedClassName, $declaringClassName);
@@ -40,25 +42,25 @@ class StaticReflectionParserTest extends DoctrineTestCase
      */
     public function parentClassData()
     {
-        $data = array();
-        $noParentClassName = 'Doctrine\\Tests\\Common\\Reflection\\NoParent';
-        $dummyParentClassName = 'Doctrine\\Tests\\Common\\Reflection\\Dummies\\NoParent';
-        foreach (array(false, true) as $classAnnotationOptimize) {
-            $data[] = array(
+        $data = [];
+        $noParentClassName = NoParent::class;
+        $dummyParentClassName = NoParentDummy::class;
+        foreach ([false, true] as $classAnnotationOptimize) {
+            $data[] = [
               $classAnnotationOptimize, $noParentClassName, $noParentClassName,
-            );
-            $data[] = array(
-              $classAnnotationOptimize, 'Doctrine\\Tests\\Common\\Reflection\\FullyClassifiedParent', $noParentClassName,
-            );
-            $data[] = array(
-              $classAnnotationOptimize, 'Doctrine\\Tests\\Common\\Reflection\\SameNamespaceParent', $noParentClassName,
-            );
-            $data[] = array(
-              $classAnnotationOptimize, 'Doctrine\\Tests\\Common\\Reflection\\DeeperNamespaceParent', $dummyParentClassName,
-            );
-            $data[] = array(
-              $classAnnotationOptimize, 'Doctrine\\Tests\\Common\\Reflection\\UseParent', $dummyParentClassName,
-            );
+            ];
+            $data[] = [
+              $classAnnotationOptimize, FullyClassifiedParent::class, $noParentClassName,
+            ];
+            $data[] = [
+              $classAnnotationOptimize, SameNamespaceParent::class, $noParentClassName,
+            ];
+            $data[] = [
+              $classAnnotationOptimize, DeeperNamespaceParent::class, $dummyParentClassName,
+            ];
+            $data[] = [
+              $classAnnotationOptimize, UseParent::class, $dummyParentClassName,
+            ];
         }
         return $data;
     }
@@ -68,10 +70,10 @@ class StaticReflectionParserTest extends DoctrineTestCase
      */
     public function testClassAnnotationOptimizedParsing($classAnnotationOptimize) {
         $testsRoot = substr(__DIR__, 0, -strlen(__NAMESPACE__) - 1);
-        $paths = array(
-          'Doctrine\\Tests' => array($testsRoot),
-        );
-        $staticReflectionParser = new StaticReflectionParser('Doctrine\\Tests\\Common\\Reflection\\ExampleAnnotationClass', new Psr0FindFile($paths), $classAnnotationOptimize);
+        $paths = [
+          'Doctrine\\Tests' => [$testsRoot],
+        ];
+        $staticReflectionParser = new StaticReflectionParser(ExampleAnnotationClass::class, new Psr0FindFile($paths), $classAnnotationOptimize);
         $expectedDocComment = '/**
  * @Annotation(
  *   key = "value"
@@ -85,9 +87,9 @@ class StaticReflectionParserTest extends DoctrineTestCase
      */
     public function classAnnotationOptimize()
     {
-        return array(
-            array(false),
-            array(true)
-        );
+        return [
+            [false],
+            [true]
+        ];
     }
 }

@@ -198,7 +198,7 @@ abstract class PersistentObject implements ObjectManagerAware
                 throw new \InvalidArgumentException("Expected persistent object of type '".$targetClass."'");
             }
             if (!($this->$field instanceof Collection)) {
-                $this->$field = new ArrayCollection($this->$field ?: array());
+                $this->$field = new ArrayCollection($this->$field ?: []);
             }
             $this->$field->add($args[0]);
             $this->completeOwningSide($field, $targetClass, $args[0]);

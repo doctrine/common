@@ -19,6 +19,7 @@
 
 namespace Doctrine\Common\Util;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\Proxy;
 
 /**
@@ -95,13 +96,13 @@ final class Debug
         $return = null;
         $isObj = is_object($var);
 
-        if ($isObj && in_array('Doctrine\Common\Collections\Collection', class_implements($var))) {
+        if ($var instanceof Collection) {
             $var = $var->toArray();
         }
 
         if ($maxDepth) {
             if (is_array($var)) {
-                $return = array();
+                $return = [];
 
                 foreach ($var as $k => $v) {
                     $return[$k] = self::export($v, $maxDepth - 1);

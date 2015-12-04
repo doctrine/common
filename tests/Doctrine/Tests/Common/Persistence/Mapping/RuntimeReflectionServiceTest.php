@@ -19,7 +19,9 @@
 
 namespace Doctrine\Tests\Common\Persistence\Mapping;
 
+use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\Common\Persistence\Mapping\RuntimeReflectionService;
+use Doctrine\Common\Reflection\RuntimePublicReflectionProperty;
 
 /**
  * @group DCOM-93
@@ -45,7 +47,7 @@ class RuntimeReflectionServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testClassNamespaceName()
     {
-        $this->assertEquals("Doctrine\Tests\Common\Persistence\Mapping", $this->reflectionService->getClassNamespace(__CLASS__));
+        $this->assertEquals('Doctrine\Tests\Common\Persistence\Mapping', $this->reflectionService->getClassNamespace(__CLASS__));
     }
 
     public function testGetParentClasses()
@@ -56,7 +58,7 @@ class RuntimeReflectionServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testGetParentClassesForAbsentClass()
     {
-        $this->setExpectedException('Doctrine\Common\Persistence\Mapping\MappingException');
+        $this->setExpectedException(MappingException::class);
         $this->reflectionService->getParentClasses(__NAMESPACE__ . '\AbsentClass');
     }
 
@@ -78,7 +80,7 @@ class RuntimeReflectionServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf("ReflectionProperty", $reflProp);
 
         $reflProp = $this->reflectionService->getAccessibleProperty(__CLASS__, "unusedPublicProperty");
-        $this->assertInstanceOf("Doctrine\Common\Reflection\RuntimePublicReflectionProperty", $reflProp);
+        $this->assertInstanceOf(RuntimePublicReflectionProperty::class, $reflProp);
     }
 }
 

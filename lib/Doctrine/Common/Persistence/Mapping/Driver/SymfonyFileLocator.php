@@ -37,14 +37,14 @@ class SymfonyFileLocator implements FileLocator
      *
      * @var array
      */
-    protected $paths = array();
+    protected $paths = [];
 
     /**
      * A map of mapping directory path to namespace prefix used to expand class shortnames.
      *
      * @var array
      */
-    protected $prefixes = array();
+    protected $prefixes = [];
 
     /**
      * File extension that is searched for.
@@ -164,7 +164,7 @@ class SymfonyFileLocator implements FileLocator
      */
     public function getAllClassNames($globalBasename = null)
     {
-        $classes = array();
+        $classes = [];
 
         if ($this->paths) {
             foreach ((array) $this->paths as $path) {

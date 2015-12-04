@@ -107,10 +107,6 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testSupportsTraitAutoloading()
     {
-        if (PHP_VERSION_ID < 50400) {
-            $this->markTestSkipped('Traits are only supported in PHP >=5.4.0');
-        }
-
         $classLoader = new ClassLoader();
         $classLoader->setIncludePath(__DIR__);
         $classLoader->setFileExtension('.class.php');

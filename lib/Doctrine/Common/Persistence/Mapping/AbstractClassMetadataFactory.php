@@ -53,7 +53,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
     /**
      * @var ClassMetadata[]
      */
-    private $loadedMetadata = array();
+    private $loadedMetadata = [];
 
     /**
      * @var bool
@@ -110,7 +110,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         }
 
         $driver = $this->getDriver();
-        $metadata = array();
+        $metadata = [];
         foreach ($driver->getAllClassNames() as $className) {
             $metadata[] = $this->getMetadataFor($className);
         }
@@ -277,7 +277,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
     protected function getParentClasses($name)
     {
         // Collect parent classes, ignoring transient (not-mapped) classes.
-        $parentClasses = array();
+        $parentClasses = [];
         foreach (array_reverse($this->getReflectionService()->getParentClasses($name)) as $parentClass) {
             if ( ! $this->getDriver()->isTransient($parentClass)) {
                 $parentClasses[] = $parentClass;
@@ -306,7 +306,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
             $this->initialize();
         }
 
-        $loaded = array();
+        $loaded = [];
 
         $parentClasses = $this->getParentClasses($name);
         $parentClasses[] = $name;
@@ -314,7 +314,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         // Move down the hierarchy of parent classes, starting from the topmost class
         $parent = null;
         $rootEntityFound = false;
-        $visited = array();
+        $visited = [];
         $reflService = $this->getReflectionService();
         foreach ($parentClasses as $className) {
             if (isset($this->loadedMetadata[$className])) {
