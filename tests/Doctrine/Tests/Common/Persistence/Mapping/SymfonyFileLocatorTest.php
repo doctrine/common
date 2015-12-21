@@ -179,4 +179,32 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
         );
         $locator->findMappingFile("Foo\\stdClass2");
     }
+
+    public function testFindMappingFileLeastSpecificNamespaceFirst()
+    {
+        // Low -> High
+        $prefixes = array();
+        $prefixes[__DIR__ . "/_match_ns"] = "Foo";
+        $prefixes[__DIR__ . "/_match_ns/Bar"] = "Foo\\Bar";
+
+        $locator = new SymfonyFileLocator($prefixes, ".yml");
+
+        $this->assertEquals(
+            __DIR__ . "/_match_ns/Bar/barEntity.yml",
+            $locator->findMappingFile("Foo\\Bar\\barEntity")
+        );
+    }
+
+    public function testFindMappingFileMostSpecificNamespaceFirst() {
+        $prefixes = array();
+        $prefixes[__DIR__ . "/_match_ns/Bar"] = "Foo\\Bar";
+        $prefixes[__DIR__ . "/_match_ns"] = "Foo";
+
+        $locator = new SymfonyFileLocator($prefixes, ".yml");
+
+        $this->assertEquals(
+            __DIR__ . "/_match_ns/Bar/barEntity.yml",
+            $locator->findMappingFile("Foo\\Bar\\barEntity")
+        );
+    }
 }
