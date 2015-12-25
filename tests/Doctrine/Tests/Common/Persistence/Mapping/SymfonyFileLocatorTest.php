@@ -174,9 +174,37 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
         $locator = new SymfonyFileLocator([$path => $prefix], ".yml");
 
         $this->setExpectedException(
-            MappingException::class,
-            "No mapping file found named '".__DIR__."/_files/stdClass2.yml' for class 'Foo\stdClass2'."
+            "Doctrine\Common\Persistence\Mapping\MappingException",
+            "No mapping file found named 'stdClass2.yml' for class 'Foo\stdClass2'."
         );
         $locator->findMappingFile("Foo\\stdClass2");
+    }
+
+    public function testFindMappingFileLeastSpecificNamespaceFirst()
+    {
+        // Low -> High
+        $prefixes = array();
+        $prefixes[__DIR__ . "/_match_ns"] = "Foo";
+        $prefixes[__DIR__ . "/_match_ns/Bar"] = "Foo\\Bar";
+
+        $locator = new SymfonyFileLocator($prefixes, ".yml");
+
+        $this->assertEquals(
+            __DIR__ . "/_match_ns/Bar/barEntity.yml",
+            $locator->findMappingFile("Foo\\Bar\\barEntity")
+        );
+    }
+
+    public function testFindMappingFileMostSpecificNamespaceFirst() {
+        $prefixes = array();
+        $prefixes[__DIR__ . "/_match_ns/Bar"] = "Foo\\Bar";
+        $prefixes[__DIR__ . "/_match_ns"] = "Foo";
+
+        $locator = new SymfonyFileLocator($prefixes, ".yml");
+
+        $this->assertEquals(
+            __DIR__ . "/_match_ns/Bar/barEntity.yml",
+            $locator->findMappingFile("Foo\\Bar\\barEntity")
+        );
     }
 }
