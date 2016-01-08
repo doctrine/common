@@ -40,6 +40,11 @@ class ProxyGenerator
     const PATTERN_MATCH_ID_METHOD = '((public\s+)?(function\s+%s\s*\(\)\s*)\s*(?::\s*\\\\?[a-z_\x7f-\xff][\w\x7f-\xff]*(?:\\\\[a-z_\x7f-\xff][\w\x7f-\xff]*)*\s*)?{\s*return\s*\$this->%s;\s*})i';
 
     /**
+     * @var int
+     */
+    private $umask;
+
+    /**
      * The namespace that contains all proxy classes.
      *
      * @var string
@@ -206,10 +211,11 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
      *
      * @param string $proxyDirectory The directory to use for the proxy classes. It must exist.
      * @param string $proxyNamespace The namespace to use for the proxy classes.
+     * @param int    $umask          The umask that controls file permissions.
      *
      * @throws InvalidArgumentException
      */
-    public function __construct($proxyDirectory, $proxyNamespace)
+    public function __construct($proxyDirectory, $proxyNamespace, $umask = 0002)
     {
         if ( ! $proxyDirectory) {
             throw InvalidArgumentException::proxyDirectoryRequired();
@@ -219,8 +225,16 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
             throw InvalidArgumentException::proxyNamespaceRequired();
         }
 
+        if ( ! is_int($umask)) {
+            throw new \InvalidArgumentException(sprintf(
+                'The parameter umask must be an integer, was: %s',
+                gettype($umask)
+            ));
+        }
+
         $this->proxyDirectory        = $proxyDirectory;
         $this->proxyNamespace        = $proxyNamespace;
+        $this->umask                 = $umask;
     }
 
     /**
@@ -291,7 +305,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
 
         $parentDirectory = dirname($fileName);
 
-        if ( ! is_dir($parentDirectory) && (false === @mkdir($parentDirectory, 0775, true))) {
+        if ( ! is_dir($parentDirectory) && (false === @mkdir($parentDirectory, 0777 & (~$this->umask), true))) {
             throw UnexpectedValueException::proxyDirectoryNotWritable($this->proxyDirectory);
         }
 
@@ -302,7 +316,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
         $tmpFileName = $fileName . '.' . uniqid('', true);
 
         file_put_contents($tmpFileName, $proxyCode);
-        @chmod($tmpFileName, 0664);
+        @chmod($tmpFileName, 0666 & (~$this->umask));
         rename($tmpFileName, $fileName);
     }
 
