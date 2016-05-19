@@ -6,3 +6,4 @@ tests export-ignore
 build.properties export-ignore
 build.xml export-ignore
 phpunit.xml.dist export-ignore
+/lib/vendor export-ignore
