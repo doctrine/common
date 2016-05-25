@@ -34,7 +34,7 @@ interface ObjectRepository
      *
      * @param mixed $id The identifier.
      *
-     * @return object The object.
+     * @return object|null The object.
      */
     public function find($id);
 
@@ -68,7 +68,7 @@ interface ObjectRepository
      *
      * @param array $criteria The criteria.
      *
-     * @return object The object.
+     * @return object|null The object.
      */
     public function findOneBy(array $criteria);
 
