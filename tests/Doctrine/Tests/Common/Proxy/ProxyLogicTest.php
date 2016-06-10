@@ -99,8 +99,9 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
         // creating the proxy class
         if (!class_exists($proxyClassName, false)) {
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
-            $proxyGenerator->generateProxyClass($metadata);
-            require_once $proxyGenerator->getProxyFileName($metadata->getName());
+            $proxyFileName = $proxyGenerator->getProxyFileName($metadata->getName());
+            $proxyGenerator->generateProxyClass($metadata, $proxyFileName);
+            require_once $proxyFileName;
         }
 
         $this->lazyObject = new $proxyClassName($this->getClosure($this->initializerCallbackMock), $cloner);
