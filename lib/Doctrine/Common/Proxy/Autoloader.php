@@ -49,7 +49,11 @@ class Autoloader
             throw InvalidArgumentException::notProxyClass($className, $proxyNamespace);
         }
 
-        $className = str_replace('\\', '', substr($className, strlen($proxyNamespace) + 1));
+        // remove proxy namespace from class name
+        $className = substr($className, strlen($proxyNamespace));
+
+        // remove namespace separators from remaining class name
+        $className = str_replace('\\', '', $className);
 
         return $proxyDir . DIRECTORY_SEPARATOR . $className . '.php';
     }
