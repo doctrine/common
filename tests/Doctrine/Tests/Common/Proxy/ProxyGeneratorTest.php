@@ -35,7 +35,7 @@ use PHPUnit_Framework_TestCase;
  * @author Giorgio Sironi <piccoloprincipeazzurro@gmail.com>
  * @author Marco Pivetta <ocramius@gmail.com>
  */
-class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
+class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var string
