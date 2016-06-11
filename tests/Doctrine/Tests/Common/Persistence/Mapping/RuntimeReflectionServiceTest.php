@@ -77,7 +77,8 @@ class RuntimeReflectionServiceTest extends \PHPUnit_Framework_TestCase
     public function testGetAccessibleProperty()
     {
         $reflProp = $this->reflectionService->getAccessibleProperty(__CLASS__, "reflectionService");
-        $this->assertInstanceOf("ReflectionProperty", $reflProp);
+        $this->assertInstanceOf(\ReflectionProperty::class, $reflProp);
+        $this->assertInstanceOf(RuntimeReflectionService::class, $reflProp->getValue($this));
 
         $reflProp = $this->reflectionService->getAccessibleProperty(__CLASS__, "unusedPublicProperty");
         $this->assertInstanceOf(RuntimePublicReflectionProperty::class, $reflProp);
