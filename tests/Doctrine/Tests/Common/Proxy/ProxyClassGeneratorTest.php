@@ -235,12 +235,10 @@ class ProxyClassGeneratorTest extends PHPUnit_Framework_TestCase
         $metadata = $this->createClassMetadata($className, ['id']);
         $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
 
-        $this->setExpectedException(
-            UnexpectedValueException::class,
-            'The type hint of parameter "foo" in method "invalidTypeHintMethod"'
-                .' in class "' . $className . '" is invalid.'
-        );
-        $proxyGenerator->generateProxyClass($metadata);
+        $this->generateAndRequire($proxyGenerator, $metadata);
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyInvalidTypeHintClass.php');
+
+        $this->assertNotContains('function foo', $classCode);
     }
 
     public function testNoConfigDirThrowsException()

@@ -767,6 +767,14 @@ EOT;
                 continue;
             }
 
+            // Checks earlier that the parameters type hint are valid.
+            try {
+                $parameters = $this->buildParametersString($class, $method, $method->getParameters());
+            } catch (UnexpectedValueException $exception) {
+                // in case a type hint is invalid, the method won't be callable anyway
+                continue;
+            }
+
             $methodNames[$name] = true;
             $methods .= "\n    /**\n"
                 . "     * {@inheritDoc}\n"
@@ -777,7 +785,7 @@ EOT;
                 $methods .= '&';
             }
 
-            $methods .= $name . '(' . $this->buildParametersString($class, $method, $method->getParameters()) . ')';
+            $methods .= $name . '(' . $parameters . ')';
             $methods .= $this->getMethodReturnType($method);
             $methods .= "\n" . '    {' . "\n";
 
