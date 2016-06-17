@@ -6,6 +6,6 @@
     },
     "timeout": 10,
     "logs": {
-        "text": "humbuglog.txt"
+        "text": "reports/humbuglog.txt"
     }
 }
