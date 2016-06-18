@@ -76,8 +76,8 @@ class TestManager extends PHPUnit_Framework_TestCase
 {
     public function getMetadataFactory()
     {
-        $driver   = $this->getMock(MappingDriver::class);
-        $metadata = $this->getMock(ClassMetadata::class);
+        $driver   = $this->createMock(MappingDriver::class);
+        $metadata = $this->createMock(ClassMetadata::class);
 
         return new TestClassMetadataFactory($driver, $metadata);
     }

@@ -10,7 +10,8 @@ class StaticPHPDriverTest extends DoctrineTestCase
 {
     public function testLoadMetadata()
     {
-        $metadata = $this->getMock(ClassMetadata::class);
+        /* @var $metadata ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
+        $metadata = $this->createMock(ClassMetadata::class);
         $metadata->expects($this->once())->method('getFieldNames');
 
         $driver = new StaticPHPDriver([__DIR__]);

@@ -281,7 +281,7 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
      */
     private function createClassMetadata($className, array $ids)
     {
-        $metadata = $this->getMock(ClassMetadata::class);
+        $metadata = $this->createMock(ClassMetadata::class);
         $reflClass = new ReflectionClass($className);
         $metadata->expects($this->any())->method('getReflectionClass')->will($this->returnValue($reflClass));
         $metadata->expects($this->any())->method('getIdentifierFieldNames')->will($this->returnValue($ids));

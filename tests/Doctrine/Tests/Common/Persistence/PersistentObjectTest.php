@@ -19,7 +19,7 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
     public function setUp()
     {
         $this->cm = new TestObjectMetadata;
-        $this->om = $this->getMock(ObjectManager::class);
+        $this->om = $this->createMock(ObjectManager::class);
         $this->om->expects($this->any())->method('getClassMetadata')
                  ->will($this->returnValue($this->cm));
         $this->object = new TestObject;
@@ -34,8 +34,8 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testNonMatchingObjectManager()
     {
-        $this->setExpectedException('RuntimeException');
-        $om = $this->getMock(ObjectManager::class);
+        $this->expectException(\RuntimeException::class);
+        $om = $this->createMock(ObjectManager::class);
         $this->object->injectObjectManager($om, $this->cm);
     }
 

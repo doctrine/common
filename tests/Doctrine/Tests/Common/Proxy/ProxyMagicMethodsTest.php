@@ -263,7 +263,7 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
             return $proxyClassName;
         }
 
-        $metadata = $this->getMock(ClassMetadata::class);
+        $metadata = $this->createMock(ClassMetadata::class);
 
         $metadata
             ->expects($this->any())
