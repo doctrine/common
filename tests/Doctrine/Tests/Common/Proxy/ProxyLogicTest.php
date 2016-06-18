@@ -23,7 +23,9 @@ use Doctrine\Common\Proxy\ProxyGenerator;
 use Doctrine\Common\Proxy\Proxy;
 use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use PHPUnit_Framework_Error_Notice;
 use PHPUnit_Framework_TestCase;
+use stdClass;
 
 /**
  * Test the generated proxies behavior. These tests make assumptions about the structure of LazyLoadableObject
@@ -62,8 +64,8 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->proxyLoader = $loader      = $this->getMock('stdClass', ['load'], [], '', false);
-        $this->initializerCallbackMock    = $this->getMock('stdClass', ['__invoke']);
+        $this->proxyLoader = $loader      = $this->getMockBuilder(stdClass::class)->setMethods(['load'])->getMock();
+        $this->initializerCallbackMock    = $this->getMockBuilder(stdClass::class)->setMethods(['__invoke'])->getMock();
         $identifier                       = $this->identifier;
         $this->lazyLoadableObjectMetadata = $metadata = new LazyLoadableObjectClassMetadata();
 
@@ -206,10 +208,8 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
         $this->configureInitializerMock(0);
 
         $class = get_class($this->lazyObject);
-        $this->setExpectedException(
-            'PHPUnit_Framework_Error_Notice',
-            'Undefined property: ' . $class . '::$non_existing_property'
-        );
+        $this->expectException(PHPUnit_Framework_Error_Notice::class);
+        $this->expectExceptionMessage('Undefined property: ' . $class . '::$non_existing_property');
 
         $this->lazyObject->non_existing_property;
     }
@@ -233,7 +233,7 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
     {
         $lazyObject = $this->lazyObject;
         $test = $this;
-        $cb = $this->getMock('stdClass', ['cb']);
+        $cb = $this->getMockBuilder(stdClass::class)->setMethods(['cb'])->getMock();
         $cb
             ->expects($this->once())
             ->method('cb')
@@ -311,7 +311,7 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
     public function testFailedLoadingWillThrowException()
     {
         $this->proxyLoader->expects($this->any())->method('load')->will($this->returnValue(null));
-        $this->setExpectedException('UnexpectedValueException');
+        $this->expectException(\UnexpectedValueException::class);
         $this->lazyObject->__setInitializer($this->getSuggestedInitializerImplementation());
 
         $this->lazyObject->__load();
@@ -600,7 +600,7 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
         $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\VariadicTypeHintClass';
 
         /* @var $metadata ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
-        $metadata = $this->getMock(ClassMetadata::class);
+        $metadata = $this->createMock(ClassMetadata::class);
 
         $metadata
             ->expects($this->any())
@@ -619,7 +619,7 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
         }
 
         /* @var $invocationMock callable|\PHPUnit_Framework_MockObject_MockObject */
-        $invocationMock = $this->getMock('stdClass', ['__invoke']);
+        $invocationMock = $this->getMockBuilder(stdClass::class)->setMethods(['__invoke'])->getMock();
 
         /* @var $lazyObject VariadicTypeHintClass */
         $lazyObject = new $proxyClassName(

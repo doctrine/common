@@ -19,8 +19,8 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
 
     public function setUp()
     {
-        $driver = $this->getMock(MappingDriver::class);
-        $metadata = $this->getMock(ClassMetadata::class);
+        $driver = $this->createMock(MappingDriver::class);
+        $metadata = $this->createMock(ClassMetadata::class);
         $this->cmf = new TestClassMetadataFactory($driver, $metadata);
     }
 
@@ -42,7 +42,7 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
 
     public function testGetMetadataForAbsentClass()
     {
-        $this->setExpectedException(MappingException::class);
+        $this->expectException(MappingException::class);
         $this->cmf->getMetadataFor(__NAMESPACE__ . '\AbsentClass');
     }
 
@@ -57,7 +57,7 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
 
     public function testGetCachedMetadata()
     {
-        $metadata = $this->getMock(ClassMetadata::class);
+        $metadata = $this->createMock(ClassMetadata::class);
         $cache = new ArrayCache();
         $cache->save(ChildEntity::class . '$CLASSMETADATA', $metadata);
 
@@ -89,8 +89,8 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
      */
     public function testGetInvalidAliasedMetadata()
     {
-        $this->setExpectedException(
-            MappingException::class,
+        $this->expectException(MappingException::class);
+        $this->expectExceptionMessage(
             'Class \'Doctrine\Tests\Common\Persistence\Mapping\ChildEntity:Foo\' does not exist'
         );
 
@@ -107,7 +107,7 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
 
     public function testWillFallbackOnNotLoadedMetadata()
     {
-        $classMetadata = $this->getMock(ClassMetadata::class);
+        $classMetadata = $this->createMock(ClassMetadata::class);
 
         $this->cmf->fallbackCallback = function () use ($classMetadata) {
             return $classMetadata;
@@ -126,7 +126,7 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
 
         $this->cmf->metadata = null;
 
-        $this->setExpectedException(MappingException::class);
+        $this->expectException(MappingException::class);
 
         $this->cmf->getMetadataFor('Foo');
     }

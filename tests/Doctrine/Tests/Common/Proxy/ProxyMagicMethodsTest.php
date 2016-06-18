@@ -22,6 +22,7 @@ namespace Doctrine\Tests\Common\Proxy;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Proxy\ProxyGenerator;
 use Doctrine\Common\Proxy\Proxy;
+use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
 use ReflectionClass;
 
@@ -71,7 +72,7 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
         $proxy          = new $proxyClassName(
             function (Proxy $proxy, $method, $params) use (&$counter) {
                 if ( ! in_array($params[0], ['publicField', 'test', 'notDefined'])) {
-                    throw new \InvalidArgumentException('Unexpected access to field "' . $params[0] . '"');
+                    throw new InvalidArgumentException('Unexpected access to field "' . $params[0] . '"');
                 }
 
                 $initializer = $proxy->__getInitializer();
@@ -111,7 +112,7 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame(456, $proxy->__get('value'), 'Value was fetched by reference');
 
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException(InvalidArgumentException::class);
 
         $undefined = $proxy->nonExisting;
     }
@@ -122,7 +123,7 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
         $proxy          = new $proxyClassName(
             function (Proxy  $proxy, $method, $params) use (&$counter) {
                 if ( ! in_array($params[0], ['publicField', 'test', 'notDefined'])) {
-                    throw new \InvalidArgumentException('Unexpected access to field "' . $params[0] . '"');
+                    throw new InvalidArgumentException('Unexpected access to field "' . $params[0] . '"');
                 }
 
                 $counter += 1;
@@ -200,7 +201,7 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
                 return;
             }
 
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf('Should not be initialized when checking isset("%s")', $params[0])
             );
         });
@@ -263,7 +264,7 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
             return $proxyClassName;
         }
 
-        $metadata = $this->getMock(ClassMetadata::class);
+        $metadata = $this->createMock(ClassMetadata::class);
 
         $metadata
             ->expects($this->any())

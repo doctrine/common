@@ -13,7 +13,7 @@
         {"name": "Johannes Schmitt", "email": "schmittjoh@gmail.com"}
     ],
     "require": {
-        "php": "~5.5|~7.0",
+        "php": "~5.6|~7.0",
         "doctrine/inflector": "1.*",
         "doctrine/cache": "1.*",
         "doctrine/collections": "1.*",
@@ -21,7 +21,7 @@
         "doctrine/annotations": "1.*"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.8|~5.0"
+        "phpunit/phpunit": "^5.4.6"
     },
     "autoload": {
         "psr-4": {

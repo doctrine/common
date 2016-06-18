@@ -63,10 +63,8 @@ class AutoloaderTest extends PHPUnit_Framework_TestCase
 
     public function testRegisterWithInvalidCallback()
     {
-        $this->setExpectedException(
-            InvalidArgumentException::class,
-            'Invalid \$notFoundCallback given: must be a callable, "stdClass" given'
-        );
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid \$notFoundCallback given: must be a callable, "stdClass" given');
 
         Autoloader::register('', '', new \stdClass());
     }

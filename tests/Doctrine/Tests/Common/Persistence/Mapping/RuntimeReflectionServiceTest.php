@@ -58,7 +58,7 @@ class RuntimeReflectionServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testGetParentClassesForAbsentClass()
     {
-        $this->setExpectedException(MappingException::class);
+        $this->expectException(MappingException::class);
         $this->reflectionService->getParentClasses(__NAMESPACE__ . '\AbsentClass');
     }
 

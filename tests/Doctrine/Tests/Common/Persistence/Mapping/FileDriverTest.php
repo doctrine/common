@@ -138,7 +138,7 @@ class FileDriverTest extends DoctrineTestCase
 
     private function newLocator()
     {
-        $locator = $this->getMock(FileLocator::class);
+        $locator = $this->createMock(FileLocator::class);
         $locator->expects($this->any())->method('getFileExtension')->will($this->returnValue('.yml'));
         $locator->expects($this->any())->method('getPaths')->will($this->returnValue([__DIR__ . "/_files"]));
         return $locator;

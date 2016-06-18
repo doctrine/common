@@ -16,8 +16,8 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
 {
     public function testGenerateProxyClasses()
     {
-        $metadata       = $this->getMock(ClassMetadata::class);
-        $proxyGenerator = $this->getMock(ProxyGenerator::class, [], [], '', false);
+        $metadata       = $this->createMock(ClassMetadata::class);
+        $proxyGenerator = $this->createMock(ProxyGenerator::class, [], [], '', false);
 
         $proxyGenerator
             ->expects($this->once())
@@ -26,7 +26,7 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
             ->expects($this->once())
             ->method('generateProxyClass');
 
-        $metadataFactory = $this->getMock(ClassMetadataFactory::class);
+        $metadataFactory = $this->createMock(ClassMetadataFactory::class);
         /* @var $proxyFactory \PHPUnit_Framework_MockObject_MockObject|AbstractProxyFactory */
         $proxyFactory    = $this->getMockForAbstractClass(
             AbstractProxyFactory::class,
@@ -45,11 +45,11 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
 
     public function testGetProxy()
     {
-        $metadata        = $this->getMock(ClassMetadata::class);
-        $proxy           = $this->getMock(Proxy::class);
+        $metadata        = $this->createMock(ClassMetadata::class);
+        $proxy           = $this->createMock(Proxy::class);
         $definition      = new ProxyDefinition(get_class($proxy), [], [], null, null);
-        $proxyGenerator  = $this->getMock(ProxyGenerator::class, [], [], '', false);
-        $metadataFactory = $this->getMock(ClassMetadataFactory::class);
+        $proxyGenerator  = $this->createMock(ProxyGenerator::class, [], [], '', false);
+        $metadataFactory = $this->createMock(ClassMetadataFactory::class);
 
         $metadataFactory
             ->expects($this->once())
@@ -74,12 +74,12 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
 
     public function testResetUnitializedProxy()
     {
-        $metadata        = $this->getMock(ClassMetadata::class);
+        $metadata        = $this->createMock(ClassMetadata::class);
         /* @var $proxy \PHPUnit_Framework_MockObject_MockObject|Proxy */
-        $proxy           = $this->getMock(Proxy::class);
+        $proxy           = $this->createMock(Proxy::class);
         $definition      = new ProxyDefinition(get_class($proxy), [], [], null, null);
-        $proxyGenerator  = $this->getMock(ProxyGenerator::class, [], [], '', false);
-        $metadataFactory = $this->getMock(ClassMetadataFactory::class);
+        $proxyGenerator  = $this->createMock(ProxyGenerator::class, [], [], '', false);
+        $metadataFactory = $this->createMock(ClassMetadataFactory::class);
 
         $metadataFactory
             ->expects($this->once())
@@ -116,25 +116,25 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
         /* @var $proxyFactory AbstractProxyFactory */
         $proxyFactory = $this->getMockForAbstractClass(AbstractProxyFactory::class,  [], '', false);
         /* @var $proxy Proxy|\PHPUnit_Framework_MockObject_MockObject */
-        $proxy        = $this->getMock(Proxy::class);
+        $proxy        = $this->createMock(Proxy::class);
 
         $proxy
             ->expects($this->any())
             ->method('__isInitialized')
             ->will($this->returnValue(true));
 
-        $this->setExpectedException(InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $proxyFactory->resetUninitializedProxy($proxy);
     }
 
     public function testMissingPrimaryKeyValue()
     {
-        $metadata        = $this->getMock(ClassMetadata::class);
-        $proxy           = $this->getMock(Proxy::class);
+        $metadata        = $this->createMock(ClassMetadata::class);
+        $proxy           = $this->createMock(Proxy::class);
         $definition      = new ProxyDefinition(get_class($proxy), ['missingKey'], [], null, null);
-        $proxyGenerator  = $this->getMock(ProxyGenerator::class, [], [], '', false);
-        $metadataFactory = $this->getMock(ClassMetadataFactory::class);
+        $proxyGenerator  = $this->createMock(ProxyGenerator::class, [], [], '', false);
+        $metadataFactory = $this->createMock(ClassMetadataFactory::class);
 
         $metadataFactory
             ->expects($this->once())
@@ -152,7 +152,7 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
             ->method('createProxyDefinition')
             ->will($this->returnValue($definition));
 
-        $this->setExpectedException(OutOfBoundsException::class);
+        $this->expectException(OutOfBoundsException::class);
 
         $proxyFactory->getProxy('Class', []);
     }

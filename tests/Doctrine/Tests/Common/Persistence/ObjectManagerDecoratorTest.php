@@ -23,7 +23,7 @@ class ObjectManagerDecoratorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->wrapped   = $this->getMock(ObjectManager::class);
+        $this->wrapped   = $this->createMock(ObjectManager::class);
         $this->decorated = new NullObjectManagerDecorator($this->wrapped);
     }
 
