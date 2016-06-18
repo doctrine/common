@@ -235,8 +235,8 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $metadata = $this->createClassMetadata($className, ['id']);
         $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
 
-        $this->setExpectedException(
-            UnexpectedValueException::class,
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage(
             'The type hint of parameter "foo" in method "invalidTypeHintMethod"'
                 .' in class "' . $className . '" is invalid.'
         );
@@ -245,19 +245,19 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
 
     public function testNoConfigDirThrowsException()
     {
-        $this->setExpectedException(InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new ProxyGenerator(null, null);
     }
 
     public function testNoNamespaceThrowsException()
     {
-        $this->setExpectedException(InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new ProxyGenerator(__DIR__ . '/generated', null);
     }
 
     public function testInvalidPlaceholderThrowsException()
     {
-        $this->setExpectedException(InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $generator = new ProxyGenerator(__DIR__ . '/generated', 'SomeNamespace');
         $generator->setPlaceholder('<somePlaceholder>', []);
     }

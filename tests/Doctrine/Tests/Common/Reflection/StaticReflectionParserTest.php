@@ -7,6 +7,7 @@ use Doctrine\Tests\Common\Reflection\Dummies\NoParent as NoParentDummy;
 use Doctrine\Tests\DoctrineTestCase;
 use Doctrine\Common\Reflection\StaticReflectionParser;
 use Doctrine\Common\Reflection\Psr0FindFile;
+use ReflectionException;
 
 class StaticReflectionParserTest extends DoctrineTestCase
 {
@@ -24,7 +25,7 @@ class StaticReflectionParserTest extends DoctrineTestCase
         // If classed annotation optimization is enabled the properties tested
         // below cannot be found.
         if ($classAnnotationOptimize) {
-            $this->setExpectedException('ReflectionException');
+            $this->expectException(ReflectionException::class);
         }
 
         $testsRoot = substr(__DIR__, 0, -strlen(__NAMESPACE__) - 1);

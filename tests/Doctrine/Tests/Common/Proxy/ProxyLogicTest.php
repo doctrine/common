@@ -23,6 +23,7 @@ use Doctrine\Common\Proxy\ProxyGenerator;
 use Doctrine\Common\Proxy\Proxy;
 use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use PHPUnit_Framework_Error_Notice;
 use PHPUnit_Framework_TestCase;
 use stdClass;
 
@@ -207,10 +208,8 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
         $this->configureInitializerMock(0);
 
         $class = get_class($this->lazyObject);
-        $this->setExpectedException(
-            'PHPUnit_Framework_Error_Notice',
-            'Undefined property: ' . $class . '::$non_existing_property'
-        );
+        $this->expectException(PHPUnit_Framework_Error_Notice::class);
+        $this->expectExceptionMessage('Undefined property: ' . $class . '::$non_existing_property');
 
         $this->lazyObject->non_existing_property;
     }
@@ -312,7 +311,7 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
     public function testFailedLoadingWillThrowException()
     {
         $this->proxyLoader->expects($this->any())->method('load')->will($this->returnValue(null));
-        $this->setExpectedException('UnexpectedValueException');
+        $this->expectException(\UnexpectedValueException::class);
         $this->lazyObject->__setInitializer($this->getSuggestedInitializerImplementation());
 
         $this->lazyObject->__load();

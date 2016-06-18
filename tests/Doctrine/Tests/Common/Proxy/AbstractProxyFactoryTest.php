@@ -123,7 +123,7 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
             ->method('__isInitialized')
             ->will($this->returnValue(true));
 
-        $this->setExpectedException(InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $proxyFactory->resetUninitializedProxy($proxy);
     }
@@ -152,7 +152,7 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
             ->method('createProxyDefinition')
             ->will($this->returnValue($definition));
 
-        $this->setExpectedException(OutOfBoundsException::class);
+        $this->expectException(OutOfBoundsException::class);
 
         $proxyFactory->getProxy('Class', []);
     }

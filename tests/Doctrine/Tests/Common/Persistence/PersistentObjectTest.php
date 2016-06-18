@@ -2,10 +2,13 @@
 
 namespace Doctrine\Tests\Common\Persistence;
 
+use BadMethodCallException;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\PersistentObject;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\ReflectionService;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * @group DDC-1448
@@ -34,7 +37,7 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testNonMatchingObjectManager()
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $om = $this->createMock(ObjectManager::class);
         $this->object->injectObjectManager($om, $this->cm);
     }
@@ -57,19 +60,19 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testSetIdentifier()
     {
-        $this->setExpectedException('BadMethodCallException');
+        $this->expectException(BadMethodCallException::class);
         $this->object->setId(2);
     }
 
     public function testSetUnknownField()
     {
-        $this->setExpectedException('BadMethodCallException');
+        $this->expectException(BadMethodCallException::class);
         $this->object->setUnknown("test");
     }
 
     public function testGetUnknownField()
     {
-        $this->setExpectedException('BadMethodCallException');
+        $this->expectException(BadMethodCallException::class);
         $this->object->getUnknown();
     }
 
@@ -89,7 +92,7 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $parent = new \stdClass();
 
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException(InvalidArgumentException::class);
         $this->object->setParent($parent);
     }
 
@@ -117,7 +120,7 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testAddInvalidToManyAssociation()
     {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException(InvalidArgumentException::class);
         $this->object->addChildren(new \stdClass());
     }
 
@@ -126,19 +129,19 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
         PersistentObject::setObjectManager(null);
         $child = new TestObject();
 
-        $this->setExpectedException('RuntimeException');
+        $this->expectException(RuntimeException::class);
         $child->setName("test");
     }
 
     public function testInvalidMethod()
     {
-        $this->setExpectedException('BadMethodCallException');
+        $this->expectException(BadMethodCallException::class);
         $this->object->asdf();
     }
 
     public function testAddInvalidCollection()
     {
-        $this->setExpectedException('BadMethodCallException');
+        $this->expectException(BadMethodCallException::class);
         $this->object->addAsdf(new \stdClass());
     }
 }

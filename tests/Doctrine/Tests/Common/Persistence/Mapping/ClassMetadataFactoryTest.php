@@ -42,7 +42,7 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
 
     public function testGetMetadataForAbsentClass()
     {
-        $this->setExpectedException(MappingException::class);
+        $this->expectException(MappingException::class);
         $this->cmf->getMetadataFor(__NAMESPACE__ . '\AbsentClass');
     }
 
@@ -89,8 +89,8 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
      */
     public function testGetInvalidAliasedMetadata()
     {
-        $this->setExpectedException(
-            MappingException::class,
+        $this->expectException(MappingException::class);
+        $this->expectExceptionMessage(
             'Class \'Doctrine\Tests\Common\Persistence\Mapping\ChildEntity:Foo\' does not exist'
         );
 
@@ -126,7 +126,7 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
 
         $this->cmf->metadata = null;
 
-        $this->setExpectedException(MappingException::class);
+        $this->expectException(MappingException::class);
 
         $this->cmf->getMetadataFor('Foo');
     }
