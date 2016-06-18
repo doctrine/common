@@ -50,12 +50,12 @@ class Autoloader
         }
 
         // remove proxy namespace from class name
-        $className = substr($className, strlen($proxyNamespace));
+        $classNameRelativeToProxyNamespace = substr($className, strlen($proxyNamespace));
 
         // remove namespace separators from remaining class name
-        $className = str_replace('\\', '', $className);
+        $fileName = str_replace('\\', '', $classNameRelativeToProxyNamespace);
 
-        return $proxyDir . DIRECTORY_SEPARATOR . $className . '.php';
+        return $proxyDir . DIRECTORY_SEPARATOR . $fileName . '.php';
     }
 
     /**
