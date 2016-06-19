@@ -65,7 +65,7 @@ final class Debug
             ini_set('xdebug.var_display_max_depth', $maxDepth);
         }
 
-        $var = self::export($var, $maxDepth++);
+        $var = self::export($var, $maxDepth);
 
         ob_start();
         var_dump($var);
