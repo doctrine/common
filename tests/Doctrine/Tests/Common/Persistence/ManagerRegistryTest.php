@@ -5,10 +5,10 @@ namespace Doctrine\Tests\Common\Persistence;
 use Doctrine\Common\Persistence\AbstractManagerRegistry;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectManagerAware;
 use Doctrine\Tests\Common\Persistence\Mapping\TestClassMetadataFactory;
 use Doctrine\Tests\DoctrineTestCase;
-use PHPUnit_Framework_TestCase;
 use ReflectionException;
 
 /**
@@ -29,11 +29,12 @@ class ManagerRegistryTest extends DoctrineTestCase
     {
         $this->mr = new TestManagerRegistry(
             'ORM',
-            ['default_connection'],
-            ['default_manager'],
+            array('default' => 'default_connection'),
+            array('default' => 'default_manager'),
             'default',
             'default',
-            ObjectManagerAware::class
+            ObjectManagerAware::class,
+            $this->getManagerFactory()
         );
     }
 
@@ -67,32 +68,54 @@ class ManagerRegistryTest extends DoctrineTestCase
 
         $this->mr->getManagerForClass('prefix:TestObject:Foo');
     }
-}
 
-class TestManager extends PHPUnit_Framework_TestCase
-{
-    public function getMetadataFactory()
+    public function testResetManager()
     {
-        $driver   = $this->createMock(MappingDriver::class);
-        $metadata = $this->createMock(ClassMetadata::class);
+        $manager = $this->mr->getManager();
+        $newManager = $this->mr->resetManager();
 
-        return new TestClassMetadataFactory($driver, $metadata);
+        $this->assertInstanceOf(ObjectManager::class, $newManager);
+        $this->assertNotSame($manager, $newManager);
+    }
+
+    private function getManagerFactory()
+    {
+        return function () {
+            $mock = $this->getMockBuilder(ObjectManager::class)->getMock();
+            $driver = $this->createMock(MappingDriver::class);
+            $metadata = $this->createMock(ClassMetadata::class);
+            $mock->method('getMetadataFactory')->willReturn(new TestClassMetadataFactory($driver, $metadata));
+
+            return $mock;
+        };
     }
 }
 
 class TestManagerRegistry extends AbstractManagerRegistry
 {
-    protected function getService($name)
+    private $services;
+
+    private $managerFactory;
+
+    public function __construct($name, array $connections, array $managers, $defaultConnection, $defaultManager, $proxyInterfaceName, callable $managerFactory)
     {
-        return new TestManager();
+        $this->managerFactory = $managerFactory;
+
+        parent::__construct($name, $connections, $managers, $defaultConnection, $defaultManager, $proxyInterfaceName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    protected function getService($name)
+    {
+        if (!isset($this->services[$name])) {
+            $this->services[$name] = call_user_func($this->managerFactory);
+        }
+
+        return $this->services[$name];
+    }
+
     protected function resetService($name)
     {
-
+        unset($this->services[$name]);
     }
 
     public function getAliasNamespace($alias)
