@@ -50,8 +50,10 @@ class ManagerRegistryTest extends DoctrineTestCase
 
     public function testGetManagerForInvalidClass()
     {
-        $this->expectException(ReflectionException::class);
-        $this->expectExceptionMessage('Class Doctrine\Tests\Common\Persistence\TestObjectInexistent does not exist');
+        $this->setExpectedException(
+            ReflectionException::class,
+            'Class Doctrine\Tests\Common\Persistence\TestObjectInexistent does not exist'
+        );
 
         $this->mr->getManagerForClass('prefix:TestObjectInexistent');
     }
@@ -63,8 +65,10 @@ class ManagerRegistryTest extends DoctrineTestCase
 
     public function testGetManagerForInvalidAliasedClass()
     {
-        $this->expectException(ReflectionException::class);
-        $this->expectExceptionMessage('Class Doctrine\Tests\Common\Persistence\TestObject:Foo does not exist');
+        $this->setExpectedException(
+            ReflectionException::class,
+            'Class Doctrine\Tests\Common\Persistence\TestObject:Foo does not exist'
+        );
 
         $this->mr->getManagerForClass('prefix:TestObject:Foo');
     }
