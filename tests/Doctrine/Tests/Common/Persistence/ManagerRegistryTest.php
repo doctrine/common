@@ -5,10 +5,11 @@ namespace Doctrine\Tests\Common\Persistence;
 use Doctrine\Common\Persistence\AbstractManagerRegistry;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectManagerAware;
 use Doctrine\Tests\Common\Persistence\Mapping\TestClassMetadataFactory;
 use Doctrine\Tests\DoctrineTestCase;
-use PHPUnit_Framework_TestCase;
+use ReflectionException;
 
 /**
  * @groups DCOM-270
@@ -28,11 +29,12 @@ class ManagerRegistryTest extends DoctrineTestCase
     {
         $this->mr = new TestManagerRegistry(
             'ORM',
-            ['default_connection'],
-            ['default_manager'],
+            ['default' => 'default_connection'],
+            ['default' => 'default_manager'],
             'default',
             'default',
-            ObjectManagerAware::class
+            ObjectManagerAware::class,
+            $this->getManagerFactory()
         );
     }
 
@@ -48,10 +50,8 @@ class ManagerRegistryTest extends DoctrineTestCase
 
     public function testGetManagerForInvalidClass()
     {
-        $this->setExpectedException(
-            'ReflectionException',
-            'Class Doctrine\Tests\Common\Persistence\TestObjectInexistent does not exist'
-        );
+        $this->expectException(ReflectionException::class);
+        $this->expectExceptionMessage('Class Doctrine\Tests\Common\Persistence\TestObjectInexistent does not exist');
 
         $this->mr->getManagerForClass('prefix:TestObjectInexistent');
     }
@@ -63,39 +63,61 @@ class ManagerRegistryTest extends DoctrineTestCase
 
     public function testGetManagerForInvalidAliasedClass()
     {
-        $this->setExpectedException(
-            'ReflectionException',
-            'Class Doctrine\Tests\Common\Persistence\TestObject:Foo does not exist'
-        );
+        $this->expectException(ReflectionException::class);
+        $this->expectExceptionMessage('Class Doctrine\Tests\Common\Persistence\TestObject:Foo does not exist');
 
         $this->mr->getManagerForClass('prefix:TestObject:Foo');
     }
-}
 
-class TestManager extends PHPUnit_Framework_TestCase
-{
-    public function getMetadataFactory()
+    public function testResetManager()
     {
-        $driver   = $this->getMock(MappingDriver::class);
-        $metadata = $this->getMock(ClassMetadata::class);
+        $manager = $this->mr->getManager();
+        $newManager = $this->mr->resetManager();
 
-        return new TestClassMetadataFactory($driver, $metadata);
+        $this->assertInstanceOf(ObjectManager::class, $newManager);
+        $this->assertNotSame($manager, $newManager);
+    }
+
+    private function getManagerFactory()
+    {
+        return function () {
+            $mock = $this->getMockBuilder(ObjectManager::class)->getMock();
+            $driver = $this->getMock(MappingDriver::class);
+            $metadata = $this->getMock(ClassMetadata::class);
+            $mock->method('getMetadataFactory')->willReturn(new TestClassMetadataFactory($driver, $metadata));
+
+            return $mock;
+        };
     }
 }
 
 class TestManagerRegistry extends AbstractManagerRegistry
 {
-    protected function getService($name)
+    private $services;
+
+    private $managerFactory;
+
+    public function __construct($name, array $connections, array $managers, $defaultConnection, $defaultManager, $proxyInterfaceName, callable $managerFactory)
     {
-        return new TestManager();
+        $this->managerFactory = $managerFactory;
+
+        parent::__construct($name, $connections, $managers, $defaultConnection, $defaultManager, $proxyInterfaceName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    protected function getService($name)
+    {
+        if (!isset($this->services[$name])) {
+            $this->services[$name] = call_user_func($this->managerFactory);
+        }
+
+        return $this->services[$name];
+    }
+
     protected function resetService($name)
     {
+        unset($this->services[$name]);
 
+        return $this->getService($name);
     }
 
     public function getAliasNamespace($alias)
