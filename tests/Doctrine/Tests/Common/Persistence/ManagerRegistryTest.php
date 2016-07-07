@@ -29,8 +29,8 @@ class ManagerRegistryTest extends DoctrineTestCase
     {
         $this->mr = new TestManagerRegistry(
             'ORM',
-            array('default' => 'default_connection'),
-            array('default' => 'default_manager'),
+            ['default' => 'default_connection'],
+            ['default' => 'default_manager'],
             'default',
             'default',
             ObjectManagerAware::class,
@@ -81,7 +81,7 @@ class ManagerRegistryTest extends DoctrineTestCase
     private function getManagerFactory()
     {
         return function () {
-            $mock = $this->getMockBuilder(ObjectManager::class)->getMock();
+            $mock = $this->createMock(ObjectManager::class);
             $driver = $this->createMock(MappingDriver::class);
             $metadata = $this->createMock(ClassMetadata::class);
             $mock->method('getMetadataFactory')->willReturn(new TestClassMetadataFactory($driver, $metadata));
