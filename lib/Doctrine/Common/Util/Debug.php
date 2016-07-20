@@ -109,10 +109,10 @@ final class Debug
                 }
             } else if ($isObj) {
                 $return = new \stdclass();
-                if ($var instanceof \DateTime) {
-                    $return->__CLASS__ = "DateTime";
+                if ($var instanceof \DateTime || $var instanceof \DateTimeInterface) {
+                    $return->__CLASS__ = get_class($var);
                     $return->date = $var->format('c');
-                    $return->timezone = $var->getTimeZone()->getName();
+                    $return->timezone = $var->getTimezone()->getName();
                 } else {
                     $reflClass = ClassUtils::newReflectionObject($var);
                     $return->__CLASS__ = ClassUtils::getClass($var);

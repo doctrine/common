@@ -19,10 +19,23 @@ class DebugTest extends DoctrineTestCase
 
     public function testExportDateTime()
     {
-        $obj = new \DateTime( "2010-10-10 10:10:10" );
+        $obj = new \DateTime('2010-10-10 10:10:10', new \DateTimeZone('UTC'));
+
+        $var = Debug::export($obj, 2);
+        $this->assertEquals('DateTime', $var->__CLASS__ );
+        $this->assertEquals('2010-10-10T10:10:10+00:00', $var->date );
+    }
+
+    /**
+     * @requires PHP 5.5
+     */
+    public function testExportDateTimeImmutable()
+    {
+        $obj = new \DateTimeImmutable('2010-10-10 10:10:10', new \DateTimeZone('UTC'));
 
         $var = Debug::export( $obj, 2 );
-        $this->assertEquals( "DateTime", $var->__CLASS__ );
+        $this->assertEquals('DateTimeImmutable', $var->__CLASS__ );
+        $this->assertEquals('2010-10-10T10:10:10+00:00', $var->date );
     }
 
     public function testExportArrayTraversable()
