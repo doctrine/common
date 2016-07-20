@@ -90,7 +90,7 @@ class DebugTest extends DoctrineTestCase
         );
 
         $print_r_class = print_r($class, true);
-        $print_r_expected = print_r($class, true);
+        $print_r_expected = print_r($expected, true);
 
         $print_r_class = substr($print_r_class, strpos($print_r_class, '('));
         $print_r_expected = substr($print_r_expected, strpos($print_r_expected, '('));
