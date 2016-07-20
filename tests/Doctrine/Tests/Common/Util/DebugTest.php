@@ -33,7 +33,7 @@ class DebugTest extends DoctrineTestCase
     {
         $obj = new \DateTimeImmutable('2010-10-10 10:10:10', new \DateTimeZone('UTC'));
 
-        $var = Debug::export( $obj, 2 );
+        $var = Debug::export($obj, 2);
         $this->assertEquals('DateTimeImmutable', $var->__CLASS__ );
         $this->assertEquals('2010-10-10T10:10:10+00:00', $var->date );
     }
@@ -74,5 +74,24 @@ class DebugTest extends DoctrineTestCase
 
         $this->assertEmpty($outputValue);
         $this->assertNotSame($outputValue, $dump);
+    }
+
+    public function testExportParentPrivateAttributes()
+    {
+        $class = new TestAsset\ChildClass();
+
+        $expected = array(
+            '__CLASS__' => 'Doctrine\Tests\Common\Util\TestAsset\ChildClass',
+            'childPublicAttribute' => 4,
+            'childProtectedAttribute:protected' => 5,
+            'childPrivateAttribute:Doctrine\Tests\Common\Util\TestAsset\ChildClass:private' => 6,
+            'parentPublicAttribute' => 1,
+            'parentProtectedAttribute:protected' => 2,
+            'parentPrivateAttribute:Doctrine\Tests\Common\Util\TestAsset\ParentClass:private' => 3,
+        );
+
+        $var = Debug::export($class, 3);
+
+        $this->assertSame($expected, (array) $var);
     }
 }

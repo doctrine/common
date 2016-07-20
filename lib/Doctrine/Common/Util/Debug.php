@@ -126,12 +126,30 @@ final class Debug
                         $return->__STORAGE__ = self::export($var->getArrayCopy(), $maxDepth - 1);
                     }
 
-                    foreach ($reflClass->getProperties() as $reflProperty) {
-                        $name  = $reflProperty->getName();
+                    $parsedAttributes = array();
+                    do {
+                        $currentClassName = $reflClass->getName();
 
-                        $reflProperty->setAccessible(true);
-                        $return->$name = self::export($reflProperty->getValue($var), $maxDepth - 1);
-                    }
+                        foreach ($reflClass->getProperties() as $reflProperty) {
+                            $name = $reflProperty->getName();
+
+                            if (isset($parsedAttributes[$name])) {
+                                continue;
+                            }
+
+                            $parsedAttributes[$name] = true;
+
+                            $name =
+                                  $name
+                                . ($return->__CLASS__ !== $currentClassName || $reflProperty->isPrivate() ? ':' . $currentClassName : '')
+                                . ($reflProperty->isPrivate() ? ':private' : '')
+                                . ($reflProperty->isProtected() ? ':protected' : '')
+                            ;
+
+                            $reflProperty->setAccessible(true);
+                            $return->$name = self::export($reflProperty->getValue($var), $maxDepth - 1);
+                        }
+                    } while ($reflClass = $reflClass->getParentClass());
                 }
             } else {
                 $return = $var;
