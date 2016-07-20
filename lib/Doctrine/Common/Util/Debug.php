@@ -114,7 +114,6 @@ final class Debug
                     $return->date = $var->format('c');
                     $return->timezone = $var->getTimezone()->getName();
                 } else {
-                    $reflClass = ClassUtils::newReflectionObject($var);
                     $return->__CLASS__ = ClassUtils::getClass($var);
 
                     if ($var instanceof Proxy) {
@@ -126,30 +125,7 @@ final class Debug
                         $return->__STORAGE__ = self::export($var->getArrayCopy(), $maxDepth - 1);
                     }
 
-                    $parsedAttributes = array();
-                    do {
-                        $currentClassName = $reflClass->getName();
-
-                        foreach ($reflClass->getProperties() as $reflProperty) {
-                            $name = $reflProperty->getName();
-
-                            if (isset($parsedAttributes[$name])) {
-                                continue;
-                            }
-
-                            $parsedAttributes[$name] = true;
-
-                            $name =
-                                  $name
-                                . ($return->__CLASS__ !== $currentClassName || $reflProperty->isPrivate() ? ':' . $currentClassName : '')
-                                . ($reflProperty->isPrivate() ? ':private' : '')
-                                . ($reflProperty->isProtected() ? ':protected' : '')
-                            ;
-
-                            $reflProperty->setAccessible(true);
-                            $return->$name = self::export($reflProperty->getValue($var), $maxDepth - 1);
-                        }
-                    } while ($reflClass = $reflClass->getParentClass());
+                    self::fillReturnWithClassAttributes($var, $return, $maxDepth);
                 }
             } else {
                 $return = $var;
@@ -160,6 +136,44 @@ final class Debug
         }
 
         return $return;
+    }
+
+    /**
+     * Fill the $return variable with class attributes
+     *
+     * @param object   $var
+     * @param stdClass $return
+     * @param int      $maxDepth
+     *
+     * @return void
+     */
+    private static function fillReturnWithClassAttributes($var, \stdClass $return, $maxDepth)
+    {
+        $reflClass = ClassUtils::newReflectionObject($var);
+        $parsedAttributes = array();
+        do {
+            $currentClassName = $reflClass->getName();
+
+            foreach ($reflClass->getProperties() as $reflProperty) {
+                $name = $reflProperty->getName();
+
+                if (isset($parsedAttributes[$name])) {
+                    continue;
+                }
+
+                $parsedAttributes[$name] = true;
+
+                $name =
+                      $name
+                    . ($return->__CLASS__ !== $currentClassName || $reflProperty->isPrivate() ? ':' . $currentClassName : '')
+                    . ($reflProperty->isPrivate() ? ':private' : '')
+                    . ($reflProperty->isProtected() ? ':protected' : '')
+                ;
+
+                $reflProperty->setAccessible(true);
+                $return->$name = self::export($reflProperty->getValue($var), $maxDepth - 1);
+            }
+        } while ($reflClass = $reflClass->getParentClass());
     }
 
     /**
