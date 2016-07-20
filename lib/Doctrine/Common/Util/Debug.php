@@ -77,11 +77,11 @@ final class Debug
         $dumpText = ($stripTags ? strip_tags(html_entity_decode($dump)) : $dump);
 
         ini_set('html_errors', $html);
-        
+
         if ($echo) {
             echo $dumpText;
         }
-        
+
         return $dumpText;
     }
 
@@ -100,46 +100,85 @@ final class Debug
             $var = $var->toArray();
         }
 
-        if ($maxDepth) {
-            if (is_array($var)) {
-                $return = [];
-
-                foreach ($var as $k => $v) {
-                    $return[$k] = self::export($v, $maxDepth - 1);
-                }
-            } else if ($isObj) {
-                $return = new \stdclass();
-                if ($var instanceof \DateTime) {
-                    $return->__CLASS__ = "DateTime";
-                    $return->date = $var->format('c');
-                    $return->timezone = $var->getTimeZone()->getName();
-                } else {
-                    $reflClass = ClassUtils::newReflectionObject($var);
-                    $return->__CLASS__ = ClassUtils::getClass($var);
-
-                    if ($var instanceof Proxy) {
-                        $return->__IS_PROXY__ = true;
-                        $return->__PROXY_INITIALIZED__ = $var->__isInitialized();
-                    }
-
-                    if ($var instanceof \ArrayObject || $var instanceof \ArrayIterator) {
-                        $return->__STORAGE__ = self::export($var->getArrayCopy(), $maxDepth - 1);
-                    }
-
-                    foreach ($reflClass->getProperties() as $reflProperty) {
-                        $name  = $reflProperty->getName();
-
-                        $reflProperty->setAccessible(true);
-                        $return->$name = self::export($reflProperty->getValue($var), $maxDepth - 1);
-                    }
-                }
-            } else {
-                $return = $var;
-            }
-        } else {
-            $return = is_object($var) ? get_class($var)
+        if (! $maxDepth) {
+            return is_object($var) ? get_class($var)
                 : (is_array($var) ? 'Array(' . count($var) . ')' : $var);
         }
+
+        if (is_array($var)) {
+            $return = [];
+
+            foreach ($var as $k => $v) {
+                $return[$k] = self::export($v, $maxDepth - 1);
+            }
+
+            return $return;
+        }
+
+        if (! $isObj) {
+            return $var;
+        }
+
+        $return = new \stdclass();
+        if ($var instanceof \DateTimeInterface) {
+            $return->__CLASS__ = get_class($var);
+            $return->date = $var->format('c');
+            $return->timezone = $var->getTimezone()->getName();
+
+            return $return;
+        }
+
+        $return->__CLASS__ = ClassUtils::getClass($var);
+
+        if ($var instanceof Proxy) {
+            $return->__IS_PROXY__ = true;
+            $return->__PROXY_INITIALIZED__ = $var->__isInitialized();
+        }
+
+        if ($var instanceof \ArrayObject || $var instanceof \ArrayIterator) {
+            $return->__STORAGE__ = self::export($var->getArrayCopy(), $maxDepth - 1);
+        }
+
+        return self::fillReturnWithClassAttributes($var, $return, $maxDepth);
+    }
+
+    /**
+     * Fill the $return variable with class attributes
+     *
+     * @param object   $var
+     * @param stdClass $return
+     * @param int      $maxDepth
+     *
+     * @return mixed
+     */
+    private static function fillReturnWithClassAttributes($var, \stdClass $return, $maxDepth)
+    {
+        $reflClass = ClassUtils::newReflectionObject($var);
+        $parsedAttributes = array();
+        do {
+            $currentClassName = $reflClass->getName();
+
+            foreach ($reflClass->getProperties() as $reflProperty) {
+                $attributeKey = $reflProperty->isPrivate() ? $currentClassName . '#' : '';
+                $attributeKey .= $reflProperty->getName();
+
+                if (isset($parsedAttributes[$attributeKey])) {
+                    continue;
+                }
+
+                $parsedAttributes[$attributeKey] = true;
+
+                $name =
+                      $reflProperty->getName()
+                    . ($return->__CLASS__ !== $currentClassName || $reflProperty->isPrivate() ? ':' . $currentClassName : '')
+                    . ($reflProperty->isPrivate() ? ':private' : '')
+                    . ($reflProperty->isProtected() ? ':protected' : '')
+                ;
+
+                $reflProperty->setAccessible(true);
+                $return->$name = self::export($reflProperty->getValue($var), $maxDepth - 1);
+            }
+        } while ($reflClass = $reflClass->getParentClass());
 
         return $return;
     }
