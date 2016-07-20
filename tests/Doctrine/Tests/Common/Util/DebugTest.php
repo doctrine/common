@@ -81,7 +81,6 @@ class DebugTest extends DoctrineTestCase
         $class = new TestAsset\ChildClass();
 
         $expected = array(
-            '__CLASS__' => 'Doctrine\Tests\Common\Util\TestAsset\ChildClass',
             'childPublicAttribute' => 4,
             'childProtectedAttribute:protected' => 5,
             'childPrivateAttribute:Doctrine\Tests\Common\Util\TestAsset\ChildClass:private' => 6,
@@ -90,8 +89,18 @@ class DebugTest extends DoctrineTestCase
             'parentPrivateAttribute:Doctrine\Tests\Common\Util\TestAsset\ParentClass:private' => 3,
         );
 
-        $var = Debug::export($class, 3);
+        $print_r_class = print_r($class, true);
+        $print_r_expected = print_r($class, true);
 
-        $this->assertSame($expected, (array) $var);
+        $print_r_class = substr($print_r_class, strpos($print_r_class, '('));
+        $print_r_expected = substr($print_r_expected, strpos($print_r_expected, '('));
+
+        $this->assertSame($print_r_class, $print_r_expected);
+
+        $var = Debug::export($class, 3);
+        $var = (array) $var;
+        unset($var['__CLASS__']);
+
+        $this->assertSame($expected, $var);
     }
 }
