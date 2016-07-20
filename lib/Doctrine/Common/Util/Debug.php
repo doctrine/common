@@ -159,16 +159,17 @@ final class Debug
             $currentClassName = $reflClass->getName();
 
             foreach ($reflClass->getProperties() as $reflProperty) {
-                $name = $reflProperty->getName();
+                $attributeKey = $reflProperty->isPrivate() ? $currentClassName . '#' : '';
+                $attributeKey .= $reflProperty->getName();
 
-                if (isset($parsedAttributes[$name])) {
+                if (isset($parsedAttributes[$attributeKey])) {
                     continue;
                 }
 
-                $parsedAttributes[$name] = true;
+                $parsedAttributes[$attributeKey] = true;
 
                 $name =
-                      $name
+                      $reflProperty->getName()
                     . ($return->__CLASS__ !== $currentClassName || $reflProperty->isPrivate() ? ':' . $currentClassName : '')
                     . ($reflProperty->isPrivate() ? ':private' : '')
                     . ($reflProperty->isProtected() ? ':protected' : '')

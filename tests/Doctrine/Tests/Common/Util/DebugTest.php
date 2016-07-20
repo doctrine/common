@@ -82,19 +82,11 @@ class DebugTest extends DoctrineTestCase
         $this->assertNotSame($outputValue, $dump);
     }
 
-    public function testExportParentPrivateAttributes()
+    /**
+     * @dataProvider provideAttributesCases
+     */
+    public function testExportParentAttributes(TestAsset\ParentClass $class, array $expected)
     {
-        $class = new TestAsset\ChildClass();
-
-        $expected = array(
-            'childPublicAttribute' => 4,
-            'childProtectedAttribute:protected' => 5,
-            'childPrivateAttribute:Doctrine\Tests\Common\Util\TestAsset\ChildClass:private' => 6,
-            'parentPublicAttribute' => 1,
-            'parentProtectedAttribute:protected' => 2,
-            'parentPrivateAttribute:Doctrine\Tests\Common\Util\TestAsset\ParentClass:private' => 3,
-        );
-
         $print_r_class = print_r($class, true);
         $print_r_expected = print_r($expected, true);
 
@@ -108,5 +100,31 @@ class DebugTest extends DoctrineTestCase
         unset($var['__CLASS__']);
 
         $this->assertSame($expected, $var);
+    }
+
+    public function provideAttributesCases()
+    {
+        return array(
+            'different-attributes' => array(
+                new TestAsset\ChildClass(),
+                array(
+                    'childPublicAttribute' => 4,
+                    'childProtectedAttribute:protected' => 5,
+                    'childPrivateAttribute:Doctrine\Tests\Common\Util\TestAsset\ChildClass:private' => 6,
+                    'parentPublicAttribute' => 1,
+                    'parentProtectedAttribute:protected' => 2,
+                    'parentPrivateAttribute:Doctrine\Tests\Common\Util\TestAsset\ParentClass:private' => 3,
+                ),
+            ),
+            'same-attributes' => array(
+                new TestAsset\ChildWithSameAttributesClass(),
+                array(
+                    'parentPublicAttribute' => 4,
+                    'parentProtectedAttribute:protected' => 5,
+                    'parentPrivateAttribute:Doctrine\Tests\Common\Util\TestAsset\ChildWithSameAttributesClass:private' => 6,
+                    'parentPrivateAttribute:Doctrine\Tests\Common\Util\TestAsset\ParentClass:private' => 3,
+                ),
+            ),
+        );
     }
 }
