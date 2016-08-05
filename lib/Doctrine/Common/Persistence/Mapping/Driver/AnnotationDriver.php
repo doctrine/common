@@ -270,6 +270,11 @@ abstract class AnnotationDriver implements MappingDriver
 
         $stack = [];
         $path = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, substr($path, 7));
+
+        if (DIRECTORY_SEPARATOR === substr($path, 0, 1)) {
+            array_push($stack, '');
+        }
+
         foreach (explode(DIRECTORY_SEPARATOR, $path) as $folder) {
             if (0 === strlen($folder) || '.' === $folder) {
                 continue;
