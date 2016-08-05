@@ -260,7 +260,7 @@ abstract class AnnotationDriver implements MappingDriver
      */
     protected function realpath($path)
     {
-        if ('' === \Phar::running()) {
+        if ('phar://' !== substr($path, 0, 7)) {
             return realpath($path);
         }
 
@@ -268,15 +268,10 @@ abstract class AnnotationDriver implements MappingDriver
             return false;
         }
 
-        $scheme = '';
-        if (preg_match('/^([a-zA-Z]+\:\/\/)(.*)/', $path, $matches)) {
-            list(, $scheme, $path) = $matches;
-        }
-
         $stack = [];
-        $path = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $path);
+        $path = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, substr($path, 7));
         foreach (explode(DIRECTORY_SEPARATOR, $path) as $folder) {
-            if (strlen($folder) || '.' !== $folder) {
+            if (0 === strlen($folder) || '.' === $folder) {
                 continue;
             }
             if ('..' === $folder) {
@@ -286,6 +281,6 @@ abstract class AnnotationDriver implements MappingDriver
             }
         }
 
-        return $scheme . implode('/', $stack);
+        return 'phar://' . implode('/', $stack);
     }
 }
