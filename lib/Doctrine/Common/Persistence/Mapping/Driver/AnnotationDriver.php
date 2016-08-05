@@ -218,14 +218,10 @@ abstract class AnnotationDriver implements MappingDriver
             );
 
             foreach ($iterator as $file) {
-                $sourceFile = $file[0];
-
-                if ( ! preg_match('(^phar:)i', $sourceFile)) {
-                    $sourceFile = realpath($sourceFile);
-                }
+                $sourceFile = $this->realpath($file[0]);
 
                 foreach ($this->excludePaths as $excludePath) {
-                    $exclude = str_replace('\\', '/', realpath($excludePath));
+                    $exclude = str_replace('\\', '/', $this->realpath($excludePath));
                     $current = str_replace('\\', '/', $sourceFile);
 
                     if (strpos($current, $exclude) !== false) {
@@ -252,5 +248,44 @@ abstract class AnnotationDriver implements MappingDriver
         $this->classNames = $classes;
 
         return $classes;
+    }
+
+    /**
+     * Returns the canonicalized absolute pathname. This method is a Phar-safe version
+     * of the builtin `realpath()` function.
+     *
+     * @param string $path
+     *
+     * @return boolean|string
+     */
+    protected function realpath($path)
+    {
+        if ('' === \Phar::running()) {
+            return realpath($path);
+        }
+
+        if (!file_exists($path)) {
+            return false;
+        }
+
+        $scheme = '';
+        if (preg_match('/^([a-zA-Z]+\:\/\/)(.*)/', $path, $matches)) {
+            list(, $scheme, $path) = $matches;
+        }
+
+        $stack = [];
+        $path = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $path);
+        foreach (explode(DIRECTORY_SEPARATOR, $path) as $folder) {
+            if (strlen($folder) || '.' !== $folder) {
+                continue;
+            }
+            if ('..' === $folder) {
+                array_pop($stack);
+            } else {
+                array_push($stack, $folder);
+            }
+        }
+
+        return $scheme . implode('/', $stack);
     }
 }
