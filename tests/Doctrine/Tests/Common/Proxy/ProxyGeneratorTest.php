@@ -222,6 +222,7 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyReturnTypesClass.php');
 
         $this->assertEquals(1, substr_count($classCode, 'function returnsClass(): \stdClass'));
+        $this->assertEquals(1, substr_count($classCode, 'function returnsFQN(): \Doctrine\Tests\Common\Proxy\ReturnTypesClass'));
         $this->assertEquals(1, substr_count($classCode, 'function returnsScalar(): int'));
         $this->assertEquals(1, substr_count($classCode, 'function returnsArray(): array'));
         $this->assertEquals(1, substr_count($classCode, 'function returnsCallable(): callable'));

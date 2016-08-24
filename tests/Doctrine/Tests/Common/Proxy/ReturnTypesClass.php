@@ -11,6 +11,10 @@ class ReturnTypesClass extends \stdClass
     {
     }
 
+    public function returnsFQN(): \Doctrine\Tests\Common\Proxy\ReturnTypesClass
+    {
+    }
+
     public function returnsScalar(): int
     {
     }
