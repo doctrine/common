@@ -1032,6 +1032,6 @@ EOT;
             return ': \\' . $method->getDeclaringClass()->getParentClass()->getName();
         }
 
-        return ': \\' . (string) $returnType;
+        return ': \\' . ltrim((string) $returnType, '\\');
     }
 }
