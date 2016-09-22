@@ -66,11 +66,12 @@ interface ObjectRepository
     /**
      * Finds a single object by a set of criteria.
      *
-     * @param array $criteria The criteria.
+     * @param array      $criteria The criteria.
+     * @param array|null $orderBy
      *
      * @return object|null The object.
      */
-    public function findOneBy(array $criteria);
+    public function findOneBy(array $criteria, array $orderBy = null);
 
     /**
      * Returns the class name of the object managed by the repository.
