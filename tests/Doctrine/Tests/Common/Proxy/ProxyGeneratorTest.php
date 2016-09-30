@@ -203,6 +203,8 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'function multipleTypeHints(int $a, float $b, bool $c, string $d)'));
         $this->assertEquals(1, substr_count($classCode, 'function combinationOfTypeHintsAndNormal(\stdClass $a, $b, int $c)'));
         $this->assertEquals(1, substr_count($classCode, 'function typeHintsWithVariadic(int ...$foo)'));
+        $this->assertEquals(1, substr_count($classCode, 'function withDefaultValue(int $foo = 123)'));
+        $this->assertEquals(1, substr_count($classCode, 'function withDefaultValueNull(int $foo = NULL)'));
     }
 
     public function testClassWithReturnTypesOnProxiedMethods()
@@ -229,6 +231,94 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'function returnsParent(): \stdClass'));
     }
 
+    public function testClassWithNullableTypeHintsOnProxiedMethods()
+    {
+        if (PHP_VERSION_ID < 70100) {
+            $this->markTestSkipped('Nullable type hints are only supported in PHP >= 7.1.0.');
+        }
+
+        if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableTypeHintsClass', false)) {
+            $className = NullableTypeHintsClass::class;
+            $metadata = $this->createClassMetadata($className, ['id']);
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableTypeHintsClass.php');
+
+        $this->assertEquals(1, substr_count($classCode, 'function nullableTypeHintInt(?int $param)'));
+        $this->assertEquals(1, substr_count($classCode, 'function nullableTypeHintObject(?\stdClass $param)'));
+        $this->assertEquals(1, substr_count($classCode, 'function nullableTypeHintSelf(?\\' . $className . ' $param)'));
+        $this->assertEquals(1, substr_count($classCode, 'function nullableTypeHintWithDefault(?int $param = 123)'));
+        $this->assertEquals(1, substr_count($classCode, 'function nullableTypeHintWithDefaultNull(int $param = NULL)'));
+        $this->assertEquals(1, substr_count($classCode, 'function notNullableTypeHintWithDefaultNull(int $param = NULL)'));
+    }
+
+    public function testClassWithNullableReturnTypesOnProxiedMethods()
+    {
+        if (PHP_VERSION_ID < 70100) {
+            $this->markTestSkipped('Nullable method return types are only supported in PHP >= 7.1.0.');
+        }
+
+        $className = NullableTypeHintsClass::class;
+        if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableTypeHintsClass', false)) {
+            $metadata = $this->createClassMetadata($className, ['id']);
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableTypeHintsClass.php');
+
+        $this->assertEquals(1, substr_count($classCode, 'function returnsNullableInt(): ?int'));
+        $this->assertEquals(1, substr_count($classCode, 'function returnsNullableObject(): ?\stdClass'));
+        $this->assertEquals(1, substr_count($classCode, 'function returnsNullableSelf(): ?\\' . $className));
+    }
+
+    public function testClassWithVoidReturnType()
+    {
+        if (PHP_VERSION_ID < 70100) {
+            $this->markTestSkipped('Void method return types are only supported in PHP >= 7.1.0.');
+        }
+
+        $className = VoidReturnTypeClass::class;
+        if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\VoidReturnTypeClass', false)) {
+            $metadata = $this->createClassMetadata($className, ['id']);
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyVoidReturnTypeClass.php');
+
+        $this->assertEquals(1, substr_count($classCode, 'function returnsVoid(): void'));
+    }
+
+    public function testClassWithIterableTypeHint()
+    {
+        if (PHP_VERSION_ID < 70000) {
+            $this->markTestSkipped('Method return types are only supported in PHP >= 7.0.0.');
+        }
+
+        if (PHP_VERSION_ID < 70100) {
+            $this->expectException(UnexpectedValueException::class);
+        }
+
+        $className = IterableTypeHintClass::class;
+        if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\IterableTypeHintClass', false)) {
+            $metadata = $this->createClassMetadata($className, ['id']);
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyIterableTypeHintClass.php');
+
+        $this->assertEquals(1, substr_count($classCode, 'function parameterType(iterable $param)'));
+        $this->assertEquals(1, substr_count($classCode, 'function returnType(): iterable'));
+    }
+
     public function testClassWithInvalidTypeHintOnProxiedMethod()
     {
         $className = InvalidTypeHintClass::class;
@@ -238,6 +328,24 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage(
             'The type hint of parameter "foo" in method "invalidTypeHintMethod"'
+                .' in class "' . $className . '" is invalid.'
+        );
+        $proxyGenerator->generateProxyClass($metadata);
+    }
+
+    public function testClassWithInvalidReturnTypeOnProxiedMethod()
+    {
+        if (PHP_VERSION_ID < 70000) {
+            $this->markTestSkipped('Method return types are only supported in PHP >= 7.0.0.');
+        }
+
+        $className = InvalidReturnTypeClass::class;
+        $metadata = $this->createClassMetadata($className, ['id']);
+        $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
+
+        $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage(
+            'The return type of method "invalidReturnTypeMethod"'
                 .' in class "' . $className . '" is invalid.'
         );
         $proxyGenerator->generateProxyClass($metadata);
