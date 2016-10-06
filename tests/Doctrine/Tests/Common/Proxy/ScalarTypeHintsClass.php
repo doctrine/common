@@ -22,4 +22,12 @@ class ScalarTypeHintsClass
     public function typeHintsWithVariadic(int ...$foo)
     {
     }
+
+    public function withDefaultValue(int $foo = 123)
+    {
+    }
+
+    public function withDefaultValueNull(int $foo = null)
+    {
+    }
 }

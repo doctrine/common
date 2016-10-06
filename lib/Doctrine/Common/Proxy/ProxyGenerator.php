@@ -787,7 +787,9 @@ EOT;
                 $cast       = in_array($fieldType, ['integer', 'smallint']) ? '(int) ' : '';
 
                 $methods .= '        if ($this->__isInitialized__ === false) {' . "\n";
-                $methods .= '            return ' . $cast . ' parent::' . $method->getName() . "();\n";
+                $methods .= '            ';
+                $methods .= $this->shouldProxiedMethodReturn($method) ? 'return ' : '';
+                $methods .= $cast . ' parent::' . $method->getName() . "();\n";
                 $methods .= '        }' . "\n\n";
             }
 
@@ -797,7 +799,9 @@ EOT;
             $methods .= "\n        \$this->__initializer__ "
                 . "&& \$this->__initializer__->__invoke(\$this, " . var_export($name, true)
                 . ", [" . $invokeParamsString . "]);"
-                . "\n\n        return parent::" . $name . '(' . $callParamsString . ');'
+                . "\n\n        "
+                . ($this->shouldProxiedMethodReturn($method) ? 'return ' : '')
+                . "parent::" . $name . '(' . $callParamsString . ');'
                 . "\n" . '    }' . "\n";
         }
 
@@ -935,18 +939,21 @@ EOT;
      */
     private function getParameterType(ClassMetadata $class, \ReflectionMethod $method, \ReflectionParameter $parameter)
     {
+        if (method_exists($parameter, 'hasType')) {
+            if ( ! $parameter->hasType()) {
+                return '';
+            }
 
-        // We need to pick the type hint class too
+            return $this->formatType($parameter->getType(), $parameter->getDeclaringFunction(), $parameter);
+        }
+
+        // For PHP 5.x, we need to pick the type hint in the old way (to be removed for PHP 7.0+)
         if ($parameter->isArray()) {
             return 'array';
         }
 
         if ($parameter->isCallable()) {
             return 'callable';
-        }
-
-        if (method_exists($parameter, 'hasType') && $parameter->hasType() && $parameter->getType()->isBuiltin()) {
-            return (string) $parameter->getType();
         }
 
         try {
@@ -1012,26 +1019,75 @@ EOT;
      */
     private function getMethodReturnType(\ReflectionMethod $method)
     {
-        if (! (method_exists($method, 'hasReturnType') && $method->hasReturnType())) {
+        if ( ! method_exists($method, 'hasReturnType') || ! $method->hasReturnType()) {
             return '';
         }
 
-        $returnType = $method->getReturnType();
+        return ': ' . $this->formatType($method->getReturnType(), $method);
+    }
 
-        if ($returnType->isBuiltin()) {
-            return ': ' . $returnType;
+    /**
+     * @param \ReflectionMethod $method
+     *
+     * @return bool
+     */
+    private function shouldProxiedMethodReturn(\ReflectionMethod $method)
+    {
+        if ( ! method_exists($method, 'hasReturnType') || ! $method->hasReturnType()) {
+            return true;
         }
 
-        $nameLower = strtolower((string) $returnType);
+        return 'void' !== strtolower($this->formatType($method->getReturnType(), $method));
+    }
+
+    /**
+     * @param \ReflectionType $type
+     * @param \ReflectionMethod $method
+     * @param \ReflectionParameter|null $parameter
+     *
+     * @return string
+     */
+    private function formatType(
+        \ReflectionType $type,
+        \ReflectionMethod $method,
+        \ReflectionParameter $parameter = null
+    ) {
+        $name = method_exists($type, 'getName') ? $type->getName() : (string) $type;
+        $nameLower = strtolower($name);
 
         if ('self' === $nameLower) {
-            return ': \\' . $method->getDeclaringClass()->getName();
+            $name = $method->getDeclaringClass()->getName();
         }
 
         if ('parent' === $nameLower) {
-            return ': \\' . $method->getDeclaringClass()->getParentClass()->getName();
+            $name = $method->getDeclaringClass()->getParentClass()->getName();
         }
 
-        return ': \\' . (string) $returnType;
+        if ( ! $type->isBuiltin() && ! class_exists($name)) {
+            if (null !== $parameter) {
+                throw UnexpectedValueException::invalidParameterTypeHint(
+                    $method->getDeclaringClass()->getName(),
+                    $method->getName(),
+                    $parameter->getName()
+                );
+            }
+
+            throw UnexpectedValueException::invalidReturnTypeHint(
+                $method->getDeclaringClass()->getName(),
+                $method->getName()
+            );
+        }
+
+        if ( ! $type->isBuiltin()) {
+            $name = '\\' . $name;
+        }
+
+        if ($type->allowsNull()
+            && (null === $parameter || ! $parameter->isOptional() || null !== $parameter->getDefaultValue())
+        ) {
+            $name = '?' . $name;
+        }
+
+        return $name;
     }
 }
