@@ -30,4 +30,8 @@ class ReturnTypesClass extends \stdClass
     public function returnsParent(): parent
     {
     }
+
+    public function returnsInterface() : \Countable
+    {
+    }
 }

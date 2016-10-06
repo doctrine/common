@@ -15,7 +15,7 @@ class ScalarTypeHintsClass
     {
     }
 
-    public function combinationOfTypeHintsAndNormal(\stdClass $a, $b, int $c)
+    public function combinationOfTypeHintsAndNormal(\stdClass $a, \Countable $b, $c, int $d)
     {
     }
 
