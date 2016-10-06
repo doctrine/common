@@ -201,7 +201,7 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, substr_count($classCode, 'function singleTypeHint(string $param)'));
         $this->assertEquals(1, substr_count($classCode, 'function multipleTypeHints(int $a, float $b, bool $c, string $d)'));
-        $this->assertEquals(1, substr_count($classCode, 'function combinationOfTypeHintsAndNormal(\stdClass $a, $b, int $c)'));
+        $this->assertEquals(1, substr_count($classCode, 'function combinationOfTypeHintsAndNormal(\stdClass $a, \Countable $b, $c, int $d)'));
         $this->assertEquals(1, substr_count($classCode, 'function typeHintsWithVariadic(int ...$foo)'));
         $this->assertEquals(1, substr_count($classCode, 'function withDefaultValue(int $foo = 123)'));
         $this->assertEquals(1, substr_count($classCode, 'function withDefaultValueNull(int $foo = NULL)'));
@@ -229,6 +229,7 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'function returnsCallable(): callable'));
         $this->assertEquals(1, substr_count($classCode, 'function returnsSelf(): \\' . $className));
         $this->assertEquals(1, substr_count($classCode, 'function returnsParent(): \stdClass'));
+        $this->assertEquals(1, substr_count($classCode, 'function returnsInterface(): \Countable'));
     }
 
     public function testClassWithNullableTypeHintsOnProxiedMethods()

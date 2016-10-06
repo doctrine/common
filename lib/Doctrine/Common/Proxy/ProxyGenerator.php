@@ -1063,7 +1063,7 @@ EOT;
             $name = $method->getDeclaringClass()->getParentClass()->getName();
         }
 
-        if ( ! $type->isBuiltin() && ! class_exists($name)) {
+        if ( ! $type->isBuiltin() && ! class_exists($name) && ! interface_exists($name)) {
             if (null !== $parameter) {
                 throw UnexpectedValueException::invalidParameterTypeHint(
                     $method->getDeclaringClass()->getName(),
