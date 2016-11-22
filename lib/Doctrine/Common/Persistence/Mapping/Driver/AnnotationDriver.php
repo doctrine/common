@@ -210,7 +210,7 @@ abstract class AnnotationDriver implements MappingDriver
 
             $iterator = new \RegexIterator(
                 new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS),
+                    new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS|\RecursiveDirectoryIterator::FOLLOW_SYMLINKS),
                     \RecursiveIteratorIterator::LEAVES_ONLY
                 ),
                 '/^.+' . preg_quote($this->fileExtension) . '$/i',
