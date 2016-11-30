@@ -2,6 +2,7 @@
 
 namespace Doctrine\Tests\Common\Persistence\Mapping;
 
+use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\Tests\DoctrineTestCase;
@@ -10,6 +11,9 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\Mapping\AbstractClassMetadataFactory;
 use Doctrine\Common\Cache\ArrayCache;
 
+/**
+ * @covers \Doctrine\Common\Persistence\Mapping\AbstractClassMetadataFactory
+ */
 class ClassMetadataFactoryTest extends DoctrineTestCase
 {
     /**
@@ -129,6 +133,30 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
         $this->expectException(MappingException::class);
 
         $this->cmf->getMetadataFor('Foo');
+    }
+
+    /**
+     * @group 717
+     */
+    public function testWillIgnoreCacheEntriesThatAreNotMetadataInstances()
+    {
+        /* @var $cacheDriver Cache|\PHPUnit_Framework_MockObject_MockObject */
+        $cacheDriver = $this->createMock(Cache::class);
+
+        $this->cmf->setCacheDriver($cacheDriver);
+
+        $cacheDriver->expects(self::once())->method('fetch')->with('Foo$CLASSMETADATA')->willReturn(new \stdClass());
+
+        /* @var $metadata ClassMetadata */
+        $metadata = $this->createMock(ClassMetadata::class);
+
+        $fallbackCallback = $this->getMockBuilder(\stdClass::class)->setMethods(['__invoke'])->getMock();
+
+        $fallbackCallback->expects(self::any())->method('__invoke')->willReturn($metadata);
+
+        $this->cmf->fallbackCallback = $fallbackCallback;
+
+        self::assertSame($metadata, $this->cmf->getMetadataFor('Foo'));
     }
 }
 
