@@ -141,14 +141,14 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
     public function testWillIgnoreCacheEntriesThatAreNotMetadataInstances()
     {
         /* @var $cacheDriver Cache|\PHPUnit_Framework_MockObject_MockObject */
-        $cacheDriver = $this->createMock(Cache::class);
+        $cacheDriver = $this->getMockBuilder(Cache::class)->getMock();
 
         $this->cmf->setCacheDriver($cacheDriver);
 
         $cacheDriver->expects(self::once())->method('fetch')->with('Foo$CLASSMETADATA')->willReturn(new \stdClass());
 
         /* @var $metadata ClassMetadata */
-        $metadata = $this->createMock(ClassMetadata::class);
+        $metadata = $this->getMockBuilder(ClassMetadata::class)->getMock();
 
         $fallbackCallback = $this->getMockBuilder(\stdClass::class)->setMethods(['__invoke'])->getMock();
 
