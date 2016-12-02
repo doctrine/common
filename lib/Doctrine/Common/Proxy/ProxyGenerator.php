@@ -1083,7 +1083,7 @@ EOT;
         }
 
         if ($type->allowsNull()
-            && (null === $parameter || ! $parameter->isOptional() || null !== $parameter->getDefaultValue())
+            && (null === $parameter || ! $parameter->isDefaultValueAvailable() || null !== $parameter->getDefaultValue())
         ) {
             $name = '?' . $name;
         }
