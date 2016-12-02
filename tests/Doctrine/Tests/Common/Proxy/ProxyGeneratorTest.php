@@ -297,7 +297,7 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @requires PHP 7.0
+     * @requires PHP 7.1
      */
     public function testClassWithVoidReturnType()
     {
