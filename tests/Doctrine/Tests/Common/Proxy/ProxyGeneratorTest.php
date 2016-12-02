@@ -277,6 +277,9 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'function returnsNullableSelf(): ?\\' . $className));
     }
 
+    /**
+     * @group #751
+     */
     public function testClassWithNullableOptionalNonLastParameterOnProxiedMethods()
     {
         $className = NullableNonOptionalHintClass::class;
