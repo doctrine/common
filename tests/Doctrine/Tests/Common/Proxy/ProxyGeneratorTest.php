@@ -164,10 +164,6 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
 
     public function testClassWithVariadicArgumentOnProxiedMethod()
     {
-        if (PHP_VERSION_ID < 50600) {
-            $this->markTestSkipped('`...` is only supported in PHP >=5.6.0');
-        }
-
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\VariadicTypeHintClass', false)) {
             $className = VariadicTypeHintClass::class;
             $metadata = $this->createClassMetadata($className, ['id']);
@@ -183,12 +179,11 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'parent::addType(...$types)'));
     }
 
+    /**
+     * @requires PHP 7.0
+     */
     public function testClassWithScalarTypeHintsOnProxiedMethods()
     {
-        if (PHP_VERSION_ID < 70000) {
-            $this->markTestSkipped('Scalar type hints are only supported in PHP >= 7.0.0.');
-        }
-
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\ScalarTypeHintsClass', false)) {
             $className = ScalarTypeHintsClass::class;
             $metadata = $this->createClassMetadata($className, ['id']);
@@ -207,12 +202,11 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'function withDefaultValueNull(int $foo = NULL)'));
     }
 
+    /**
+     * @requires PHP 7.0
+     */
     public function testClassWithReturnTypesOnProxiedMethods()
     {
-        if (PHP_VERSION_ID < 70000) {
-            $this->markTestSkipped('Method return types are only supported in PHP >= 7.0.0.');
-        }
-
         $className = ReturnTypesClass::class;
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\ReturnTypesClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
@@ -232,12 +226,11 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'function returnsInterface(): \Countable'));
     }
 
+    /**
+     * @requires PHP 7.1
+     */
     public function testClassWithNullableTypeHintsOnProxiedMethods()
     {
-        if (PHP_VERSION_ID < 70100) {
-            $this->markTestSkipped('Nullable type hints are only supported in PHP >= 7.1.0.');
-        }
-
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableTypeHintsClass', false)) {
             $className = NullableTypeHintsClass::class;
             $metadata = $this->createClassMetadata($className, ['id']);
@@ -256,12 +249,11 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'function notNullableTypeHintWithDefaultNull(int $param = NULL)'));
     }
 
+    /**
+     * @requires PHP 7.1
+     */
     public function testClassWithNullableReturnTypesOnProxiedMethods()
     {
-        if (PHP_VERSION_ID < 70100) {
-            $this->markTestSkipped('Nullable method return types are only supported in PHP >= 7.1.0.');
-        }
-
         $className = NullableTypeHintsClass::class;
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableTypeHintsClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
@@ -304,12 +296,11 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @requires PHP 7.0
+     */
     public function testClassWithVoidReturnType()
     {
-        if (PHP_VERSION_ID < 70100) {
-            $this->markTestSkipped('Void method return types are only supported in PHP >= 7.1.0.');
-        }
-
         $className = VoidReturnTypeClass::class;
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\VoidReturnTypeClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
@@ -323,12 +314,11 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'function returnsVoid(): void'));
     }
 
+    /**
+     * @requires PHP 7.0
+     */
     public function testClassWithIterableTypeHint()
     {
-        if (PHP_VERSION_ID < 70000) {
-            $this->markTestSkipped('Method return types are only supported in PHP >= 7.0.0.');
-        }
-
         if (PHP_VERSION_ID < 70100) {
             $this->expectException(UnexpectedValueException::class);
         }
@@ -361,12 +351,11 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $proxyGenerator->generateProxyClass($metadata);
     }
 
+    /**
+     * @requires PHP 7.0
+     */
     public function testClassWithInvalidReturnTypeOnProxiedMethod()
     {
-        if (PHP_VERSION_ID < 70000) {
-            $this->markTestSkipped('Method return types are only supported in PHP >= 7.0.0.');
-        }
-
         $className = InvalidReturnTypeClass::class;
         $metadata = $this->createClassMetadata($className, ['id']);
         $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
