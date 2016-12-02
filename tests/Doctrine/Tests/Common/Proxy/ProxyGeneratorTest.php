@@ -277,6 +277,23 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'function returnsNullableSelf(): ?\\' . $className));
     }
 
+    public function testClassWithNullableOptionalNonLastParameterOnProxiedMethods()
+    {
+        $className = NullableNonOptionalHintClass::class;
+
+        if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableNonOptionalHintClass', false)) {
+            $metadata = $this->createClassMetadata($className, ['id']);
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        $this->assertContains(
+            'public function midSignatureNullableParameter(\stdClass $param = NULL, $secondParam)',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableNonOptionalHintClass.php')
+        );
+    }
+
     public function testClassWithVoidReturnType()
     {
         if (PHP_VERSION_ID < 70100) {
