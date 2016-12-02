@@ -279,6 +279,8 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
 
     /**
      * @group #751
+     *
+     * @requires PHP 7.0
      */
     public function testClassWithNullableOptionalNonLastParameterOnProxiedMethods()
     {
@@ -293,6 +295,11 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
 
         $this->assertContains(
             'public function midSignatureNullableParameter(\stdClass $param = NULL, $secondParam)',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableNonOptionalHintClass.php')
+        );
+
+        $this->assertContains(
+            'public function midSignatureNotNullableHintedParameter(string $param = \'foo\', $secondParam)',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableNonOptionalHintClass.php')
         );
     }
