@@ -313,8 +313,9 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         }
 
         $this->assertContains(
-            'public function midSignatureNullableParameter(?string $param = NULL, $secondParam)',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp71NullableDefaultedNonOptionalHintClass.php')
+            'public function midSignatureNullableParameter(string $param = NULL, $secondParam)',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp71NullableDefaultedNonOptionalHintClass.php'),
+            'Signature allows nullable type, although explicit "?" marker isn\'t used in the proxy'
         );
 
         $this->assertContains(
