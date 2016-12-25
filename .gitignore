@@ -8,3 +8,4 @@ vendor/
 composer.lock
 doctrine-common-*.tar
 doctrine-common-*.tar.gz
+tests/Doctrine/Tests/Common/Persistence/Mapping/_files/annotation/SubDirForSymlink
