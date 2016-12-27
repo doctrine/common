@@ -21,7 +21,11 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
 
         $classes = $driver->getAllClassNames();
 
-        $this->assertEquals([SubDirTestClass::class, SymlinkedTestClass::class, TestClass::class], $classes);
+        $expectedClasses = [SubDirTestClass::class, SymlinkedTestClass::class, TestClass::class];
+        sort($expectedClasses);
+        sort($classes);
+
+        $this->assertEquals($expectedClasses, $classes);
     }
 
     private function makeSymlink()
