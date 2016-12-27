@@ -14,7 +14,7 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetAllClassNames()
     {
-        $this->makeSymlink();
+        $this->makeSubDirSymlink();
 
         $reader = new AnnotationReader();
         $driver = new SimpleAnnotationDriver($reader, [__DIR__ . '/_files/annotation']);
@@ -28,16 +28,15 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedClasses, $classes);
     }
 
-    private function makeSymlink()
+    private function makeSubDirSymlink()
     {
         $symlinkTarget = __DIR__ . '/_files/SubDirForSymlink';
         $symlinkPath = __DIR__ . '/_files/annotation/SubDirForSymlink';
-        if (!is_link($symlinkPath)) {
+        if (! is_link($symlinkPath)) {
             if (file_exists($symlinkPath)) {
                 throw new \Exception(sprintf('Remove file/dir "%s".', $symlinkPath));
-            } else {
-                symlink($symlinkTarget, $symlinkPath);
             }
+            symlink($symlinkTarget, $symlinkPath);
         }
     }
 }
