@@ -26,7 +26,7 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
 
     private function makeSymlink()
     {
-        $symlinkTarget = __DIR__ . '/../SubDirForSymlink';
+        $symlinkTarget = __DIR__ . '/_files/SubDirForSymlink';
         $symlinkPath = __DIR__ . '/_files/annotation/SubDirForSymlink';
         if (!is_link($symlinkPath)) {
             if (file_exists($symlinkPath)) {
