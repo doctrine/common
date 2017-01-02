@@ -11,6 +11,10 @@ php:
   - 7.1
   - hhvm
 
+matrix:
+    allow_failures:
+        - php: hhvm
+
 before_script:
   - composer --prefer-source install
 
