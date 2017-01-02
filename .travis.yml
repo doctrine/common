@@ -10,15 +10,13 @@ php:
   - 7.0
   - 7.1
 
-  matrix:
+matrix:
   fast_finish: true
   include:
     - php: hhvm
       sudo: true
       dist: trusty
       group: edge # until the next update
-  allow_failures:
-    - php: hhvm
 
 before_script:
   - composer --prefer-source install
