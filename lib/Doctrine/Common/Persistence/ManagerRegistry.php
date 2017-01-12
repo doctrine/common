@@ -91,7 +91,7 @@ interface ManagerRegistry extends ConnectionRegistry
     public function getManagerNames();
 
     /**
-     * Gets the ObjectRepository for an persistent object.
+     * Gets the ObjectRepository for a persistent object.
      *
      * @param string $persistentObject      The name of the persistent object.
      * @param string $persistentManagerName The object manager name (null for the default one).
