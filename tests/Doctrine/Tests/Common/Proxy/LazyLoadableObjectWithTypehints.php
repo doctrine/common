@@ -51,6 +51,7 @@ class LazyLoadableObjectWithTypehints
 
     /** @var \stdClass */
     private $identifierFieldReturnClassOneLetter;
+
     /**
      * @return string
      */
