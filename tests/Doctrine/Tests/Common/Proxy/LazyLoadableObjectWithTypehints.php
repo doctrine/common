@@ -52,6 +52,9 @@ class LazyLoadableObjectWithTypehints
     /** @var \stdClass */
     private $identifierFieldReturnClassOneLetter;
 
+    /** @var \stdClass */
+    private $identifierFieldReturnClassOneLetterNullable;
+
     /**
      * @return string
      */
@@ -88,6 +91,11 @@ class LazyLoadableObjectWithTypehints
     public function getIdentifierFieldReturnClassOneLetter(): A
     {
         return $this->identifierFieldReturnClassOneLetter;
+    }
+
+    public function getIdentifierFieldReturnClassOneLetterNullable(): ?A
+    {
+        return $this->identifierFieldReturnClassOneLetterNullable;
     }
 
 
