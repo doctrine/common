@@ -35,184 +35,68 @@ use stdClass;
 class ProxyLogicTypehintsTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @dataProvider methodsForWhichLazyLoadingShouldBeDisabled
+     *
+     * @param ClassMetadata $metadata
+     * @param string        $fieldName
+     * @param mixed         $expectedReturnedValue
      */
-    protected $proxyLoader;
-
-    /**
-     * @var ClassMetadata
-     */
-    protected $lazyLoadableObjectMetadata;
-
-    /**
-     * @var LazyLoadableObjectWithTypehints|Proxy
-     */
-    protected $lazyObject;
-
-    protected $identifier = [];
-
-    /**
-     * @var string
-     */
-    protected $proxyClassName;
-
-    /**
-     * @var ClassMetadata
-     */
-    protected $metadata;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Callable
-     */
-    protected $initializerCallbackMock;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setUp()
+    public function testNoLazyLoadingForIdentifier(ClassMetadata $metadata, $fieldName, $expectedReturnedValue)
     {
-        if (PHP_VERSION_ID < 70000) {
-            $this->markTestSkipped('Return type hints are only supported in PHP >= 7.0.0.');
-        }
-        $this->identifier = [
-            'identifierFieldNoReturnTypehint' => 'noTypeHint',
-            'identifierFieldReturnTypehintScalar' => 'scalarValue',
-            'identifierFieldReturnClassFullyQualified' => new LazyLoadableObjectWithTypehints(),
-            'identifierFieldReturnClassPartialUse' => new LazyLoadableObjectWithTypehints(),
-            'identifierFieldReturnClassFullUse' => new LazyLoadableObjectWithTypehints(),
-            'identifierFieldReturnClassOneWord' => new stdClass(),
-            'identifierFieldReturnClassOneLetter' => new stdClass(),
-        ];
+        $className      = $metadata->getName();
+        $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\\' . $className;
+        $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
+        $proxyFileName  = $proxyGenerator->getProxyFileName($className);
 
-        $this->proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\LazyLoadableObjectWithTypehints';
-        $this->lazyLoadableObjectMetadata = $this->metadata = new LazyLoadableObjectWithTypehintsClassMetadata();
+        if (! class_exists($proxyClassName, false)) {
+            $proxyGenerator->generateProxyClass($metadata, $proxyFileName);
 
-        $this->setUpProxy();
-    }
-
-    public function setUpProxy()
-    {
-        $this->proxyLoader = $loader      = $this->getMockBuilder(stdClass::class)->setMethods(['load'])->getMock();
-        $this->initializerCallbackMock    = $this->getMockBuilder(stdClass::class)->setMethods(['__invoke'])->getMock();
-        $identifier                       = $this->identifier;
-
-
-        // emulating what should happen in a proxy factory
-        $cloner = function (LazyLoadableObjectWithTypehints $proxy) use ($loader, $identifier) {
-            /* @var $proxy LazyLoadableObjectWithTypehints|Proxy */
-            if ($proxy->__isInitialized()) {
-                return;
-            }
-
-            $proxy->__setInitialized(true);
-            $proxy->__setInitializer(null);
-            $original = $loader->load($identifier);
-
-            if (null === $original) {
-                throw new UnexpectedValueException();
-            }
-
-            foreach ($this->metadata->getReflectionClass()->getProperties() as $reflProperty) {
-                $propertyName = $reflProperty->getName();
-
-                if ($this->metadata->hasField($propertyName) || $this->metadata->hasAssociation($propertyName)) {
-                    $reflProperty->setAccessible(true);
-                    $reflProperty->setValue($proxy, $reflProperty->getValue($original));
-                }
-            }
-        };
-
-        // creating the proxy class
-        if (!class_exists($this->proxyClassName, false)) {
-            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
-            $proxyFileName = $proxyGenerator->getProxyFileName($this->metadata->getName());
-            $proxyGenerator->generateProxyClass($this->metadata, $proxyFileName);
+            /** @noinspection PhpIncludeInspection */
             require_once $proxyFileName;
         }
 
-        $this->lazyObject = new $this->proxyClassName($this->getClosure($this->initializerCallbackMock), $cloner);
+        $proxy = new $proxyClassName(
+            function () {
+                self::fail('Initialization is never supposed to happen');
+            },
+            function () {
+                self::fail('Initialization is never supposed to happen');
+            }
+        );
 
-        // setting identifiers in the proxy via reflection
-        foreach ($this->metadata->getIdentifierFieldNames() as $idField) {
-            $prop = $this->metadata->getReflectionClass()->getProperty($idField);
-            $prop->setAccessible(true);
-            $prop->setValue($this->lazyObject, $identifier[$idField]);
-        }
+        $reflection = $metadata->getReflectionClass()->getProperty($fieldName);
 
-        $this->assertFalse($this->lazyObject->__isInitialized());
-    }
+        $reflection->setAccessible(true);
+        $reflection->setValue($proxy, $expectedReturnedValue);
 
-    /**
-     * @dataProvider dataNoLazyLoadingForIdentifier
-     *
-     * @param string $fieldName
-     */
-    public function testNoLazyLoadingForIdentifier($fieldName)
-    {
-        $this->configureInitializerMock(0);
-        $getter = 'get' . ucfirst($fieldName);
-
-        $this->assertSame($this->identifier[$fieldName], $this->lazyObject->$getter());
+        $this->assertSame($expectedReturnedValue, $proxy->{'get' . $fieldName}());
     }
 
     /**
      * @return array
      */
-    public function dataNoLazyLoadingForIdentifier()
+    public function methodsForWhichLazyLoadingShouldBeDisabled()
     {
-        return [
-            ['identifierFieldNoReturnTypehint'],
-            ['identifierFieldReturnTypehintScalar'],
-            ['identifierFieldReturnClassFullyQualified'],
-            ['identifierFieldReturnClassPartialUse'],
-            ['identifierFieldReturnClassFullUse'],
-            ['identifierFieldReturnClassOneWord'],
-            ['identifierFieldReturnClassOneLetter'],
+        $methods = [
+            [new LazyLoadableObjectWithTypehintsClassMetadata(), 'identifierFieldNoReturnTypehint', 'noTypeHint'],
+            [new LazyLoadableObjectWithTypehintsClassMetadata(), 'identifierFieldReturnTypehintScalar', 'scalarValue'],
+            [new LazyLoadableObjectWithTypehintsClassMetadata(), 'identifierFieldReturnClassFullyQualified', new LazyLoadableObjectWithTypehints()],
+            [new LazyLoadableObjectWithTypehintsClassMetadata(), 'identifierFieldReturnClassPartialUse', new LazyLoadableObjectWithTypehints()],
+            [new LazyLoadableObjectWithTypehintsClassMetadata(), 'identifierFieldReturnClassFullUse', new LazyLoadableObjectWithTypehints()],
+            [new LazyLoadableObjectWithTypehintsClassMetadata(), 'identifierFieldReturnClassOneWord', new stdClass()],
+            [new LazyLoadableObjectWithTypehintsClassMetadata(), 'identifierFieldReturnClassOneLetter', new stdClass()],
         ];
-    }
 
-
-    /**
-     * Converts a given callable into a closure
-     *
-     * @param  callable $callable
-     * @return \Closure
-     */
-    private function getClosure($callable) {
-        return function () use ($callable) {
-            call_user_func_array($callable, func_get_args());
-        };
-    }
-
-    /**
-     * Configures the current initializer callback mock with provided matcher params
-     *
-     * @param int $expectedCallCount the number of invocations to be expected. If a value< 0 is provided, `any` is used
-     * @param array $callParamsMatch an ordered array of parameters to be expected
-     * @param callable $callbackClosure a return callback closure
-     *
-     * @return \PHPUnit_Framework_MockObject_MockObject|
-     */
-    private function configureInitializerMock(
-        $expectedCallCount = 0,
-        array $callParamsMatch = null,
-        \Closure $callbackClosure = null
-    ) {
-        if (!$expectedCallCount) {
-            $invocationCountMatcher = $this->exactly((int) $expectedCallCount);
-        } else {
-            $invocationCountMatcher = $expectedCallCount < 0 ? $this->any() : $this->exactly($expectedCallCount);
+        if (PHP_VERSION_ID < 70100) {
+            return $methods;
         }
 
-        $invocationMocker = $this->initializerCallbackMock->expects($invocationCountMatcher)->method('__invoke');
-
-        if (null !== $callParamsMatch) {
-            call_user_func_array([$invocationMocker, 'with'], $callParamsMatch);
-        }
-
-        if ($callbackClosure) {
-            $invocationMocker->will($this->returnCallback($callbackClosure));
-        }
+        return array_merge(
+            $methods,
+            [
+                [new LazyLoadableObjectWithNullableTypehintsClassMetadata(), 'identifierFieldReturnClassOneLetterNullable', new stdClass()],
+                [new LazyLoadableObjectWithNullableTypehintsClassMetadata(), 'identifierFieldReturnClassOneLetterNullableWithSpace', new stdClass()],
+            ]
+        );
     }
-
 }
