@@ -46,6 +46,7 @@ class LazyLoadableObjectWithTypehintsClassMetadata implements ClassMetadata
         'identifierFieldReturnClassFullUse' => true,
         'identifierFieldReturnClassOneWord' => true,
         'identifierFieldReturnClassOneLetter' => true,
+        'identifierFieldReturnClassOneLetterNullable' => true,
     ];
 
     /**
@@ -59,6 +60,7 @@ class LazyLoadableObjectWithTypehintsClassMetadata implements ClassMetadata
         'identifierFieldReturnClassFullUse' => true,
         'identifierFieldReturnClassOneWord' => true,
         'identifierFieldReturnClassOneLetter' => true,
+        'identifierFieldReturnClassOneLetterNullable' => true,
     ];
 
     /**

@@ -72,6 +72,7 @@ class ProxyLogicTypehintsTest extends PHPUnit_Framework_TestCase
             'identifierFieldReturnClassFullUse' => new LazyLoadableObjectWithTypehints(),
             'identifierFieldReturnClassOneWord' => new stdClass(),
             'identifierFieldReturnClassOneLetter' => new stdClass(),
+            'identifierFieldReturnClassOneLetterNullable' => new stdClass(),
         ];
 
         $this->proxyLoader = $loader      = $this->getMockBuilder(stdClass::class)->setMethods(['load'])->getMock();
@@ -151,6 +152,7 @@ class ProxyLogicTypehintsTest extends PHPUnit_Framework_TestCase
             ['identifierFieldReturnClassFullUse'],
             ['identifierFieldReturnClassOneWord'],
             ['identifierFieldReturnClassOneLetter'],
+            ['identifierFieldReturnClassOneLetterNullable'],
         ];
     }
 
