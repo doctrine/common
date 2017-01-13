@@ -25,12 +25,13 @@ use PHPUnit_Framework_TestCase;
 use stdClass;
 
 /**
- * Test that identifier getter does not cause lazy loading. These tests make assumptions about the structure of LazyLoadableObjectWithTypehints
+ * Test that identifier getter does not cause lazy loading.
+ * These tests make assumptions about the structure of LazyLoadableObjectWithTypehints
  *
  * @author Marco Pivetta <ocramius@gmail.com>
  * @author Jan Langer <jan.langer@slevomat.cz>
  */
-class ProxyLogicTypehintsTest extends PHPUnit_Framework_TestCase
+class ProxyLogicIdentifierGetterTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider methodsForWhichLazyLoadingShouldBeDisabled
