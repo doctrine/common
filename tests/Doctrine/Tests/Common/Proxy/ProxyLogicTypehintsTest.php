@@ -144,14 +144,15 @@ class ProxyLogicTypehintsTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataNoLazyLoadingForIdentifier
-     * @param string $field
+     *
+     * @param string $fieldName
      */
-    public function testNoLazyLoadingForIdentifier($field)
+    public function testNoLazyLoadingForIdentifier($fieldName)
     {
         $this->configureInitializerMock(0);
-        $getter = 'get' . ucfirst($field);
+        $getter = 'get' . ucfirst($fieldName);
 
-        $this->assertSame($this->identifier[$field], $this->lazyObject->$getter());
+        $this->assertSame($this->identifier[$fieldName], $this->lazyObject->$getter());
     }
 
     /**
