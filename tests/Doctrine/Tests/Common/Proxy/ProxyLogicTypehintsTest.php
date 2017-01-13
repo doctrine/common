@@ -52,6 +52,16 @@ class ProxyLogicTypehintsTest extends PHPUnit_Framework_TestCase
     protected $identifier = [];
 
     /**
+     * @var string
+     */
+    protected $proxyClassName;
+
+    /**
+     * @var ClassMetadata
+     */
+    protected $metadata;
+
+    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|Callable
      */
     protected $initializerCallbackMock;
@@ -74,13 +84,21 @@ class ProxyLogicTypehintsTest extends PHPUnit_Framework_TestCase
             'identifierFieldReturnClassOneLetter' => new stdClass(),
         ];
 
+        $this->proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\LazyLoadableObjectWithTypehints';
+        $this->lazyLoadableObjectMetadata = $this->metadata = new LazyLoadableObjectWithTypehintsClassMetadata();
+
+        $this->setUpProxy();
+    }
+
+    public function setUpProxy()
+    {
         $this->proxyLoader = $loader      = $this->getMockBuilder(stdClass::class)->setMethods(['load'])->getMock();
         $this->initializerCallbackMock    = $this->getMockBuilder(stdClass::class)->setMethods(['__invoke'])->getMock();
         $identifier                       = $this->identifier;
-        $this->lazyLoadableObjectMetadata = $metadata = new LazyLoadableObjectWithTypehintsClassMetadata();
+
 
         // emulating what should happen in a proxy factory
-        $cloner = function (LazyLoadableObjectWithTypehints $proxy) use ($loader, $identifier, $metadata) {
+        $cloner = function (LazyLoadableObjectWithTypehints $proxy) use ($loader, $identifier) {
             /* @var $proxy LazyLoadableObjectWithTypehints|Proxy */
             if ($proxy->__isInitialized()) {
                 return;
@@ -94,31 +112,29 @@ class ProxyLogicTypehintsTest extends PHPUnit_Framework_TestCase
                 throw new UnexpectedValueException();
             }
 
-            foreach ($metadata->getReflectionClass()->getProperties() as $reflProperty) {
+            foreach ($this->metadata->getReflectionClass()->getProperties() as $reflProperty) {
                 $propertyName = $reflProperty->getName();
 
-                if ($metadata->hasField($propertyName) || $metadata->hasAssociation($propertyName)) {
+                if ($this->metadata->hasField($propertyName) || $this->metadata->hasAssociation($propertyName)) {
                     $reflProperty->setAccessible(true);
                     $reflProperty->setValue($proxy, $reflProperty->getValue($original));
                 }
             }
         };
 
-        $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\LazyLoadableObjectWithTypehints';
-
         // creating the proxy class
-        if (!class_exists($proxyClassName, false)) {
+        if (!class_exists($this->proxyClassName, false)) {
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
-            $proxyFileName = $proxyGenerator->getProxyFileName($metadata->getName());
-            $proxyGenerator->generateProxyClass($metadata, $proxyFileName);
+            $proxyFileName = $proxyGenerator->getProxyFileName($this->metadata->getName());
+            $proxyGenerator->generateProxyClass($this->metadata, $proxyFileName);
             require_once $proxyFileName;
         }
 
-        $this->lazyObject = new $proxyClassName($this->getClosure($this->initializerCallbackMock), $cloner);
+        $this->lazyObject = new $this->proxyClassName($this->getClosure($this->initializerCallbackMock), $cloner);
 
         // setting identifiers in the proxy via reflection
-        foreach ($metadata->getIdentifierFieldNames() as $idField) {
-            $prop = $metadata->getReflectionClass()->getProperty($idField);
+        foreach ($this->metadata->getIdentifierFieldNames() as $idField) {
+            $prop = $this->metadata->getReflectionClass()->getProperty($idField);
             $prop->setAccessible(true);
             $prop->setValue($this->lazyObject, $identifier[$idField]);
         }
