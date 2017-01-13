@@ -28,7 +28,7 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata;
  * @author Marco Pivetta <ocramius@gmail.com>
  * @since  2.4
  */
-class LazyLoadableObjectWithTypehintsClassMetadata implements ClassMetadata
+class LazyLoadableObjectWithNullableTypehintsClassMetadata implements ClassMetadata
 {
     /**
      * @var ReflectionClass
@@ -39,26 +39,16 @@ class LazyLoadableObjectWithTypehintsClassMetadata implements ClassMetadata
      * @var array
      */
     protected $identifier = [
-        'identifierFieldNoReturnTypehint' => true,
-        'identifierFieldReturnTypehintScalar' => true,
-        'identifierFieldReturnClassFullyQualified' => true,
-        'identifierFieldReturnClassPartialUse' => true,
-        'identifierFieldReturnClassFullUse' => true,
-        'identifierFieldReturnClassOneWord' => true,
-        'identifierFieldReturnClassOneLetter' => true,
+        'identifierFieldReturnClassOneLetterNullable' => true,
+        'identifierFieldReturnClassOneLetterNullableWithSpace' => true,
     ];
 
     /**
      * @var array
      */
     protected $fields = [
-        'identifierFieldNoReturnTypehint' => true,
-        'identifierFieldReturnTypehintScalar' => true,
-        'identifierFieldReturnClassFullyQualified' => true,
-        'identifierFieldReturnClassPartialUse' => true,
-        'identifierFieldReturnClassFullUse' => true,
-        'identifierFieldReturnClassOneWord' => true,
-        'identifierFieldReturnClassOneLetter' => true,
+        'identifierFieldReturnClassOneLetterNullable' => true,
+        'identifierFieldReturnClassOneLetterNullableWithSpace' => true,
     ];
 
     /**
@@ -83,7 +73,7 @@ class LazyLoadableObjectWithTypehintsClassMetadata implements ClassMetadata
     public function getReflectionClass()
     {
         if (null === $this->reflectionClass) {
-            $this->reflectionClass = new \ReflectionClass(__NAMESPACE__ . '\LazyLoadableObjectWithTypehints');
+            $this->reflectionClass = new \ReflectionClass(__NAMESPACE__ . '\LazyLoadableObjectWithNullableTypehints');
         }
 
         return $this->reflectionClass;
