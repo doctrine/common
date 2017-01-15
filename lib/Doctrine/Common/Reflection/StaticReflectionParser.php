@@ -81,7 +81,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
     /**
      * The docComment of the class.
      *
-     * @var string
+     * @var mixed[]
      */
     protected $docComment = [
         'class' => '',
