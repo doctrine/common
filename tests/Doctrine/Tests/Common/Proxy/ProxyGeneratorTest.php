@@ -231,8 +231,8 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
      */
     public function testClassWithNullableTypeHintsOnProxiedMethods()
     {
+        $className = NullableTypeHintsClass::class;
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableTypeHintsClass', false)) {
-            $className = NullableTypeHintsClass::class;
             $metadata = $this->createClassMetadata($className, ['id']);
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
