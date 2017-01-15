@@ -71,7 +71,7 @@ class ProxyLogicVoidReturnTypeTest extends PHPUnit_Framework_TestCase
 
         // creating the proxy class
         if (!class_exists($proxyClassName, false)) {
-            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
             $proxyFileName = $proxyGenerator->getProxyFileName($metadata->getName());
             $proxyGenerator->generateProxyClass($metadata, $proxyFileName);
             require_once $proxyFileName;

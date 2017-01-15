@@ -44,7 +44,7 @@ class ProxyLogicIdentifierGetterTest extends PHPUnit_Framework_TestCase
     {
         $className      = $metadata->getName();
         $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\\' . $className;
-        $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy', true);
+        $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
         $proxyFileName  = $proxyGenerator->getProxyFileName($className);
 
         if (! class_exists($proxyClassName, false)) {
