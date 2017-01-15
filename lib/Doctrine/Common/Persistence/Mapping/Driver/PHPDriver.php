@@ -42,7 +42,7 @@ class PHPDriver extends FileDriver
     /**
      * {@inheritDoc}
      */
-    public function __construct($locator, $fileExtension = null)
+    public function __construct($locator)
     {
         parent::__construct($locator, '.php');
     }
