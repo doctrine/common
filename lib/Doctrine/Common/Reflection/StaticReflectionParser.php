@@ -51,6 +51,13 @@ class StaticReflectionParser implements ReflectionProviderInterface
     protected $classAnnotationOptimize;
 
     /**
+     * A ClassFinder object which finds the class.
+     *
+     * @var ClassFinderInterface
+     */
+    protected $finder;
+
+    /**
      * Whether the parser has run.
      *
      * @var boolean
@@ -74,7 +81,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
     /**
      * The docComment of the class.
      *
-     * @var string
+     * @var mixed[]
      */
     protected $docComment = [
         'class' => '',

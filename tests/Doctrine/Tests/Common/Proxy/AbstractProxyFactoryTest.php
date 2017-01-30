@@ -17,7 +17,7 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
     public function testGenerateProxyClasses()
     {
         $metadata       = $this->createMock(ClassMetadata::class);
-        $proxyGenerator = $this->createMock(ProxyGenerator::class, [], [], '', false);
+        $proxyGenerator = $this->createMock(ProxyGenerator::class);
 
         $proxyGenerator
             ->expects($this->once())
@@ -48,7 +48,7 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
         $metadata        = $this->createMock(ClassMetadata::class);
         $proxy           = $this->createMock(Proxy::class);
         $definition      = new ProxyDefinition(get_class($proxy), [], [], null, null);
-        $proxyGenerator  = $this->createMock(ProxyGenerator::class, [], [], '', false);
+        $proxyGenerator  = $this->createMock(ProxyGenerator::class);
         $metadataFactory = $this->createMock(ClassMetadataFactory::class);
 
         $metadataFactory
@@ -78,7 +78,7 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
         /* @var $proxy \PHPUnit_Framework_MockObject_MockObject|Proxy */
         $proxy           = $this->createMock(Proxy::class);
         $definition      = new ProxyDefinition(get_class($proxy), [], [], null, null);
-        $proxyGenerator  = $this->createMock(ProxyGenerator::class, [], [], '', false);
+        $proxyGenerator  = $this->createMock(ProxyGenerator::class);
         $metadataFactory = $this->createMock(ClassMetadataFactory::class);
 
         $metadataFactory
@@ -133,7 +133,7 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
         $metadata        = $this->createMock(ClassMetadata::class);
         $proxy           = $this->createMock(Proxy::class);
         $definition      = new ProxyDefinition(get_class($proxy), ['missingKey'], [], null, null);
-        $proxyGenerator  = $this->createMock(ProxyGenerator::class, [], [], '', false);
+        $proxyGenerator  = $this->createMock(ProxyGenerator::class);
         $metadataFactory = $this->createMock(ClassMetadataFactory::class);
 
         $metadataFactory

@@ -1,0 +1,12 @@
+includes:
+    - phpstan.neon
+
+parameters:
+    excludes_analyse:
+        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/IterableTypeHintClass.php
+        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/LazyLoadableObjectWithNullableTypehints.php
+        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/LazyLoadableObjectWithVoid.php
+        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/NullableTypeHintsClass.php
+        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/Php71NullableDefaultedNonOptionalHintClass.php
+        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/VoidReturnTypeClass.php
+        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyGeneratorTest.php

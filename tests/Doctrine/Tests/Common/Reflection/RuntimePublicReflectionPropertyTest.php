@@ -78,7 +78,7 @@ class RuntimePublicReflectionPropertyTestProxyMock implements Proxy
     private $initializer     = null;
 
     /**
-     * @var \Closure|null
+     * @var bool
      */
     private $initialized     = false;
 

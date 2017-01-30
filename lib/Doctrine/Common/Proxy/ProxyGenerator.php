@@ -917,7 +917,6 @@ EOT;
                 $parameterDefinition .= '...';
             }
 
-            $parameters[]     = '$' . $param->getName();
             $parameterDefinition .= '$' . $param->getName();
 
             if ($param->isDefaultValueAvailable()) {

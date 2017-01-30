@@ -87,7 +87,7 @@ class ClassUtils
      *
      * @param object $object
      *
-     * @return \ReflectionObject
+     * @return \ReflectionClass
      */
     public static function newReflectionObject($object)
     {

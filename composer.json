@@ -28,6 +28,11 @@
             "Doctrine\\Common\\": "lib/Doctrine/Common"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Doctrine\\Tests\\": "tests/Doctrine/Tests"
+        }
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "2.8.x-dev"

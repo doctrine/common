@@ -150,6 +150,7 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
         /* @var $metadata ClassMetadata */
         $metadata = $this->createMock(ClassMetadata::class);
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|\stdClass $fallbackCallback */
         $fallbackCallback = $this->getMockBuilder(\stdClass::class)->setMethods(['__invoke'])->getMock();
 
         $fallbackCallback->expects(self::any())->method('__invoke')->willReturn($metadata);
