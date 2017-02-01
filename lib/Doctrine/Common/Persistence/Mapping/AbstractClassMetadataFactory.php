@@ -291,7 +291,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
      * Loads the metadata of the class in question and all it's ancestors whose metadata
      * is still not loaded.
      *
-     * Important: The class $name does not necesarily exist at this point here.
+     * Important: The class $name does not necessarily exist at this point here.
      * Scenarios in a code-generation setup might have access to XML/YAML
      * Mapping files without the actual PHP code existing here. That is why the
      * {@see Doctrine\Common\Persistence\Mapping\ReflectionService} interface
