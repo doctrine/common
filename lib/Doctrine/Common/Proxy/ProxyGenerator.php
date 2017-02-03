@@ -256,10 +256,13 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
      * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class    Metadata for the original class.
      * @param string|bool                                        $fileName Filename (full path) for the generated class. If none is given, eval() is used.
      *
+     * @throws InvalidArgumentException
      * @throws UnexpectedValueException
      */
     public function generateProxyClass(ClassMetadata $class, $fileName = false)
     {
+        $this->verifyClassCanBeProxied($class);
+
         preg_match_all('(<([a-zA-Z]+)>)', $this->proxyClassTemplate, $placeholderMatches);
 
         $placeholderMatches = array_combine($placeholderMatches[0], $placeholderMatches[1]);
@@ -304,6 +307,22 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
         file_put_contents($tmpFileName, $proxyCode);
         @chmod($tmpFileName, 0664);
         rename($tmpFileName, $fileName);
+    }
+
+    /**
+     * @param ClassMetadata $class
+     *
+     * @throws InvalidArgumentException
+     */
+    private function verifyClassCanBeProxied(ClassMetadata $class)
+    {
+        if ($class->getReflectionClass()->isFinal()) {
+            throw InvalidArgumentException::classMustNotBeFinal($class->getName());
+        }
+
+        if ($class->getReflectionClass()->isAbstract()) {
+            throw InvalidArgumentException::classMustNotBeAbstract($class->getName());
+        }
     }
 
     /**
