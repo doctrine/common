@@ -42,15 +42,15 @@ class ObjectManagerDecoratorTest extends \PHPUnit_Framework_TestCase
 
         $methods = [];
         foreach ($class->getMethods() as $method) {
+            $isVoidMethod = in_array($method->getName(), $voidMethods, true);
             if ($method->getNumberOfRequiredParameters() === 0) {
-               $methods[] = [$method->getName(), []];
+               $methods[] = [$method->getName(), [], $isVoidMethod];
             } elseif ($method->getNumberOfRequiredParameters() > 0) {
-                $methods[] = [$method->getName(), array_fill(0, $method->getNumberOfRequiredParameters(), 'req') ?: []];
+                $methods[] = [$method->getName(), array_fill(0, $method->getNumberOfRequiredParameters(), 'req') ?: [], $isVoidMethod];
             }
             if ($method->getNumberOfParameters() != $method->getNumberOfRequiredParameters()) {
-                $methods[] = [$method->getName(), array_fill(0, $method->getNumberOfParameters(), 'all') ?: []];
+                $methods[] = [$method->getName(), array_fill(0, $method->getNumberOfParameters(), 'all') ?: [], $isVoidMethod];
             }
-            $methods[] = in_array($method->getName(), $voidMethods, true);
         }
 
         return $methods;
@@ -61,7 +61,7 @@ class ObjectManagerDecoratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testAllMethodCallsAreDelegatedToTheWrappedInstance($method, array $parameters, $isVoidMethod)
     {
-        $returnedValue = $isVoidMethod ? 'INNER VALUE FROM ' . $method : null;
+        $returnedValue = $isVoidMethod ? null : 'INNER VALUE FROM ' . $method;
         $stub = $this->wrapped
             ->expects($this->once())
             ->method($method)
