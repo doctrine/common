@@ -426,6 +426,24 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertContains("eval()'d code", $reflClass->getFileName());
     }
 
+    public function testAbstractClassThrowsException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unable to create a proxy for an abstract class "' . AbstractClass::class . '".');
+
+        $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
+        $proxyGenerator->generateProxyClass($this->createClassMetadata(AbstractClass::class, []));
+    }
+
+    public function testFinalClassThrowsException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unable to create a proxy for a final class "' . FinalClass::class . '".');
+
+        $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
+        $proxyGenerator->generateProxyClass($this->createClassMetadata(FinalClass::class, []));
+    }
+
     /**
      * @param       $className
      * @param array $ids
