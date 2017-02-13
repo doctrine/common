@@ -102,53 +102,6 @@ class StaticReflectionClass extends ReflectionClass
      */
     public function __call($name, $arguments)
     {
-        // List of unsupported methods. __call() is used so that PHP can change the signature of these methods without
-        // breaking this class. For example, https://github.com/php/php-src/pull/2363.
-        $methods = [
-            'export',
-            'getConstant',
-            'getConstants',
-            'getConstructor',
-            'getDefaultProperties',
-            'getEndLine',
-            'getExtension',
-            'getExtensionName',
-            'getFileName',
-            'getInterfaceNames',
-            'getInterfaces',
-            'getMethods',
-            'getModifiers',
-            'getParentClass',
-            'getProperties',
-            'getShortName',
-            'getStartLine',
-            'getStaticProperties',
-            'getStaticPropertyValue',
-            'getTraitAliases',
-            'getTraitNames',
-            'getTraits',
-            'hasConstant',
-            'hasMethod',
-            'hasProperty',
-            'implementsInterface',
-            'inNamespace',
-            'isAbstract',
-            'isCloneable',
-            'isFinal',
-            'isInstance',
-            'isInstantiable',
-            'isInterface',
-            'isInternal',
-            'isIterateable',
-            'isSubclassOf',
-            'isTrait',
-            'isUserDefined',
-            'newInstance',
-            'newInstanceArgs',
-            'newInstanceWithoutConstructor',
-            'setStaticPropertyValue'
-        ];
-
         throw new ReflectionException('Method not implemented');
     }
 
