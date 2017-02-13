@@ -88,338 +88,67 @@ class StaticReflectionClass extends ReflectionClass
     }
 
     /**
-     * {@inheritDoc}
+     * Prevents calling unsupported methods.
+     *
+     * __call() is used so that PHP can change the signature of these methods without breaking this class. For example,
+     * https://github.com/php/php-src/pull/2363.
+     *
+     * @param string $method
+     * @param array  $args
+     *
+     * @return mixed
+     *
+     * @throws \ReflectionException
      */
-    public static function export($argument, $return = false)
+    public function __call($name, $arguments)
     {
-        throw new ReflectionException('Method not implemented');
-    }
+        // List of unsupported methods. __call() is used so that PHP can change the signature of these methods without
+        // breaking this class. For example, https://github.com/php/php-src/pull/2363.
+        $methods = [
+            'export',
+            'getConstant',
+            'getConstants',
+            'getConstructor',
+            'getDefaultProperties',
+            'getEndLine',
+            'getExtension',
+            'getExtensionName',
+            'getFileName',
+            'getInterfaceNames',
+            'getInterfaces',
+            'getMethods',
+            'getModifiers',
+            'getParentClass',
+            'getProperties',
+            'getShortName',
+            'getStartLine',
+            'getStaticProperties',
+            'getStaticPropertyValue',
+            'getTraitAliases',
+            'getTraitNames',
+            'getTraits',
+            'hasConstant',
+            'hasMethod',
+            'hasProperty',
+            'implementsInterface',
+            'inNamespace',
+            'isAbstract',
+            'isCloneable',
+            'isFinal',
+            'isInstance',
+            'isInstantiable',
+            'isInterface',
+            'isInternal',
+            'isIterateable',
+            'isSubclassOf',
+            'isTrait',
+            'isUserDefined',
+            'newInstance',
+            'newInstanceArgs',
+            'newInstanceWithoutConstructor',
+            'setStaticPropertyValue'
+        ];
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getConstant($name)
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getConstants()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getConstructor()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDefaultProperties()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getEndLine()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getExtension()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getExtensionName()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getFileName()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getInterfaceNames()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getInterfaces()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getMethods($filter = null)
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getModifiers()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getParentClass()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getProperties($filter = null)
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getShortName()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getStartLine()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getStaticProperties()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getStaticPropertyValue($name, $default = '')
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getTraitAliases()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getTraitNames()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getTraits()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function hasConstant($name)
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function hasMethod($name)
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function hasProperty($name)
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function implementsInterface($interface)
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function inNamespace()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isAbstract()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isCloneable()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isFinal()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isInstance($object)
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isInstantiable()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isInterface()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isInternal()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isIterateable()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isSubclassOf($class)
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isTrait()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isUserDefined()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function newInstance($args)
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function newInstanceArgs(array $args = [])
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function newInstanceWithoutConstructor()
-    {
-        throw new ReflectionException('Method not implemented');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setStaticPropertyValue($name, $value)
-    {
         throw new ReflectionException('Method not implemented');
     }
 
