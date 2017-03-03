@@ -1031,7 +1031,7 @@ EOT;
     }
 
     /**
-     * @Param \ReflectionMethod $method
+     * @param \ReflectionMethod $method
      *
      * @return string
      */
