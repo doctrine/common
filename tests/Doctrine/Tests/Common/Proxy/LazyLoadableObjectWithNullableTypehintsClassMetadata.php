@@ -104,6 +104,14 @@ class LazyLoadableObjectWithNullableTypehintsClassMetadata implements ClassMetad
     }
 
     /**
+     * @inheritDoc
+     */
+    public function hasEmbeddedField($fieldName)
+    {
+        return false;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function isSingleValuedAssociation($fieldName)

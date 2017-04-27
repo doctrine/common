@@ -901,7 +901,8 @@ EOT;
         foreach ($class->getReflectionClass()->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
             $name = $property->getName();
 
-            if (($class->hasField($name) || $class->hasAssociation($name)) && ! $class->isIdentifier($name)) {
+            $fieldExists = $class->hasField($name) || $class->hasAssociation($name) || $class->hasEmbeddedField($name);
+            if ($fieldExists && ! $class->isIdentifier($name)) {
                 $properties[$name] = $defaultProperties[$name];
             }
         }

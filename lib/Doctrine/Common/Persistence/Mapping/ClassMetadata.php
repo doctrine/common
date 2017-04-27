@@ -80,6 +80,15 @@ interface ClassMetadata
     public function hasAssociation($fieldName);
 
     /**
+     * Checks if the given field is an embedded class for this class.
+     *
+     * @param string $fieldName
+     *
+     * @return boolean
+     */
+    public function hasEmbeddedField($fieldName);
+
+    /**
      * Checks if the given field is a mapped single valued association for this class.
      *
      * @param string $fieldName

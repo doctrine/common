@@ -161,6 +161,21 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
         $this->assertSame('loadedValue', $this->lazyObject->publicPersistentField);
     }
 
+    public function testFetchingPublicEmbeddedFieldCausesLazyLoading()
+    {
+        $test = $this;
+        $this->configureInitializerMock(
+            1,
+            [$this->lazyObject, '__get', ['publicEmbeddedField']],
+            function () use ($test) {
+                $test->setProxyValue('publicEmbeddedField', 'loadedValue');
+            }
+        );
+
+        $this->assertSame('loadedValue', $this->lazyObject->publicEmbeddedField);
+        $this->assertSame('loadedValue', $this->lazyObject->publicEmbeddedField);
+    }
+
     public function testFetchingPublicAssociationCausesLazyLoading()
     {
         $test = $this;

@@ -56,6 +56,14 @@ class LazyLoadableObjectClassMetadata implements ClassMetadata
     /**
      * @var array
      */
+    protected $embeddedClasses = [
+        'publicEmbeddedField'    => true,
+        'protectedEmbeddedField' => true,
+    ];
+
+    /**
+     * @var array
+     */
     protected $associations = [
         'publicAssociation'        => true,
         'protectedAssociation'     => true,
@@ -111,6 +119,14 @@ class LazyLoadableObjectClassMetadata implements ClassMetadata
     public function hasAssociation($fieldName)
     {
         return isset($this->associations[$fieldName]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasEmbeddedField($fieldName)
+    {
+        return isset($this->embeddedClasses[$fieldName]);
     }
 
     /**
