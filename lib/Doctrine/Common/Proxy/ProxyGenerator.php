@@ -904,7 +904,7 @@ EOT;
             $fieldExists = (
                 $class->hasField($name)
                 || $class->hasAssociation($name)
-                || (method_exists($class, 'hasEmbeddedField') && $class->hasEmbeddedField($name))
+                || (method_exists($class, 'hasEmbeddedField') && call_user_func([$class, 'hasEmbeddedField'], $name))
             );
             if ($fieldExists && ! $class->isIdentifier($name)) {
                 $properties[$name] = $defaultProperties[$name];
