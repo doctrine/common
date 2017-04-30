@@ -76,6 +76,13 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
         $this->object->getUnknown();
     }
 
+    public function testUndefinedMethod()
+    {
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage("There is no method");
+        (new TestObject)->undefinedMethod();
+    }
+
     public function testGetToOneAssociation()
     {
         $this->assertNull($this->object->getParent());

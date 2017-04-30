@@ -119,8 +119,6 @@ abstract class PersistentObject implements ObjectManagerAware
      */
     private function set($field, $args)
     {
-        $this->initializeDoctrine();
-
         if ($this->cm->hasField($field) && !$this->cm->isIdentifier($field)) {
             $this->$field = $args[0];
         } else if ($this->cm->hasAssociation($field) && $this->cm->isSingleValuedAssociation($field)) {
@@ -146,13 +144,11 @@ abstract class PersistentObject implements ObjectManagerAware
      */
     private function get($field)
     {
-        $this->initializeDoctrine();
-
         if ( $this->cm->hasField($field) || $this->cm->hasAssociation($field) ) {
             return $this->$field;
-        } else {
-            throw new \BadMethodCallException("no field with name '".$field."' exists on '".$this->cm->getName()."'");
         }
+
+        throw new \BadMethodCallException("no field with name '".$field."' exists on '".$this->cm->getName()."'");
     }
 
     /**
@@ -190,8 +186,6 @@ abstract class PersistentObject implements ObjectManagerAware
      */
     private function add($field, $args)
     {
-        $this->initializeDoctrine();
-
         if ($this->cm->hasAssociation($field) && $this->cm->isCollectionValuedAssociation($field)) {
             $targetClass = $this->cm->getAssociationTargetClass($field);
             if (!($args[0] instanceof $targetClass)) {
@@ -239,6 +233,8 @@ abstract class PersistentObject implements ObjectManagerAware
      */
     public function __call($method, $args)
     {
+        $this->initializeDoctrine();
+
         $command = substr($method, 0, 3);
         $field = lcfirst(substr($method, 3));
         if ($command == "set") {
