@@ -33,32 +33,32 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     /**
      * @var string
      */
-    private $name;
+    protected $name;
 
     /**
      * @var array
      */
-    private $connections;
+    protected $connections;
 
     /**
      * @var array
      */
-    private $managers;
+    protected $managers;
 
     /**
      * @var string
      */
-    private $defaultConnection;
+    protected $defaultConnection;
 
     /**
      * @var string
      */
-    private $defaultManager;
+    protected $defaultManager;
 
     /**
      * @var string
      */
-    private $proxyInterfaceName;
+    protected $proxyInterfaceName;
 
     /**
      * Constructor.
