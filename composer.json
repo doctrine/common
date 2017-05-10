@@ -26,7 +26,8 @@
     "autoload": {
         "psr-4": {
             "Doctrine\\Common\\": "lib/Doctrine/Common"
-        }
+        },
+        "files": [ "bootstrap.php" ]
     },
     "autoload-dev": {
         "psr-4": {
