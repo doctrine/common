@@ -55,6 +55,13 @@ abstract class AnnotationDriver implements MappingDriver
     protected $excludePaths = [];
 
     /**
+     * The paths excluded from path where to look for mapping files.
+     *
+     * @var array
+     */
+    protected $excludePaths = array();
+
+    /**
      * The file extension of mapping documents.
      *
      * @var string
@@ -228,6 +235,14 @@ abstract class AnnotationDriver implements MappingDriver
                     $exclude = str_replace('\\', '/', realpath($excludePath));
                     $current = str_replace('\\', '/', $sourceFile);
 
+                    if (strpos($current, $exclude) !== false) {
+                        continue 2;
+                    }
+                }
+
+                foreach ($this->excludePaths as $excludePath) {
+                    $exclude = str_replace('\\', '/', realpath($excludePath));
+                    $current = str_replace('\\', '/', $sourceFile);
                     if (strpos($current, $exclude) !== false) {
                         continue 2;
                     }
