@@ -119,6 +119,29 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
     }
 
     /**
+     * Forces the factory to load the metadata of all classes known to the underlying
+     * mapping driver and where the name looks like one of the pattern given.
+     *
+     * @param array $filter
+     * @return array The ClassMetadat instances of all mapped classes.
+     */
+    function getAllFilteredMetadata(array $filter)
+    {
+        if ( ! $this->initialized) {
+            $this->initialize();
+        }
+
+        $driver = $this->getDriver();
+        $metadata = array();
+        foreach ($driver->getFilteredClassNames($filter) as $className) {
+            $metadata[] = $this->getMetadataFor($className);
+        }
+
+        return $metadata;
+    }
+
+
+    /**
      * Lazy initialization of this stuff, especially the metadata driver,
      * since these are not needed at all when a metadata cache is active.
      *
