@@ -55,7 +55,7 @@ class ClassUtils
      */
     public static function getClass($object)
     {
-        return self::getRealClass(get_class($object));
+        return $object instanceof Proxy ? self::getRealClass(get_parent_class($object)) : get_class($object);
     }
 
     /**
