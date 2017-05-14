@@ -18,6 +18,4 @@ parameters:
         - '#Call to an undefined method Doctrine\\Tests\\Common\\Persistence\\TestObject#'
         - '#Access to an undefined property Doctrine\\Common\\Proxy\\Proxy::\$publicField#'
         - '#Access to an undefined property Doctrine\\Tests\\Common\\Proxy\\MagicGetByRefClass::\$nonExisting#'
-
-        # @method is not yet supported
-        - '#Call to an undefined method PHPUnit_Framework_MockObject_MockObject::method\(\)#'
+        - '#does not accept [\\a-zA-Z0-9_|]*PHPUnit_Framework_MockObject_MockObject#'
