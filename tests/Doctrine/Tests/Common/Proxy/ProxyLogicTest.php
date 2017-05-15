@@ -670,7 +670,7 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
      * @param array $callParamsMatch an ordered array of parameters to be expected
      * @param callable $callbackClosure a return callback closure
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
     protected function configureInitializerMock(
         $expectedCallCount = 0,

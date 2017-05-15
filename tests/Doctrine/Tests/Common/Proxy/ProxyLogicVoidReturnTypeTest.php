@@ -125,7 +125,7 @@ class ProxyLogicVoidReturnTypeTest extends PHPUnit_Framework_TestCase
      * @param array $callParamsMatch an ordered array of parameters to be expected
      * @param callable $callbackClosure a return callback closure
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
     private function configureInitializerMock(
         $expectedCallCount = 0,
