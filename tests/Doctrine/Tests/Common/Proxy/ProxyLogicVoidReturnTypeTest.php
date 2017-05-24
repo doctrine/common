@@ -59,10 +59,6 @@ class ProxyLogicVoidReturnTypeTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        if (PHP_VERSION_ID < 70100) {
-            $this->markTestSkipped('Void return type is only supported in PHP >= 7.1.0.');
-        }
-
         $this->proxyLoader = $loader      = $this->getMockBuilder(stdClass::class)->setMethods(['load'])->getMock();
         $this->initializerCallbackMock    = $this->getMockBuilder(stdClass::class)->setMethods(['__invoke'])->getMock();
         $this->lazyLoadableObjectMetadata = $metadata = new LazyLoadableObjectWithVoidClassMetadata();

@@ -796,7 +796,7 @@ EOT;
                 $methods .= '&';
             }
 
-            $methods .= $name . '(' . $this->buildParametersString($class, $method, $method->getParameters()) . ')';
+            $methods .= $name . '(' . $this->buildParametersString($method->getParameters()) . ')';
             $methods .= $this->getMethodReturnType($method);
             $methods .= "\n" . '    {' . "\n";
 
@@ -910,13 +910,11 @@ EOT;
     }
 
     /**
-     * @param ClassMetadata          $class
-     * @param \ReflectionMethod      $method
      * @param \ReflectionParameter[] $parameters
      *
      * @return string
      */
-    private function buildParametersString(ClassMetadata $class, \ReflectionMethod $method, array $parameters)
+    private function buildParametersString(array $parameters)
     {
         $parameterDefinitions = [];
 
@@ -924,7 +922,7 @@ EOT;
         foreach ($parameters as $param) {
             $parameterDefinition = '';
 
-            if ($parameterType = $this->getParameterType($class, $method, $param)) {
+            if ($parameterType = $this->getParameterType($param)) {
                 $parameterDefinition .= $parameterType . ' ';
             }
 
@@ -932,7 +930,7 @@ EOT;
                 $parameterDefinition .= '&';
             }
 
-            if (method_exists($param, 'isVariadic') && $param->isVariadic()) {
+            if ($param->isVariadic()) {
                 $parameterDefinition .= '...';
             }
 
@@ -955,41 +953,13 @@ EOT;
      *
      * @return string|null
      */
-    private function getParameterType(ClassMetadata $class, \ReflectionMethod $method, \ReflectionParameter $parameter)
+    private function getParameterType(\ReflectionParameter $parameter)
     {
-        if (method_exists($parameter, 'hasType')) {
-            if ( ! $parameter->hasType()) {
-                return '';
-            }
-
-            return $this->formatType($parameter->getType(), $parameter->getDeclaringFunction(), $parameter);
+        if ( ! $parameter->hasType()) {
+            return null;
         }
 
-        // For PHP 5.x, we need to pick the type hint in the old way (to be removed for PHP 7.0+)
-        if ($parameter->isArray()) {
-            return 'array';
-        }
-
-        if ($parameter->isCallable()) {
-            return 'callable';
-        }
-
-        try {
-            $parameterClass = $parameter->getClass();
-
-            if ($parameterClass) {
-                return '\\' . $parameterClass->getName();
-            }
-        } catch (\ReflectionException $previous) {
-            throw UnexpectedValueException::invalidParameterTypeHint(
-                $class->getName(),
-                $method->getName(),
-                $parameter->getName(),
-                $previous
-            );
-        }
-
-        return null;
+        return $this->formatType($parameter->getType(), $parameter->getDeclaringFunction(), $parameter);
     }
 
     /**
@@ -1018,7 +988,7 @@ EOT;
             function (\ReflectionParameter $parameter) {
                 $name = '';
 
-                if (method_exists($parameter, 'isVariadic') && $parameter->isVariadic()) {
+                if ($parameter->isVariadic()) {
                     $name .= '...';
                 }
 
@@ -1037,7 +1007,7 @@ EOT;
      */
     private function getMethodReturnType(\ReflectionMethod $method)
     {
-        if ( ! method_exists($method, 'hasReturnType') || ! $method->hasReturnType()) {
+        if ( ! $method->hasReturnType()) {
             return '';
         }
 
@@ -1051,7 +1021,7 @@ EOT;
      */
     private function shouldProxiedMethodReturn(\ReflectionMethod $method)
     {
-        if ( ! method_exists($method, 'hasReturnType') || ! $method->hasReturnType()) {
+        if ( ! $method->hasReturnType()) {
             return true;
         }
 
@@ -1070,7 +1040,7 @@ EOT;
         \ReflectionMethod $method,
         \ReflectionParameter $parameter = null
     ) {
-        $name = method_exists($type, 'getName') ? $type->getName() : (string) $type;
+        $name = (string) $type;
         $nameLower = strtolower($name);
 
         if ('self' === $nameLower) {

@@ -179,9 +179,6 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'parent::addType(...$types)'));
     }
 
-    /**
-     * @requires PHP 7.0
-     */
     public function testClassWithScalarTypeHintsOnProxiedMethods()
     {
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\ScalarTypeHintsClass', false)) {
@@ -202,9 +199,6 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'function withDefaultValueNull(int $foo = NULL)'));
     }
 
-    /**
-     * @requires PHP 7.0
-     */
     public function testClassWithReturnTypesOnProxiedMethods()
     {
         $className = ReturnTypesClass::class;
@@ -226,9 +220,6 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'function returnsInterface(): \Countable'));
     }
 
-    /**
-     * @requires PHP 7.1
-     */
     public function testClassWithNullableTypeHintsOnProxiedMethods()
     {
         $className = NullableTypeHintsClass::class;
@@ -249,9 +240,6 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'function notNullableTypeHintWithDefaultNull(int $param = NULL)'));
     }
 
-    /**
-     * @requires PHP 7.1
-     */
     public function testClassWithNullableReturnTypesOnProxiedMethods()
     {
         $className = NullableTypeHintsClass::class;
@@ -271,8 +259,6 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
 
     /**
      * @group #751
-     *
-     * @requires PHP 7.0
      */
     public function testClassWithNullableOptionalNonLastParameterOnProxiedMethods()
     {
@@ -298,8 +284,6 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
 
     /**
      * @group #751
-     *
-     * @requires PHP 7.1
      */
     public function testClassWithPhp71NullableOptionalNonLastParameterOnProxiedMethods()
     {
@@ -324,9 +308,6 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @requires PHP 7.1
-     */
     public function testClassWithVoidReturnType()
     {
         $className = VoidReturnTypeClass::class;
@@ -342,15 +323,8 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, substr_count($classCode, 'function returnsVoid(): void'));
     }
 
-    /**
-     * @requires PHP 7.0
-     */
     public function testClassWithIterableTypeHint()
     {
-        if (PHP_VERSION_ID < 70100) {
-            $this->expectException(UnexpectedValueException::class);
-        }
-
         $className = IterableTypeHintClass::class;
         if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\IterableTypeHintClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
@@ -379,9 +353,6 @@ class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
         $proxyGenerator->generateProxyClass($metadata);
     }
 
-    /**
-     * @requires PHP 7.0
-     */
     public function testClassWithInvalidReturnTypeOnProxiedMethod()
     {
         $className = InvalidReturnTypeClass::class;

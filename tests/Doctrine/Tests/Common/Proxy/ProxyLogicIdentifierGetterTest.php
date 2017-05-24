@@ -97,10 +97,6 @@ class ProxyLogicIdentifierGetterTest extends PHPUnit_Framework_TestCase
             ]
         );
 
-        if (PHP_VERSION_ID < 70100) {
-            return $methods;
-        }
-
         return array_merge(
             $methods,
             [
