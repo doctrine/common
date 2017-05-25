@@ -67,6 +67,12 @@ class LazyLoadableObject
      */
     protected $protectedAssociation         = 'protectedAssociationValue';
 
+    /** @var string */
+    public $publicEmbeddedField             = 'publicEmbeddedField';
+
+    /** @var string */
+    protected $protectedEmbeddedField       = 'protectedEmbeddedField';
+
     /**
      * @return string
      */
@@ -89,6 +95,14 @@ class LazyLoadableObject
     public function getProtectedAssociation()
     {
         return $this->protectedAssociation;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProtectedEmbeddedField()
+    {
+        return $this->protectedEmbeddedField;
     }
 
     /**

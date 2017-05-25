@@ -152,6 +152,7 @@ class TestObject extends PersistentObject
     protected $name = 'beberlei';
     protected $parent;
     protected $children;
+    protected $embedded;
 }
 
 class TestObjectMetadata implements ClassMetadata
@@ -202,6 +203,11 @@ class TestObjectMetadata implements ClassMetadata
     public function hasAssociation($fieldName)
     {
         return in_array($fieldName, ['parent', 'children']);
+    }
+
+    public function hasEmbeddedField($fieldName)
+    {
+        return in_array($fieldName, ['embedded']);
     }
 
     public function hasField($fieldName)

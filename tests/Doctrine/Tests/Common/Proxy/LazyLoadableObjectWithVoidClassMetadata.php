@@ -87,6 +87,14 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     }
 
     /**
+     * @inheritDoc
+     */
+    public function hasEmbeddedField($fieldName)
+    {
+        return false;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function isSingleValuedAssociation($fieldName)
