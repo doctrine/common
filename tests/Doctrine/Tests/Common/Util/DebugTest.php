@@ -17,6 +17,28 @@ class DebugTest extends DoctrineTestCase
         $this->assertEquals( "stdClass", $var->__CLASS__ );
     }
 
+    public function testExportObjectWithReference()
+    {
+        $foo = 'bar';
+        $bar = ['foo' => & $foo];
+        $baz = (object) $bar;
+
+        $var = Debug::export($baz, 2);
+        $baz->foo = 'tab';
+
+        $this->assertEquals('bar', $var->foo);
+        $this->assertEquals('tab', $bar['foo']);
+    }
+
+    public function testExportArray()
+    {
+        $array = ['a' => 'b', 'b' => ['c', 'd' => ['e', 'f']]];
+        $var = Debug::export($array, 2);
+        $expected = $array;
+        $expected['b']['d'] = 'Array(2)';
+        $this->assertEquals($expected, $var);
+    }
+
     public function testExportDateTime()
     {
         $obj = new \DateTime('2010-10-10 10:10:10', new \DateTimeZone('UTC'));

@@ -144,41 +144,26 @@ final class Debug
 
     /**
      * Fill the $return variable with class attributes
+     * Based on obj2array function from {@see http://php.net/manual/en/function.get-object-vars.php#47075}
      *
      * @param object   $var
-     * @param stdClass $return
+     * @param \stdClass $return
      * @param int      $maxDepth
      *
      * @return mixed
      */
     private static function fillReturnWithClassAttributes($var, \stdClass $return, $maxDepth)
     {
-        $reflClass = ClassUtils::newReflectionObject($var);
-        $parsedAttributes = array();
-        do {
-            $currentClassName = $reflClass->getName();
+        $clone = (array) $var;
 
-            foreach ($reflClass->getProperties() as $reflProperty) {
-                $attributeKey = $reflProperty->isPrivate() ? $currentClassName . '#' : '';
-                $attributeKey .= $reflProperty->getName();
-
-                if (isset($parsedAttributes[$attributeKey])) {
-                    continue;
-                }
-
-                $parsedAttributes[$attributeKey] = true;
-
-                $name =
-                      $reflProperty->getName()
-                    . ($return->__CLASS__ !== $currentClassName || $reflProperty->isPrivate() ? ':' . $currentClassName : '')
-                    . ($reflProperty->isPrivate() ? ':private' : '')
-                    . ($reflProperty->isProtected() ? ':protected' : '')
-                ;
-
-                $reflProperty->setAccessible(true);
-                $return->$name = self::export($reflProperty->getValue($var), $maxDepth - 1);
+        foreach (array_keys($clone) as $key) {
+            $aux = explode("\0", $key);
+            $name = end($aux);
+            if ($aux[0] === '') {
+                $name.= ':' . ($aux[1] === '*' ? 'protected' : $aux[1].':private');
             }
-        } while ($reflClass = $reflClass->getParentClass());
+            $return->$name = self::export($clone[$key], $maxDepth - 1);;
+        }
 
         return $return;
     }
