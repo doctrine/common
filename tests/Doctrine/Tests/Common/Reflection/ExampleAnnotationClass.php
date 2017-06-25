@@ -9,6 +9,7 @@ use Doctrine\Common\Annotations\Annotation;
  *   key = "value"
  * )
  */
+const foo = \stdClass::class;
 class ExampleAnnotationClass {
-
+    const foo = \stdClass::class;
 } 

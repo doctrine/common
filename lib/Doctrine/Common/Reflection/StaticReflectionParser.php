@@ -153,8 +153,10 @@ class StaticReflectionParser implements ReflectionProviderInterface
                     $docComment = $token[1];
                     break;
                 case T_CLASS:
-                    $this->docComment['class'] = $docComment;
-                    $docComment = '';
+                    if ($docComment) {
+                        $this->docComment['class'] = $docComment;
+                        $docComment = '';
+                    }
                     break;
                 case T_VAR:
                 case T_PRIVATE:
