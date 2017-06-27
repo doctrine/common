@@ -245,7 +245,7 @@ class ClassLoader
                     } else if ($loader[0]->{$loader[1]}($className)) {
                         return true;
                     }
-                } else if ($loader[0]::$loader[1]($className)) { // array('ClassName', 'methodName')
+                } else if ($loader[0]::{$loader[1]}($className)) { // array('ClassName', 'methodName')
                     return true;
                 }
             } else if ($loader instanceof \Closure) { // function($className) {..}
