@@ -53,7 +53,7 @@ final class Debug
      *
      * @return string
      */
-    public static function dump($var, $maxDepth = 2, $stripTags = true, $echo = true)
+    public static function dump($var, int $maxDepth = 2, bool $stripTags = true, bool $echo = true): string
     {
         $html = ini_get('html_errors');
 
@@ -91,7 +91,7 @@ final class Debug
      *
      * @return mixed
      */
-    public static function export($var, $maxDepth)
+    public static function export($var, int $maxDepth)
     {
         $return = null;
         $isObj = is_object($var);
@@ -152,7 +152,7 @@ final class Debug
      *
      * @return mixed
      */
-    private static function fillReturnWithClassAttributes($var, \stdClass $return, $maxDepth)
+    private static function fillReturnWithClassAttributes(object $var, \stdClass $return, int $maxDepth)
     {
         $clone = (array) $var;
 
@@ -175,7 +175,7 @@ final class Debug
      *
      * @return string
      */
-    public static function toString($obj)
+    public static function toString(object $obj): string
     {
         return method_exists($obj, '__toString') ? (string) $obj : get_class($obj) . '@' . spl_object_hash($obj);
     }
