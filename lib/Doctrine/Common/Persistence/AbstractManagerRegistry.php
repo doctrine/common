@@ -70,8 +70,14 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
      * @param string $defaultManager
      * @param string $proxyInterfaceName
      */
-    public function __construct($name, array $connections, array $managers, $defaultConnection, $defaultManager, $proxyInterfaceName)
-    {
+    public function __construct(
+        string $name,
+        array $connections,
+        array $managers,
+        string $defaultConnection,
+        string $defaultManager,
+        string $proxyInterfaceName
+    ) {
         $this->name = $name;
         $this->connections = $connections;
         $this->managers = $managers;
@@ -89,7 +95,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
      *
      * @return object The instance of the given service.
      */
-    abstract protected function getService($name);
+    abstract protected function getService(string $name): object;
 
     /**
      * Resets the given services.
@@ -100,14 +106,14 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
      *
      * @return void
      */
-    abstract protected function resetService($name);
+    abstract protected function resetService(string $name): void;
 
     /**
      * Gets the name of the registry.
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -115,7 +121,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     /**
      * {@inheritdoc}
      */
-    public function getConnection($name = null)
+    public function getConnection(?string $name = null): object
     {
         if (null === $name) {
             $name = $this->defaultConnection;
@@ -131,7 +137,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     /**
      * {@inheritdoc}
      */
-    public function getConnectionNames()
+    public function getConnectionNames(): array
     {
         return $this->connections;
     }
@@ -139,7 +145,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     /**
      * {@inheritdoc}
      */
-    public function getConnections()
+    public function getConnections(): array
     {
         $connections = [];
         foreach ($this->connections as $name => $id) {
@@ -152,7 +158,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     /**
      * {@inheritdoc}
      */
-    public function getDefaultConnectionName()
+    public function getDefaultConnectionName(): string
     {
         return $this->defaultConnection;
     }
@@ -160,7 +166,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     /**
      * {@inheritdoc}
      */
-    public function getDefaultManagerName()
+    public function getDefaultManagerName(): string
     {
         return $this->defaultManager;
     }
@@ -170,7 +176,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
      *
      * @throws \InvalidArgumentException
      */
-    public function getManager($name = null)
+    public function getManager(?string $name = null): ObjectManager
     {
         if (null === $name) {
             $name = $this->defaultManager;
@@ -186,7 +192,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     /**
      * {@inheritdoc}
      */
-    public function getManagerForClass($class)
+    public function getManagerForClass(string $class): ?ObjectManager
     {
         // Check for namespace alias
         if (strpos($class, ':') !== false) {
@@ -211,12 +217,14 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
                 return $manager;
             }
         }
+
+        return null;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getManagerNames()
+    public function getManagerNames(): array
     {
         return $this->managers;
     }
@@ -224,7 +232,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     /**
      * {@inheritdoc}
      */
-    public function getManagers()
+    public function getManagers(): array
     {
         $dms = [];
         foreach ($this->managers as $name => $id) {
@@ -237,7 +245,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     /**
      * {@inheritdoc}
      */
-    public function getRepository($persistentObjectName, $persistentManagerName = null)
+    public function getRepository(string $persistentObjectName, ?string $persistentManagerName = null): ObjectRepository
     {
         return $this->getManager($persistentManagerName)->getRepository($persistentObjectName);
     }
@@ -245,7 +253,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     /**
      * {@inheritdoc}
      */
-    public function resetManager($name = null)
+    public function resetManager(?string $name = null): ObjectManager
     {
         if (null === $name) {
             $name = $this->defaultManager;

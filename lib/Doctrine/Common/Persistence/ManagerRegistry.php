@@ -107,5 +107,5 @@ interface ManagerRegistry extends ConnectionRegistry
      *
      * @return \Doctrine\Common\Persistence\ObjectManager|null
      */
-    public function getManagerForClass($class): ?ObjectManager;
+    public function getManagerForClass(string $class): ?ObjectManager;
 }

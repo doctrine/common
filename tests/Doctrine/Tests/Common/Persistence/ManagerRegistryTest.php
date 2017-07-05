@@ -104,7 +104,7 @@ class TestManagerRegistry extends AbstractManagerRegistry
         parent::__construct($name, $connections, $managers, $defaultConnection, $defaultManager, $proxyInterfaceName);
     }
 
-    protected function getService($name)
+    protected function getService(string $name): object
     {
         if (!isset($this->services[$name])) {
             $this->services[$name] = call_user_func($this->managerFactory);
@@ -113,12 +113,12 @@ class TestManagerRegistry extends AbstractManagerRegistry
         return $this->services[$name];
     }
 
-    protected function resetService($name)
+    protected function resetService(string $name): void
     {
         unset($this->services[$name]);
     }
 
-    public function getAliasNamespace($alias)
+    public function getAliasNamespace(string $alias): string
     {
         return __NAMESPACE__;
     }
