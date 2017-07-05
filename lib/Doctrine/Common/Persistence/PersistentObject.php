@@ -73,7 +73,7 @@ abstract class PersistentObject implements ObjectManagerAware
      *
      * @return void
      */
-    static public function setObjectManager(ObjectManager $objectManager = null)
+    static public function setObjectManager(?ObjectManager $objectManager = null): void
     {
         self::$objectManager = $objectManager;
     }
@@ -81,7 +81,7 @@ abstract class PersistentObject implements ObjectManagerAware
     /**
      * @return ObjectManager|null
      */
-    static public function getObjectManager()
+    static public function getObjectManager(): ?ObjectManager
     {
         return self::$objectManager;
     }
@@ -96,7 +96,7 @@ abstract class PersistentObject implements ObjectManagerAware
      *
      * @throws \RuntimeException
      */
-    public function injectObjectManager(ObjectManager $objectManager, ClassMetadata $classMetadata)
+    public function injectObjectManager(ObjectManager $objectManager, ClassMetadata $classMetadata): void
     {
         if ($objectManager !== self::$objectManager) {
             throw new \RuntimeException("Trying to use PersistentObject with different ObjectManager instances. " .
@@ -117,7 +117,7 @@ abstract class PersistentObject implements ObjectManagerAware
      * @throws \BadMethodCallException   When no persistent field exists by that name.
      * @throws \InvalidArgumentException When the wrong target object type is passed to an association.
      */
-    private function set($field, $args)
+    private function set(string $field, array $args): void
     {
         $this->initializeDoctrine();
 
@@ -144,7 +144,7 @@ abstract class PersistentObject implements ObjectManagerAware
      *
      * @throws \BadMethodCallException When no persistent field exists by that name.
      */
-    private function get($field)
+    private function get(string $field)
     {
         $this->initializeDoctrine();
 
@@ -158,13 +158,13 @@ abstract class PersistentObject implements ObjectManagerAware
     /**
      * If this is an inverse side association, completes the owning side.
      *
-     * @param string        $field
-     * @param ClassMetadata $targetClass
-     * @param object        $targetObject
+     * @param string      $field
+     * @param string      $targetClass
+     * @param object|null $targetObject
      *
      * @return void
      */
-    private function completeOwningSide($field, $targetClass, $targetObject)
+    private function completeOwningSide(string $field, string $targetClass, ?object $targetObject): void
     {
         // add this object on the owning side as well, for obvious infinite recursion
         // reasons this is only done when called on the inverse side.
@@ -188,7 +188,7 @@ abstract class PersistentObject implements ObjectManagerAware
      * @throws \BadMethodCallException
      * @throws \InvalidArgumentException
      */
-    private function add($field, $args)
+    private function add(string $field, array $args): void
     {
         $this->initializeDoctrine();
 
@@ -214,7 +214,7 @@ abstract class PersistentObject implements ObjectManagerAware
      *
      * @throws \RuntimeException
      */
-    private function initializeDoctrine()
+    private function initializeDoctrine(): void
     {
         if ($this->cm !== null) {
             return;
@@ -237,7 +237,7 @@ abstract class PersistentObject implements ObjectManagerAware
      *
      * @throws \BadMethodCallException
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         $command = substr($method, 0, 3);
         $field = lcfirst(substr($method, 3));
