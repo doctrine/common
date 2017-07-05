@@ -47,5 +47,5 @@ interface ObjectManagerAware
      *
      * @return void
      */
-    public function injectObjectManager(ObjectManager $objectManager, ClassMetadata $classMetadata);
+    public function injectObjectManager(ObjectManager $objectManager, ClassMetadata $classMetadata): void;
 }
