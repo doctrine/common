@@ -38,5 +38,5 @@ interface NotifyPropertyChanged
      *
      * @return void
      */
-    public function addPropertyChangedListener(PropertyChangedListener $listener);
+    public function addPropertyChangedListener(PropertyChangedListener $listener): void;
 }
