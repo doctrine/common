@@ -81,7 +81,7 @@ class EventManagerTest extends \Doctrine\Tests\DoctrineTestCase
 
 class TestEventSubscriber implements \Doctrine\Common\EventSubscriber
 {
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return ['preFoo', 'postFoo'];
     }
