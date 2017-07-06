@@ -58,7 +58,7 @@ class LoadClassMetadataEventArgs extends EventArgs
      *
      * @return ClassMetadata
      */
-    public function getClassMetadata()
+    public function getClassMetadata(): ClassMetadata
     {
         return $this->classMetadata;
     }
@@ -68,7 +68,7 @@ class LoadClassMetadataEventArgs extends EventArgs
      *
      * @return ObjectManager
      */
-    public function getObjectManager()
+    public function getObjectManager(): ObjectManager
     {
         return $this->objectManager;
     }
