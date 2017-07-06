@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\Reflection;
 
 use Doctrine\Common\Annotations\Annotation;

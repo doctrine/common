@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Util;
 
 use Doctrine\Common\Collections\Collection;
@@ -58,7 +60,7 @@ final class Debug
         $html = ini_get('html_errors');
 
         if ($html !== true) {
-            ini_set('html_errors', true);
+            ini_set('html_errors', '1');
         }
 
         if (extension_loaded('xdebug')) {
@@ -157,7 +159,7 @@ final class Debug
         $clone = (array) $var;
 
         foreach (array_keys($clone) as $key) {
-            $aux = explode("\0", $key);
+            $aux = explode("\0", (string) $key);
             $name = end($aux);
             if ($aux[0] === '') {
                 $name.= ':' . ($aux[1] === '*' ? 'protected' : $aux[1].':private');

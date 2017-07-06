@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\Reflection;
 
 use PHPUnit_Framework_TestCase;
