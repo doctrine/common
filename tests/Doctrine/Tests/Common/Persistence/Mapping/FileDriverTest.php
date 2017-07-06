@@ -147,7 +147,7 @@ class FileDriverTest extends DoctrineTestCase
 
 class TestFileDriver extends FileDriver
 {
-    protected function loadMappingFile($file)
+    protected function loadMappingFile(string $file): array
     {
         if (strpos($file, "global.yml") !== false) {
             return ['stdGlobal' => 'stdGlobal', 'stdGlobal2' => 'stdGlobal2'];
@@ -155,7 +155,7 @@ class TestFileDriver extends FileDriver
         return ['stdClass' => 'stdClass'];
     }
 
-    public function loadMetadataForClass($className, ClassMetadata $metadata)
+    public function loadMetadataForClass(string $className, ClassMetadata $metadata): void
     {
 
     }

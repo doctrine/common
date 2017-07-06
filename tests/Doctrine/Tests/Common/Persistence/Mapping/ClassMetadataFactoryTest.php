@@ -175,44 +175,44 @@ class TestClassMetadataFactory extends AbstractClassMetadataFactory
         $this->metadata = $metadata;
     }
 
-    protected function doLoadMetadata($class, $parent, $rootEntityFound, array $nonSuperclassParents)
+    protected function doLoadMetadata(ClassMetadata $class, ?ClassMetadata $parent, bool $rootEntityFound, array $nonSuperclassParents): void
     {
 
     }
 
-    protected function getFqcnFromAlias($namespaceAlias, $simpleClassName)
+    protected function getFqcnFromAlias(string $namespaceAlias, string $simpleClassName): string
     {
         return __NAMESPACE__ . '\\' . $simpleClassName;
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
 
     }
 
-    protected function newClassMetadataInstance($className)
+    protected function newClassMetadataInstance(string $className): ClassMetadata
     {
         return $this->metadata;
     }
 
-    protected function getDriver()
+    protected function getDriver(): MappingDriver
     {
         return $this->driver;
     }
-    protected function wakeupReflection(ClassMetadata $class, ReflectionService $reflService)
+    protected function wakeupReflection(ClassMetadata $class, ReflectionService $reflService): void
     {
     }
 
-    protected function initializeReflection(ClassMetadata $class, ReflectionService $reflService)
+    protected function initializeReflection(ClassMetadata $class, ReflectionService $reflService): void
     {
     }
 
-    protected function isEntity(ClassMetadata $class)
+    protected function isEntity(ClassMetadata $class): bool
     {
         return true;
     }
 
-    protected function onNotFoundMetadata($className)
+    protected function onNotFoundMetadata(string $className): ?ClassMetadata
     {
         if (! $fallback = $this->fallbackCallback) {
             return null;
@@ -221,7 +221,7 @@ class TestClassMetadataFactory extends AbstractClassMetadataFactory
         return $fallback();
     }
 
-    public function isTransient($class)
+    public function isTransient(string $class): bool
     {
         return true;
     }

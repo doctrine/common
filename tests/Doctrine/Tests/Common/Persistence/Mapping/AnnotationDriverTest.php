@@ -25,7 +25,7 @@ class SimpleAnnotationDriver extends AnnotationDriver
 {
     protected $entityAnnotationClasses = [Entity::class => true];
 
-    public function loadMetadataForClass($className, ClassMetadata $metadata)
+    public function loadMetadataForClass(string $className, ClassMetadata $metadata): void
     {
     }
 }
