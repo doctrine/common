@@ -37,7 +37,7 @@ class Psr0FindFile implements ClassFinderInterface
      * @param array $prefixes An array of prefixes. Each key is a PHP namespace and each value is
      *                        a list of directories.
      */
-    public function __construct($prefixes)
+    public function __construct(array $prefixes)
     {
         $this->prefixes = $prefixes;
     }
@@ -45,7 +45,7 @@ class Psr0FindFile implements ClassFinderInterface
     /**
      * {@inheritDoc}
      */
-    public function findFile($class)
+    public function findFile(string $class): ?string
     {
         $lastNsPos = strrpos($class, '\\');
         if ('\\' == $class[0]) {
