@@ -37,7 +37,7 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->getReflectionClass()->getName();
     }
@@ -45,7 +45,7 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function getIdentifier()
+    public function getIdentifier(): array
     {
         return [];
     }
@@ -53,7 +53,7 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function getReflectionClass()
+    public function getReflectionClass(): \ReflectionClass
     {
         if (null === $this->reflectionClass) {
             $this->reflectionClass = new \ReflectionClass(__NAMESPACE__ . '\LazyLoadableObjectWithVoid');
@@ -65,7 +65,7 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function isIdentifier($fieldName)
+    public function isIdentifier(string $fieldName): bool
     {
         return false;
     }
@@ -73,7 +73,7 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function hasField($fieldName)
+    public function hasField(string $fieldName): bool
     {
         return false;
     }
@@ -81,7 +81,7 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function hasAssociation($fieldName)
+    public function hasAssociation(string $fieldName): bool
     {
         return false;
     }
@@ -89,7 +89,7 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function isSingleValuedAssociation($fieldName)
+    public function isSingleValuedAssociation(string $fieldName): bool
     {
         throw new \BadMethodCallException('not implemented');
     }
@@ -97,7 +97,7 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function isCollectionValuedAssociation($fieldName)
+    public function isCollectionValuedAssociation(string $fieldName): bool
     {
         throw new \BadMethodCallException('not implemented');
     }
@@ -105,7 +105,7 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function getFieldNames()
+    public function getFieldNames(): array
     {
         return [];
     }
@@ -113,7 +113,7 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function getIdentifierFieldNames()
+    public function getIdentifierFieldNames(): array
     {
         return $this->getIdentifier();
     }
@@ -121,7 +121,7 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function getAssociationNames()
+    public function getAssociationNames(): array
     {
         return [];
     }
@@ -129,7 +129,7 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function getTypeOfField($fieldName)
+    public function getTypeOfField(string $fieldName): string
     {
         return 'integer';
     }
@@ -137,7 +137,7 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function getAssociationTargetClass($assocName)
+    public function getAssociationTargetClass(string $assocName): string
     {
         throw new \BadMethodCallException('not implemented');
     }
@@ -145,7 +145,7 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function isAssociationInverseSide($assocName)
+    public function isAssociationInverseSide(string $assocName): bool
     {
         throw new \BadMethodCallException('not implemented');
     }
@@ -153,7 +153,7 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function getAssociationMappedByTargetField($assocName)
+    public function getAssociationMappedByTargetField(string $assocName): string
     {
         throw new \BadMethodCallException('not implemented');
     }
@@ -161,7 +161,7 @@ class LazyLoadableObjectWithVoidClassMetadata implements ClassMetadata
     /**
      * {@inheritDoc}
      */
-    public function getIdentifierValues($object)
+    public function getIdentifierValues(object $object): array
     {
         throw new \BadMethodCallException('not implemented');
     }

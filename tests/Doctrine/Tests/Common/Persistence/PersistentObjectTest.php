@@ -157,84 +157,84 @@ class TestObject extends PersistentObject
 class TestObjectMetadata implements ClassMetadata
 {
 
-    public function getAssociationMappedByTargetField($assocName)
+    public function getAssociationMappedByTargetField(string $assocName): string
     {
         $assoc = ['children' => 'parent'];
         return $assoc[$assocName];
     }
 
-    public function getAssociationNames()
+    public function getAssociationNames(): array
     {
         return ['parent', 'children'];
     }
 
-    public function getAssociationTargetClass($assocName)
+    public function getAssociationTargetClass(string $assocName): string
     {
         return __NAMESPACE__ . '\TestObject';
     }
 
-    public function getFieldNames()
+    public function getFieldNames(): array
     {
         return ['id', 'name'];
     }
 
-    public function getIdentifier()
+    public function getIdentifier(): array
     {
         return ['id'];
     }
 
-    public function getName()
+    public function getName(): string
     {
         return __NAMESPACE__ . '\TestObject';
     }
 
-    public function getReflectionClass()
+    public function getReflectionClass(): \ReflectionClass
     {
         return new \ReflectionClass($this->getName());
     }
 
-    public function getTypeOfField($fieldName)
+    public function getTypeOfField(string $fieldName): string
     {
         $types = ['id' => 'integer', 'name' => 'string'];
         return $types[$fieldName];
     }
 
-    public function hasAssociation($fieldName)
+    public function hasAssociation(string $fieldName): bool
     {
         return in_array($fieldName, ['parent', 'children']);
     }
 
-    public function hasField($fieldName)
+    public function hasField(string $fieldName): bool
     {
         return in_array($fieldName, ['id', 'name']);
     }
 
-    public function isAssociationInverseSide($assocName)
+    public function isAssociationInverseSide(string $assocName): bool
     {
         return ($assocName === 'children');
     }
 
-    public function isCollectionValuedAssociation($fieldName)
+    public function isCollectionValuedAssociation(string $fieldName): bool
     {
         return ($fieldName === 'children');
     }
 
-    public function isIdentifier($fieldName)
+    public function isIdentifier(string $fieldName): bool
     {
         return $fieldName === 'id';
     }
 
-    public function isSingleValuedAssociation($fieldName)
+    public function isSingleValuedAssociation(string $fieldName): bool
     {
         return $fieldName === 'parent';
     }
 
-    public function getIdentifierValues($entity)
+    public function getIdentifierValues(object $object): array
     {
 
     }
 
-    public function getIdentifierFieldNames()
+    public function getIdentifierFieldNames(): array
     {
 
     }
