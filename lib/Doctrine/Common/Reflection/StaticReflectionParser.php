@@ -111,7 +111,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
      * @param boolean              $classAnnotationOptimize Only retrieve the class docComment.
      *                                                      Presumes there is only one statement per line.
      */
-    public function __construct($className, $finder, $classAnnotationOptimize = false)
+    public function __construct(string $className, ClassFinderInterface $finder, bool $classAnnotationOptimize = false)
     {
         $this->className = ltrim($className, '\\');
         $lastNsPos = strrpos($this->className, '\\');
@@ -130,7 +130,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
     /**
      * @return void
      */
-    protected function parse()
+    protected function parse(): void
     {
         if ($this->parsed || !$fileName = $this->finder->findFile($this->className)) {
             return;
@@ -212,7 +212,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
     /**
      * @return StaticReflectionParser
      */
-    protected function getParentStaticReflectionParser()
+    protected function getParentStaticReflectionParser(): StaticReflectionParser
     {
         if (empty($this->parentStaticReflectionParser)) {
             $this->parentStaticReflectionParser = new static($this->parentClassName, $this->finder);
@@ -224,7 +224,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
     /**
      * @return string
      */
-    public function getClassName()
+    public function getClassName(): string
     {
         return $this->className;
     }
@@ -232,7 +232,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
     /**
      * @return string
      */
-    public function getNamespaceName()
+    public function getNamespaceName(): string
     {
         return $this->namespace;
     }
@@ -240,7 +240,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function getReflectionClass()
+    public function getReflectionClass(): \ReflectionClass
     {
         return new StaticReflectionClass($this);
     }
@@ -248,7 +248,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function getReflectionMethod($methodName)
+    public function getReflectionMethod(string $methodName): \ReflectionMethod
     {
         return new StaticReflectionMethod($this, $methodName);
     }
@@ -256,7 +256,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function getReflectionProperty($propertyName)
+    public function getReflectionProperty(string $propertyName): \ReflectionProperty
     {
         return new StaticReflectionProperty($this, $propertyName);
     }
@@ -266,7 +266,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
      *
      * @return array
      */
-    public function getUseStatements()
+    public function getUseStatements(): array
     {
         $this->parse();
 
@@ -281,7 +281,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
      *
      * @return string The doc comment, empty string if none.
      */
-    public function getDocComment($type = 'class', $name = '')
+    public function getDocComment(string $type = 'class', string $name = ''): string
     {
         $this->parse();
 
@@ -298,7 +298,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
      *
      * @throws ReflectionException
      */
-    public function getStaticReflectionParserForDeclaringClass($type, $name)
+    public function getStaticReflectionParserForDeclaringClass(string $type, string $name): StaticReflectionParser
     {
         $this->parse();
         if (isset($this->docComment[$type][$name])) {
