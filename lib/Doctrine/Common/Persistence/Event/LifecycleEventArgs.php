@@ -49,7 +49,7 @@ class LifecycleEventArgs extends EventArgs
      * @param object        $object
      * @param ObjectManager $objectManager
      */
-    public function __construct($object, ObjectManager $objectManager)
+    public function __construct(object $object, ObjectManager $objectManager)
     {
         $this->object = $object;
         $this->objectManager = $objectManager;
@@ -62,7 +62,7 @@ class LifecycleEventArgs extends EventArgs
      *
      * @return object
      */
-    public function getEntity()
+    public function getEntity(): object
     {
         return $this->object;
     }
@@ -72,7 +72,7 @@ class LifecycleEventArgs extends EventArgs
      *
      * @return object
      */
-    public function getObject()
+    public function getObject(): object
     {
         return $this->object;
     }
@@ -82,7 +82,7 @@ class LifecycleEventArgs extends EventArgs
      *
      * @return ObjectManager
      */
-    public function getObjectManager()
+    public function getObjectManager(): ObjectManager
     {
         return $this->objectManager;
     }
