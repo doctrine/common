@@ -52,7 +52,7 @@ class ManagerEventArgs extends EventArgs
      *
      * @return ObjectManager
      */
-    public function getObjectManager()
+    public function getObjectManager(): ObjectManager
     {
         return $this->objectManager;
     }
