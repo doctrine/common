@@ -37,46 +37,46 @@ class RuntimeReflectionServiceTest extends \PHPUnit_Framework_TestCase
 
     public $unusedPublicProperty;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->reflectionService = new RuntimeReflectionService();
     }
 
-    public function testShortname()
+    public function testShortname(): void
     {
         $this->assertEquals("RuntimeReflectionServiceTest", $this->reflectionService->getClassShortName(__CLASS__));
     }
 
-    public function testClassNamespaceName()
+    public function testClassNamespaceName(): void
     {
         $this->assertEquals('Doctrine\Tests\Common\Persistence\Mapping', $this->reflectionService->getClassNamespace(__CLASS__));
     }
 
-    public function testGetParentClasses()
+    public function testGetParentClasses(): void
     {
         $classes = $this->reflectionService->getParentClasses(__CLASS__);
         $this->assertTrue(count($classes) >= 1, "The test class ".__CLASS__." should have at least one parent.");
     }
 
-    public function testGetParentClassesForAbsentClass()
+    public function testGetParentClassesForAbsentClass(): void
     {
         $this->expectException(MappingException::class);
         $this->reflectionService->getParentClasses(__NAMESPACE__ . '\AbsentClass');
     }
 
-    public function testGetReflectionClass()
+    public function testGetReflectionClass(): void
     {
         $class = $this->reflectionService->getClass(__CLASS__);
         $this->assertInstanceOf("ReflectionClass", $class);
     }
 
-    public function testGetMethods()
+    public function testGetMethods(): void
     {
         $this->assertTrue($this->reflectionService->hasPublicMethod(__CLASS__, "testGetMethods"));
         $this->assertFalse($this->reflectionService->hasPublicMethod(__CLASS__, "testGetMethods2"));
     }
 
-    public function testGetAccessibleProperty()
+    public function testGetAccessibleProperty(): void
     {
         $reflProp = $this->reflectionService->getAccessibleProperty(__CLASS__, "reflectionService");
         $this->assertInstanceOf(\ReflectionProperty::class, $reflProp);

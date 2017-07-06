@@ -23,13 +23,13 @@ class ObjectManagerDecoratorTest extends \PHPUnit_Framework_TestCase
     private $wrapped;
     private $decorated;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->wrapped   = $this->createMock(ObjectManager::class);
         $this->decorated = new NullObjectManagerDecorator($this->wrapped);
     }
 
-    public function getMethodParameters()
+    public function getMethodParameters(): array
     {
         $class = new \ReflectionClass(ObjectManager::class);
 
@@ -51,7 +51,7 @@ class ObjectManagerDecoratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getMethodParameters
      */
-    public function testAllMethodCallsAreDelegatedToTheWrappedInstance($method, array $parameters, $returnedValue)
+    public function testAllMethodCallsAreDelegatedToTheWrappedInstance(string $method, array $parameters, $returnedValue): void
     {
         $stub = $this->wrapped
             ->expects($this->once())

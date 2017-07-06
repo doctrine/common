@@ -21,7 +21,7 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
     private $om;
     private $object;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->cm = new TestObjectMetadata;
         $this->om = $this->createMock(ObjectManager::class);
@@ -32,65 +32,65 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
         $this->object->injectObjectManager($this->om, $this->cm);
     }
 
-    public function testGetObjectManager()
+    public function testGetObjectManager(): void
     {
         $this->assertSame($this->om, PersistentObject::getObjectManager());
     }
 
-    public function testNonMatchingObjectManager()
+    public function testNonMatchingObjectManager(): void
     {
         $this->expectException(RuntimeException::class);
         $om = $this->createMock(ObjectManager::class);
         $this->object->injectObjectManager($om, $this->cm);
     }
 
-    public function testGetField()
+    public function testGetField(): void
     {
         $this->assertEquals('beberlei', $this->object->getName());
     }
 
-    public function testSetField()
+    public function testSetField(): void
     {
         $this->object->setName("test");
         $this->assertEquals("test", $this->object->getName());
     }
 
-    public function testGetIdentifier()
+    public function testGetIdentifier(): void
     {
         $this->assertEquals(1, $this->object->getId());
     }
 
-    public function testSetIdentifier()
+    public function testSetIdentifier(): void
     {
         $this->expectException(BadMethodCallException::class);
         $this->object->setId(2);
     }
 
-    public function testSetUnknownField()
+    public function testSetUnknownField(): void
     {
         $this->expectException(BadMethodCallException::class);
         $this->object->setUnknown("test");
     }
 
-    public function testGetUnknownField()
+    public function testGetUnknownField(): void
     {
         $this->expectException(BadMethodCallException::class);
         $this->object->getUnknown();
     }
 
-    public function testGetToOneAssociation()
+    public function testGetToOneAssociation(): void
     {
         $this->assertNull($this->object->getParent());
     }
 
-    public function testSetToOneAssociation()
+    public function testSetToOneAssociation(): void
     {
         $parent = new TestObject();
         $this->object->setParent($parent);
         $this->assertSame($parent, $this->object->getParent($parent));
     }
 
-    public function testSetInvalidToOneAssociation()
+    public function testSetInvalidToOneAssociation(): void
     {
         $parent = new \stdClass();
 
@@ -98,7 +98,7 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
         $this->object->setParent($parent);
     }
 
-    public function testSetToOneAssociationNull()
+    public function testSetToOneAssociationNull(): void
     {
         $parent = new TestObject();
         $this->object->setParent($parent);
@@ -106,7 +106,7 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertNull($this->object->getParent());
     }
 
-    public function testAddToManyAssociation()
+    public function testAddToManyAssociation(): void
     {
         $child = new TestObject();
         $this->object->addChildren($child);
@@ -120,13 +120,13 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals(2, count($this->object->getChildren()));
     }
 
-    public function testAddInvalidToManyAssociation()
+    public function testAddInvalidToManyAssociation(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->object->addChildren(new \stdClass());
     }
 
-    public function testNoObjectManagerSet()
+    public function testNoObjectManagerSet(): void
     {
         PersistentObject::setObjectManager(null);
         $child = new TestObject();
@@ -135,13 +135,13 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
         $child->setName("test");
     }
 
-    public function testInvalidMethod()
+    public function testInvalidMethod(): void
     {
         $this->expectException(BadMethodCallException::class);
         $this->object->asdf();
     }
 
-    public function testAddInvalidCollection()
+    public function testAddInvalidCollection(): void
     {
         $this->expectException(BadMethodCallException::class);
         $this->object->addAsdf(new \stdClass());
@@ -241,12 +241,12 @@ class TestObjectMetadata implements ClassMetadata
 
     }
 
-    public function initializeReflection(ReflectionService $reflService)
+    public function initializeReflection(ReflectionService $reflService): void
     {
 
     }
 
-    public function wakeupReflection(ReflectionService $reflService)
+    public function wakeupReflection(ReflectionService $reflService): void
     {
 
     }

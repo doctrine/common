@@ -13,7 +13,7 @@ use Doctrine\Tests\DoctrineTestCase;
 
 class DriverChainTest extends DoctrineTestCase
 {
-    public function testDelegateToMatchingNamespaceDriver()
+    public function testDelegateToMatchingNamespaceDriver(): void
     {
         $className = DriverChainEntity::class;
         /* @var $classMetadata ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
@@ -46,7 +46,7 @@ class DriverChainTest extends DoctrineTestCase
         $this->assertTrue( $chain->isTransient($className) );
     }
 
-    public function testLoadMetadata_NoDelegatorFound_ThrowsMappingException()
+    public function testLoadMetadata_NoDelegatorFound_ThrowsMappingException(): void
     {
         $className = DriverChainEntity::class;
         /* @var $classMetadata ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
@@ -58,7 +58,7 @@ class DriverChainTest extends DoctrineTestCase
         $chain->loadMetadataForClass($className, $classMetadata);
     }
 
-    public function testGatherAllClassNames()
+    public function testGatherAllClassNames(): void
     {
         $chain = new MappingDriverChain();
 
@@ -87,7 +87,7 @@ class DriverChainTest extends DoctrineTestCase
     /**
      * @group DDC-706
      */
-    public function testIsTransient()
+    public function testIsTransient(): void
     {
         /* @var $driver1 MappingDriver|\PHPUnit_Framework_MockObject_MockObject */
         $driver1 = $this->createMock(MappingDriver::class);
@@ -100,7 +100,7 @@ class DriverChainTest extends DoctrineTestCase
     /**
      * @group DDC-1412
      */
-    public function testDefaultDriver()
+    public function testDefaultDriver(): void
     {
         $companyDriver      = $this->createMock(MappingDriver::class);
         $defaultDriver      = $this->createMock(MappingDriver::class);
@@ -133,7 +133,7 @@ class DriverChainTest extends DoctrineTestCase
         $this->assertFalse($chain->isTransient($managerClassName));
     }
 
-    public function testDefaultDriverGetAllClassNames()
+    public function testDefaultDriverGetAllClassNames(): void
     {
         /* @var $companyDriver MappingDriver|\PHPUnit_Framework_MockObject_MockObject */
         $companyDriver = $this->createMock(MappingDriver::class);

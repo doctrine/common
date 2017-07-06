@@ -20,21 +20,21 @@ class EventManagerTest extends \Doctrine\Tests\DoctrineTestCase
 
     private $_eventManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->_eventManager = new EventManager;
         $this->_preFooInvoked = false;
         $this->_postFooInvoked = false;
     }
 
-    public function testInitialState()
+    public function testInitialState(): void
     {
         $this->assertEquals([], $this->_eventManager->getListeners());
         $this->assertFalse($this->_eventManager->hasListeners(self::preFoo));
         $this->assertFalse($this->_eventManager->hasListeners(self::postFoo));
     }
 
-    public function testAddEventListener()
+    public function testAddEventListener(): void
     {
         $this->_eventManager->addEventListener(['preFoo', 'postFoo'], $this);
         $this->assertTrue($this->_eventManager->hasListeners(self::preFoo));
@@ -44,7 +44,7 @@ class EventManagerTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals(2, count($this->_eventManager->getListeners()));
     }
 
-    public function testDispatchEvent()
+    public function testDispatchEvent(): void
     {
         $this->_eventManager->addEventListener(['preFoo', 'postFoo'], $this);
         $this->_eventManager->dispatchEvent(self::preFoo);
@@ -52,7 +52,7 @@ class EventManagerTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($this->_postFooInvoked);
     }
 
-    public function testRemoveEventListener()
+    public function testRemoveEventListener(): void
     {
         $this->_eventManager->addEventListener(['preBar'], $this);
         $this->assertTrue($this->_eventManager->hasListeners(self::preBar));
@@ -60,7 +60,7 @@ class EventManagerTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($this->_eventManager->hasListeners(self::preBar));
     }
 
-    public function testAddEventSubscriber()
+    public function testAddEventSubscriber(): void
     {
         $eventSubscriber = new TestEventSubscriber();
         $this->_eventManager->addEventSubscriber($eventSubscriber);
@@ -70,12 +70,12 @@ class EventManagerTest extends \Doctrine\Tests\DoctrineTestCase
 
     /* Listener methods */
 
-    public function preFoo(EventArgs $e)
+    public function preFoo(EventArgs $e): void
     {
         $this->_preFooInvoked = true;
     }
 
-    public function postFoo(EventArgs $e)
+    public function postFoo(EventArgs $e): void
     {
         $this->_postFooInvoked = true;
     }

@@ -10,7 +10,7 @@ use Doctrine\Common\Persistence\Mapping\Driver\PHPDriver;
 
 class PHPDriverTest extends DoctrineTestCase
 {
-    public function testLoadMetadata()
+    public function testLoadMetadata(): void
     {
         /* @var $metadata ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
         $metadata = $this->createMock(ClassMetadata::class);

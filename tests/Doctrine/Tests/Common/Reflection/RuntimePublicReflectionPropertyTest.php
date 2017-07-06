@@ -10,7 +10,7 @@ use Doctrine\Common\Proxy\Proxy;
 
 class RuntimePublicReflectionPropertyTest extends PHPUnit_Framework_TestCase
 {
-    public function testGetValueOnProxyPublicProperty()
+    public function testGetValueOnProxyPublicProperty(): void
     {
         $getCheckMock = $this->getMockBuilder('stdClass')->setMethods(['callGet'])->getMock();
         $getCheckMock->expects($this->never())->method('callGet');
@@ -31,7 +31,7 @@ class RuntimePublicReflectionPropertyTest extends PHPUnit_Framework_TestCase
         $this->assertNull($reflProperty->getValue($mockProxy));
     }
 
-    public function testSetValueOnProxyPublicProperty()
+    public function testSetValueOnProxyPublicProperty(): void
     {
         $setCheckMock = $this->getMockBuilder('stdClass')->setMethods(['neverCallSet'])->getMock();
         $setCheckMock->expects($this->never())->method('neverCallSet');

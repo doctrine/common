@@ -22,7 +22,7 @@ class StaticReflectionParserTest extends DoctrineTestCase
      *
      * @return void
      */
-    public function testParentClass($classAnnotationOptimize, $parsedClassName, $expectedClassName)
+    public function testParentClass(bool $classAnnotationOptimize, string $parsedClassName, string $expectedClassName): void
     {
         // If classed annotation optimization is enabled the properties tested
         // below cannot be found.
@@ -43,7 +43,7 @@ class StaticReflectionParserTest extends DoctrineTestCase
     /**
      * @return array
      */
-    public function parentClassData()
+    public function parentClassData(): array
     {
         $data = [];
         $noParentClassName = NoParent::class;
@@ -71,7 +71,8 @@ class StaticReflectionParserTest extends DoctrineTestCase
     /**
      * @dataProvider classAnnotationOptimize
      */
-    public function testClassAnnotationOptimizedParsing($classAnnotationOptimize) {
+    public function testClassAnnotationOptimizedParsing(bool $classAnnotationOptimize): void
+    {
         $testsRoot = substr(__DIR__, 0, -strlen(__NAMESPACE__) - 1);
         $paths = [
           'Doctrine\\Tests' => [$testsRoot],

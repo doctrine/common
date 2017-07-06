@@ -12,7 +12,7 @@ use Doctrine\TestClass;
 
 class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetAllClassNames()
+    public function testGetAllClassNames(): void
     {
         $reader = new AnnotationReader();
         $driver = new SimpleAnnotationDriver($reader, [__DIR__ . '/_files/annotation']);
