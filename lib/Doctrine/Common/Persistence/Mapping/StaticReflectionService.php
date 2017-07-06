@@ -29,7 +29,7 @@ class StaticReflectionService implements ReflectionService
     /**
      * {@inheritDoc}
      */
-    public function getParentClasses($class)
+    public function getParentClasses(string $class): array
     {
         return [];
     }
@@ -37,7 +37,7 @@ class StaticReflectionService implements ReflectionService
     /**
      * {@inheritDoc}
      */
-    public function getClassShortName($className)
+    public function getClassShortName(string $className): string
     {
         if (strpos($className, '\\') !== false) {
             $className = substr($className, strrpos($className, "\\")+1);
@@ -48,7 +48,7 @@ class StaticReflectionService implements ReflectionService
     /**
      * {@inheritDoc}
      */
-    public function getClassNamespace($className)
+    public function getClassNamespace(string $className): string
     {
         $namespace = '';
         if (strpos($className, '\\') !== false) {
@@ -60,7 +60,7 @@ class StaticReflectionService implements ReflectionService
     /**
      * {@inheritDoc}
      */
-    public function getClass($class)
+    public function getClass(string $class): ?\ReflectionClass
     {
         return null;
     }
@@ -68,7 +68,7 @@ class StaticReflectionService implements ReflectionService
     /**
      * {@inheritDoc}
      */
-    public function getAccessibleProperty($class, $property)
+    public function getAccessibleProperty(string $class, string $property): ?\ReflectionProperty
     {
         return null;
     }
@@ -76,7 +76,7 @@ class StaticReflectionService implements ReflectionService
     /**
      * {@inheritDoc}
      */
-    public function hasPublicMethod($class, $method)
+    public function hasPublicMethod($class, $method): bool
     {
         return true;
     }
