@@ -80,7 +80,7 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
         $path = __DIR__ . "/_files";
         $prefix = "Foo";
 
-        new SymfonyFileLocator([$path => $prefix], ".yml", null);
+        new SymfonyFileLocator([$path => $prefix], ".yml", "");
     }
 
     public function customNamespaceSeparatorProvider()
