@@ -138,6 +138,9 @@ class FileDriverTest extends DoctrineTestCase
         $this->assertFalse($driver->isTransient('stdClass'));
     }
 
+    /**
+     * @return FileLocator|\PHPUnit_Framework_MockObject_MockObject
+     */
     private function newLocator(): FileLocator
     {
         $locator = $this->createMock(FileLocator::class);
