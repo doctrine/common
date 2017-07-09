@@ -13,7 +13,7 @@
         {"name": "Johannes Schmitt", "email": "schmittjoh@gmail.com"}
     ],
     "require": {
-        "php": "~7.1",
+        "php": "~7.2",
         "doctrine/inflector": "1.*",
         "doctrine/cache": "1.*",
         "doctrine/collections": "1.*",
@@ -35,7 +35,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.8.x-dev"
+            "dev-master": "3.0.x-dev"
         }
     }
 }

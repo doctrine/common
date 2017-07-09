@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Persistence\Mapping\Driver;
 
 use Doctrine\Common\Persistence\Mapping\MappingException;
@@ -53,7 +55,7 @@ class DefaultFileLocator implements FileLocator
      * @param string|array $paths         One or multiple paths where mapping documents can be found.
      * @param string|null  $fileExtension The file extension of mapping documents, usually prefixed with a dot.
      */
-    public function __construct($paths, $fileExtension = null)
+    public function __construct($paths, ?string $fileExtension = null)
     {
         $this->addPaths((array) $paths);
         $this->fileExtension = $fileExtension;
@@ -66,7 +68,7 @@ class DefaultFileLocator implements FileLocator
      *
      * @return void
      */
-    public function addPaths(array $paths)
+    public function addPaths(array $paths): void
     {
         $this->paths = array_unique(array_merge($this->paths, $paths));
     }
@@ -76,7 +78,7 @@ class DefaultFileLocator implements FileLocator
      *
      * @return array
      */
-    public function getPaths()
+    public function getPaths(): array
     {
         return $this->paths;
     }
@@ -86,7 +88,7 @@ class DefaultFileLocator implements FileLocator
      *
      * @return string|null
      */
-    public function getFileExtension()
+    public function getFileExtension(): string
     {
         return $this->fileExtension;
     }
@@ -98,7 +100,7 @@ class DefaultFileLocator implements FileLocator
      *
      * @return void
      */
-    public function setFileExtension($fileExtension)
+    public function setFileExtension(?string $fileExtension): void
     {
         $this->fileExtension = $fileExtension;
     }
@@ -106,7 +108,7 @@ class DefaultFileLocator implements FileLocator
     /**
      * {@inheritDoc}
      */
-    public function findMappingFile($className)
+    public function findMappingFile(string $className): string
     {
         $fileName = str_replace('\\', '.', $className) . $this->fileExtension;
 
@@ -123,7 +125,7 @@ class DefaultFileLocator implements FileLocator
     /**
      * {@inheritDoc}
      */
-    public function getAllClassNames($globalBasename)
+    public function getAllClassNames(?string $globalBasename): array
     {
         $classes = [];
 
@@ -157,7 +159,7 @@ class DefaultFileLocator implements FileLocator
     /**
      * {@inheritDoc}
      */
-    public function fileExists($className)
+    public function fileExists(string $className): bool
     {
         $fileName = str_replace('\\', '.', $className) . $this->fileExtension;
 

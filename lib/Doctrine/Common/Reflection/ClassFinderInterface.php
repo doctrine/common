@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Reflection;
 
 /**
@@ -33,5 +35,5 @@ interface ClassFinderInterface
      *
      * @return string|null The name of the class or NULL if not found.
      */
-    public function findFile($class);
+    public function findFile(string $class): ?string;
 }

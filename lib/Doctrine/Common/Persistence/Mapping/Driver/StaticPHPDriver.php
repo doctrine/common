@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Persistence\Mapping\Driver;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
@@ -66,7 +68,7 @@ class StaticPHPDriver implements MappingDriver
      *
      * @return void
      */
-    public function addPaths(array $paths)
+    public function addPaths(array $paths): void
     {
         $this->paths = array_unique(array_merge($this->paths, $paths));
     }
@@ -74,7 +76,7 @@ class StaticPHPDriver implements MappingDriver
     /**
      * {@inheritdoc}
      */
-    public function loadMetadataForClass($className, ClassMetadata $metadata)
+    public function loadMetadataForClass(string $className, ClassMetadata $metadata): void
     {
         $className::loadMetadata($metadata);
     }
@@ -83,7 +85,7 @@ class StaticPHPDriver implements MappingDriver
      * {@inheritDoc}
      * @todo Same code exists in AnnotationDriver, should we re-use it somehow or not worry about it?
      */
-    public function getAllClassNames()
+    public function getAllClassNames(): array
     {
         if ($this->classNames !== null) {
             return $this->classNames;
@@ -135,7 +137,7 @@ class StaticPHPDriver implements MappingDriver
     /**
      * {@inheritdoc}
      */
-    public function isTransient($className)
+    public function isTransient(string $className): bool
     {
         return ! method_exists($className, 'loadMetadata');
     }

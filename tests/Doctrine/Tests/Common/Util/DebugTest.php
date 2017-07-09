@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\Util;
 
 use Doctrine\Tests\DoctrineTestCase;
@@ -7,7 +9,7 @@ use Doctrine\Common\Util\Debug;
 
 class DebugTest extends DoctrineTestCase
 {
-    public function testExportObject( )
+    public function testExportObject(): void
     {
         $obj = new \stdClass;
         $obj->foo = "bar";
@@ -17,7 +19,7 @@ class DebugTest extends DoctrineTestCase
         $this->assertEquals( "stdClass", $var->__CLASS__ );
     }
 
-    public function testExportObjectWithReference()
+    public function testExportObjectWithReference(): void
     {
         $foo = 'bar';
         $bar = ['foo' => & $foo];
@@ -30,7 +32,7 @@ class DebugTest extends DoctrineTestCase
         $this->assertEquals('tab', $bar['foo']);
     }
 
-    public function testExportArray()
+    public function testExportArray(): void
     {
         $array = ['a' => 'b', 'b' => ['c', 'd' => ['e', 'f']]];
         $var = Debug::export($array, 2);
@@ -39,7 +41,7 @@ class DebugTest extends DoctrineTestCase
         $this->assertEquals($expected, $var);
     }
 
-    public function testExportDateTime()
+    public function testExportDateTime(): void
     {
         $obj = new \DateTime('2010-10-10 10:10:10', new \DateTimeZone('UTC'));
 
@@ -48,7 +50,7 @@ class DebugTest extends DoctrineTestCase
         $this->assertEquals('2010-10-10T10:10:10+00:00', $var->date);
     }
 
-    public function testExportDateTimeImmutable()
+    public function testExportDateTimeImmutable(): void
     {
         $obj = new \DateTimeImmutable('2010-10-10 10:10:10', new \DateTimeZone('UTC'));
 
@@ -57,7 +59,7 @@ class DebugTest extends DoctrineTestCase
         $this->assertEquals('2010-10-10T10:10:10+00:00', $var->date);
     }
 
-    public function testExportDateTimeZone()
+    public function testExportDateTimeZone(): void
     {
         $obj = new \DateTimeImmutable('2010-10-10 12:34:56', new \DateTimeZone('Europe/Rome'));
 
@@ -66,7 +68,7 @@ class DebugTest extends DoctrineTestCase
         $this->assertEquals('2010-10-10T12:34:56+02:00', $var->date);
     }
 
-    public function testExportArrayTraversable()
+    public function testExportArrayTraversable(): void
     {
         $obj = new \ArrayObject(['foobar']);
 
@@ -79,7 +81,7 @@ class DebugTest extends DoctrineTestCase
         $this->assertContains('foobar', $var->__STORAGE__);
     }
 
-    public function testReturnsOutput()
+    public function testReturnsOutput(): void
     {
         ob_start();
 
@@ -91,7 +93,7 @@ class DebugTest extends DoctrineTestCase
         $this->assertSame($outputValue, $dump);
     }
 
-    public function testDisablesOutput()
+    public function testDisablesOutput(): void
     {
         ob_start();
 
@@ -107,7 +109,7 @@ class DebugTest extends DoctrineTestCase
     /**
      * @dataProvider provideAttributesCases
      */
-    public function testExportParentAttributes(TestAsset\ParentClass $class, array $expected)
+    public function testExportParentAttributes(TestAsset\ParentClass $class, array $expected): void
     {
         $print_r_class = print_r($class, true);
         $print_r_expected = print_r($expected, true);
@@ -124,7 +126,7 @@ class DebugTest extends DoctrineTestCase
         $this->assertSame($expected, $var);
     }
 
-    public function provideAttributesCases()
+    public function provideAttributesCases(): array
     {
         return array(
             'different-attributes' => array(

@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Persistence\Mapping\Driver;
 
 /**
@@ -37,16 +39,16 @@ interface FileLocator
      *
      * @return string
      */
-    public function findMappingFile($className);
+    public function findMappingFile(string $className): string;
 
     /**
      * Gets all class names that are found with this file locator.
      *
-     * @param string $globalBasename Passed to allow excluding the basename.
+     * @param string|null $globalBasename Passed to allow excluding the basename.
      *
      * @return array
      */
-    public function getAllClassNames($globalBasename);
+    public function getAllClassNames(?string $globalBasename): array;
 
     /**
      * Checks if a file can be found for this class name.
@@ -55,19 +57,19 @@ interface FileLocator
      *
      * @return bool
      */
-    public function fileExists($className);
+    public function fileExists(string $className): bool;
 
     /**
      * Gets all the paths that this file locator looks for mapping files.
      *
      * @return array
      */
-    public function getPaths();
+    public function getPaths(): array;
 
     /**
      * Gets the file extension that mapping files are suffixed with.
      *
      * @return string
      */
-    public function getFileExtension();
+    public function getFileExtension(): string;
 }

@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common;
 
 /**
@@ -34,7 +36,7 @@ class Version
     /**
      * Current Doctrine Version.
      */
-    const VERSION = '2.7.0-DEV';
+    const VERSION = '3.0.0-DEV';
 
     /**
      * Compares a Doctrine version with the current one.
@@ -43,7 +45,7 @@ class Version
      *
      * @return int -1 if older, 0 if it is the same, 1 if version passed as argument is newer.
      */
-    public static function compare($version)
+    public static function compare(string $version): int
     {
         $currentVersion = str_replace(' ', '', strtolower(self::VERSION));
         $version = str_replace(' ', '', $version);

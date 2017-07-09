@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Persistence\Mapping;
 
 /**
@@ -38,7 +40,7 @@ interface ReflectionService
      *
      * @return array
      */
-    public function getParentClasses($class);
+    public function getParentClasses(string $class): array;
 
     /**
      * Returns the shortname of a class.
@@ -47,14 +49,14 @@ interface ReflectionService
      *
      * @return string
      */
-    public function getClassShortName($class);
+    public function getClassShortName(string $class): string;
 
     /**
      * @param string $class
      *
      * @return string
      */
-    public function getClassNamespace($class);
+    public function getClassNamespace(string $class): string;
 
     /**
      * Returns a reflection class instance or null.
@@ -63,7 +65,7 @@ interface ReflectionService
      *
      * @return \ReflectionClass|null
      */
-    public function getClass($class);
+    public function getClass(string $class): ?\ReflectionClass;
 
     /**
      * Returns an accessible property (setAccessible(true)) or null.
@@ -73,7 +75,7 @@ interface ReflectionService
      *
      * @return \ReflectionProperty|null
      */
-    public function getAccessibleProperty($class, $property);
+    public function getAccessibleProperty(string $class, string $property): ?\ReflectionProperty;
 
     /**
      * Checks if the class have a public method with the given name.
@@ -83,5 +85,5 @@ interface ReflectionService
      *
      * @return bool
      */
-    public function hasPublicMethod($class, $method);
+    public function hasPublicMethod($class, $method): bool;
 }

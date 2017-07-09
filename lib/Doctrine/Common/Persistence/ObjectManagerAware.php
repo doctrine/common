@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Persistence;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
@@ -47,5 +49,5 @@ interface ObjectManagerAware
      *
      * @return void
      */
-    public function injectObjectManager(ObjectManager $objectManager, ClassMetadata $classMetadata);
+    public function injectObjectManager(ObjectManager $objectManager, ClassMetadata $classMetadata): void;
 }

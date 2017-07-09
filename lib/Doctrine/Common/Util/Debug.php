@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Util;
 
 use Doctrine\Common\Collections\Collection;
@@ -53,12 +55,12 @@ final class Debug
      *
      * @return string
      */
-    public static function dump($var, $maxDepth = 2, $stripTags = true, $echo = true)
+    public static function dump($var, int $maxDepth = 2, bool $stripTags = true, bool $echo = true): string
     {
         $html = ini_get('html_errors');
 
         if ($html !== true) {
-            ini_set('html_errors', true);
+            ini_set('html_errors', '1');
         }
 
         if (extension_loaded('xdebug')) {
@@ -91,7 +93,7 @@ final class Debug
      *
      * @return mixed
      */
-    public static function export($var, $maxDepth)
+    public static function export($var, int $maxDepth)
     {
         $return = null;
         $isObj = is_object($var);
@@ -152,12 +154,12 @@ final class Debug
      *
      * @return mixed
      */
-    private static function fillReturnWithClassAttributes($var, \stdClass $return, $maxDepth)
+    private static function fillReturnWithClassAttributes(object $var, \stdClass $return, int $maxDepth)
     {
         $clone = (array) $var;
 
         foreach (array_keys($clone) as $key) {
-            $aux = explode("\0", $key);
+            $aux = explode("\0", (string) $key);
             $name = end($aux);
             if ($aux[0] === '') {
                 $name.= ':' . ($aux[1] === '*' ? 'protected' : $aux[1].':private');
@@ -175,7 +177,7 @@ final class Debug
      *
      * @return string
      */
-    public static function toString($obj)
+    public static function toString(object $obj): string
     {
         return method_exists($obj, '__toString') ? (string) $obj : get_class($obj) . '@' . spl_object_hash($obj);
     }

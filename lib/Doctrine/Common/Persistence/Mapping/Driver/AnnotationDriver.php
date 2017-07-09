@@ -17,9 +17,12 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Persistence\Mapping\Driver;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 
 /**
@@ -82,7 +85,7 @@ abstract class AnnotationDriver implements MappingDriver
      * @param AnnotationReader  $reader The AnnotationReader to use, duck-typed.
      * @param string|array|null $paths  One or multiple paths where mapping classes can be found.
      */
-    public function __construct($reader, $paths = null)
+    public function __construct(Reader $reader, $paths = null)
     {
         $this->reader = $reader;
         if ($paths) {
@@ -97,7 +100,7 @@ abstract class AnnotationDriver implements MappingDriver
      *
      * @return void
      */
-    public function addPaths(array $paths)
+    public function addPaths(array $paths): void
     {
         $this->paths = array_unique(array_merge($this->paths, $paths));
     }
@@ -107,7 +110,7 @@ abstract class AnnotationDriver implements MappingDriver
      *
      * @return array
      */
-    public function getPaths()
+    public function getPaths(): array
     {
         return $this->paths;
     }
@@ -117,7 +120,7 @@ abstract class AnnotationDriver implements MappingDriver
      *
      * @param array $paths
      */
-    public function addExcludePaths(array $paths)
+    public function addExcludePaths(array $paths): void
     {
         $this->excludePaths = array_unique(array_merge($this->excludePaths, $paths));
     }
@@ -127,7 +130,7 @@ abstract class AnnotationDriver implements MappingDriver
      *
      * @return array
      */
-    public function getExcludePaths()
+    public function getExcludePaths(): array
     {
         return $this->excludePaths;
     }
@@ -137,7 +140,7 @@ abstract class AnnotationDriver implements MappingDriver
      *
      * @return AnnotationReader
      */
-    public function getReader()
+    public function getReader(): AnnotationReader
     {
         return $this->reader;
     }
@@ -147,7 +150,7 @@ abstract class AnnotationDriver implements MappingDriver
      *
      * @return string
      */
-    public function getFileExtension()
+    public function getFileExtension(): string
     {
         return $this->fileExtension;
     }
@@ -159,7 +162,7 @@ abstract class AnnotationDriver implements MappingDriver
      *
      * @return void
      */
-    public function setFileExtension($fileExtension)
+    public function setFileExtension(string $fileExtension): void
     {
         $this->fileExtension = $fileExtension;
     }
@@ -175,7 +178,7 @@ abstract class AnnotationDriver implements MappingDriver
      *
      * @return boolean
      */
-    public function isTransient($className)
+    public function isTransient(string $className): bool
     {
         $classAnnotations = $this->reader->getClassAnnotations(new \ReflectionClass($className));
 
@@ -190,7 +193,7 @@ abstract class AnnotationDriver implements MappingDriver
     /**
      * {@inheritDoc}
      */
-    public function getAllClassNames()
+    public function getAllClassNames(): array
     {
         if ($this->classNames !== null) {
             return $this->classNames;

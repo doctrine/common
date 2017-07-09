@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Reflection;
 
 use ReflectionException;
@@ -42,7 +44,7 @@ class StaticReflectionProperty extends ReflectionProperty
      * @param StaticReflectionParser $staticReflectionParser
      * @param string|null            $propertyName
      */
-    public function __construct(StaticReflectionParser $staticReflectionParser, $propertyName)
+    public function __construct(StaticReflectionParser $staticReflectionParser, string $propertyName)
     {
         $this->staticReflectionParser = $staticReflectionParser;
         $this->propertyName = $propertyName;
@@ -51,7 +53,7 @@ class StaticReflectionProperty extends ReflectionProperty
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->propertyName;
     }
@@ -59,7 +61,7 @@ class StaticReflectionProperty extends ReflectionProperty
     /**
      * @return StaticReflectionParser
      */
-    protected function getStaticReflectionParser()
+    protected function getStaticReflectionParser(): StaticReflectionParser
     {
         return $this->staticReflectionParser->getStaticReflectionParserForDeclaringClass('property', $this->propertyName);
     }
@@ -67,7 +69,7 @@ class StaticReflectionProperty extends ReflectionProperty
     /**
      * {@inheritDoc}
      */
-    public function getDeclaringClass()
+    public function getDeclaringClass(): \ReflectionClass
     {
         return $this->getStaticReflectionParser()->getReflectionClass();
     }
@@ -75,7 +77,7 @@ class StaticReflectionProperty extends ReflectionProperty
     /**
      * {@inheritDoc}
      */
-    public function getDocComment()
+    public function getDocComment(): string
     {
         return $this->getStaticReflectionParser()->getDocComment('property', $this->propertyName);
     }
@@ -83,7 +85,7 @@ class StaticReflectionProperty extends ReflectionProperty
     /**
      * @return array
      */
-    public function getUseStatements()
+    public function getUseStatements(): array
     {
         return $this->getStaticReflectionParser()->getUseStatements();
     }
@@ -91,7 +93,7 @@ class StaticReflectionProperty extends ReflectionProperty
     /**
      * {@inheritDoc}
      */
-    public static function export($class, $name, $return = false)
+    public static function export($class, $name, $return = false): void
     {
         throw new ReflectionException('Method not implemented');
     }
@@ -99,7 +101,7 @@ class StaticReflectionProperty extends ReflectionProperty
     /**
      * {@inheritDoc}
      */
-    public function getModifiers()
+    public function getModifiers(): void
     {
         throw new ReflectionException('Method not implemented');
     }
@@ -107,7 +109,7 @@ class StaticReflectionProperty extends ReflectionProperty
     /**
      * {@inheritDoc}
      */
-    public function getValue($object = null)
+    public function getValue($object = null): void
     {
         throw new ReflectionException('Method not implemented');
     }
@@ -115,7 +117,7 @@ class StaticReflectionProperty extends ReflectionProperty
     /**
      * {@inheritDoc}
      */
-    public function isDefault()
+    public function isDefault(): void
     {
         throw new ReflectionException('Method not implemented');
     }
@@ -123,7 +125,7 @@ class StaticReflectionProperty extends ReflectionProperty
     /**
      * {@inheritDoc}
      */
-    public function isPrivate()
+    public function isPrivate(): void
     {
         throw new ReflectionException('Method not implemented');
     }
@@ -131,7 +133,7 @@ class StaticReflectionProperty extends ReflectionProperty
     /**
      * {@inheritDoc}
      */
-    public function isProtected()
+    public function isProtected(): void
     {
         throw new ReflectionException('Method not implemented');
     }
@@ -139,7 +141,7 @@ class StaticReflectionProperty extends ReflectionProperty
     /**
      * {@inheritDoc}
      */
-    public function isPublic()
+    public function isPublic(): void
     {
         throw new ReflectionException('Method not implemented');
     }
@@ -147,7 +149,7 @@ class StaticReflectionProperty extends ReflectionProperty
     /**
      * {@inheritDoc}
      */
-    public function isStatic()
+    public function isStatic(): void
     {
         throw new ReflectionException('Method not implemented');
     }
@@ -155,7 +157,7 @@ class StaticReflectionProperty extends ReflectionProperty
     /**
      * {@inheritDoc}
      */
-    public function setAccessible($accessible)
+    public function setAccessible($accessible): void
     {
         throw new ReflectionException('Method not implemented');
     }
@@ -163,7 +165,7 @@ class StaticReflectionProperty extends ReflectionProperty
     /**
      * {@inheritDoc}
      */
-    public function setValue($object, $value = null)
+    public function setValue($object, $value = null): void
     {
         throw new ReflectionException('Method not implemented');
     }
@@ -171,7 +173,7 @@ class StaticReflectionProperty extends ReflectionProperty
     /**
      * {@inheritDoc}
      */
-    public function __toString()
+    public function __toString(): void
     {
         throw new ReflectionException('Method not implemented');
     }

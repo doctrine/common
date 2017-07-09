@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Persistence\Event;
 
 use Doctrine\Common\EventArgs;
@@ -48,7 +50,7 @@ class OnClearEventArgs extends EventArgs
      * @param ObjectManager $objectManager The object manager.
      * @param string|null   $entityClass   The optional entity class.
      */
-    public function __construct($objectManager, $entityClass = null)
+    public function __construct(ObjectManager $objectManager, ?string $entityClass = null)
     {
         $this->objectManager = $objectManager;
         $this->entityClass = $entityClass;
@@ -59,7 +61,7 @@ class OnClearEventArgs extends EventArgs
      *
      * @return \Doctrine\Common\Persistence\ObjectManager
      */
-    public function getObjectManager()
+    public function getObjectManager(): ObjectManager
     {
         return $this->objectManager;
     }
@@ -69,7 +71,7 @@ class OnClearEventArgs extends EventArgs
      *
      * @return string|null
      */
-    public function getEntityClass()
+    public function getEntityClass(): ?string
     {
         return $this->entityClass;
     }
@@ -79,7 +81,7 @@ class OnClearEventArgs extends EventArgs
      *
      * @return bool
      */
-    public function clearsAllEntities()
+    public function clearsAllEntities(): bool
     {
         return ($this->entityClass === null);
     }

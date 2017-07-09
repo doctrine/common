@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Persistence\Mapping\Driver;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
@@ -37,14 +39,14 @@ interface MappingDriver
      *
      * @return void
      */
-    public function loadMetadataForClass($className, ClassMetadata $metadata);
+    public function loadMetadataForClass(string $className, ClassMetadata $metadata): void;
 
     /**
      * Gets the names of all mapped classes known to this driver.
      *
      * @return array The names of all mapped classes known to this driver.
      */
-    public function getAllClassNames();
+    public function getAllClassNames(): array;
 
     /**
      * Returns whether the class with the specified name should have its metadata loaded.
@@ -54,5 +56,5 @@ interface MappingDriver
      *
      * @return boolean
      */
-    public function isTransient($className);
+    public function isTransient(string $className): bool;
 }

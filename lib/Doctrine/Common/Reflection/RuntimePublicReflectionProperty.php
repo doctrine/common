@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Reflection;
 
 use Doctrine\Common\Proxy\Proxy;
@@ -60,7 +62,7 @@ class RuntimePublicReflectionProperty extends ReflectionProperty
      * is a {@see \Doctrine\Common\Proxy\Proxy}.
      * @link https://bugs.php.net/bug.php?id=63463
      */
-    public function setValue($object, $value = null)
+    public function setValue($object, $value = null): void
     {
         if ( ! ($object instanceof Proxy && ! $object->__isInitialized())) {
             parent::setValue($object, $value);

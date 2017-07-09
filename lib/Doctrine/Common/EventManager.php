@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common;
 
 /**
@@ -50,7 +52,7 @@ class EventManager
      *
      * @return void
      */
-    public function dispatchEvent($eventName, EventArgs $eventArgs = null)
+    public function dispatchEvent(string $eventName, ?EventArgs $eventArgs = null): void
     {
         if (isset($this->_listeners[$eventName])) {
             $eventArgs = $eventArgs === null ? EventArgs::getEmptyInstance() : $eventArgs;
@@ -68,7 +70,7 @@ class EventManager
      *
      * @return array The event listeners for the specified event, or all event listeners.
      */
-    public function getListeners($event = null)
+    public function getListeners(?string $event = null): array
     {
         return $event ? $this->_listeners[$event] : $this->_listeners;
     }
@@ -80,7 +82,7 @@ class EventManager
      *
      * @return boolean TRUE if the specified event has any listeners, FALSE otherwise.
      */
-    public function hasListeners($event)
+    public function hasListeners(string $event): bool
     {
         return !empty($this->_listeners[$event]);
     }
@@ -93,7 +95,7 @@ class EventManager
      *
      * @return void
      */
-    public function addEventListener($events, $listener)
+    public function addEventListener($events, object $listener): void
     {
         // Picks the hash code related to that listener
         $hash = spl_object_hash($listener);
@@ -113,7 +115,7 @@ class EventManager
      *
      * @return void
      */
-    public function removeEventListener($events, $listener)
+    public function removeEventListener($events, object $listener): void
     {
         // Picks the hash code related to that listener
         $hash = spl_object_hash($listener);
@@ -131,7 +133,7 @@ class EventManager
      *
      * @return void
      */
-    public function addEventSubscriber(EventSubscriber $subscriber)
+    public function addEventSubscriber(EventSubscriber $subscriber): void
     {
         $this->addEventListener($subscriber->getSubscribedEvents(), $subscriber);
     }
@@ -144,7 +146,7 @@ class EventManager
      *
      * @return void
      */
-    public function removeEventSubscriber(EventSubscriber $subscriber)
+    public function removeEventSubscriber(EventSubscriber $subscriber): void
     {
         $this->removeEventListener($subscriber->getSubscribedEvents(), $subscriber);
     }

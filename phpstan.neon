@@ -18,3 +18,5 @@ parameters:
         - '#Access to an undefined property Doctrine\\Common\\Proxy\\Proxy::\$publicField#'
         - '#Access to an undefined property Doctrine\\Tests\\Common\\Proxy\\MagicGetByRefClass::\$nonExisting#'
         - '#does not accept [\\a-zA-Z0-9_|]*PHPUnit_Framework_MockObject_MockObject#'
+        - '#Return typehint of method .+ has invalid type object#'
+        - '#Parameter \$\S+ of method .+ has invalid typehint type object#'

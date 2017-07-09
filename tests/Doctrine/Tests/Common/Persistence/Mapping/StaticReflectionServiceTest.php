@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\Persistence\Mapping;
 
 use Doctrine\Common\Persistence\Mapping\StaticReflectionService;
@@ -31,41 +33,41 @@ class StaticReflectionServiceTest extends \PHPUnit_Framework_TestCase
      */
     private $reflectionService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->reflectionService = new StaticReflectionService();
     }
 
-    public function testShortname()
+    public function testShortname(): void
     {
         $this->assertEquals("StaticReflectionServiceTest", $this->reflectionService->getClassShortName(__CLASS__));
     }
 
-    public function testClassNamespaceName()
+    public function testClassNamespaceName(): void
     {
         $this->assertEquals('', $this->reflectionService->getClassNamespace(\stdClass::class));
         $this->assertEquals(__NAMESPACE__, $this->reflectionService->getClassNamespace(__CLASS__));
     }
 
-    public function testGetParentClasses()
+    public function testGetParentClasses(): void
     {
         $classes = $this->reflectionService->getParentClasses(__CLASS__);
         $this->assertTrue(count($classes) == 0, "The test class ".__CLASS__." should have no parents according to static reflection.");
     }
 
-    public function testGetReflectionClass()
+    public function testGetReflectionClass(): void
     {
         $class = $this->reflectionService->getClass(__CLASS__);
         $this->assertNull($class);
     }
 
-    public function testGetMethods()
+    public function testGetMethods(): void
     {
         $this->assertTrue($this->reflectionService->hasPublicMethod(__CLASS__, "testGetMethods"));
         $this->assertTrue($this->reflectionService->hasPublicMethod(__CLASS__, "testGetMethods2"));
     }
 
-    public function testGetAccessibleProperty()
+    public function testGetAccessibleProperty(): void
     {
         $reflProp = $this->reflectionService->getAccessibleProperty(__CLASS__, "reflectionService");
         $this->assertNull($reflProp);

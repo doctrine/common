@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Persistence\Mapping;
 
 /**
@@ -34,7 +36,7 @@ interface ClassMetadata
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Gets the mapped identifier field name.
@@ -43,14 +45,14 @@ interface ClassMetadata
      *
      * @return array
      */
-    public function getIdentifier();
+    public function getIdentifier(): array;
 
     /**
      * Gets the ReflectionClass instance for this mapped class.
      *
      * @return \ReflectionClass
      */
-    public function getReflectionClass();
+    public function getReflectionClass(): \ReflectionClass;
 
     /**
      * Checks if the given field name is a mapped identifier for this class.
@@ -59,7 +61,7 @@ interface ClassMetadata
      *
      * @return boolean
      */
-    public function isIdentifier($fieldName);
+    public function isIdentifier(string $fieldName): bool;
 
     /**
      * Checks if the given field is a mapped property for this class.
@@ -68,7 +70,7 @@ interface ClassMetadata
      *
      * @return boolean
      */
-    public function hasField($fieldName);
+    public function hasField(string $fieldName): bool;
 
     /**
      * Checks if the given field is a mapped association for this class.
@@ -77,7 +79,7 @@ interface ClassMetadata
      *
      * @return boolean
      */
-    public function hasAssociation($fieldName);
+    public function hasAssociation(string $fieldName): bool;
 
     /**
      * Checks if the given field is a mapped single valued association for this class.
@@ -86,7 +88,7 @@ interface ClassMetadata
      *
      * @return boolean
      */
-    public function isSingleValuedAssociation($fieldName);
+    public function isSingleValuedAssociation(string $fieldName): bool;
 
     /**
      * Checks if the given field is a mapped collection valued association for this class.
@@ -95,7 +97,7 @@ interface ClassMetadata
      *
      * @return boolean
      */
-    public function isCollectionValuedAssociation($fieldName);
+    public function isCollectionValuedAssociation(string $fieldName): bool;
 
     /**
      * A numerically indexed list of field names of this persistent class.
@@ -104,14 +106,14 @@ interface ClassMetadata
      *
      * @return array
      */
-    public function getFieldNames();
+    public function getFieldNames(): array;
 
     /**
      * Returns an array of identifier field names numerically indexed.
      *
      * @return array
      */
-    public function getIdentifierFieldNames();
+    public function getIdentifierFieldNames(): array;
 
     /**
      * Returns a numerically indexed list of association names of this persistent class.
@@ -120,7 +122,7 @@ interface ClassMetadata
      *
      * @return array
      */
-    public function getAssociationNames();
+    public function getAssociationNames(): array;
 
     /**
      * Returns a type name of this field.
@@ -132,7 +134,7 @@ interface ClassMetadata
      *
      * @return string
      */
-    public function getTypeOfField($fieldName);
+    public function getTypeOfField(string $fieldName): string;
 
     /**
      * Returns the target class name of the given association.
@@ -141,7 +143,7 @@ interface ClassMetadata
      *
      * @return string
      */
-    public function getAssociationTargetClass($assocName);
+    public function getAssociationTargetClass(string $assocName): string;
 
     /**
      * Checks if the association is the inverse side of a bidirectional association.
@@ -150,7 +152,7 @@ interface ClassMetadata
      *
      * @return boolean
      */
-    public function isAssociationInverseSide($assocName);
+    public function isAssociationInverseSide(string $assocName): bool;
 
     /**
      * Returns the target field of the owning side of the association.
@@ -159,7 +161,7 @@ interface ClassMetadata
      *
      * @return string
      */
-    public function getAssociationMappedByTargetField($assocName);
+    public function getAssociationMappedByTargetField(string $assocName): string;
 
     /**
      * Returns the identifier of this object as an array with field name as key.
@@ -170,5 +172,5 @@ interface ClassMetadata
      *
      * @return array
      */
-    public function getIdentifierValues($object);
+    public function getIdentifierValues(object $object): array;
 }

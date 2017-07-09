@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Persistence\Event;
 
 use Doctrine\Common\Persistence\ObjectManager;
@@ -43,7 +45,7 @@ class PreUpdateEventArgs extends LifecycleEventArgs
      * @param ObjectManager $objectManager
      * @param array         $changeSet
      */
-    public function __construct($entity, ObjectManager $objectManager, array &$changeSet)
+    public function __construct(object $entity, ObjectManager $objectManager, array &$changeSet)
     {
         parent::__construct($entity, $objectManager);
 
@@ -55,7 +57,7 @@ class PreUpdateEventArgs extends LifecycleEventArgs
      *
      * @return array
      */
-    public function getEntityChangeSet()
+    public function getEntityChangeSet(): array
     {
         return $this->entityChangeSet;
     }
@@ -67,7 +69,7 @@ class PreUpdateEventArgs extends LifecycleEventArgs
      *
      * @return boolean
      */
-    public function hasChangedField($field)
+    public function hasChangedField(string $field): bool
     {
         return isset($this->entityChangeSet[$field]);
     }
@@ -79,7 +81,7 @@ class PreUpdateEventArgs extends LifecycleEventArgs
      *
      * @return mixed
      */
-    public function getOldValue($field)
+    public function getOldValue(string $field)
     {
         $this->assertValidField($field);
 
@@ -93,7 +95,7 @@ class PreUpdateEventArgs extends LifecycleEventArgs
      *
      * @return mixed
      */
-    public function getNewValue($field)
+    public function getNewValue(string $field)
     {
         $this->assertValidField($field);
 
@@ -108,7 +110,7 @@ class PreUpdateEventArgs extends LifecycleEventArgs
      *
      * @return void
      */
-    public function setNewValue($field, $value)
+    public function setNewValue(string $field, $value): void
     {
         $this->assertValidField($field);
 
@@ -124,7 +126,7 @@ class PreUpdateEventArgs extends LifecycleEventArgs
      *
      * @throws \InvalidArgumentException
      */
-    private function assertValidField($field)
+    private function assertValidField(string $field): void
     {
         if ( ! isset($this->entityChangeSet[$field])) {
             throw new \InvalidArgumentException(sprintf(

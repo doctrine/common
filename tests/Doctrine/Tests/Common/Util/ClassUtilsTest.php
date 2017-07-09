@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\Common\Util
 {
     use Doctrine\Tests\DoctrineTestCase;
@@ -7,7 +9,7 @@ namespace Doctrine\Tests\Common\Util
 
     class ClassUtilsTest extends DoctrineTestCase
     {
-        static public function dataGetClass()
+        static public function dataGetClass(): array
         {
             return [
                 [\stdClass::class, \stdClass::class],
@@ -21,7 +23,7 @@ namespace Doctrine\Tests\Common\Util
         /**
          * @dataProvider dataGetClass
          */
-        public function testGetRealClass($className, $expectedClassName)
+        public function testGetRealClass(string $className, string $expectedClassName): void
         {
             $this->assertEquals($expectedClassName, ClassUtils::getRealClass($className));
         }
@@ -29,19 +31,19 @@ namespace Doctrine\Tests\Common\Util
         /**
          * @dataProvider dataGetClass
          */
-        public function testGetClass( $className, $expectedClassName )
+        public function testGetClass(string $className, string $expectedClassName): void
         {
             $object = new $className();
             $this->assertEquals($expectedClassName, ClassUtils::getClass($object));
         }
 
-        public function testGetParentClass()
+        public function testGetParentClass(): void
         {
             $parentClass = ClassUtils::getParentClass( 'MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\Doctrine\Tests\Common\Util\ChildObject' );
             $this->assertEquals('stdClass', $parentClass);
         }
 
-        public function testGenerateProxyClassName()
+        public function testGenerateProxyClassName(): void
         {
             $this->assertEquals( 'Proxies\__CG__\stdClass', ClassUtils::generateProxyClassName( 'stdClass', 'Proxies' ) );
         }
@@ -49,7 +51,7 @@ namespace Doctrine\Tests\Common\Util
         /**
          * @dataProvider dataGetClass
          */
-        public function testNewReflectionClass( $className, $expectedClassName )
+        public function testNewReflectionClass(string $className, string $expectedClassName): void
         {
             $reflClass = ClassUtils::newReflectionClass( $className );
             $this->assertEquals( $expectedClassName, $reflClass->getName() );
@@ -58,7 +60,7 @@ namespace Doctrine\Tests\Common\Util
         /**
          * @dataProvider dataGetClass
          */
-        public function testNewReflectionObject( $className, $expectedClassName )
+        public function testNewReflectionObject(string $className, string $expectedClassName): void
         {
             $object = new $className;
             $reflClass = ClassUtils::newReflectionObject( $object );

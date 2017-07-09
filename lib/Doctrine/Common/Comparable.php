@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common;
 
 /**
@@ -38,9 +40,9 @@ interface Comparable
      * This method should not check for identity using ===, only for semantical equality for example
      * when two different DateTime instances point to the exact same Date + TZ.
      *
-     * @param mixed $other
+     * @param object $other
      *
      * @return int
      */
-    public function compareTo($other);
+    public function compareTo(object $other): int;
 }

@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common;
 
 /**
@@ -56,7 +58,7 @@ class EventArgs
      *
      * @return EventArgs
      */
-    public static function getEmptyInstance()
+    public static function getEmptyInstance(): self
     {
         if ( ! self::$_emptyEventArgsInstance) {
             self::$_emptyEventArgsInstance = new EventArgs;

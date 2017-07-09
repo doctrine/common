@@ -17,7 +17,12 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Persistence;
+
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
 
 /**
  * Contract for a Doctrine persistence layer ObjectManager class to implement.
@@ -39,7 +44,7 @@ interface ObjectManager
      *
      * @return object The found object.
      */
-    public function find($className, $id);
+    public function find(string $className, $id): object;
 
     /**
      * Tells the ObjectManager to make an instance managed and persistent.
@@ -53,7 +58,7 @@ interface ObjectManager
      *
      * @return void
      */
-    public function persist($object);
+    public function persist(object $object): void;
 
     /**
      * Removes an object instance.
@@ -64,7 +69,7 @@ interface ObjectManager
      *
      * @return void
      */
-    public function remove($object);
+    public function remove(object $object): void;
 
     /**
      * Merges the state of a detached object into the persistence context
@@ -75,7 +80,7 @@ interface ObjectManager
      *
      * @return object
      */
-    public function merge($object);
+    public function merge(object $object): object;
 
     /**
      * Clears the ObjectManager. All objects that are currently managed
@@ -85,7 +90,7 @@ interface ObjectManager
      *
      * @return void
      */
-    public function clear($objectName = null);
+    public function clear(?string $objectName = null): void;
 
     /**
      * Detaches an object from the ObjectManager, causing a managed object to
@@ -98,7 +103,7 @@ interface ObjectManager
      *
      * @return void
      */
-    public function detach($object);
+    public function detach(object $object): void;
 
     /**
      * Refreshes the persistent state of an object from the database,
@@ -108,7 +113,7 @@ interface ObjectManager
      *
      * @return void
      */
-    public function refresh($object);
+    public function refresh(object $object): void;
 
     /**
      * Flushes all changes to objects that have been queued up to now to the database.
@@ -117,7 +122,7 @@ interface ObjectManager
      *
      * @return void
      */
-    public function flush();
+    public function flush(): void;
 
     /**
      * Gets the repository for a class.
@@ -126,7 +131,7 @@ interface ObjectManager
      *
      * @return \Doctrine\Common\Persistence\ObjectRepository
      */
-    public function getRepository($className);
+    public function getRepository(string $className): ObjectRepository;
 
     /**
      * Returns the ClassMetadata descriptor for a class.
@@ -138,14 +143,14 @@ interface ObjectManager
      *
      * @return \Doctrine\Common\Persistence\Mapping\ClassMetadata
      */
-    public function getClassMetadata($className);
+    public function getClassMetadata(string $className): ClassMetadata;
 
     /**
      * Gets the metadata factory used to gather the metadata of classes.
      *
      * @return \Doctrine\Common\Persistence\Mapping\ClassMetadataFactory
      */
-    public function getMetadataFactory();
+    public function getMetadataFactory(): ClassMetadataFactory;
 
     /**
      * Helper method to initialize a lazy loading proxy or persistent collection.
@@ -156,7 +161,7 @@ interface ObjectManager
      *
      * @return void
      */
-    public function initializeObject($obj);
+    public function initializeObject(object $obj): void;
 
     /**
      * Checks if the object is part of the current UnitOfWork and therefore managed.
@@ -165,5 +170,5 @@ interface ObjectManager
      *
      * @return bool
      */
-    public function contains($object);
+    public function contains(object $object): bool;
 }

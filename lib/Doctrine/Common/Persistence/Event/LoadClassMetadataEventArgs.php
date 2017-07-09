@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Persistence\Event;
 
 use Doctrine\Common\EventArgs;
@@ -58,7 +60,7 @@ class LoadClassMetadataEventArgs extends EventArgs
      *
      * @return ClassMetadata
      */
-    public function getClassMetadata()
+    public function getClassMetadata(): ClassMetadata
     {
         return $this->classMetadata;
     }
@@ -68,7 +70,7 @@ class LoadClassMetadataEventArgs extends EventArgs
      *
      * @return ObjectManager
      */
-    public function getObjectManager()
+    public function getObjectManager(): ObjectManager
     {
         return $this->objectManager;
     }

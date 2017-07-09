@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common;
 
 /**
@@ -41,5 +43,5 @@ interface PropertyChangedListener
      *
      * @return void
      */
-    function propertyChanged($sender, $propertyName, $oldValue, $newValue);
+    function propertyChanged(object $sender, string $propertyName, $oldValue, $newValue): void;
 }
