@@ -11,4 +11,11 @@ use Doctrine\Common\Annotations\Annotation;
  */
 class ExampleAnnotationClass {
 
+  const foo = \stdClass::class;
+
+  /**
+   * Example with comment.
+   */
+  const bar = \stdClass::class;
+
 } 
