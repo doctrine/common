@@ -69,12 +69,12 @@ class StaticReflectionParserTest extends DoctrineTestCase
     /**
      * @dataProvider classAnnotationOptimize
      */
-    public function testClassAnnotationOptimizedParsing($classAnnotationOptimize) {
+    public function testClassAnnotationOptimizedParsing($class, $classAnnotationOptimize) {
         $testsRoot = substr(__DIR__, 0, -strlen(__NAMESPACE__) - 1);
         $paths = [
           'Doctrine\\Tests' => [$testsRoot],
         ];
-        $staticReflectionParser = new StaticReflectionParser(ExampleAnnotationClass::class, new Psr0FindFile($paths), $classAnnotationOptimize);
+        $staticReflectionParser = new StaticReflectionParser($class, new Psr0FindFile($paths), $classAnnotationOptimize);
         $expectedDocComment = '/**
  * @Annotation(
  *   key = "value"
@@ -89,8 +89,10 @@ class StaticReflectionParserTest extends DoctrineTestCase
     public function classAnnotationOptimize()
     {
         return [
-            [false],
-            [true]
+            [ExampleAnnotationClass::class, false],
+            [ExampleAnnotationClass::class, true],
+            [AnnotationClassWithScopeResolution::class, false],
+            [AnnotationClassWithScopeResolution::class, true],
         ];
     }
 }

@@ -144,6 +144,8 @@ class StaticReflectionParser implements ReflectionProviderInterface
         }
         $tokenParser = new TokenParser($contents);
         $docComment = '';
+        $last_token = false;
+
         while ($token = $tokenParser->next(false)) {
             switch ($token[0]) {
                 case T_USE:
@@ -153,8 +155,10 @@ class StaticReflectionParser implements ReflectionProviderInterface
                     $docComment = $token[1];
                     break;
                 case T_CLASS:
-                    $this->docComment['class'] = $docComment;
-                    $docComment = '';
+                    if ($last_token !== T_PAAMAYIM_NEKUDOTAYIM) {
+                        $this->docComment['class'] = $docComment;
+                        $docComment = '';
+                    }
                     break;
                 case T_VAR:
                 case T_PRIVATE:
@@ -206,6 +210,8 @@ class StaticReflectionParser implements ReflectionProviderInterface
                     }
                     break;
             }
+
+            $last_token = $token[0];
         }
     }
 
