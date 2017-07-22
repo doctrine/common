@@ -98,6 +98,15 @@ interface ClassMetadata
     public function isCollectionValuedAssociation($fieldName);
 
     /**
+     * Checks if the given field has an embedded class for this class.
+     *
+     * @param string $fieldName
+     *
+     * @return boolean
+     */
+    public function hasEmbeddedClass($fieldName);
+
+    /**
      * A numerically indexed list of field names of this persistent class.
      *
      * This array includes identifier fields if present on this class.
