@@ -144,7 +144,8 @@ class StaticReflectionParser implements ReflectionProviderInterface
         }
         $tokenParser = new TokenParser($contents);
         $docComment = '';
-        $last_token = FALSE;
+        $last_token = false;
+
         while ($token = $tokenParser->next(false)) {
             switch ($token[0]) {
                 case T_USE:
@@ -209,6 +210,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
                     }
                     break;
             }
+
             $last_token = $token[0];
         }
     }
