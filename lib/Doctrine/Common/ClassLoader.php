@@ -183,7 +183,7 @@ class ClassLoader
             return false;
         }
 
-        require ($this->includePath !== null ? $this->includePath . DIRECTORY_SEPARATOR : '')
+        require($this->includePath !== null ? $this->includePath . DIRECTORY_SEPARATOR : '')
                . str_replace($this->namespaceSeparator, DIRECTORY_SEPARATOR, $className)
                . $this->fileExtension;
 
@@ -200,7 +200,7 @@ class ClassLoader
      */
     public function canLoadClass($className)
     {
-        if ($this->namespace !== null && strpos($className, $this->namespace.$this->namespaceSeparator) !== 0) {
+        if ($this->namespace !== null && strpos($className, $this->namespace . $this->namespaceSeparator) !== 0) {
             return false;
         }
 
@@ -250,7 +250,7 @@ class ClassLoader
      */
     public static function getClassLoader($className)
     {
-         foreach (spl_autoload_functions() as $loader) {
+        foreach (spl_autoload_functions() as $loader) {
             if (is_array($loader)
                 && ($classLoader = reset($loader))
                 && $classLoader instanceof ClassLoader

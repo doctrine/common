@@ -105,7 +105,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
      */
     public function getAllMetadata()
     {
-        if ( ! $this->initialized) {
+        if (! $this->initialized) {
             $this->initialize();
         }
 
@@ -280,7 +280,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         // Collect parent classes, ignoring transient (not-mapped) classes.
         $parentClasses = [];
         foreach (array_reverse($this->getReflectionService()->getParentClasses($name)) as $parentClass) {
-            if ( ! $this->getDriver()->isTransient($parentClass)) {
+            if (! $this->getDriver()->isTransient($parentClass)) {
                 $parentClasses[] = $parentClass;
             }
         }
@@ -303,7 +303,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
      */
     protected function loadMetadata($name)
     {
-        if ( ! $this->initialized) {
+        if (! $this->initialized) {
             $this->initialize();
         }
 
@@ -390,7 +390,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
      */
     public function isTransient($class)
     {
-        if ( ! $this->initialized) {
+        if (! $this->initialized) {
             $this->initialize();
         }
 

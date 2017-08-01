@@ -126,7 +126,7 @@ class PreUpdateEventArgs extends LifecycleEventArgs
      */
     private function assertValidField($field)
     {
-        if ( ! isset($this->entityChangeSet[$field])) {
+        if (! isset($this->entityChangeSet[$field])) {
             throw new \InvalidArgumentException(sprintf(
                 'Field "%s" is not a valid field of the entity "%s" in PreUpdateEventArgs.',
                 $field,
