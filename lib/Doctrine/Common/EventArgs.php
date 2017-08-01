@@ -58,7 +58,7 @@ class EventArgs
      */
     public static function getEmptyInstance()
     {
-        if ( ! self::$_emptyEventArgsInstance) {
+        if (! self::$_emptyEventArgsInstance) {
             self::$_emptyEventArgsInstance = new EventArgs;
         }
 

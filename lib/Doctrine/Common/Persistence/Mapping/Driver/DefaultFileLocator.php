@@ -129,7 +129,7 @@ class DefaultFileLocator implements FileLocator
 
         if ($this->paths) {
             foreach ($this->paths as $path) {
-                if ( ! is_dir($path)) {
+                if (! is_dir($path)) {
                     throw MappingException::fileMappingDriversRequireConfiguredDirectoryPath($path);
                 }
 

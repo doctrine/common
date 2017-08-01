@@ -52,7 +52,7 @@ class StaticReflectionService implements ReflectionService
     {
         $namespace = '';
         if (strpos($className, '\\') !== false) {
-            $namespace = strrev(substr( strrev($className), strpos(strrev($className), '\\')+1 ));
+            $namespace = strrev(substr(strrev($className), strpos(strrev($className), '\\')+1));
         }
         return $namespace;
     }

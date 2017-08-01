@@ -175,6 +175,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
                         continue 2;
                     }
                     // No break.
+                    // no break
                 case T_FUNCTION:
                     // The next string after function is the name, but
                     // there can be & before the function name so find the
@@ -202,7 +203,7 @@ class StaticReflectionParser implements ReflectionProviderInterface
                             if ($alias == $prefix) {
                                 $this->parentClassName = '\\' . $use . $postfix;
                                 $fullySpecified = true;
-                          }
+                            }
                         }
                     }
                     if (!$fullySpecified) {

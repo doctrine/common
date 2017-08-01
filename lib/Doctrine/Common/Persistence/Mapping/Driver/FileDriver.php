@@ -183,7 +183,7 @@ abstract class FileDriver implements MappingDriver
         $this->classCache = [];
         if (null !== $this->globalBasename) {
             foreach ($this->locator->getPaths() as $path) {
-                $file = $path.'/'.$this->globalBasename.$this->locator->getFileExtension();
+                $file = $path . '/' . $this->globalBasename . $this->locator->getFileExtension();
                 if (is_file($file)) {
                     $this->classCache = array_merge(
                         $this->classCache,

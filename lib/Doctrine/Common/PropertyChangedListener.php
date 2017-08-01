@@ -41,5 +41,5 @@ interface PropertyChangedListener
      *
      * @return void
      */
-    function propertyChanged($sender, $propertyName, $oldValue, $newValue);
+    public function propertyChanged($sender, $propertyName, $oldValue, $newValue);
 }

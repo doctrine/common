@@ -73,7 +73,7 @@ class Autoloader
     {
         $proxyNamespace = ltrim($proxyNamespace, '\\');
 
-        if ( ! (null === $notFoundCallback || is_callable($notFoundCallback))) {
+        if (! (null === $notFoundCallback || is_callable($notFoundCallback))) {
             throw InvalidArgumentException::invalidClassNotFoundCallback($notFoundCallback);
         }
 
