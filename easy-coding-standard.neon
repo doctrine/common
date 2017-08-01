@@ -1,0 +1,10 @@
+# this will be placed in doctrine/coding-stanard, easy-accessible for anyone
+includes:
+    # PSR-2 rules: https://github.com/doctrine/coding-standard/blob/fe7696ba040327075c7bf1693c5d88bd64995090/ruleset.xml#L6
+    - vendor/symplify/easy-coding-standard/config/psr2-checkers.neon
+
+checkers:
+    # can be used instead of
+    # https://github.com/doctrine/coding-standard/blob/master/Sniffs/Strings/ConcatenationSpacingSniff.php
+    PhpCsFixer\Fixer\Operator\ConcatSpaceFixer:
+        spacing: one
