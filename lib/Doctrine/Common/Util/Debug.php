@@ -163,7 +163,6 @@ final class Debug
                 $name.= ':' . ($aux[1] === '*' ? 'protected' : $aux[1] . ':private');
             }
             $return->$name = self::export($clone[$key], $maxDepth - 1);
-            ;
         }
 
         return $return;
