@@ -8,3 +8,5 @@ vendor/
 composer.lock
 doctrine-common-*.tar
 doctrine-common-*.tar.gz
+/phpcs.xml
+/.phpcs-cache
