@@ -23,9 +23,9 @@ class RuntimePublicReflectionPropertyTest extends \PHPUnit\Framework\TestCase
             'checkedProperty'
         );
 
-        $this->assertSame('testValue', $reflProperty->getValue($mockProxy));
+        self::assertSame('testValue', $reflProperty->getValue($mockProxy));
         unset($mockProxy->checkedProperty);
-        $this->assertNull($reflProperty->getValue($mockProxy));
+        self::assertNull($reflProperty->getValue($mockProxy));
     }
 
     public function testSetValueOnProxyPublicProperty()
@@ -45,11 +45,11 @@ class RuntimePublicReflectionPropertyTest extends \PHPUnit\Framework\TestCase
         );
 
         $reflProperty->setValue($mockProxy, 'newValue');
-        $this->assertSame('newValue', $mockProxy->checkedProperty);
+        self::assertSame('newValue', $mockProxy->checkedProperty);
 
         unset($mockProxy->checkedProperty);
         $reflProperty->setValue($mockProxy, 'otherNewValue');
-        $this->assertSame('otherNewValue', $mockProxy->checkedProperty);
+        self::assertSame('otherNewValue', $mockProxy->checkedProperty);
 
         $setCheckMock = $this->getMockBuilder('stdClass')->setMethods(['callSet'])->getMock();
         $setCheckMock->expects($this->once())->method('callSet');
@@ -62,7 +62,7 @@ class RuntimePublicReflectionPropertyTest extends \PHPUnit\Framework\TestCase
 
         unset($mockProxy->checkedProperty);
         $reflProperty->setValue($mockProxy, 'againNewValue');
-        $this->assertSame('againNewValue', $mockProxy->checkedProperty);
+        self::assertSame('againNewValue', $mockProxy->checkedProperty);
     }
 }
 

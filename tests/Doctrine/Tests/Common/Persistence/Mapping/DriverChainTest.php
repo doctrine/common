@@ -41,7 +41,7 @@ class DriverChainTest extends DoctrineTestCase
 
         $chain->loadMetadataForClass($className, $classMetadata);
 
-        $this->assertTrue( $chain->isTransient($className) );
+        self::assertTrue( $chain->isTransient($className) );
     }
 
     public function testLoadMetadata_NoDelegatorFound_ThrowsMappingException()
@@ -75,7 +75,7 @@ class DriverChainTest extends DoctrineTestCase
         $chain->addDriver($driver1, 'Doctrine\Tests\Models\Company');
         $chain->addDriver($driver2, 'Doctrine\Tests\ORM\Mapping');
 
-        $this->assertEquals([
+        self::assertEquals([
             'Doctrine\Tests\Models\Company\Foo',
             'Doctrine\Tests\ORM\Mapping\Bar',
             'Doctrine\Tests\ORM\Mapping\Baz'
@@ -92,7 +92,7 @@ class DriverChainTest extends DoctrineTestCase
         $chain = new MappingDriverChain();
         $chain->addDriver($driver1, 'Doctrine\Tests\Models\CMS');
 
-        $this->assertTrue($chain->isTransient('stdClass'), "stdClass isTransient");
+        self::assertTrue($chain->isTransient('stdClass'), "stdClass isTransient");
     }
 
     /**
@@ -120,15 +120,15 @@ class DriverChainTest extends DoctrineTestCase
             ->with($this->equalTo($entityClassName))
             ->will($this->returnValue(true));
 
-        $this->assertNull($chain->getDefaultDriver());
+        self::assertNull($chain->getDefaultDriver());
 
         $chain->setDefaultDriver($defaultDriver);
         $chain->addDriver($companyDriver, 'Doctrine\Tests\Models\Company');
 
-        $this->assertSame($defaultDriver, $chain->getDefaultDriver());
+        self::assertSame($defaultDriver, $chain->getDefaultDriver());
 
-        $this->assertTrue($chain->isTransient($entityClassName));
-        $this->assertFalse($chain->isTransient($managerClassName));
+        self::assertTrue($chain->isTransient($entityClassName));
+        self::assertFalse($chain->isTransient($managerClassName));
     }
 
     public function testDefaultDriverGetAllClassNames()
@@ -152,7 +152,7 @@ class DriverChainTest extends DoctrineTestCase
 
         $classNames = $chain->getAllClassNames();
 
-        $this->assertEquals(['Doctrine\Tests\Models\Company\Foo', 'Other\Class'], $classNames);
+        self::assertEquals(['Doctrine\Tests\Models\Company\Foo', 'Other\Class'], $classNames);
     }
 }
 

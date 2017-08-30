@@ -114,21 +114,21 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             $prop->setValue($this->lazyObject, $identifier[$idField]);
         }
 
-        $this->assertFalse($this->lazyObject->__isInitialized());
+        self::assertFalse($this->lazyObject->__isInitialized());
     }
 
     public function testFetchingPublicIdentifierDoesNotCauseLazyLoading()
     {
         $this->configureInitializerMock(0);
 
-        $this->assertSame('publicIdentifierFieldValue', $this->lazyObject->publicIdentifierField);
+        self::assertSame('publicIdentifierFieldValue', $this->lazyObject->publicIdentifierField);
     }
 
     public function testFetchingIdentifiersViaPublicGetterDoesNotCauseLazyLoading()
     {
         $this->configureInitializerMock(0);
 
-        $this->assertSame('protectedIdentifierFieldValue', $this->lazyObject->getProtectedIdentifierField());
+        self::assertSame('protectedIdentifierFieldValue', $this->lazyObject->getProtectedIdentifierField());
     }
 
     public function testCallingMethodCausesLazyLoading()
@@ -156,8 +156,8 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             }
         );
 
-        $this->assertSame('loadedValue', $this->lazyObject->publicPersistentField);
-        $this->assertSame('loadedValue', $this->lazyObject->publicPersistentField);
+        self::assertSame('loadedValue', $this->lazyObject->publicPersistentField);
+        self::assertSame('loadedValue', $this->lazyObject->publicPersistentField);
     }
 
     public function testFetchingPublicAssociationCausesLazyLoading()
@@ -171,8 +171,8 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             }
         );
 
-        $this->assertSame('loadedAssociation', $this->lazyObject->publicAssociation);
-        $this->assertSame('loadedAssociation', $this->lazyObject->publicAssociation);
+        self::assertSame('loadedAssociation', $this->lazyObject->publicAssociation);
+        self::assertSame('loadedAssociation', $this->lazyObject->publicAssociation);
     }
 
     public function testFetchingProtectedAssociationViaPublicGetterCausesLazyLoading()
@@ -185,8 +185,8 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             }
         );
 
-        $this->assertSame('protectedAssociationValue', $this->lazyObject->getProtectedAssociation());
-        $this->assertSame('protectedAssociationValue', $this->lazyObject->getProtectedAssociation());
+        self::assertSame('protectedAssociationValue', $this->lazyObject->getProtectedAssociation());
+        self::assertSame('protectedAssociationValue', $this->lazyObject->getProtectedAssociation());
     }
 
     public function testLazyLoadingTriggeredOnlyAtFirstPublicPropertyRead()
@@ -201,8 +201,8 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             }
         );
 
-        $this->assertSame('loadedValue', $this->lazyObject->publicPersistentField);
-        $this->assertSame('publicAssociationValue', $this->lazyObject->publicAssociation);
+        self::assertSame('loadedValue', $this->lazyObject->publicPersistentField);
+        self::assertSame('publicAssociationValue', $this->lazyObject->publicAssociation);
     }
 
     public function testNoticeWhenReadingNonExistentPublicProperties()
@@ -220,7 +220,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
     {
         $this->configureInitializerMock(0);
 
-        $this->assertFalse(isset($this->lazyObject->non_existing_property));
+        self::assertFalse(isset($this->lazyObject->non_existing_property));
     }
 
     public function testNoErrorWhenSettingNonExistentProperty()
@@ -228,7 +228,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         $this->configureInitializerMock(0);
 
         $this->lazyObject->non_existing_property = 'now has a value';
-        $this->assertSame('now has a value', $this->lazyObject->non_existing_property);
+        self::assertSame('now has a value', $this->lazyObject->non_existing_property);
     }
 
     public function testCloningCallsClonerWithClonedObject()
@@ -250,15 +250,15 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         $this->lazyObject->__setCloner($this->getClosure([$cb, 'cb']));
 
         $cloned = clone $this->lazyObject;
-        $this->assertSame('clonedAssociation', $cloned->publicAssociation);
-        $this->assertNotSame($cloned, $lazyObject, 'a clone of the lazy object is retrieved');
+        self::assertSame('clonedAssociation', $cloned->publicAssociation);
+        self::assertNotSame($cloned, $lazyObject, 'a clone of the lazy object is retrieved');
     }
 
     public function testFetchingTransientPropertiesWillNotTriggerLazyLoading()
     {
         $this->configureInitializerMock(0);
 
-        $this->assertSame(
+        self::assertSame(
             'publicTransientFieldValue',
             $this->lazyObject->publicTransientField,
             'fetching public transient field won\'t trigger lazy loading'
@@ -268,7 +268,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             ->getReflectionClass()
             ->getProperty('protectedTransientField');
         $property->setAccessible(true);
-        $this->assertSame(
+        self::assertSame(
             'protectedTransientFieldValue',
             $property->getValue($this->lazyObject),
             'fetching protected transient field via reflection won\'t trigger lazy loading'
@@ -308,7 +308,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
 
         $this->lazyObject->__load();
         $this->lazyObject->__load();
-        $this->assertSame('publicIdentifierFieldValue-test', $this->lazyObject->publicAssociation);
+        self::assertSame('publicIdentifierFieldValue-test', $this->lazyObject->publicAssociation);
     }
 
     public function testFailedLoadingWillThrowException()
@@ -341,34 +341,34 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             }));
 
         $firstClone = clone $this->lazyObject;
-        $this->assertSame(
+        self::assertSame(
             'checked-persistent-field',
             $firstClone->publicPersistentField,
             'Persistent fields are cloned correctly'
         );
-        $this->assertSame(
+        self::assertSame(
             'checked-association-field',
             $firstClone->publicAssociation,
             'Associations are cloned correctly'
         );
-        $this->assertSame(
+        self::assertSame(
             'should-not-change',
             $firstClone->publicTransientField,
             'Transient fields are not overwritten'
         );
 
         $secondClone = clone $this->lazyObject;
-        $this->assertSame(
+        self::assertSame(
             'checked-persistent-field',
             $secondClone->publicPersistentField,
             'Persistent fields are cloned correctly'
         );
-        $this->assertSame(
+        self::assertSame(
             'checked-association-field',
             $secondClone->publicAssociation,
             'Associations are cloned correctly'
         );
-        $this->assertSame(
+        self::assertSame(
             'should-not-change',
             $secondClone->publicTransientField,
             'Transient fields are not overwritten'
@@ -388,51 +388,51 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         $unserialized = unserialize($serialized);
         $reflClass = $this->lazyLoadableObjectMetadata->getReflectionClass();
 
-        $this->assertFalse($unserialized->__isInitialized(), 'serialization didn\'t cause intialization');
+        self::assertFalse($unserialized->__isInitialized(), 'serialization didn\'t cause intialization');
 
         // Checking identifiers
-        $this->assertSame('publicIdentifierFieldValue', $unserialized->publicIdentifierField, 'identifiers are kept');
+        self::assertSame('publicIdentifierFieldValue', $unserialized->publicIdentifierField, 'identifiers are kept');
         $protectedIdentifierField = $reflClass->getProperty('protectedIdentifierField');
         $protectedIdentifierField->setAccessible(true);
-        $this->assertSame(
+        self::assertSame(
             'protectedIdentifierFieldValue',
             $protectedIdentifierField->getValue($unserialized),
             'identifiers are kept'
         );
 
         // Checking transient fields
-        $this->assertSame(
+        self::assertSame(
             'publicTransientFieldValue',
             $unserialized->publicTransientField,
             'transient fields are kept'
         );
         $protectedTransientField = $reflClass->getProperty('protectedTransientField');
         $protectedTransientField->setAccessible(true);
-        $this->assertSame(
+        self::assertSame(
             'protectedTransientFieldValue',
             $protectedTransientField->getValue($unserialized),
             'transient fields are kept'
         );
 
         // Checking persistent fields
-        $this->assertSame(
+        self::assertSame(
             'publicPersistentFieldValue',
             $unserialized->publicPersistentField,
             'persistent fields are kept'
         );
         $protectedPersistentField = $reflClass->getProperty('protectedPersistentField');
         $protectedPersistentField->setAccessible(true);
-        $this->assertSame(
+        self::assertSame(
             'protectedPersistentFieldValue',
             $protectedPersistentField->getValue($unserialized),
             'persistent fields are kept'
         );
 
         // Checking associations
-        $this->assertSame('publicAssociationValue', $unserialized->publicAssociation, 'associations are kept');
+        self::assertSame('publicAssociationValue', $unserialized->publicAssociation, 'associations are kept');
         $protectedAssociationField = $reflClass->getProperty('protectedAssociation');
         $protectedAssociationField->setAccessible(true);
-        $this->assertSame(
+        self::assertSame(
             'protectedAssociationValue',
             $protectedAssociationField->getValue($unserialized),
             'associations are kept'
@@ -451,55 +451,55 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         /* @var $unserialized LazyLoadableObject|Proxy */
         $unserialized = unserialize($serialized);
 
-        $this->assertTrue($unserialized->__isInitialized(), 'serialization didn\'t cause intialization');
+        self::assertTrue($unserialized->__isInitialized(), 'serialization didn\'t cause intialization');
 
         // Checking transient fields
-        $this->assertSame(
+        self::assertSame(
             'publicTransientFieldValue',
             $unserialized->publicTransientField,
             'transient fields are kept'
         );
         $protectedTransientField = $reflClass->getProperty('protectedTransientField');
         $protectedTransientField->setAccessible(true);
-        $this->assertSame(
+        self::assertSame(
             'protectedTransientFieldValue',
             $protectedTransientField->getValue($unserialized),
             'transient fields are kept'
         );
 
         // Checking persistent fields
-        $this->assertSame(
+        self::assertSame(
             'publicPersistentFieldValue',
             $unserialized->publicPersistentField,
             'persistent fields are kept'
         );
         $protectedPersistentField = $reflClass->getProperty('protectedPersistentField');
         $protectedPersistentField->setAccessible(true);
-        $this->assertSame(
+        self::assertSame(
             'protectedPersistentFieldValue',
             $protectedPersistentField->getValue($unserialized),
             'persistent fields are kept'
         );
 
         // Checking identifiers
-        $this->assertSame(
+        self::assertSame(
             'publicIdentifierFieldValue',
             $unserialized->publicIdentifierField,
             'identifiers are kept'
         );
         $protectedIdentifierField = $reflClass->getProperty('protectedIdentifierField');
         $protectedIdentifierField->setAccessible(true);
-        $this->assertSame(
+        self::assertSame(
             'protectedIdentifierFieldValue',
             $protectedIdentifierField->getValue($unserialized),
             'identifiers are kept'
         );
 
         // Checking associations
-        $this->assertSame('publicAssociationValue', $unserialized->publicAssociation, 'associations are kept');
+        self::assertSame('publicAssociationValue', $unserialized->publicAssociation, 'associations are kept');
         $protectedAssociationField = $reflClass->getProperty('protectedAssociation');
         $protectedAssociationField->setAccessible(true);
-        $this->assertSame(
+        self::assertSame(
             'protectedAssociationValue',
             $protectedAssociationField->getValue($unserialized),
             'associations are kept'
@@ -512,12 +512,12 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         $this->proxyLoader->expects($this->once())->method('load')->will($this->returnValue($this->lazyObject));
         $this->lazyObject->__setInitializer($this->getSuggestedInitializerImplementation());
 
-        $this->assertSame(
+        self::assertSame(
             'publicPersistentFieldValue',
             $this->lazyObject->publicPersistentField,
             'Persistent field is restored to default value'
         );
-        $this->assertSame(
+        self::assertSame(
             'publicAssociationValue',
             $this->lazyObject->publicAssociation,
             'Association is restored to default value'
@@ -537,8 +537,8 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->lazyObject->publicPersistentField = 'newPublicPersistentFieldValue';
-        $this->assertSame('newPublicPersistentFieldValue', $this->lazyObject->publicPersistentField);
-        $this->assertSame('newAssociationValue', $this->lazyObject->publicAssociation);
+        self::assertSame('newPublicPersistentFieldValue', $this->lazyObject->publicPersistentField);
+        self::assertSame('newAssociationValue', $this->lazyObject->publicAssociation);
     }
 
     public function testSettingPublicAssociationCausesLazyLoading()
@@ -554,8 +554,8 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->lazyObject->publicAssociation = 'newPublicAssociationValue';
-        $this->assertSame('newPublicAssociationValue', $this->lazyObject->publicAssociation);
-        $this->assertSame('newPublicPersistentFieldValue', $this->lazyObject->publicPersistentField);
+        self::assertSame('newPublicAssociationValue', $this->lazyObject->publicAssociation);
+        self::assertSame('newPublicPersistentFieldValue', $this->lazyObject->publicPersistentField);
     }
 
     public function testCheckingPublicFieldsCausesLazyLoading()
@@ -570,10 +570,10 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             }
         );
 
-        $this->assertFalse(isset($this->lazyObject->publicPersistentField));
-        $this->assertNull($this->lazyObject->publicPersistentField);
-        $this->assertTrue(isset($this->lazyObject->publicAssociation));
-        $this->assertSame('setPublicAssociation', $this->lazyObject->publicAssociation);
+        self::assertFalse(isset($this->lazyObject->publicPersistentField));
+        self::assertNull($this->lazyObject->publicPersistentField);
+        self::assertTrue(isset($this->lazyObject->publicAssociation));
+        self::assertSame('setPublicAssociation', $this->lazyObject->publicAssociation);
     }
 
     public function testCheckingPublicAssociationCausesLazyLoading()
@@ -588,10 +588,10 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             }
         );
 
-        $this->assertTrue(isset($this->lazyObject->publicAssociation));
-        $this->assertSame('setPublicAssociation', $this->lazyObject->publicAssociation);
-        $this->assertTrue(isset($this->lazyObject->publicPersistentField));
-        $this->assertSame('newPersistentFieldValue', $this->lazyObject->publicPersistentField);
+        self::assertTrue(isset($this->lazyObject->publicAssociation));
+        self::assertSame('setPublicAssociation', $this->lazyObject->publicAssociation);
+        self::assertTrue(isset($this->lazyObject->publicPersistentField));
+        self::assertSame('newPersistentFieldValue', $this->lazyObject->publicPersistentField);
     }
 
     public function testCallingVariadicMethodCausesLazyLoading()
@@ -638,12 +638,12 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             ->with($lazyObject, 'addTypeWithMultipleParameters', ['foo', 'bar', ['baz1', 'baz2']]);
 
         $lazyObject->addType('type1', 'type2');
-        $this->assertSame(['type1', 'type2'], $lazyObject->types);
+        self::assertSame(['type1', 'type2'], $lazyObject->types);
 
         $lazyObject->addTypeWithMultipleParameters('foo', 'bar', 'baz1', 'baz2');
-        $this->assertSame('foo', $lazyObject->foo);
-        $this->assertSame('bar', $lazyObject->bar);
-        $this->assertSame(['baz1', 'baz2'], $lazyObject->baz);
+        self::assertSame('foo', $lazyObject->foo);
+        self::assertSame('bar', $lazyObject->bar);
+        self::assertSame(['baz1', 'baz2'], $lazyObject->baz);
     }
 
     /**

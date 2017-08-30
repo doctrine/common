@@ -14,7 +14,7 @@ class DebugTest extends DoctrineTestCase
         $obj->bar = 1234;
 
         $var = Debug::export($obj, 2);
-        $this->assertEquals( "stdClass", $var->__CLASS__ );
+        self::assertEquals( "stdClass", $var->__CLASS__ );
     }
 
     public function testExportObjectWithReference()
@@ -26,8 +26,8 @@ class DebugTest extends DoctrineTestCase
         $var = Debug::export($baz, 2);
         $baz->foo = 'tab';
 
-        $this->assertEquals('bar', $var->foo);
-        $this->assertEquals('tab', $bar['foo']);
+        self::assertEquals('bar', $var->foo);
+        self::assertEquals('tab', $bar['foo']);
     }
 
     public function testExportArray()
@@ -36,7 +36,7 @@ class DebugTest extends DoctrineTestCase
         $var = Debug::export($array, 2);
         $expected = $array;
         $expected['b']['d'] = 'Array(2)';
-        $this->assertEquals($expected, $var);
+        self::assertEquals($expected, $var);
     }
 
     public function testExportDateTime()
@@ -44,8 +44,8 @@ class DebugTest extends DoctrineTestCase
         $obj = new \DateTime('2010-10-10 10:10:10', new \DateTimeZone('UTC'));
 
         $var = Debug::export($obj, 2);
-        $this->assertEquals('DateTime', $var->__CLASS__);
-        $this->assertEquals('2010-10-10T10:10:10+00:00', $var->date);
+        self::assertEquals('DateTime', $var->__CLASS__);
+        self::assertEquals('2010-10-10T10:10:10+00:00', $var->date);
     }
 
     public function testExportDateTimeImmutable()
@@ -53,8 +53,8 @@ class DebugTest extends DoctrineTestCase
         $obj = new \DateTimeImmutable('2010-10-10 10:10:10', new \DateTimeZone('UTC'));
 
         $var = Debug::export($obj, 2);
-        $this->assertEquals('DateTimeImmutable', $var->__CLASS__);
-        $this->assertEquals('2010-10-10T10:10:10+00:00', $var->date);
+        self::assertEquals('DateTimeImmutable', $var->__CLASS__);
+        self::assertEquals('2010-10-10T10:10:10+00:00', $var->date);
     }
 
     public function testExportDateTimeZone()
@@ -62,8 +62,8 @@ class DebugTest extends DoctrineTestCase
         $obj = new \DateTimeImmutable('2010-10-10 12:34:56', new \DateTimeZone('Europe/Rome'));
 
         $var = Debug::export($obj, 2);
-        $this->assertEquals('DateTimeImmutable', $var->__CLASS__);
-        $this->assertEquals('2010-10-10T12:34:56+02:00', $var->date);
+        self::assertEquals('DateTimeImmutable', $var->__CLASS__);
+        self::assertEquals('2010-10-10T12:34:56+02:00', $var->date);
     }
 
     public function testExportArrayTraversable()
@@ -71,12 +71,12 @@ class DebugTest extends DoctrineTestCase
         $obj = new \ArrayObject(['foobar']);
 
         $var = Debug::export($obj, 2);
-        $this->assertContains('foobar', $var->__STORAGE__);
+        self::assertContains('foobar', $var->__STORAGE__);
 
         $it = new \ArrayIterator(['foobar']);
 
         $var = Debug::export($it, 5);
-        $this->assertContains('foobar', $var->__STORAGE__);
+        self::assertContains('foobar', $var->__STORAGE__);
     }
 
     public function testReturnsOutput()
@@ -88,7 +88,7 @@ class DebugTest extends DoctrineTestCase
 
         ob_end_clean();
 
-        $this->assertSame($outputValue, $dump);
+        self::assertSame($outputValue, $dump);
     }
 
     public function testDisablesOutput()
@@ -100,8 +100,8 @@ class DebugTest extends DoctrineTestCase
 
         ob_end_clean();
 
-        $this->assertEmpty($outputValue);
-        $this->assertNotSame($outputValue, $dump);
+        self::assertEmpty($outputValue);
+        self::assertNotSame($outputValue, $dump);
     }
 
     /**
@@ -115,13 +115,13 @@ class DebugTest extends DoctrineTestCase
         $print_r_class = substr($print_r_class, strpos($print_r_class, '('));
         $print_r_expected = substr($print_r_expected, strpos($print_r_expected, '('));
 
-        $this->assertSame($print_r_class, $print_r_expected);
+        self::assertSame($print_r_class, $print_r_expected);
 
         $var = Debug::export($class, 3);
         $var = (array) $var;
         unset($var['__CLASS__']);
 
-        $this->assertSame($expected, $var);
+        self::assertSame($expected, $var);
     }
 
     public function provideAttributesCases()

@@ -43,7 +43,7 @@ class AutoloaderTest extends \PHPUnit\Framework\TestCase
     public function testResolveFile($proxyDir, $proxyNamespace, $className, $expectedProxyFile)
     {
         $actualProxyFile = Autoloader::resolveFile($proxyDir, $proxyNamespace, $className);
-        $this->assertEquals($expectedProxyFile, $actualProxyFile);
+        self::assertEquals($expectedProxyFile, $actualProxyFile);
     }
 
     public function testAutoload()
@@ -56,7 +56,7 @@ class AutoloaderTest extends \PHPUnit\Framework\TestCase
             file_put_contents(sys_get_temp_dir() . "/AutoloaderTestClass.php", "<?php namespace ProxyAutoloaderTest; class AutoloaderTestClass {} ");
         });
 
-        $this->assertTrue(class_exists('ProxyAutoloaderTest\AutoloaderTestClass', true));
+        self::assertTrue(class_exists('ProxyAutoloaderTest\AutoloaderTestClass', true));
         unlink(sys_get_temp_dir() ."/AutoloaderTestClass.php");
     }
 

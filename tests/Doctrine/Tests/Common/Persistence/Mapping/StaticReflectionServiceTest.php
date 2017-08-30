@@ -38,37 +38,37 @@ class StaticReflectionServiceTest extends \PHPUnit\Framework\TestCase
 
     public function testShortname()
     {
-        $this->assertEquals("StaticReflectionServiceTest", $this->reflectionService->getClassShortName(__CLASS__));
+        self::assertEquals("StaticReflectionServiceTest", $this->reflectionService->getClassShortName(__CLASS__));
     }
 
     public function testClassNamespaceName()
     {
-        $this->assertEquals('', $this->reflectionService->getClassNamespace(\stdClass::class));
-        $this->assertEquals(__NAMESPACE__, $this->reflectionService->getClassNamespace(__CLASS__));
+        self::assertEquals('', $this->reflectionService->getClassNamespace(\stdClass::class));
+        self::assertEquals(__NAMESPACE__, $this->reflectionService->getClassNamespace(__CLASS__));
     }
 
     public function testGetParentClasses()
     {
         $classes = $this->reflectionService->getParentClasses(__CLASS__);
-        $this->assertTrue(count($classes) == 0, "The test class ".__CLASS__." should have no parents according to static reflection.");
+        self::assertTrue(count($classes) == 0, "The test class ".__CLASS__." should have no parents according to static reflection.");
     }
 
     public function testGetReflectionClass()
     {
         $class = $this->reflectionService->getClass(__CLASS__);
-        $this->assertNull($class);
+        self::assertNull($class);
     }
 
     public function testGetMethods()
     {
-        $this->assertTrue($this->reflectionService->hasPublicMethod(__CLASS__, "testGetMethods"));
-        $this->assertTrue($this->reflectionService->hasPublicMethod(__CLASS__, "testGetMethods2"));
+        self::assertTrue($this->reflectionService->hasPublicMethod(__CLASS__, "testGetMethods"));
+        self::assertTrue($this->reflectionService->hasPublicMethod(__CLASS__, "testGetMethods2"));
     }
 
     public function testGetAccessibleProperty()
     {
         $reflProp = $this->reflectionService->getAccessibleProperty(__CLASS__, "reflectionService");
-        $this->assertNull($reflProp);
+        self::assertNull($reflProp);
     }
 }
 

@@ -30,18 +30,18 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
 
     public function testGetCacheDriver()
     {
-        $this->assertNull($this->cmf->getCacheDriver());
+        self::assertNull($this->cmf->getCacheDriver());
         $cache = new ArrayCache();
         $this->cmf->setCacheDriver($cache);
-        $this->assertSame($cache, $this->cmf->getCacheDriver());
+        self::assertSame($cache, $this->cmf->getCacheDriver());
     }
 
     public function testGetMetadataFor()
     {
         $metadata = $this->cmf->getMetadataFor('stdClass');
 
-        $this->assertInstanceOf(ClassMetadata::class, $metadata);
-        $this->assertTrue($this->cmf->hasMetadataFor('stdClass'));
+        self::assertInstanceOf(ClassMetadata::class, $metadata);
+        self::assertTrue($this->cmf->hasMetadataFor('stdClass'));
     }
 
     public function testGetMetadataForAbsentClass()
@@ -54,9 +54,9 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
     {
         $metadata = $this->cmf->getMetadataFor(ChildEntity::class);
 
-        $this->assertInstanceOf(ClassMetadata::class, $metadata);
-        $this->assertTrue($this->cmf->hasMetadataFor(ChildEntity::class));
-        $this->assertTrue($this->cmf->hasMetadataFor(RootEntity::class));
+        self::assertInstanceOf(ClassMetadata::class, $metadata);
+        self::assertTrue($this->cmf->hasMetadataFor(ChildEntity::class));
+        self::assertTrue($this->cmf->hasMetadataFor(RootEntity::class));
     }
 
     public function testGetCachedMetadata()
@@ -67,7 +67,7 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
 
         $this->cmf->setCacheDriver($cache);
 
-        $this->assertSame($metadata, $this->cmf->getMetadataFor(ChildEntity::class));
+        self::assertSame($metadata, $this->cmf->getMetadataFor(ChildEntity::class));
     }
 
     public function testCacheGetMetadataFor()
@@ -77,15 +77,15 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
 
         $loadedMetadata = $this->cmf->getMetadataFor(ChildEntity::class);
 
-        $this->assertSame($loadedMetadata, $cache->fetch(ChildEntity::class. '$CLASSMETADATA'));
+        self::assertSame($loadedMetadata, $cache->fetch(ChildEntity::class. '$CLASSMETADATA'));
     }
 
     public function testGetAliasedMetadata()
     {
         $this->cmf->getMetadataFor('prefix:ChildEntity');
 
-        $this->assertTrue($this->cmf->hasMetadataFor(__NAMESPACE__ . '\ChildEntity'));
-        $this->assertTrue($this->cmf->hasMetadataFor('prefix:ChildEntity'));
+        self::assertTrue($this->cmf->hasMetadataFor(__NAMESPACE__ . '\ChildEntity'));
+        self::assertTrue($this->cmf->hasMetadataFor('prefix:ChildEntity'));
     }
 
     /**
@@ -106,7 +106,7 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
      */
     public function testClassIsTransient()
     {
-        $this->assertTrue($this->cmf->isTransient('prefix:ChildEntity:Foo'));
+        self::assertTrue($this->cmf->isTransient('prefix:ChildEntity:Foo'));
     }
 
     public function testWillFallbackOnNotLoadedMetadata()
@@ -119,7 +119,7 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
 
         $this->cmf->metadata = null;
 
-        $this->assertSame($classMetadata, $this->cmf->getMetadataFor('Foo'));
+        self::assertSame($classMetadata, $this->cmf->getMetadataFor('Foo'));
     }
 
     public function testWillFailOnFallbackFailureWithNotLoadedMetadata()

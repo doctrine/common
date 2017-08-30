@@ -13,24 +13,24 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
         $classLoader->setFileExtension('.class.php');
         $classLoader->setNamespaceSeparator('_');
 
-        $this->assertTrue($classLoader->canLoadClass('ClassLoaderTest_ClassA'));
-        $this->assertTrue($classLoader->canLoadClass('ClassLoaderTest_ClassB'));
-        $this->assertTrue($classLoader->canLoadClass('ClassLoaderTest_ClassC'));
-        $this->assertFalse($classLoader->canLoadClass('OtherClass'));
-        $this->assertEquals($classLoader->loadClass('ClassLoaderTest_ClassA'), true);
-        $this->assertEquals($classLoader->loadClass('ClassLoaderTest_ClassB'), true);
-        $this->assertEquals($classLoader->loadClass('ClassLoaderTest_ClassC'), true);
+        self::assertTrue($classLoader->canLoadClass('ClassLoaderTest_ClassA'));
+        self::assertTrue($classLoader->canLoadClass('ClassLoaderTest_ClassB'));
+        self::assertTrue($classLoader->canLoadClass('ClassLoaderTest_ClassC'));
+        self::assertFalse($classLoader->canLoadClass('OtherClass'));
+        self::assertEquals($classLoader->loadClass('ClassLoaderTest_ClassA'), true);
+        self::assertEquals($classLoader->loadClass('ClassLoaderTest_ClassB'), true);
+        self::assertEquals($classLoader->loadClass('ClassLoaderTest_ClassC'), true);
     }
 
     public function testClassExists()
     {
-        $this->assertFalse(ClassLoader::classExists('ClassLoaderTest\ClassD'));
+        self::assertFalse(ClassLoader::classExists('ClassLoaderTest\ClassD'));
         $badLoader = function($className) {
             require __DIR__ . '/ClassLoaderTest/ClassD.php';
             return true;
         };
         spl_autoload_register($badLoader);
-        $this->assertTrue(ClassLoader::classExists('ClassLoaderTest\ClassD'));
+        self::assertTrue(ClassLoader::classExists('ClassLoaderTest\ClassD'));
         spl_autoload_unregister($badLoader);
     }
 
@@ -38,8 +38,8 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cl = new ClassLoader('ClassLoaderTest', __DIR__);
         $cl->register();
-        $this->assertTrue(ClassLoader::getClassLoader('ClassLoaderTest\ClassD') instanceof \Doctrine\Common\ClassLoader);
-        $this->assertNull(ClassLoader::getClassLoader('This\Class\Does\Not\Exist'));
+        self::assertTrue(ClassLoader::getClassLoader('ClassLoaderTest\ClassD') instanceof \Doctrine\Common\ClassLoader);
+        self::assertNull(ClassLoader::getClassLoader('This\Class\Does\Not\Exist'));
         $cl->unregister();
     }
 
@@ -54,10 +54,10 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
             $test->fail('Should not call this loader, class was already loaded');
         };
 
-        $this->assertFalse(ClassLoader::classExists('ClassLoaderTest\ClassE'));
+        self::assertFalse(ClassLoader::classExists('ClassLoaderTest\ClassE'));
         spl_autoload_register($silentLoader);
         spl_autoload_register($additionalLoader);
-        $this->assertTrue(ClassLoader::classExists('ClassLoaderTest\ClassE'));
+        self::assertTrue(ClassLoader::classExists('ClassLoaderTest\ClassE'));
         spl_autoload_unregister($additionalLoader);
         spl_autoload_unregister($silentLoader);
     }
@@ -68,13 +68,13 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
 
         // Test static call
         \ClassLoaderTest\ExternalLoader::registerStatic();
-        $this->assertFalse(ClassLoader::classExists('ClassLoaderTest\Class\That\Does\Not\Exist'));
+        self::assertFalse(ClassLoader::classExists('ClassLoaderTest\Class\That\Does\Not\Exist'));
         \ClassLoaderTest\ExternalLoader::unregisterStatic();
 
         // Test object
         $loader = new \ClassLoaderTest\ExternalLoader();
         $loader->register();
-        $this->assertFalse(ClassLoader::classExists('ClassLoaderTest\Class\That\Does\Not\Exist'));
+        self::assertFalse(ClassLoader::classExists('ClassLoaderTest\Class\That\Does\Not\Exist'));
         $loader->unregister();
     }
 
@@ -82,7 +82,7 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $classLoader = new ClassLoader('ClassLoaderTest', __DIR__);
 
-        $this->assertFalse($classLoader->loadClass('ClassLoaderTest\Non\Existing\ClassName'));
+        self::assertFalse($classLoader->loadClass('ClassLoaderTest\Non\Existing\ClassName'));
     }
 
     public function testLoadFileNotContainingClassClass()
@@ -91,7 +91,7 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
 
         $classLoader->setFileExtension('.class.php');
 
-        $this->assertFalse($classLoader->loadClass('ClassLoaderTest\EmptyFile'));
+        self::assertFalse($classLoader->loadClass('ClassLoaderTest\EmptyFile'));
     }
 
     public function testSupportsInterfaceAutoloading()
@@ -101,8 +101,8 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
         $classLoader->setFileExtension('.class.php');
         $classLoader->setNamespaceSeparator('_');
 
-        $this->assertTrue($classLoader->loadClass('ClassLoaderTest_InterfaceA'));
-        $this->assertTrue(interface_exists('ClassLoaderTest_InterfaceA', false));
+        self::assertTrue($classLoader->loadClass('ClassLoaderTest_InterfaceA'));
+        self::assertTrue(interface_exists('ClassLoaderTest_InterfaceA', false));
     }
 
     public function testSupportsTraitAutoloading()
@@ -112,8 +112,8 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
         $classLoader->setFileExtension('.class.php');
         $classLoader->setNamespaceSeparator('_');
 
-        $this->assertTrue($classLoader->loadClass('ClassLoaderTest_TraitA'));
-        $this->assertTrue(trait_exists('ClassLoaderTest_TraitA', false));
+        self::assertTrue($classLoader->loadClass('ClassLoaderTest_TraitA'));
+        self::assertTrue(trait_exists('ClassLoaderTest_TraitA', false));
     }
 
     public function testMultipleAutoloadRequestsWillProduceSameResult()
@@ -123,7 +123,7 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
         $classLoader->setFileExtension('.class.php');
         $classLoader->setNamespaceSeparator('_');
 
-        $this->assertTrue($classLoader->loadClass('ClassLoaderTest_ClassA'));
-        $this->assertTrue($classLoader->loadClass('ClassLoaderTest_ClassA'));
+        self::assertTrue($classLoader->loadClass('ClassLoaderTest_ClassA'));
+        self::assertTrue($classLoader->loadClass('ClassLoaderTest_ClassA'));
     }
 }

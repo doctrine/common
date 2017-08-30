@@ -67,7 +67,7 @@ class ProxyLogicIdentifierGetterTest extends \PHPUnit\Framework\TestCase
         $reflection->setAccessible(true);
         $reflection->setValue($proxy, $expectedReturnedValue);
 
-        $this->assertSame($expectedReturnedValue, $proxy->{'get' . $fieldName}());
+        self::assertSame($expectedReturnedValue, $proxy->{'get' . $fieldName}());
     }
 
     /**

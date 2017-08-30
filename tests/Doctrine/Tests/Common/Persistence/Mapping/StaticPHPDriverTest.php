@@ -23,7 +23,7 @@ class StaticPHPDriverTest extends DoctrineTestCase
         $driver = new StaticPHPDriver([__DIR__]);
         $classNames = $driver->getAllClassNames();
 
-        $this->assertContains(TestEntity::class, $classNames);
+        self::assertContains(TestEntity::class, $classNames);
     }
 }
 

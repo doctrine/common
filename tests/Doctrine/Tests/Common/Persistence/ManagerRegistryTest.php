@@ -45,7 +45,7 @@ class ManagerRegistryTest extends DoctrineTestCase
 
     public function testGetManagerForProxyInterface()
     {
-        $this->assertNull($this->mr->getManagerForClass(ObjectManagerAware::class));
+        self::assertNull($this->mr->getManagerForClass(ObjectManagerAware::class));
     }
 
     public function testGetManagerForInvalidClass()
@@ -74,8 +74,8 @@ class ManagerRegistryTest extends DoctrineTestCase
         $manager = $this->mr->getManager();
         $newManager = $this->mr->resetManager();
 
-        $this->assertInstanceOf(ObjectManager::class, $newManager);
-        $this->assertNotSame($manager, $newManager);
+        self::assertInstanceOf(ObjectManager::class, $newManager);
+        self::assertNotSame($manager, $newManager);
     }
 
     private function getManagerFactory()

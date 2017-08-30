@@ -13,18 +13,18 @@ class DefaultFileLocatorTest extends DoctrineTestCase
         $path = __DIR__ . "/_files";
 
         $locator = new DefaultFileLocator([$path]);
-        $this->assertEquals([$path], $locator->getPaths());
+        self::assertEquals([$path], $locator->getPaths());
 
         $locator = new DefaultFileLocator($path);
-        $this->assertEquals([$path], $locator->getPaths());
+        self::assertEquals([$path], $locator->getPaths());
     }
 
     public function testGetFileExtension()
     {
         $locator = new DefaultFileLocator([], ".yml");
-        $this->assertEquals(".yml", $locator->getFileExtension());
+        self::assertEquals(".yml", $locator->getFileExtension());
         $locator->setFileExtension(".xml");
-        $this->assertEquals(".xml", $locator->getFileExtension());
+        self::assertEquals(".xml", $locator->getFileExtension());
     }
 
     public function testUniquePaths()
@@ -32,7 +32,7 @@ class DefaultFileLocatorTest extends DoctrineTestCase
         $path = __DIR__ . "/_files";
 
         $locator = new DefaultFileLocator([$path, $path]);
-        $this->assertEquals([$path], $locator->getPaths());
+        self::assertEquals([$path], $locator->getPaths());
     }
 
     public function testFindMappingFile()
@@ -41,7 +41,7 @@ class DefaultFileLocatorTest extends DoctrineTestCase
 
         $locator = new DefaultFileLocator([$path], ".yml");
 
-        $this->assertEquals(__DIR__ . '/_files' . DIRECTORY_SEPARATOR . 'stdClass.yml', $locator->findMappingFile('stdClass'));
+        self::assertEquals(__DIR__ . '/_files' . DIRECTORY_SEPARATOR . 'stdClass.yml', $locator->findMappingFile('stdClass'));
     }
 
     public function testFindMappingFileNotFound()
@@ -71,8 +71,8 @@ class DefaultFileLocatorTest extends DoctrineTestCase
         sort($expectedAllClasses);
         sort($expectedGlobalClasses);
 
-        $this->assertEquals($expectedAllClasses, $allClasses);
-        $this->assertEquals($expectedGlobalClasses, $globalClasses);
+        self::assertEquals($expectedAllClasses, $allClasses);
+        self::assertEquals($expectedGlobalClasses, $globalClasses);
     }
 
     public function testGetAllClassNamesNonMatchingFileExtension()
@@ -80,7 +80,7 @@ class DefaultFileLocatorTest extends DoctrineTestCase
         $path = __DIR__ . "/_files";
 
         $locator = new DefaultFileLocator([$path], ".xml");
-        $this->assertEquals([], $locator->getAllClassNames("global"));
+        self::assertEquals([], $locator->getAllClassNames("global"));
     }
 
     public function testFileExists()
@@ -89,9 +89,9 @@ class DefaultFileLocatorTest extends DoctrineTestCase
 
         $locator = new DefaultFileLocator([$path], ".yml");
 
-        $this->assertTrue($locator->fileExists("stdClass"));
-        $this->assertFalse($locator->fileExists("stdClass2"));
-        $this->assertTrue($locator->fileExists("global"));
-        $this->assertFalse($locator->fileExists("global2"));
+        self::assertTrue($locator->fileExists("stdClass"));
+        self::assertFalse($locator->fileExists("stdClass2"));
+        self::assertTrue($locator->fileExists("global"));
+        self::assertFalse($locator->fileExists("global2"));
     }
 }

@@ -73,7 +73,7 @@ class ProxyLogicVoidReturnTypeTest extends \PHPUnit\Framework\TestCase
 
         $this->lazyObject = new $proxyClassName($this->getClosure($this->initializerCallbackMock));
 
-        $this->assertFalse($this->lazyObject->__isInitialized());
+        self::assertFalse($this->lazyObject->__isInitialized());
     }
 
     public function testParentVoidMethodIsCalledWithoutParameters()
@@ -84,8 +84,8 @@ class ProxyLogicVoidReturnTypeTest extends \PHPUnit\Framework\TestCase
             function () {}
         );
 
-        $this->assertNull($this->lazyObject->incrementingAndReturningVoid());
-        $this->assertSame(1, $this->lazyObject->value);
+        self::assertNull($this->lazyObject->incrementingAndReturningVoid());
+        self::assertSame(1, $this->lazyObject->value);
     }
 
     public function testParentVoidMethodIsCalledWithParameters()
@@ -96,8 +96,8 @@ class ProxyLogicVoidReturnTypeTest extends \PHPUnit\Framework\TestCase
             function () {}
         );
 
-        $this->assertNull($this->lazyObject->addingAndReturningVoid(10));
-        $this->assertSame(10, $this->lazyObject->value);
+        self::assertNull($this->lazyObject->addingAndReturningVoid(10));
+        self::assertSame(10, $this->lazyObject->value);
     }
 
     /**

@@ -23,7 +23,7 @@ namespace Doctrine\Tests\Common\Util
          */
         public function testGetRealClass($className, $expectedClassName)
         {
-            $this->assertEquals($expectedClassName, ClassUtils::getRealClass($className));
+            self::assertEquals($expectedClassName, ClassUtils::getRealClass($className));
         }
 
         /**
@@ -32,18 +32,18 @@ namespace Doctrine\Tests\Common\Util
         public function testGetClass( $className, $expectedClassName )
         {
             $object = new $className();
-            $this->assertEquals($expectedClassName, ClassUtils::getClass($object));
+            self::assertEquals($expectedClassName, ClassUtils::getClass($object));
         }
 
         public function testGetParentClass()
         {
             $parentClass = ClassUtils::getParentClass( 'MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\Doctrine\Tests\Common\Util\ChildObject' );
-            $this->assertEquals('stdClass', $parentClass);
+            self::assertEquals('stdClass', $parentClass);
         }
 
         public function testGenerateProxyClassName()
         {
-            $this->assertEquals( 'Proxies\__CG__\stdClass', ClassUtils::generateProxyClassName( 'stdClass', 'Proxies' ) );
+            self::assertEquals( 'Proxies\__CG__\stdClass', ClassUtils::generateProxyClassName( 'stdClass', 'Proxies' ) );
         }
 
         /**
@@ -52,7 +52,7 @@ namespace Doctrine\Tests\Common\Util
         public function testNewReflectionClass( $className, $expectedClassName )
         {
             $reflClass = ClassUtils::newReflectionClass( $className );
-            $this->assertEquals( $expectedClassName, $reflClass->getName() );
+            self::assertEquals( $expectedClassName, $reflClass->getName() );
         }
 
         /**
@@ -62,7 +62,7 @@ namespace Doctrine\Tests\Common\Util
         {
             $object = new $className;
             $reflClass = ClassUtils::newReflectionObject( $object );
-            $this->assertEquals( $expectedClassName, $reflClass->getName() );
+            self::assertEquals( $expectedClassName, $reflClass->getName() );
         }
     }
 

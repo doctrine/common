@@ -13,10 +13,10 @@ class FileDriverTest extends DoctrineTestCase
     {
         $driver = new TestFileDriver([]);
 
-        $this->assertNull($driver->getGlobalBasename());
+        self::assertNull($driver->getGlobalBasename());
 
         $driver->setGlobalBasename("global");
-        $this->assertEquals("global", $driver->getGlobalBasename());
+        self::assertEquals("global", $driver->getGlobalBasename());
     }
 
     public function testGetElementFromGlobalFile()
@@ -26,7 +26,7 @@ class FileDriverTest extends DoctrineTestCase
 
         $element = $driver->getElement('stdGlobal');
 
-        $this->assertEquals('stdGlobal', $element);
+        self::assertEquals('stdGlobal', $element);
     }
 
     public function testGetElementFromFile()
@@ -39,7 +39,7 @@ class FileDriverTest extends DoctrineTestCase
 
         $driver = new TestFileDriver($locator);
 
-        $this->assertEquals('stdClass', $driver->getElement('stdClass'));
+        self::assertEquals('stdClass', $driver->getElement('stdClass'));
     }
 
     public function testGetElementUpdatesClassCache()
@@ -55,10 +55,10 @@ class FileDriverTest extends DoctrineTestCase
         $driver = new TestFileDriver($locator);
 
         // not cached
-        $this->assertEquals('stdClass', $driver->getElement('stdClass'));
+        self::assertEquals('stdClass', $driver->getElement('stdClass'));
 
         // cached call
-        $this->assertEquals('stdClass', $driver->getElement('stdClass'));
+        self::assertEquals('stdClass', $driver->getElement('stdClass'));
     }
 
     public function testGetAllClassNamesGlobalBasename()
@@ -68,7 +68,7 @@ class FileDriverTest extends DoctrineTestCase
 
         $classNames = $driver->getAllClassNames();
 
-        $this->assertEquals(['stdGlobal', 'stdGlobal2'], $classNames);
+        self::assertEquals(['stdGlobal', 'stdGlobal2'], $classNames);
     }
 
     public function testGetAllClassNamesFromMappingFile()
@@ -82,7 +82,7 @@ class FileDriverTest extends DoctrineTestCase
 
         $classNames = $driver->getAllClassNames();
 
-        $this->assertEquals(['stdClass'], $classNames);
+        self::assertEquals(['stdClass'], $classNames);
     }
 
     public function testGetAllClassNamesBothSources()
@@ -97,7 +97,7 @@ class FileDriverTest extends DoctrineTestCase
 
         $classNames = $driver->getAllClassNames();
 
-        $this->assertEquals(['stdGlobal', 'stdGlobal2', 'stdClass'], $classNames);
+        self::assertEquals(['stdGlobal', 'stdGlobal2', 'stdClass'], $classNames);
     }
 
     public function testIsNotTransient()
@@ -111,9 +111,9 @@ class FileDriverTest extends DoctrineTestCase
         $driver = new TestFileDriver($locator);
         $driver->setGlobalBasename("global");
 
-        $this->assertFalse($driver->isTransient('stdClass'));
-        $this->assertFalse($driver->isTransient('stdGlobal'));
-        $this->assertFalse($driver->isTransient('stdGlobal2'));
+        self::assertFalse($driver->isTransient('stdClass'));
+        self::assertFalse($driver->isTransient('stdGlobal'));
+        self::assertFalse($driver->isTransient('stdGlobal2'));
     }
 
     public function testIsTransient()
@@ -126,14 +126,14 @@ class FileDriverTest extends DoctrineTestCase
 
         $driver = new TestFileDriver($locator);
 
-        $this->assertTrue($driver->isTransient('stdClass2'));
+        self::assertTrue($driver->isTransient('stdClass2'));
     }
 
     public function testNonLocatorFallback()
     {
         $driver = new TestFileDriver(__DIR__ . '/_files', '.yml');
-        $this->assertTrue($driver->isTransient('stdClass2'));
-        $this->assertFalse($driver->isTransient('stdClass'));
+        self::assertTrue($driver->isTransient('stdClass2'));
+        self::assertFalse($driver->isTransient('stdClass'));
     }
 
     private function newLocator()

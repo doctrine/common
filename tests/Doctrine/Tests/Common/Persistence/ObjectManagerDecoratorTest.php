@@ -69,6 +69,6 @@ class ObjectManagerDecoratorTest extends \PHPUnit\Framework\TestCase
 
         call_user_func_array([$stub, 'with'], $parameters);
 
-        $this->assertSame($returnedValue, call_user_func_array([$this->decorated, $method], $parameters));
+        self::assertSame($returnedValue, call_user_func_array([$this->decorated, $method], $parameters));
     }
 }

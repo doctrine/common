@@ -14,10 +14,10 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
         $prefix = "Foo";
 
         $locator = new SymfonyFileLocator([$path => $prefix]);
-        $this->assertEquals([$path], $locator->getPaths());
+        self::assertEquals([$path], $locator->getPaths());
 
         $locator = new SymfonyFileLocator([$path => $prefix]);
-        $this->assertEquals([$path], $locator->getPaths());
+        self::assertEquals([$path], $locator->getPaths());
     }
 
     public function testGetPrefixes()
@@ -26,15 +26,15 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
         $prefix = "Foo";
 
         $locator = new SymfonyFileLocator([$path => $prefix]);
-        $this->assertEquals([$path => $prefix], $locator->getNamespacePrefixes());
+        self::assertEquals([$path => $prefix], $locator->getNamespacePrefixes());
     }
 
     public function testGetFileExtension()
     {
         $locator = new SymfonyFileLocator([], ".yml");
-        $this->assertEquals(".yml", $locator->getFileExtension());
+        self::assertEquals(".yml", $locator->getFileExtension());
         $locator->setFileExtension(".xml");
-        $this->assertEquals(".xml", $locator->getFileExtension());
+        self::assertEquals(".xml", $locator->getFileExtension());
     }
 
     public function testFileExists()
@@ -44,10 +44,10 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
 
         $locator = new SymfonyFileLocator([$path => $prefix], ".yml");
 
-        $this->assertTrue($locator->fileExists("Foo\stdClass"));
-        $this->assertTrue($locator->fileExists("Foo\global"));
-        $this->assertFalse($locator->fileExists("Foo\stdClass2"));
-        $this->assertFalse($locator->fileExists("Foo\global2"));
+        self::assertTrue($locator->fileExists("Foo\stdClass"));
+        self::assertTrue($locator->fileExists("Foo\global"));
+        self::assertFalse($locator->fileExists("Foo\stdClass2"));
+        self::assertFalse($locator->fileExists("Foo\global2"));
     }
 
     public function testGetAllClassNames()
@@ -67,8 +67,8 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
         sort($expectedAllClasses);
         sort($expectedGlobalClasses);
 
-        $this->assertEquals($expectedAllClasses, $allClasses);
-        $this->assertEquals($expectedGlobalClasses, $globalClasses);
+        self::assertEquals($expectedAllClasses, $allClasses);
+        self::assertEquals($expectedGlobalClasses, $globalClasses);
     }
 
     /**
@@ -108,7 +108,7 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
         $classes = $locator->getAllClassNames(null);
         sort($classes);
 
-        $this->assertEquals(["Foo\\stdClass", "Foo\\sub\\subClass", "Foo\\sub\\subsub\\subSubClass"], $classes);
+        self::assertEquals(["Foo\\stdClass", "Foo\\sub\\subClass", "Foo\\sub\\subsub\\subSubClass"], $classes);
     }
 
     public function customNamespaceLookupQueryProvider()
@@ -150,7 +150,7 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
         $locator = new SymfonyFileLocator([$path => $prefix], ".yml", $separator);
 
         foreach ($files as $filePath => $className) {
-            $this->assertEquals(realpath($path .'/'. $filePath), realpath($locator->findMappingFile($className)));
+            self::assertEquals(realpath($path .'/'. $filePath), realpath($locator->findMappingFile($className)));
         }
 
     }
@@ -163,7 +163,7 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
 
         $locator = new SymfonyFileLocator([$path => $prefix], ".yml");
 
-        $this->assertEquals(__DIR__ . "/_files/stdClass.yml", $locator->findMappingFile("Foo\\stdClass"));
+        self::assertEquals(__DIR__ . "/_files/stdClass.yml", $locator->findMappingFile("Foo\\stdClass"));
     }
 
     public function testFindMappingFileNotFound()
@@ -187,7 +187,7 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
 
         $locator = new SymfonyFileLocator($prefixes, ".yml");
 
-        $this->assertEquals(
+        self::assertEquals(
             __DIR__ . "/_match_ns/Bar/barEntity.yml",
             $locator->findMappingFile("Foo\\Bar\\barEntity")
         );
@@ -200,7 +200,7 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
 
         $locator = new SymfonyFileLocator($prefixes, ".yml");
 
-        $this->assertEquals(
+        self::assertEquals(
             __DIR__ . "/_match_ns/Bar/barEntity.yml",
             $locator->findMappingFile("Foo\\Bar\\barEntity")
         );

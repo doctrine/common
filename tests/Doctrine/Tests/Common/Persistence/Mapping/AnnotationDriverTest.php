@@ -17,7 +17,7 @@ class AnnotationDriverTest extends \PHPUnit\Framework\TestCase
 
         $classes = $driver->getAllClassNames();
 
-        $this->assertEquals([TestClass::class], $classes);
+        self::assertEquals([TestClass::class], $classes);
     }
 }
 

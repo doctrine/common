@@ -86,7 +86,7 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
 
         $generated = $proxyFactory->generateProxyClasses([$metadata], sys_get_temp_dir());
 
-        $this->assertEquals(1, $generated, 'One proxy was generated');
+        self::assertEquals(1, $generated, 'One proxy was generated');
     }
 
     public function testGetProxy()
@@ -115,7 +115,7 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
 
         $generatedProxy = $proxyFactory->getProxy('Class', ['id' => 1]);
 
-        $this->assertInstanceOf(get_class($proxy), $generatedProxy);
+        self::assertInstanceOf(get_class($proxy), $generatedProxy);
     }
 
     public function testResetUnitializedProxy()
