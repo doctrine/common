@@ -12,10 +12,10 @@ use Doctrine\Common\Annotations\Annotation;
 class AnnotationClassWithScopeResolution
 {
 
-    const foo = \stdClass::class;
+    const FOO = \stdClass::class;
 
   /**
    * Example with comment.
    */
-    const bar = \stdClass::class;
+    const BAR = \stdClass::class;
 }

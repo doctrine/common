@@ -44,7 +44,7 @@ class DriverChainTest extends DoctrineTestCase
         self::assertTrue($chain->isTransient($className));
     }
 
-    public function testLoadMetadata_NoDelegatorFound_ThrowsMappingException()
+    public function testLoadMetadataShouldThrowMappingExceptionWhenNoDelegatorWasFound()
     {
         $className = DriverChainEntity::class;
         /* @var $classMetadata ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */

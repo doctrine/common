@@ -152,7 +152,7 @@ class SymfonyFileLocator implements FileLocator
                 continue;
             }
 
-            $filename = $path . '/' . strtr(substr($className, strlen($prefix)+1), '\\', $this->nsSeparator) . $this->fileExtension;
+            $filename = $path . '/' . strtr(substr($className, strlen($prefix) + 1), '\\', $this->nsSeparator) . $this->fileExtension;
             if (is_file($filename)) {
                 return true;
             }
@@ -227,7 +227,7 @@ class SymfonyFileLocator implements FileLocator
                 continue;
             }
 
-            $filename = $path . '/' . strtr(substr($className, strlen($prefix)+1), '\\', $this->nsSeparator) . $this->fileExtension;
+            $filename = $path . '/' . strtr(substr($className, strlen($prefix) + 1), '\\', $this->nsSeparator) . $this->fileExtension;
             if (is_file($filename)) {
                 return $filename;
             }
