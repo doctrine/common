@@ -69,6 +69,13 @@ abstract class AbstractProxyFactory
      */
     const AUTOGENERATE_EVAL = 3;
 
+    private const AUTOGENERATE_MODES = [
+        self::AUTOGENERATE_NEVER,
+        self::AUTOGENERATE_ALWAYS,
+        self::AUTOGENERATE_FILE_NOT_EXISTS,
+        self::AUTOGENERATE_EVAL,
+    ];
+
     /**
      * @var \Doctrine\Common\Persistence\Mapping\ClassMetadataFactory
      */
@@ -80,7 +87,7 @@ abstract class AbstractProxyFactory
     private $proxyGenerator;
 
     /**
-     * @var bool Whether to automatically (re)generate proxy classes.
+     * @var int Whether to automatically (re)generate proxy classes.
      */
     private $autoGenerate;
 
@@ -93,12 +100,19 @@ abstract class AbstractProxyFactory
      * @param \Doctrine\Common\Proxy\ProxyGenerator                     $proxyGenerator
      * @param \Doctrine\Common\Persistence\Mapping\ClassMetadataFactory $metadataFactory
      * @param bool|int                                                  $autoGenerate
+     *
+     * @throws \Doctrine\Common\Proxy\Exception\InvalidArgumentException When auto generate mode is not valid.
      */
     public function __construct(ProxyGenerator $proxyGenerator, ClassMetadataFactory $metadataFactory, $autoGenerate)
     {
         $this->proxyGenerator  = $proxyGenerator;
         $this->metadataFactory = $metadataFactory;
-        $this->autoGenerate    = (bool)$autoGenerate;
+
+        $this->autoGenerate = (int)$autoGenerate;
+
+        if ( ! in_array($this->autoGenerate, self::AUTOGENERATE_MODES, true)) {
+            throw InvalidArgumentException::invalidAutoGenerateMode($autoGenerate);
+        }
     }
 
     /**
