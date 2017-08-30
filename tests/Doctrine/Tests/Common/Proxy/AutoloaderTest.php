@@ -19,14 +19,13 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
-use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
 use Doctrine\Common\Proxy\Autoloader;
+use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 
 /**
  * @group DDC-1698
  */
-class AutoloaderTest extends PHPUnit_Framework_TestCase
+class AutoloaderTest extends \PHPUnit\Framework\TestCase
 {
     public static function dataResolveFile()
     {

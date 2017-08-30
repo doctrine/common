@@ -13,7 +13,7 @@ class NullObjectManagerDecorator extends ObjectManagerDecorator
     }
 }
 
-class ObjectManagerDecoratorTest extends \PHPUnit_Framework_TestCase
+class ObjectManagerDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager

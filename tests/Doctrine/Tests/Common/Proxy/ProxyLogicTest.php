@@ -19,12 +19,11 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
-use Doctrine\Common\Proxy\ProxyGenerator;
-use Doctrine\Common\Proxy\Proxy;
-use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use PHPUnit_Framework_Error_Notice;
-use PHPUnit_Framework_TestCase;
+use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
+use Doctrine\Common\Proxy\Proxy;
+use Doctrine\Common\Proxy\ProxyGenerator;
+use PHPUnit\Framework\Error\Notice;
 use stdClass;
 
 /**
@@ -32,7 +31,7 @@ use stdClass;
  *
  * @author Marco Pivetta <ocramius@gmail.com>
  */
-class ProxyLogicTest extends PHPUnit_Framework_TestCase
+class ProxyLogicTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\stdClass
@@ -211,7 +210,7 @@ class ProxyLogicTest extends PHPUnit_Framework_TestCase
         $this->configureInitializerMock(0);
 
         $class = get_class($this->lazyObject);
-        $this->expectException(PHPUnit_Framework_Error_Notice::class);
+        $this->expectException(Notice::class);
         $this->expectExceptionMessage('Undefined property: ' . $class . '::$non_existing_property');
 
         $this->lazyObject->non_existing_property;

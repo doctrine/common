@@ -26,7 +26,6 @@ use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\Common\Proxy\ProxyGenerator;
 use ReflectionClass;
 use ReflectionMethod;
-use PHPUnit_Framework_TestCase;
 
 /**
  * Test the proxy generator. Its work is generating on-the-fly subclasses of a given model, which implement the Proxy
@@ -35,7 +34,7 @@ use PHPUnit_Framework_TestCase;
  * @author Giorgio Sironi <piccoloprincipeazzurro@gmail.com>
  * @author Marco Pivetta <ocramius@gmail.com>
  */
-class ProxyGeneratorTest extends PHPUnit_Framework_TestCase
+class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var string

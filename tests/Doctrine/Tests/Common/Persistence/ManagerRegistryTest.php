@@ -40,7 +40,7 @@ class ManagerRegistryTest extends DoctrineTestCase
 
     public function testGetManagerForClass()
     {
-        $this->mr->getManagerForClass(TestObject::class);
+        self::assertNull($this->mr->getManagerForClass(TestObject::class));
     }
 
     public function testGetManagerForProxyInterface()
@@ -58,7 +58,7 @@ class ManagerRegistryTest extends DoctrineTestCase
 
     public function testGetManagerForAliasedClass()
     {
-        $this->mr->getManagerForClass('prefix:TestObject');
+        self::assertNull($this->mr->getManagerForClass('prefix:TestObject'));
     }
 
     public function testGetManagerForInvalidAliasedClass()

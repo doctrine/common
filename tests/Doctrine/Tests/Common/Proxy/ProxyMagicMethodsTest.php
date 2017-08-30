@@ -20,10 +20,9 @@
 namespace Doctrine\Tests\Common\Proxy;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\Common\Proxy\ProxyGenerator;
 use Doctrine\Common\Proxy\Proxy;
+use Doctrine\Common\Proxy\ProxyGenerator;
 use InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
 use ReflectionClass;
 
 /**
@@ -31,7 +30,7 @@ use ReflectionClass;
  *
  * @author Marco Pivetta <ocramius@gmail.com>
  */
-class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
+class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Doctrine\Common\Proxy\ProxyGenerator

@@ -19,11 +19,9 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
-use Doctrine\Common\Proxy\ProxyGenerator;
-use Doctrine\Common\Proxy\Proxy;
-use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use PHPUnit_Framework_TestCase;
+use Doctrine\Common\Proxy\Proxy;
+use Doctrine\Common\Proxy\ProxyGenerator;
 use stdClass;
 
 /**
@@ -32,7 +30,7 @@ use stdClass;
  * @author Marco Pivetta <ocramius@gmail.com>
  * @author Jan Langer <jan.langer@slevomat.cz>
  */
-class ProxyLogicVoidReturnTypeTest extends PHPUnit_Framework_TestCase
+class ProxyLogicVoidReturnTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject

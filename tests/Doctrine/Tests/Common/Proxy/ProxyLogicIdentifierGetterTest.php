@@ -21,7 +21,6 @@ namespace Doctrine\Tests\Common\Proxy;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Proxy\ProxyGenerator;
-use PHPUnit_Framework_TestCase;
 use stdClass;
 
 /**
@@ -31,7 +30,7 @@ use stdClass;
  * @author Marco Pivetta <ocramius@gmail.com>
  * @author Jan Langer <jan.langer@slevomat.cz>
  */
-class ProxyLogicIdentifierGetterTest extends PHPUnit_Framework_TestCase
+class ProxyLogicIdentifierGetterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider methodsForWhichLazyLoadingShouldBeDisabled

@@ -24,7 +24,7 @@ use Doctrine\Common\Persistence\Mapping\StaticReflectionService;
 /**
  * @group DCOM-93
  */
-class StaticReflectionServiceTest extends \PHPUnit_Framework_TestCase
+class StaticReflectionServiceTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var StaticReflectionService

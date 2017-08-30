@@ -26,7 +26,7 @@ use Doctrine\Common\Reflection\RuntimePublicReflectionProperty;
 /**
  * @group DCOM-93
  */
-class RuntimeReflectionServiceTest extends \PHPUnit_Framework_TestCase
+class RuntimeReflectionServiceTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var RuntimeReflectionService

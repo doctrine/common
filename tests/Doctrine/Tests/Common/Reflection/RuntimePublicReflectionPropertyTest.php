@@ -2,11 +2,10 @@
 
 namespace Doctrine\Tests\Common\Reflection;
 
-use PHPUnit_Framework_TestCase;
-use Doctrine\Common\Reflection\RuntimePublicReflectionProperty;
 use Doctrine\Common\Proxy\Proxy;
+use Doctrine\Common\Reflection\RuntimePublicReflectionProperty;
 
-class RuntimePublicReflectionPropertyTest extends PHPUnit_Framework_TestCase
+class RuntimePublicReflectionPropertyTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetValueOnProxyPublicProperty()
     {
