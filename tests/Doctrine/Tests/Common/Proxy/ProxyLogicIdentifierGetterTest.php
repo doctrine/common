@@ -46,7 +46,7 @@ class ProxyLogicIdentifierGetterTest extends \PHPUnit\Framework\TestCase
         $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
         $proxyFileName  = $proxyGenerator->getProxyFileName($className);
 
-        if (! class_exists($proxyClassName, false)) {
+        if ( ! class_exists($proxyClassName, false)) {
             $proxyGenerator->generateProxyClass($metadata, $proxyFileName);
 
             /** @noinspection PhpIncludeInspection */
@@ -79,7 +79,7 @@ class ProxyLogicIdentifierGetterTest extends \PHPUnit\Framework\TestCase
             [new LazyLoadableObjectClassMetadata(), 'protectedIdentifierField', 'foo'],
         ];
 
-        if (! class_exists(\ReflectionType::class, false)) {
+        if ( ! class_exists(\ReflectionType::class, false)) {
             return $methods;
         }
 

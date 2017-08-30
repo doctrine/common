@@ -12,6 +12,5 @@ class InvalidReturnTypeClass
      */
     public function invalidReturnTypeMethod() : InvalidReturnType
     {
-
     }
 }

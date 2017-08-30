@@ -64,7 +64,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
     public function setUp()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|\stdClass $loader */
-        $loader = $this->proxyLoader      = $this->getMockBuilder(stdClass::class)->setMethods(['load'])->getMock();
+        $loader                           = $this->proxyLoader      = $this->getMockBuilder(stdClass::class)->setMethods(['load'])->getMock();
         $this->initializerCallbackMock    = $this->getMockBuilder(stdClass::class)->setMethods(['__invoke'])->getMock();
         $identifier                       = $this->identifier;
         $this->lazyLoadableObjectMetadata = $metadata = new LazyLoadableObjectClassMetadata();
@@ -98,9 +98,9 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\LazyLoadableObject';
 
         // creating the proxy class
-        if (!class_exists($proxyClassName, false)) {
+        if ( ! class_exists($proxyClassName, false)) {
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
-            $proxyFileName = $proxyGenerator->getProxyFileName($metadata->getName());
+            $proxyFileName  = $proxyGenerator->getProxyFileName($metadata->getName());
             $proxyGenerator->generateProxyClass($metadata, $proxyFileName);
             require_once $proxyFileName;
         }
@@ -234,8 +234,8 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
     public function testCloningCallsClonerWithClonedObject()
     {
         $lazyObject = $this->lazyObject;
-        $test = $this;
-        $cb = $this->getMockBuilder(stdClass::class)->setMethods(['cb'])->getMock();
+        $test       = $this;
+        $cb         = $this->getMockBuilder(stdClass::class)->setMethods(['cb'])->getMock();
         $cb
             ->expects($this->once())
             ->method('cb')
@@ -332,7 +332,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
                 'protectedIdentifierField' => 'protectedIdentifierFieldValue',
             ])
             ->will($this->returnCallback(function () {
-                $blueprint = new LazyLoadableObject();
+                $blueprint                        = new LazyLoadableObject();
                 $blueprint->publicPersistentField = 'checked-persistent-field';
                 $blueprint->publicAssociation     = 'checked-association-field';
                 $blueprint->publicTransientField  = 'checked-transient-field';
@@ -386,7 +386,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         $serialized = serialize($this->lazyObject);
         /* @var $unserialized LazyLoadableObject|Proxy */
         $unserialized = unserialize($serialized);
-        $reflClass = $this->lazyLoadableObjectMetadata->getReflectionClass();
+        $reflClass    = $this->lazyLoadableObjectMetadata->getReflectionClass();
 
         self::assertFalse($unserialized->__isInitialized(), 'serialization didn\'t cause intialization');
 
@@ -446,8 +446,8 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         $this->lazyObject->__setInitializer($this->getSuggestedInitializerImplementation());
         $this->lazyObject->__load();
 
-        $serialized   = serialize($this->lazyObject);
-        $reflClass    = $this->lazyLoadableObjectMetadata->getReflectionClass();
+        $serialized = serialize($this->lazyObject);
+        $reflClass  = $this->lazyLoadableObjectMetadata->getReflectionClass();
         /* @var $unserialized LazyLoadableObject|Proxy */
         $unserialized = unserialize($serialized);
 
@@ -611,7 +611,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue(new \ReflectionClass(VariadicTypeHintClass::class)));
 
         // creating the proxy class
-        if (!class_exists($proxyClassName, false)) {
+        if ( ! class_exists($proxyClassName, false)) {
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
             $proxyGenerator->generateProxyClass($metadata);
             require_once $proxyGenerator->getProxyFileName($metadata->getName());
@@ -625,7 +625,8 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             function ($proxy, $method, $parameters) use ($invocationMock) {
                 $invocationMock($proxy, $method, $parameters);
             },
-            function () {}
+            function () {
+            }
         );
 
         $invocationMock
@@ -652,7 +653,8 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
      * @param  callable $callable
      * @return \Closure
      */
-    public function getClosure($callable) {
+    public function getClosure($callable)
+    {
         return function () use ($callable) {
             call_user_func_array($callable, func_get_args());
         };
@@ -672,7 +674,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         array $callParamsMatch = null,
         \Closure $callbackClosure = null
     ) {
-        if (!$expectedCallCount) {
+        if ( ! $expectedCallCount) {
             $invocationCountMatcher = $this->exactly((int) $expectedCallCount);
         } else {
             $invocationCountMatcher = $expectedCallCount < 0 ? $this->any() : $this->exactly($expectedCallCount);
@@ -733,7 +735,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             $properties = $proxy->__getLazyProperties();
 
             foreach ($properties as $propertyName => $property) {
-                if (!isset($proxy->$propertyName)) {
+                if ( ! isset($proxy->$propertyName)) {
                     $proxy->$propertyName = $properties[$propertyName];
                 }
             }

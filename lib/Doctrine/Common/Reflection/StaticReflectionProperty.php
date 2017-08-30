@@ -45,7 +45,7 @@ class StaticReflectionProperty extends ReflectionProperty
     public function __construct(StaticReflectionParser $staticReflectionParser, $propertyName)
     {
         $this->staticReflectionParser = $staticReflectionParser;
-        $this->propertyName = $propertyName;
+        $this->propertyName           = $propertyName;
     }
 
     /**

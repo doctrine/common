@@ -37,14 +37,13 @@ class LazyLoadableObjectWithNullableTypehints
     /** @var \stdClass */
     private $identifierFieldReturnClassOneLetterNullableWithSpace;
 
-    public function getIdentifierFieldReturnClassOneLetterNullable(): ?A
+    public function getIdentifierFieldReturnClassOneLetterNullable() : ?A
     {
         return $this->identifierFieldReturnClassOneLetterNullable;
     }
 
-    public function getIdentifierFieldReturnClassOneLetterNullableWithSpace(): ? A
+    public function getIdentifierFieldReturnClassOneLetterNullableWithSpace() : ? A
     {
         return $this->identifierFieldReturnClassOneLetterNullableWithSpace;
     }
-
 }

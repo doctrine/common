@@ -7,7 +7,7 @@ namespace Doctrine\Tests\Common\Proxy;
  */
 class VoidReturnTypeClass
 {
-    public function returnsVoid(): void
+    public function returnsVoid() : void
     {
     }
 }

@@ -7,14 +7,14 @@ use Doctrine\Common\Util\Debug;
 
 class DebugTest extends DoctrineTestCase
 {
-    public function testExportObject( )
+    public function testExportObject()
     {
-        $obj = new \stdClass;
+        $obj      = new \stdClass;
         $obj->foo = "bar";
         $obj->bar = 1234;
 
         $var = Debug::export($obj, 2);
-        self::assertEquals( "stdClass", $var->__CLASS__ );
+        self::assertEquals("stdClass", $var->__CLASS__);
     }
 
     public function testExportObjectWithReference()
@@ -23,7 +23,7 @@ class DebugTest extends DoctrineTestCase
         $bar = ['foo' => & $foo];
         $baz = (object) $bar;
 
-        $var = Debug::export($baz, 2);
+        $var      = Debug::export($baz, 2);
         $baz->foo = 'tab';
 
         self::assertEquals('bar', $var->foo);
@@ -32,9 +32,9 @@ class DebugTest extends DoctrineTestCase
 
     public function testExportArray()
     {
-        $array = ['a' => 'b', 'b' => ['c', 'd' => ['e', 'f']]];
-        $var = Debug::export($array, 2);
-        $expected = $array;
+        $array              = ['a' => 'b', 'b' => ['c', 'd' => ['e', 'f']]];
+        $var                = Debug::export($array, 2);
+        $expected           = $array;
         $expected['b']['d'] = 'Array(2)';
         self::assertEquals($expected, $var);
     }
@@ -109,10 +109,10 @@ class DebugTest extends DoctrineTestCase
      */
     public function testExportParentAttributes(TestAsset\ParentClass $class, array $expected)
     {
-        $print_r_class = print_r($class, true);
+        $print_r_class    = print_r($class, true);
         $print_r_expected = print_r($expected, true);
 
-        $print_r_class = substr($print_r_class, strpos($print_r_class, '('));
+        $print_r_class    = substr($print_r_class, strpos($print_r_class, '('));
         $print_r_expected = substr($print_r_expected, strpos($print_r_expected, '('));
 
         self::assertSame($print_r_class, $print_r_expected);

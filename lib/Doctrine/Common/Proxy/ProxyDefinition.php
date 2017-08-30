@@ -67,4 +67,3 @@ class ProxyDefinition
         $this->cloner           = $cloner;
     }
 }
-

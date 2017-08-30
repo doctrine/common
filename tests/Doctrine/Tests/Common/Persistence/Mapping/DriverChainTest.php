@@ -34,14 +34,14 @@ class DriverChainTest extends DoctrineTestCase
         $driver2->expects($this->at(1))
                 ->method('isTransient')
                 ->with($this->equalTo($className))
-                ->will($this->returnValue( true ));
+                ->will($this->returnValue(true));
 
         $chain->addDriver($driver1, 'Doctrine\Tests\Models\Company');
         $chain->addDriver($driver2, 'Doctrine\Tests\Common\Persistence\Mapping');
 
         $chain->loadMetadataForClass($className, $classMetadata);
 
-        self::assertTrue( $chain->isTransient($className) );
+        self::assertTrue($chain->isTransient($className));
     }
 
     public function testLoadMetadata_NoDelegatorFound_ThrowsMappingException()
@@ -89,7 +89,7 @@ class DriverChainTest extends DoctrineTestCase
     {
         /* @var $driver1 MappingDriver|\PHPUnit_Framework_MockObject_MockObject */
         $driver1 = $this->createMock(MappingDriver::class);
-        $chain = new MappingDriverChain();
+        $chain   = new MappingDriverChain();
         $chain->addDriver($driver1, 'Doctrine\Tests\Models\CMS');
 
         self::assertTrue($chain->isTransient('stdClass'), "stdClass isTransient");
@@ -100,11 +100,11 @@ class DriverChainTest extends DoctrineTestCase
      */
     public function testDefaultDriver()
     {
-        $companyDriver      = $this->createMock(MappingDriver::class);
-        $defaultDriver      = $this->createMock(MappingDriver::class);
-        $entityClassName    = 'Doctrine\Tests\ORM\Mapping\DriverChainEntity';
-        $managerClassName   = 'Doctrine\Tests\Models\Company\CompanyManager';
-        $chain              = new MappingDriverChain();
+        $companyDriver    = $this->createMock(MappingDriver::class);
+        $defaultDriver    = $this->createMock(MappingDriver::class);
+        $entityClassName  = 'Doctrine\Tests\ORM\Mapping\DriverChainEntity';
+        $managerClassName = 'Doctrine\Tests\Models\Company\CompanyManager';
+        $chain            = new MappingDriverChain();
 
         $companyDriver->expects($this->never())
             ->method('loadMetadataForClass');

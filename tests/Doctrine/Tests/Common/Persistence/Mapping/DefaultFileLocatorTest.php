@@ -59,8 +59,8 @@ class DefaultFileLocatorTest extends DoctrineTestCase
     {
         $path = __DIR__ . "/_files";
 
-        $locator = new DefaultFileLocator([$path], ".yml");
-        $allClasses = $locator->getAllClassNames(null);
+        $locator       = new DefaultFileLocator([$path], ".yml");
+        $allClasses    = $locator->getAllClassNames(null);
         $globalClasses = $locator->getAllClassNames("global");
 
         $expectedAllClasses    = ['global', 'stdClass', 'subDirClass'];

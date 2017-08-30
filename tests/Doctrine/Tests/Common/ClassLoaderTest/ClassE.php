@@ -2,4 +2,6 @@
 
 namespace ClassLoaderTest;
 
-class ClassE {}
+class ClassE
+{
+}

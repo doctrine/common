@@ -89,15 +89,15 @@ class StaticPHPDriver implements MappingDriver
             return $this->classNames;
         }
 
-        if (!$this->paths) {
+        if ( ! $this->paths) {
             throw MappingException::pathRequired();
         }
 
-        $classes = [];
+        $classes       = [];
         $includedFiles = [];
 
         foreach ($this->paths as $path) {
-            if (!is_dir($path)) {
+            if ( ! is_dir($path)) {
                 throw MappingException::fileMappingDriversRequireConfiguredDirectoryPath($path);
             }
 
@@ -120,9 +120,9 @@ class StaticPHPDriver implements MappingDriver
         $declared = get_declared_classes();
 
         foreach ($declared as $className) {
-            $rc = new \ReflectionClass($className);
+            $rc         = new \ReflectionClass($className);
             $sourceFile = $rc->getFileName();
-            if (in_array($sourceFile, $includedFiles) && !$this->isTransient($className)) {
+            if (in_array($sourceFile, $includedFiles) && ! $this->isTransient($className)) {
                 $classes[] = $className;
             }
         }

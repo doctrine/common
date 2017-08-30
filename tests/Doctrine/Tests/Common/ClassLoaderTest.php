@@ -25,7 +25,7 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
     public function testClassExists()
     {
         self::assertFalse(ClassLoader::classExists('ClassLoaderTest\ClassD'));
-        $badLoader = function($className) {
+        $badLoader = function ($className) {
             require __DIR__ . '/ClassLoaderTest/ClassD.php';
             return true;
         };
@@ -45,7 +45,7 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testClassExistsWithSilentAutoloader()
     {
-        $test = $this;
+        $test         = $this;
         $silentLoader = function ($className) use ($test) {
             $test->assertSame('ClassLoaderTest\ClassE', $className);
             require __DIR__ . '/ClassLoaderTest/ClassE.php';

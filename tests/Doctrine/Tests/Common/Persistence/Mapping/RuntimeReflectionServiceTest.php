@@ -53,7 +53,7 @@ class RuntimeReflectionServiceTest extends \PHPUnit\Framework\TestCase
     public function testGetParentClasses()
     {
         $classes = $this->reflectionService->getParentClasses(__CLASS__);
-        self::assertTrue(count($classes) >= 1, "The test class ".__CLASS__." should have at least one parent.");
+        self::assertTrue(count($classes) >= 1, "The test class " . __CLASS__ . " should have at least one parent.");
     }
 
     public function testGetParentClassesForAbsentClass()
@@ -84,4 +84,3 @@ class RuntimeReflectionServiceTest extends \PHPUnit\Framework\TestCase
         self::assertInstanceOf(RuntimePublicReflectionProperty::class, $reflProp);
     }
 }
-

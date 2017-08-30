@@ -74,17 +74,17 @@ class RuntimePublicReflectionPropertyTestProxyMock implements Proxy
     /**
      * @var \Closure|null
      */
-    private $initializer     = null;
+    private $initializer = null;
 
     /**
      * @var bool
      */
-    private $initialized     = false;
+    private $initialized = false;
 
     /**
      * @var string
      */
-    public  $checkedProperty = 'testValue';
+    public $checkedProperty = 'testValue';
 
     /**
      * {@inheritDoc}

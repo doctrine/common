@@ -57,16 +57,16 @@ class ProxyLogicVoidReturnTypeTest extends \PHPUnit\Framework\TestCase
      */
     public function setUp()
     {
-        $this->proxyLoader = $loader      = $this->getMockBuilder(stdClass::class)->setMethods(['load'])->getMock();
+        $this->proxyLoader                = $loader      = $this->getMockBuilder(stdClass::class)->setMethods(['load'])->getMock();
         $this->initializerCallbackMock    = $this->getMockBuilder(stdClass::class)->setMethods(['__invoke'])->getMock();
         $this->lazyLoadableObjectMetadata = $metadata = new LazyLoadableObjectWithVoidClassMetadata();
 
         $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\LazyLoadableObjectWithVoid';
 
         // creating the proxy class
-        if (!class_exists($proxyClassName, false)) {
+        if ( ! class_exists($proxyClassName, false)) {
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
-            $proxyFileName = $proxyGenerator->getProxyFileName($metadata->getName());
+            $proxyFileName  = $proxyGenerator->getProxyFileName($metadata->getName());
             $proxyGenerator->generateProxyClass($metadata, $proxyFileName);
             require_once $proxyFileName;
         }
@@ -81,7 +81,8 @@ class ProxyLogicVoidReturnTypeTest extends \PHPUnit\Framework\TestCase
         $this->configureInitializerMock(
             1,
             [$this->lazyObject, 'incrementingAndReturningVoid', []],
-            function () {}
+            function () {
+            }
         );
 
         self::assertNull($this->lazyObject->incrementingAndReturningVoid());
@@ -93,7 +94,8 @@ class ProxyLogicVoidReturnTypeTest extends \PHPUnit\Framework\TestCase
         $this->configureInitializerMock(
             1,
             [$this->lazyObject, 'addingAndReturningVoid', [10]],
-            function () {}
+            function () {
+            }
         );
 
         self::assertNull($this->lazyObject->addingAndReturningVoid(10));
@@ -106,7 +108,8 @@ class ProxyLogicVoidReturnTypeTest extends \PHPUnit\Framework\TestCase
      * @param  callable $callable
      * @return \Closure
      */
-    private function getClosure($callable) {
+    private function getClosure($callable)
+    {
         return function () use ($callable) {
             call_user_func_array($callable, func_get_args());
         };
@@ -126,7 +129,7 @@ class ProxyLogicVoidReturnTypeTest extends \PHPUnit\Framework\TestCase
         array $callParamsMatch = null,
         \Closure $callbackClosure = null
     ) {
-        if (!$expectedCallCount) {
+        if ( ! $expectedCallCount) {
             $invocationCountMatcher = $this->exactly((int) $expectedCallCount);
         } else {
             $invocationCountMatcher = $expectedCallCount < 0 ? $this->any() : $this->exactly($expectedCallCount);
@@ -142,5 +145,4 @@ class ProxyLogicVoidReturnTypeTest extends \PHPUnit\Framework\TestCase
             $invocationMocker->will($this->returnCallback($callbackClosure));
         }
     }
-
 }

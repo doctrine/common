@@ -115,7 +115,7 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements P
      *
      * @return self
      */
-    public static function invalidAutoGenerateMode($value): self
+    public static function invalidAutoGenerateMode($value) : self
     {
         return new self(sprintf('Invalid auto generate mode "%s" given.', $value));
     }

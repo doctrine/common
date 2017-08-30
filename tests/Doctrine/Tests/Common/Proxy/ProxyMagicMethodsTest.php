@@ -62,7 +62,6 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
 
     public static function tearDownAfterClass()
     {
-
     }
 
     public function testInheritedMagicGet()
@@ -79,10 +78,9 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
                 $proxy->__setInitializer(null);
 
                 $proxy->publicField = 'modifiedPublicField';
-                $counter            += 1;
+                $counter           += 1;
 
                 $proxy->__setInitializer($initializer);
-
             }
         );
 
@@ -99,7 +97,7 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
      */
     public function testInheritedMagicGetByRef()
     {
-        $proxyClassName    = $this->generateProxyClass(MagicGetByRefClass::class);
+        $proxyClassName = $this->generateProxyClass(MagicGetByRefClass::class);
         /* @var $proxy \Doctrine\Tests\Common\Proxy\MagicGetByRefClass */
         $proxy             = new $proxyClassName();
         $proxy->valueField = 123;
@@ -193,7 +191,7 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
                 $proxy->__setInitializer(null);
 
                 $proxy->publicField = 'modifiedPublicField';
-                $counter            += 1;
+                $counter           += 1;
 
                 $proxy->__setInitializer($initializer);
 
@@ -237,7 +235,7 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
     {
         $proxyClassName = $this->generateProxyClass(SerializedClass::class);
         /* @var $proxy SerializedClass */
-        $proxy          = new $proxyClassName();
+        $proxy = new $proxyClassName();
 
         $proxy->setFoo(1);
         $proxy->setBar(2);

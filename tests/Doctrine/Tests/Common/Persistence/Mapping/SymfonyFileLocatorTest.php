@@ -10,7 +10,7 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
 {
     public function testGetPaths()
     {
-        $path = __DIR__ . "/_files";
+        $path   = __DIR__ . "/_files";
         $prefix = "Foo";
 
         $locator = new SymfonyFileLocator([$path => $prefix]);
@@ -22,7 +22,7 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
 
     public function testGetPrefixes()
     {
-        $path = __DIR__ . "/_files";
+        $path   = __DIR__ . "/_files";
         $prefix = "Foo";
 
         $locator = new SymfonyFileLocator([$path => $prefix]);
@@ -39,7 +39,7 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
 
     public function testFileExists()
     {
-        $path = __DIR__ . "/_files";
+        $path   = __DIR__ . "/_files";
         $prefix = "Foo";
 
         $locator = new SymfonyFileLocator([$path => $prefix], ".yml");
@@ -52,11 +52,11 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
 
     public function testGetAllClassNames()
     {
-        $path = __DIR__ . "/_files";
+        $path   = __DIR__ . "/_files";
         $prefix = "Foo";
 
-        $locator = new SymfonyFileLocator([$path => $prefix], ".yml");
-        $allClasses = $locator->getAllClassNames(null);
+        $locator       = new SymfonyFileLocator([$path => $prefix], ".yml");
+        $allClasses    = $locator->getAllClassNames(null);
         $globalClasses = $locator->getAllClassNames("global");
 
         $expectedAllClasses    = ["Foo\\Bar\\subDirClass", "Foo\\global", "Foo\\stdClass"];
@@ -77,7 +77,7 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
      */
     public function testInvalidCustomNamespaceSeparator()
     {
-        $path = __DIR__ . "/_files";
+        $path   = __DIR__ . "/_files";
         $prefix = "Foo";
 
         new SymfonyFileLocator([$path => $prefix], ".yml", null);
@@ -101,7 +101,7 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
      */
     public function testGetClassNamesWithCustomNsSeparator($separator, $dir)
     {
-        $path = __DIR__ . $dir;
+        $path   = __DIR__ . $dir;
         $prefix = "Foo";
 
         $locator = new SymfonyFileLocator([$path => $prefix], ".yml", $separator);
@@ -150,15 +150,14 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
         $locator = new SymfonyFileLocator([$path => $prefix], ".yml", $separator);
 
         foreach ($files as $filePath => $className) {
-            self::assertEquals(realpath($path .'/'. $filePath), realpath($locator->findMappingFile($className)));
+            self::assertEquals(realpath($path . '/' . $filePath), realpath($locator->findMappingFile($className)));
         }
-
     }
 
 
     public function testFindMappingFile()
     {
-        $path = __DIR__ . "/_files";
+        $path   = __DIR__ . "/_files";
         $prefix = "Foo";
 
         $locator = new SymfonyFileLocator([$path => $prefix], ".yml");
@@ -168,7 +167,7 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
 
     public function testFindMappingFileNotFound()
     {
-        $path = __DIR__ . "/_files";
+        $path   = __DIR__ . "/_files";
         $prefix = "Foo";
 
         $locator = new SymfonyFileLocator([$path => $prefix], ".yml");
@@ -181,8 +180,8 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
     public function testFindMappingFileLeastSpecificNamespaceFirst()
     {
         // Low -> High
-        $prefixes = array();
-        $prefixes[__DIR__ . "/_match_ns"] = "Foo";
+        $prefixes                             = array();
+        $prefixes[__DIR__ . "/_match_ns"]     = "Foo";
         $prefixes[__DIR__ . "/_match_ns/Bar"] = "Foo\\Bar";
 
         $locator = new SymfonyFileLocator($prefixes, ".yml");
@@ -193,10 +192,11 @@ class SymfonyFileLocatorTest extends DoctrineTestCase
         );
     }
 
-    public function testFindMappingFileMostSpecificNamespaceFirst() {
-        $prefixes = array();
+    public function testFindMappingFileMostSpecificNamespaceFirst()
+    {
+        $prefixes                             = array();
         $prefixes[__DIR__ . "/_match_ns/Bar"] = "Foo\\Bar";
-        $prefixes[__DIR__ . "/_match_ns"] = "Foo";
+        $prefixes[__DIR__ . "/_match_ns"]     = "Foo";
 
         $locator = new SymfonyFileLocator($prefixes, ".yml");
 

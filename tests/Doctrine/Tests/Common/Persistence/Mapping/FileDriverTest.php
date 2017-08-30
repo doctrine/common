@@ -106,7 +106,7 @@ class FileDriverTest extends DoctrineTestCase
         $locator->expects($this->once())
                 ->method('fileExists')
                 ->with($this->equalTo('stdClass'))
-                ->will($this->returnValue( true ));
+                ->will($this->returnValue(true));
 
         $driver = new TestFileDriver($locator);
         $driver->setGlobalBasename("global");
@@ -122,7 +122,7 @@ class FileDriverTest extends DoctrineTestCase
         $locator->expects($this->once())
                 ->method('fileExists')
                 ->with($this->equalTo('stdClass2'))
-                ->will($this->returnValue( false ));
+                ->will($this->returnValue(false));
 
         $driver = new TestFileDriver($locator);
 
@@ -157,6 +157,5 @@ class TestFileDriver extends FileDriver
 
     public function loadMetadataForClass($className, ClassMetadata $metadata)
     {
-
     }
 }

@@ -29,7 +29,7 @@ class ObjectManagerDecoratorTest extends \PHPUnit\Framework\TestCase
 
     public function getMethodParameters()
     {
-        $class = new \ReflectionClass(ObjectManager::class);
+        $class       = new \ReflectionClass(ObjectManager::class);
         $voidMethods = [
             'persist',
             'remove',
@@ -44,7 +44,7 @@ class ObjectManagerDecoratorTest extends \PHPUnit\Framework\TestCase
         foreach ($class->getMethods() as $method) {
             $isVoidMethod = in_array($method->getName(), $voidMethods, true);
             if ($method->getNumberOfRequiredParameters() === 0) {
-               $methods[] = [$method->getName(), [], $isVoidMethod];
+                $methods[] = [$method->getName(), [], $isVoidMethod];
             } elseif ($method->getNumberOfRequiredParameters() > 0) {
                 $methods[] = [$method->getName(), array_fill(0, $method->getNumberOfRequiredParameters(), 'req') ?: [], $isVoidMethod];
             }
@@ -62,7 +62,7 @@ class ObjectManagerDecoratorTest extends \PHPUnit\Framework\TestCase
     public function testAllMethodCallsAreDelegatedToTheWrappedInstance($method, array $parameters, $isVoidMethod)
     {
         $returnedValue = $isVoidMethod ? null : 'INNER VALUE FROM ' . $method;
-        $stub = $this->wrapped
+        $stub          = $this->wrapped
             ->expects($this->once())
             ->method($method)
             ->will($this->returnValue($returnedValue));

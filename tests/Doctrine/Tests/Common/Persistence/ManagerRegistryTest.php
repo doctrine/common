@@ -71,7 +71,7 @@ class ManagerRegistryTest extends DoctrineTestCase
 
     public function testResetManager()
     {
-        $manager = $this->mr->getManager();
+        $manager    = $this->mr->getManager();
         $newManager = $this->mr->resetManager();
 
         self::assertInstanceOf(ObjectManager::class, $newManager);
@@ -81,8 +81,8 @@ class ManagerRegistryTest extends DoctrineTestCase
     private function getManagerFactory()
     {
         return function () {
-            $mock = $this->createMock(ObjectManager::class);
-            $driver = $this->createMock(MappingDriver::class);
+            $mock     = $this->createMock(ObjectManager::class);
+            $driver   = $this->createMock(MappingDriver::class);
             $metadata = $this->createMock(ClassMetadata::class);
             $mock->method('getMetadataFactory')->willReturn(new TestClassMetadataFactory($driver, $metadata));
 
@@ -106,7 +106,7 @@ class TestManagerRegistry extends AbstractManagerRegistry
 
     protected function getService($name)
     {
-        if (!isset($this->services[$name])) {
+        if ( ! isset($this->services[$name])) {
             $this->services[$name] = call_user_func($this->managerFactory);
         }
 

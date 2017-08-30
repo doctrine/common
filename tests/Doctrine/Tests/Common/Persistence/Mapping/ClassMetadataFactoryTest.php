@@ -23,8 +23,8 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
 
     public function setUp()
     {
-        $driver = $this->createMock(MappingDriver::class);
-        $metadata = $this->createMock(ClassMetadata::class);
+        $driver    = $this->createMock(MappingDriver::class);
+        $metadata  = $this->createMock(ClassMetadata::class);
         $this->cmf = new TestClassMetadataFactory($driver, $metadata);
     }
 
@@ -62,7 +62,7 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
     public function testGetCachedMetadata()
     {
         $metadata = $this->createMock(ClassMetadata::class);
-        $cache = new ArrayCache();
+        $cache    = new ArrayCache();
         $cache->save(ChildEntity::class . '$CLASSMETADATA', $metadata);
 
         $this->cmf->setCacheDriver($cache);
@@ -77,7 +77,7 @@ class ClassMetadataFactoryTest extends DoctrineTestCase
 
         $loadedMetadata = $this->cmf->getMetadataFor(ChildEntity::class);
 
-        self::assertSame($loadedMetadata, $cache->fetch(ChildEntity::class. '$CLASSMETADATA'));
+        self::assertSame($loadedMetadata, $cache->fetch(ChildEntity::class . '$CLASSMETADATA'));
     }
 
     public function testGetAliasedMetadata()
@@ -171,13 +171,12 @@ class TestClassMetadataFactory extends AbstractClassMetadataFactory
 
     public function __construct($driver, $metadata)
     {
-        $this->driver = $driver;
+        $this->driver   = $driver;
         $this->metadata = $metadata;
     }
 
     protected function doLoadMetadata($class, $parent, $rootEntityFound, array $nonSuperclassParents)
     {
-
     }
 
     protected function getFqcnFromAlias($namespaceAlias, $simpleClassName)
@@ -187,7 +186,6 @@ class TestClassMetadataFactory extends AbstractClassMetadataFactory
 
     protected function initialize()
     {
-
     }
 
     protected function newClassMetadataInstance($className)
@@ -214,7 +212,7 @@ class TestClassMetadataFactory extends AbstractClassMetadataFactory
 
     protected function onNotFoundMetadata($className)
     {
-        if (! $fallback = $this->fallbackCallback) {
+        if ( ! $fallback = $this->fallbackCallback) {
             return null;
         }
 

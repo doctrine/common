@@ -107,8 +107,7 @@ abstract class AbstractProxyFactory
     {
         $this->proxyGenerator  = $proxyGenerator;
         $this->metadataFactory = $metadataFactory;
-
-        $this->autoGenerate = (int)$autoGenerate;
+        $this->autoGenerate    = (int) $autoGenerate;
 
         if ( ! in_array($this->autoGenerate, self::AUTOGENERATE_MODES, true)) {
             throw InvalidArgumentException::invalidAutoGenerateMode($autoGenerate);
@@ -135,7 +134,7 @@ abstract class AbstractProxyFactory
         $proxy      = new $fqcn($definition->initializer, $definition->cloner);
 
         foreach ($definition->identifierFields as $idField) {
-            if (! isset($identifier[$idField])) {
+            if ( ! isset($identifier[$idField])) {
                 throw OutOfBoundsException::missingPrimaryKeyValue($className, $idField);
             }
 
@@ -216,7 +215,7 @@ abstract class AbstractProxyFactory
         $proxyClassName                = $this->definitions[$className]->proxyClassName;
 
         if ( ! class_exists($proxyClassName, false)) {
-            $fileName  = $this->proxyGenerator->getProxyFileName($className);
+            $fileName = $this->proxyGenerator->getProxyFileName($className);
 
             switch ($this->autoGenerate) {
                 case self::AUTOGENERATE_NEVER:

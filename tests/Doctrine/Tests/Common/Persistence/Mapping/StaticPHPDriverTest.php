@@ -20,7 +20,7 @@ class StaticPHPDriverTest extends DoctrineTestCase
 
     public function testGetAllClassNames()
     {
-        $driver = new StaticPHPDriver([__DIR__]);
+        $driver     = new StaticPHPDriver([__DIR__]);
         $classNames = $driver->getAllClassNames();
 
         self::assertContains(TestEntity::class, $classNames);
@@ -29,7 +29,7 @@ class StaticPHPDriverTest extends DoctrineTestCase
 
 class TestEntity
 {
-    static public function loadMetadata($metadata)
+    public static function loadMetadata($metadata)
     {
         $metadata->getFieldNames();
     }

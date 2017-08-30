@@ -72,11 +72,11 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
      */
     public function __construct($name, array $connections, array $managers, $defaultConnection, $defaultManager, $proxyInterfaceName)
     {
-        $this->name = $name;
-        $this->connections = $connections;
-        $this->managers = $managers;
-        $this->defaultConnection = $defaultConnection;
-        $this->defaultManager = $defaultManager;
+        $this->name               = $name;
+        $this->connections        = $connections;
+        $this->managers           = $managers;
+        $this->defaultConnection  = $defaultConnection;
+        $this->defaultManager     = $defaultManager;
         $this->proxyInterfaceName = $proxyInterfaceName;
     }
 
@@ -121,7 +121,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
             $name = $this->defaultConnection;
         }
 
-        if (!isset($this->connections[$name])) {
+        if ( ! isset($this->connections[$name])) {
             throw new \InvalidArgumentException(sprintf('Doctrine %s Connection named "%s" does not exist.', $this->name, $name));
         }
 
@@ -176,7 +176,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
             $name = $this->defaultManager;
         }
 
-        if (!isset($this->managers[$name])) {
+        if ( ! isset($this->managers[$name])) {
             throw new \InvalidArgumentException(sprintf('Doctrine %s Manager named "%s" does not exist.', $this->name, $name));
         }
 
@@ -191,13 +191,13 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
         // Check for namespace alias
         if (strpos($class, ':') !== false) {
             list($namespaceAlias, $simpleClassName) = explode(':', $class, 2);
-            $class = $this->getAliasNamespace($namespaceAlias) . '\\' . $simpleClassName;
+            $class                                  = $this->getAliasNamespace($namespaceAlias) . '\\' . $simpleClassName;
         }
 
         $proxyClass = new \ReflectionClass($class);
 
         if ($proxyClass->implementsInterface($this->proxyInterfaceName)) {
-            if (! $parentClass = $proxyClass->getParentClass()) {
+            if ( ! $parentClass = $proxyClass->getParentClass()) {
                 return null;
             }
 
@@ -207,7 +207,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
         foreach ($this->managers as $id) {
             $manager = $this->getService($id);
 
-            if (!$manager->getMetadataFactory()->isTransient($class)) {
+            if ( ! $manager->getMetadataFactory()->isTransient($class)) {
                 return $manager;
             }
         }
@@ -251,7 +251,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
             $name = $this->defaultManager;
         }
 
-        if (!isset($this->managers[$name])) {
+        if ( ! isset($this->managers[$name])) {
             throw new \InvalidArgumentException(sprintf('Doctrine %s Manager named "%s" does not exist.', $this->name, $name));
         }
 

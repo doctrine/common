@@ -39,7 +39,7 @@ class ClassUtils
      */
     public static function getRealClass($class)
     {
-        if (false === $pos = strrpos($class, '\\'.Proxy::MARKER.'\\')) {
+        if (false === $pos = strrpos($class, '\\' . Proxy::MARKER . '\\')) {
             return $class;
         }
 
@@ -67,7 +67,7 @@ class ClassUtils
      */
     public static function getParentClass($className)
     {
-        return get_parent_class( self::getRealClass( $className ) );
+        return get_parent_class(self::getRealClass($className));
     }
 
     /**
@@ -79,7 +79,7 @@ class ClassUtils
      */
     public static function newReflectionClass($class)
     {
-        return new \ReflectionClass( self::getRealClass( $class ) );
+        return new \ReflectionClass(self::getRealClass($class));
     }
 
     /**
@@ -91,7 +91,7 @@ class ClassUtils
      */
     public static function newReflectionObject($object)
     {
-        return self::newReflectionClass( self::getClass( $object ) );
+        return self::newReflectionClass(self::getClass($object));
     }
 
     /**
@@ -104,6 +104,6 @@ class ClassUtils
      */
     public static function generateProxyClassName($className, $proxyNamespace)
     {
-        return rtrim($proxyNamespace, '\\') . '\\'.Proxy::MARKER.'\\' . ltrim($className, '\\');
+        return rtrim($proxyNamespace, '\\') . '\\' . Proxy::MARKER . '\\' . ltrim($className, '\\');
     }
 }

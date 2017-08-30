@@ -155,7 +155,7 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
 
 class TestObject extends PersistentObject
 {
-    protected $id = 1;
+    protected $id   = 1;
     protected $name = 'beberlei';
     protected $parent;
     protected $children;
@@ -238,21 +238,17 @@ class TestObjectMetadata implements ClassMetadata
 
     public function getIdentifierValues($entity)
     {
-
     }
 
     public function getIdentifierFieldNames()
     {
-
     }
 
     public function initializeReflection(ReflectionService $reflService)
     {
-
     }
 
     public function wakeupReflection(ReflectionService $reflService)
     {
-
     }
 }

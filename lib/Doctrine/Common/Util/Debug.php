@@ -94,13 +94,13 @@ final class Debug
     public static function export($var, $maxDepth)
     {
         $return = null;
-        $isObj = is_object($var);
+        $isObj  = is_object($var);
 
         if ($var instanceof Collection) {
             $var = $var->toArray();
         }
 
-        if (! $maxDepth) {
+        if ( ! $maxDepth) {
             return is_object($var) ? get_class($var)
                 : (is_array($var) ? 'Array(' . count($var) . ')' : $var);
         }
@@ -115,15 +115,15 @@ final class Debug
             return $return;
         }
 
-        if (! $isObj) {
+        if ( ! $isObj) {
             return $var;
         }
 
         $return = new \stdclass();
         if ($var instanceof \DateTimeInterface) {
             $return->__CLASS__ = get_class($var);
-            $return->date = $var->format('c');
-            $return->timezone = $var->getTimezone()->getName();
+            $return->date      = $var->format('c');
+            $return->timezone  = $var->getTimezone()->getName();
 
             return $return;
         }
@@ -131,7 +131,7 @@ final class Debug
         $return->__CLASS__ = ClassUtils::getClass($var);
 
         if ($var instanceof Proxy) {
-            $return->__IS_PROXY__ = true;
+            $return->__IS_PROXY__          = true;
             $return->__PROXY_INITIALIZED__ = $var->__isInitialized();
         }
 
@@ -157,12 +157,13 @@ final class Debug
         $clone = (array) $var;
 
         foreach (array_keys($clone) as $key) {
-            $aux = explode("\0", $key);
+            $aux  = explode("\0", $key);
             $name = end($aux);
             if ($aux[0] === '') {
-                $name.= ':' . ($aux[1] === '*' ? 'protected' : $aux[1].':private');
+                $name .= ':' . ($aux[1] === '*' ? 'protected' : $aux[1] . ':private');
             }
-            $return->$name = self::export($clone[$key], $maxDepth - 1);;
+            $return->$name = self::export($clone[$key], $maxDepth - 1);
+            ;
         }
 
         return $return;

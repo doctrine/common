@@ -109,7 +109,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
             $this->initialize();
         }
 
-        $driver = $this->getDriver();
+        $driver   = $this->getDriver();
         $metadata = [];
         foreach ($driver->getAllClassNames() as $className) {
             $metadata[] = $this->getMetadataFor($className);
@@ -226,7 +226,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
                 $this->loadMetadata($realClassName);
             }
         } catch (MappingException $loadingException) {
-            if (! $fallbackMetadataResponse = $this->onNotFoundMetadata($realClassName)) {
+            if ( ! $fallbackMetadataResponse = $this->onNotFoundMetadata($realClassName)) {
                 throw $loadingException;
             }
 
@@ -309,14 +309,14 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
 
         $loaded = [];
 
-        $parentClasses = $this->getParentClasses($name);
+        $parentClasses   = $this->getParentClasses($name);
         $parentClasses[] = $name;
 
         // Move down the hierarchy of parent classes, starting from the topmost class
-        $parent = null;
+        $parent          = null;
         $rootEntityFound = false;
-        $visited = [];
-        $reflService = $this->getReflectionService();
+        $visited         = [];
+        $reflService     = $this->getReflectionService();
         foreach ($parentClasses as $className) {
             if (isset($this->loadedMetadata[$className])) {
                 $parent = $this->loadedMetadata[$className];
@@ -397,7 +397,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         // Check for namespace alias
         if (strpos($class, ':') !== false) {
             list($namespaceAlias, $simpleClassName) = explode(':', $class, 2);
-            $class = $this->getFqcnFromAlias($namespaceAlias, $simpleClassName);
+            $class                                  = $this->getFqcnFromAlias($namespaceAlias, $simpleClassName);
         }
 
         return $this->getDriver()->isTransient($class);

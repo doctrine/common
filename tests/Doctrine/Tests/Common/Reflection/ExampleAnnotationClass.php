@@ -9,6 +9,7 @@ use Doctrine\Common\Annotations\Annotation;
  *   key = "value"
  * )
  */
-class ExampleAnnotationClass {
+class ExampleAnnotationClass
+{
 
-} 
+}

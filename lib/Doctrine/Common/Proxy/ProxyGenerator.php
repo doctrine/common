@@ -219,8 +219,8 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
             throw InvalidArgumentException::proxyNamespaceRequired();
         }
 
-        $this->proxyDirectory        = $proxyDirectory;
-        $this->proxyNamespace        = $proxyNamespace;
+        $this->proxyDirectory = $proxyDirectory;
+        $this->proxyNamespace = $proxyNamespace;
     }
 
     /**
@@ -350,7 +350,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     private function generateNamespace(ClassMetadata $class)
     {
         $proxyClassName = ClassUtils::generateProxyClassName($class->getName(), $this->proxyNamespace);
-        $parts = explode('\\', strrev($proxyClassName), 2);
+        $parts          = explode('\\', strrev($proxyClassName), 2);
 
         return strrev($parts[1]);
     }
@@ -404,7 +404,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     {
 
 EOT;
-        $toUnset = [];
+        $toUnset         = [];
 
         foreach ($this->getLazyLoadedPublicProperties($class) as $lazyPublicProperty => $unused) {
             $toUnset[] = '$this->' . $lazyPublicProperty;
@@ -775,8 +775,7 @@ EOT;
         foreach ($reflectionMethods as $method) {
             $name = $method->getName();
 
-            if (
-                $method->isConstructor() ||
+            if ($method->isConstructor() ||
                 isset($skippedMethods[strtolower($name)]) ||
                 isset($methodNames[$name]) ||
                 $method->isFinal() ||
@@ -787,7 +786,7 @@ EOT;
             }
 
             $methodNames[$name] = true;
-            $methods .= "\n    /**\n"
+            $methods           .= "\n    /**\n"
                 . "     * {@inheritDoc}\n"
                 . "     */\n"
                 . '    public function ';
@@ -813,7 +812,7 @@ EOT;
             }
 
             $invokeParamsString = implode(', ', $this->getParameterNamesForInvoke($method->getParameters()));
-            $callParamsString = implode(', ', $this->getParameterNamesForParentCall($method->getParameters()));
+            $callParamsString   = implode(', ', $this->getParameterNamesForParentCall($method->getParameters()));
 
             $methods .= "\n        \$this->__initializer__ "
                 . "&& \$this->__initializer__->__invoke(\$this, " . var_export($name, true)
@@ -862,8 +861,8 @@ EOT;
     private function isShortIdentifierGetter($method, ClassMetadata $class)
     {
         $identifier = lcfirst(substr($method->getName(), 3));
-        $startLine = $method->getStartLine();
-        $endLine = $method->getEndLine();
+        $startLine  = $method->getStartLine();
+        $endLine    = $method->getEndLine();
         $cheapCheck = (
             $method->getNumberOfParameters() == 0
             && substr($method->getName(), 0, 3) == 'get'
@@ -896,7 +895,7 @@ EOT;
     private function getLazyLoadedPublicProperties(ClassMetadata $class)
     {
         $defaultProperties = $class->getReflectionClass()->getDefaultProperties();
-        $properties = [];
+        $properties        = [];
 
         foreach ($class->getReflectionClass()->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
             $name = $property->getName();
@@ -1040,7 +1039,7 @@ EOT;
         \ReflectionMethod $method,
         \ReflectionParameter $parameter = null
     ) {
-        $name = (string) $type;
+        $name      = (string) $type;
         $nameLower = strtolower($name);
 
         if ('self' === $nameLower) {
