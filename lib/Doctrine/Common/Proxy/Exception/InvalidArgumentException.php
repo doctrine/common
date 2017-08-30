@@ -109,4 +109,14 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements P
     {
         return new self(sprintf('Unable to create a proxy for a final class "%s".', $className));
     }
+
+    /**
+     * @param mixed $value
+     *
+     * @return self
+     */
+    public static function invalidAutoGenerateMode($value): self
+    {
+        return new self(sprintf('Invalid auto generate mode "%s" given.', $value));
+    }
 }
