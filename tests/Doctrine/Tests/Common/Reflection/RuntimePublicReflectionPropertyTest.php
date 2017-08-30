@@ -163,7 +163,7 @@ class RuntimePublicReflectionPropertyTestProxyMock implements Proxy
     /**
      * @param string $name
      *
-     * @return integer
+     * @return bool
      */
     public function __isset($name)
     {
