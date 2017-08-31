@@ -14,6 +14,52 @@ use OutOfBoundsException;
 
 class AbstractProxyFactoryTest extends DoctrineTestCase
 {
+    public function dataAutoGenerateValues(): array
+    {
+        return [
+            [0, 0],
+            [1, 1],
+            [2, 2],
+            [3, 3],
+            ['2', 2],
+            [true, 1],
+            [false, 0],
+            ['', 0]
+        ];
+    }
+
+    /**
+     * @dataProvider dataAutoGenerateValues
+     *
+     * @param mixed $autoGenerate
+     * @param int $expected
+     */
+    public function testNoExceptionIsThrownForValidIntegerAutoGenerateValues($autoGenerate, int $expected): void
+    {
+        $proxyGenerator = $this->createMock(ProxyGenerator::class);
+        $metadataFactory = $this->createMock(ClassMetadataFactory::class);
+
+        $proxyFactory = $this->getMockForAbstractClass(
+            AbstractProxyFactory::class,
+            [$proxyGenerator, $metadataFactory, $autoGenerate]
+        );
+
+        self::assertAttributeSame($expected, 'autoGenerate', $proxyFactory);
+    }
+
+    public function testInvalidAutoGenerateValueThrowsException(): void
+    {
+        $proxyGenerator = $this->createMock(ProxyGenerator::class);
+        $metadataFactory = $this->createMock(ClassMetadataFactory::class);
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->getMockForAbstractClass(
+            AbstractProxyFactory::class,
+            [$proxyGenerator, $metadataFactory, 5]
+        );
+    }
+
     public function testGenerateProxyClasses()
     {
         $metadata       = $this->createMock(ClassMetadata::class);
