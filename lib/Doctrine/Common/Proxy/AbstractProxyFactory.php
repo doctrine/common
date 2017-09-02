@@ -60,6 +60,15 @@ abstract class AbstractProxyFactory
     const AUTOGENERATE_FILE_NOT_EXISTS = 2;
 
     /**
+     * Autogenerate the proxy class when the proxy file does not exist or outdated.
+     *
+     * This strategy causes a file exists and filemtime call.
+     *
+     * @var integer
+     */
+    const AUTOGENERATE_FILE_OUTDATED = 4;
+
+    /**
      * Generate the proxy classes using eval().
      *
      * This strategy is only sane for development, and even then it gives me
@@ -224,6 +233,14 @@ abstract class AbstractProxyFactory
 
                 case self::AUTOGENERATE_FILE_NOT_EXISTS:
                     if ( ! file_exists($fileName)) {
+                        $this->proxyGenerator->generateProxyClass($classMetadata, $fileName);
+                    }
+                    require $fileName;
+                    break;
+
+                case self::AUTOGENERATE_FILE_OUTDATED:
+                    if ( ! file_exists($fileName) ||
+                        (ClassUtils::getLastClassModificationTime($classMetadata->getReflectionClass()) > filemtime($fileName))) {
                         $this->proxyGenerator->generateProxyClass($classMetadata, $fileName);
                     }
                     require $fileName;

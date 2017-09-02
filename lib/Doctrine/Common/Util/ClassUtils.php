@@ -106,4 +106,39 @@ class ClassUtils
     {
         return rtrim($proxyNamespace, '\\') . '\\' . Proxy::MARKER . '\\' . ltrim($className, '\\');
     }
+
+    /**
+     * Gets the last class modification time in unix timestamp.
+     *
+     * @param \ReflectionClass $class
+     *
+     * @return int
+     */
+    public static function getLastClassModificationTime(\ReflectionClass $class)
+    {
+        $filename = $class->getFileName();
+        $parent   = $class->getParentClass();
+
+        return max(array_merge(
+            [$filename ? filemtime($filename) : 0],
+            array_map(['self::getLastTraitModificationTime'], $class->getTraits()),
+            array_map(['self::getLastClassModificationTime'], $class->getInterfaces()),
+            $parent ? [self::getLastClassModificationTime($parent)] : []
+        ));
+    }
+
+    /**
+     * @param \ReflectionClass $trait
+     *
+     * @return int
+     */
+    private static function getLastTraitModificationTime(\ReflectionClass $trait)
+    {
+        $fileName = $trait->getFileName();
+
+        return max(array_merge(
+            [$fileName ? filemtime($fileName) : 0],
+            array_map(['self::getLastTraitModificationTime'], $trait->getTraits())
+        ));
+    }
 }
