@@ -51,7 +51,7 @@ class LifecycleEventArgs extends EventArgs
      */
     public function __construct($object, ObjectManager $objectManager)
     {
-        $this->object = $object;
+        $this->object        = $object;
         $this->objectManager = $objectManager;
     }
 

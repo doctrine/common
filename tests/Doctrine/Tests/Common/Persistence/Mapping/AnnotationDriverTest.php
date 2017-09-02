@@ -8,7 +8,7 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Entity;
 use Doctrine\TestClass;
 
-class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
+class AnnotationDriverTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetAllClassNames()
     {
@@ -17,7 +17,7 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
 
         $classes = $driver->getAllClassNames();
 
-        $this->assertEquals([TestClass::class], $classes);
+        self::assertEquals([TestClass::class], $classes);
     }
 }
 

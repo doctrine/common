@@ -9,13 +9,13 @@ use Doctrine\Common\Annotations\Annotation;
  *   key = "value"
  * )
  */
-class AnnotationClassWithScopeResolution {
+class AnnotationClassWithScopeResolution
+{
 
-  const foo = \stdClass::class;
+    const FOO = \stdClass::class;
 
   /**
    * Example with comment.
    */
-  const bar = \stdClass::class;
-
-} 
+    const BAR = \stdClass::class;
+}

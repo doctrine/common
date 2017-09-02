@@ -51,7 +51,7 @@ class OnClearEventArgs extends EventArgs
     public function __construct($objectManager, $entityClass = null)
     {
         $this->objectManager = $objectManager;
-        $this->entityClass = $entityClass;
+        $this->entityClass   = $entityClass;
     }
 
     /**

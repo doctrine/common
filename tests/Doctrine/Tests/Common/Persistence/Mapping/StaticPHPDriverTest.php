@@ -20,16 +20,16 @@ class StaticPHPDriverTest extends DoctrineTestCase
 
     public function testGetAllClassNames()
     {
-        $driver = new StaticPHPDriver([__DIR__]);
+        $driver     = new StaticPHPDriver([__DIR__]);
         $classNames = $driver->getAllClassNames();
 
-        $this->assertContains(TestEntity::class, $classNames);
+        self::assertContains(TestEntity::class, $classNames);
     }
 }
 
 class TestEntity
 {
-    static public function loadMetadata($metadata)
+    public static function loadMetadata($metadata)
     {
         $metadata->getFieldNames();
     }

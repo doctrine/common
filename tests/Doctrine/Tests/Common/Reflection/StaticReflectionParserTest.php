@@ -28,14 +28,13 @@ class StaticReflectionParserTest extends DoctrineTestCase
             $this->expectException(ReflectionException::class);
         }
 
-        $testsRoot = substr(__DIR__, 0, -strlen(__NAMESPACE__) - 1);
-        $paths = [
+        $testsRoot              = substr(__DIR__, 0, -strlen(__NAMESPACE__) - 1);
+        $paths                  = [
             'Doctrine\\Tests' => [$testsRoot],
         ];
         $staticReflectionParser = new StaticReflectionParser($parsedClassName, new Psr0FindFile($paths), $classAnnotationOptimize);
-        $declaringClassName = $staticReflectionParser->getStaticReflectionParserForDeclaringClass('property', 'test')->getClassName();
-        $this->assertEquals($expectedClassName, $declaringClassName);
-
+        $declaringClassName     = $staticReflectionParser->getStaticReflectionParserForDeclaringClass('property', 'test')->getClassName();
+        self::assertEquals($expectedClassName, $declaringClassName);
     }
 
     /**
@@ -43,8 +42,8 @@ class StaticReflectionParserTest extends DoctrineTestCase
      */
     public function parentClassData()
     {
-        $data = [];
-        $noParentClassName = NoParent::class;
+        $data                 = [];
+        $noParentClassName    = NoParent::class;
         $dummyParentClassName = NoParentDummy::class;
         foreach ([false, true] as $classAnnotationOptimize) {
             $data[] = [
@@ -69,18 +68,19 @@ class StaticReflectionParserTest extends DoctrineTestCase
     /**
      * @dataProvider classAnnotationOptimize
      */
-    public function testClassAnnotationOptimizedParsing($class, $classAnnotationOptimize) {
-        $testsRoot = substr(__DIR__, 0, -strlen(__NAMESPACE__) - 1);
-        $paths = [
+    public function testClassAnnotationOptimizedParsing($class, $classAnnotationOptimize)
+    {
+        $testsRoot              = substr(__DIR__, 0, -strlen(__NAMESPACE__) - 1);
+        $paths                  = [
           'Doctrine\\Tests' => [$testsRoot],
         ];
         $staticReflectionParser = new StaticReflectionParser($class, new Psr0FindFile($paths), $classAnnotationOptimize);
-        $expectedDocComment = '/**
+        $expectedDocComment     = '/**
  * @Annotation(
  *   key = "value"
  * )
  */';
-        $this->assertEquals($expectedDocComment, $staticReflectionParser->getDocComment('class'));
+        self::assertEquals($expectedDocComment, $staticReflectionParser->getDocComment('class'));
     }
 
     /**

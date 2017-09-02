@@ -13,7 +13,7 @@ class NullObjectManagerDecorator extends ObjectManagerDecorator
     }
 }
 
-class ObjectManagerDecoratorTest extends \PHPUnit_Framework_TestCase
+class ObjectManagerDecoratorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager
@@ -29,7 +29,7 @@ class ObjectManagerDecoratorTest extends \PHPUnit_Framework_TestCase
 
     public function getMethodParameters()
     {
-        $class = new \ReflectionClass(ObjectManager::class);
+        $class       = new \ReflectionClass(ObjectManager::class);
         $voidMethods = [
             'persist',
             'remove',
@@ -44,7 +44,7 @@ class ObjectManagerDecoratorTest extends \PHPUnit_Framework_TestCase
         foreach ($class->getMethods() as $method) {
             $isVoidMethod = in_array($method->getName(), $voidMethods, true);
             if ($method->getNumberOfRequiredParameters() === 0) {
-               $methods[] = [$method->getName(), [], $isVoidMethod];
+                $methods[] = [$method->getName(), [], $isVoidMethod];
             } elseif ($method->getNumberOfRequiredParameters() > 0) {
                 $methods[] = [$method->getName(), array_fill(0, $method->getNumberOfRequiredParameters(), 'req') ?: [], $isVoidMethod];
             }
@@ -62,13 +62,13 @@ class ObjectManagerDecoratorTest extends \PHPUnit_Framework_TestCase
     public function testAllMethodCallsAreDelegatedToTheWrappedInstance($method, array $parameters, $isVoidMethod)
     {
         $returnedValue = $isVoidMethod ? null : 'INNER VALUE FROM ' . $method;
-        $stub = $this->wrapped
+        $stub          = $this->wrapped
             ->expects($this->once())
             ->method($method)
             ->will($this->returnValue($returnedValue));
 
         call_user_func_array([$stub, 'with'], $parameters);
 
-        $this->assertSame($returnedValue, call_user_func_array([$this->decorated, $method], $parameters));
+        self::assertSame($returnedValue, call_user_func_array([$this->decorated, $method], $parameters));
     }
 }

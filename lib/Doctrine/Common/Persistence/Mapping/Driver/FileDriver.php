@@ -66,7 +66,7 @@ abstract class FileDriver implements MappingDriver
         if ($locator instanceof FileLocator) {
             $this->locator = $locator;
         } else {
-            $this->locator = new DefaultFileLocator((array)$locator, $fileExtension);
+            $this->locator = new DefaultFileLocator((array) $locator, $fileExtension);
         }
     }
 
@@ -113,7 +113,7 @@ abstract class FileDriver implements MappingDriver
         }
 
         $result = $this->loadMappingFile($this->locator->findMappingFile($className));
-        if (!isset($result[$className])) {
+        if ( ! isset($result[$className])) {
             throw MappingException::invalidMappingFile($className, str_replace('\\', '.', $className) . $this->locator->getFileExtension());
         }
 
@@ -135,7 +135,7 @@ abstract class FileDriver implements MappingDriver
             return false;
         }
 
-        return !$this->locator->fileExists($className);
+        return ! $this->locator->fileExists($className);
     }
 
     /**
@@ -147,7 +147,7 @@ abstract class FileDriver implements MappingDriver
             $this->initialize();
         }
 
-        if (! $this->classCache) {
+        if ( ! $this->classCache) {
             return (array) $this->locator->getAllClassNames($this->globalBasename);
         }
 
@@ -183,7 +183,7 @@ abstract class FileDriver implements MappingDriver
         $this->classCache = [];
         if (null !== $this->globalBasename) {
             foreach ($this->locator->getPaths() as $path) {
-                $file = $path.'/'.$this->globalBasename.$this->locator->getFileExtension();
+                $file = $path . '/' . $this->globalBasename . $this->locator->getFileExtension();
                 if (is_file($file)) {
                     $this->classCache = array_merge(
                         $this->classCache,

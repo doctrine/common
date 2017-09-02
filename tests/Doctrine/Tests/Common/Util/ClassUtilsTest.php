@@ -1,13 +1,14 @@
 <?php
 
 namespace Doctrine\Tests\Common\Util
+
 {
     use Doctrine\Tests\DoctrineTestCase;
     use Doctrine\Common\Util\ClassUtils;
 
     class ClassUtilsTest extends DoctrineTestCase
     {
-        static public function dataGetClass()
+        public static function dataGetClass()
         {
             return [
                 [\stdClass::class, \stdClass::class],
@@ -23,46 +24,46 @@ namespace Doctrine\Tests\Common\Util
          */
         public function testGetRealClass($className, $expectedClassName)
         {
-            $this->assertEquals($expectedClassName, ClassUtils::getRealClass($className));
+            self::assertEquals($expectedClassName, ClassUtils::getRealClass($className));
         }
 
         /**
          * @dataProvider dataGetClass
          */
-        public function testGetClass( $className, $expectedClassName )
+        public function testGetClass($className, $expectedClassName)
         {
             $object = new $className();
-            $this->assertEquals($expectedClassName, ClassUtils::getClass($object));
+            self::assertEquals($expectedClassName, ClassUtils::getClass($object));
         }
 
         public function testGetParentClass()
         {
-            $parentClass = ClassUtils::getParentClass( 'MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\Doctrine\Tests\Common\Util\ChildObject' );
-            $this->assertEquals('stdClass', $parentClass);
+            $parentClass = ClassUtils::getParentClass('MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\Doctrine\Tests\Common\Util\ChildObject');
+            self::assertEquals('stdClass', $parentClass);
         }
 
         public function testGenerateProxyClassName()
         {
-            $this->assertEquals( 'Proxies\__CG__\stdClass', ClassUtils::generateProxyClassName( 'stdClass', 'Proxies' ) );
+            self::assertEquals('Proxies\__CG__\stdClass', ClassUtils::generateProxyClassName('stdClass', 'Proxies'));
         }
 
         /**
          * @dataProvider dataGetClass
          */
-        public function testNewReflectionClass( $className, $expectedClassName )
+        public function testNewReflectionClass($className, $expectedClassName)
         {
-            $reflClass = ClassUtils::newReflectionClass( $className );
-            $this->assertEquals( $expectedClassName, $reflClass->getName() );
+            $reflClass = ClassUtils::newReflectionClass($className);
+            self::assertEquals($expectedClassName, $reflClass->getName());
         }
 
         /**
          * @dataProvider dataGetClass
          */
-        public function testNewReflectionObject( $className, $expectedClassName )
+        public function testNewReflectionObject($className, $expectedClassName)
         {
-            $object = new $className;
-            $reflClass = ClassUtils::newReflectionObject( $object );
-            $this->assertEquals( $expectedClassName, $reflClass->getName() );
+            $object    = new $className;
+            $reflClass = ClassUtils::newReflectionObject($object);
+            self::assertEquals($expectedClassName, $reflClass->getName());
         }
     }
 
@@ -72,6 +73,7 @@ namespace Doctrine\Tests\Common\Util
 }
 
 namespace MyProject\Proxies\__CG__
+
 {
     class stdClass extends \stdClass
     {
@@ -79,6 +81,7 @@ namespace MyProject\Proxies\__CG__
 }
 
 namespace MyProject\Proxies\__CG__\Doctrine\Tests\Common\Util
+
 {
     class ChildObject extends \Doctrine\Tests\Common\Util\ChildObject
     {
@@ -86,6 +89,7 @@ namespace MyProject\Proxies\__CG__\Doctrine\Tests\Common\Util
 }
 
 namespace MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__
+
 {
     class stdClass extends \MyProject\Proxies\__CG__\stdClass
     {
@@ -93,6 +97,7 @@ namespace MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__
 }
 
 namespace MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\Doctrine\Tests\Common\Util
+
 {
     class ChildObject extends \MyProject\Proxies\__CG__\Doctrine\Tests\Common\Util\ChildObject
     {

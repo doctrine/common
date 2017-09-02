@@ -20,10 +20,9 @@
 namespace Doctrine\Tests\Common\Proxy;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\Common\Proxy\ProxyGenerator;
 use Doctrine\Common\Proxy\Proxy;
+use Doctrine\Common\Proxy\ProxyGenerator;
 use InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
 use ReflectionClass;
 
 /**
@@ -31,7 +30,7 @@ use ReflectionClass;
  *
  * @author Marco Pivetta <ocramius@gmail.com>
  */
-class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
+class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Doctrine\Common\Proxy\ProxyGenerator
@@ -63,7 +62,6 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
-
     }
 
     public function testInheritedMagicGet()
@@ -80,19 +78,18 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
                 $proxy->__setInitializer(null);
 
                 $proxy->publicField = 'modifiedPublicField';
-                $counter            += 1;
+                $counter           += 1;
 
                 $proxy->__setInitializer($initializer);
-
             }
         );
 
-        $this->assertSame('id', $proxy->id);
-        $this->assertSame('modifiedPublicField', $proxy->publicField);
-        $this->assertSame('test', $proxy->test);
-        $this->assertSame('not defined', $proxy->notDefined);
+        self::assertSame('id', $proxy->id);
+        self::assertSame('modifiedPublicField', $proxy->publicField);
+        self::assertSame('test', $proxy->test);
+        self::assertSame('not defined', $proxy->notDefined);
 
-        $this->assertSame(3, $counter);
+        self::assertSame(3, $counter);
     }
 
     /**
@@ -100,17 +97,17 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
      */
     public function testInheritedMagicGetByRef()
     {
-        $proxyClassName    = $this->generateProxyClass(MagicGetByRefClass::class);
+        $proxyClassName = $this->generateProxyClass(MagicGetByRefClass::class);
         /* @var $proxy \Doctrine\Tests\Common\Proxy\MagicGetByRefClass */
         $proxy             = new $proxyClassName();
         $proxy->valueField = 123;
         $value             = & $proxy->__get('value');
 
-        $this->assertSame(123, $value);
+        self::assertSame(123, $value);
 
         $value = 456;
 
-        $this->assertSame(456, $proxy->__get('value'), 'Value was fetched by reference');
+        self::assertSame(456, $proxy->__get('value'), 'Value was fetched by reference');
 
         $this->expectException(InvalidArgumentException::class);
 
@@ -130,20 +127,20 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
             }
         );
 
-        $this->assertSame('id', $proxy->id);
+        self::assertSame('id', $proxy->id);
 
         $proxy->publicField = 'publicFieldValue';
 
-        $this->assertSame('publicFieldValue', $proxy->publicField);
+        self::assertSame('publicFieldValue', $proxy->publicField);
 
         $proxy->test = 'testValue';
 
-        $this->assertSame('testValue', $proxy->testAttribute);
+        self::assertSame('testValue', $proxy->testAttribute);
 
         $proxy->notDefined = 'not defined';
 
-        $this->assertSame('not defined', $proxy->testAttribute);
-        $this->assertSame(3, $counter);
+        self::assertSame('not defined', $proxy->testAttribute);
+        self::assertSame(3, $counter);
     }
 
     public function testInheritedMagicSleep()
@@ -151,16 +148,16 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
         $proxyClassName = $this->generateProxyClass(MagicSleepClass::class);
         $proxy          = new $proxyClassName();
 
-        $this->assertSame('defaultValue', $proxy->serializedField);
-        $this->assertSame('defaultValue', $proxy->nonSerializedField);
+        self::assertSame('defaultValue', $proxy->serializedField);
+        self::assertSame('defaultValue', $proxy->nonSerializedField);
 
         $proxy->serializedField    = 'changedValue';
         $proxy->nonSerializedField = 'changedValue';
 
         $unserialized = unserialize(serialize($proxy));
 
-        $this->assertSame('changedValue', $unserialized->serializedField);
-        $this->assertSame('defaultValue', $unserialized->nonSerializedField, 'Field was not returned by "__sleep"');
+        self::assertSame('changedValue', $unserialized->serializedField);
+        self::assertSame('defaultValue', $unserialized->nonSerializedField, 'Field was not returned by "__sleep"');
     }
 
     public function testInheritedMagicWakeup()
@@ -168,12 +165,12 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
         $proxyClassName = $this->generateProxyClass(MagicWakeupClass::class);
         $proxy          = new $proxyClassName();
 
-        $this->assertSame('defaultValue', $proxy->wakeupValue);
+        self::assertSame('defaultValue', $proxy->wakeupValue);
 
         $proxy->wakeupValue = 'changedValue';
         $unserialized       = unserialize(serialize($proxy));
 
-        $this->assertSame('newWakeupValue', $unserialized->wakeupValue, '"__wakeup" was called');
+        self::assertSame('newWakeupValue', $unserialized->wakeupValue, '"__wakeup" was called');
 
         $unserialized->__setInitializer(function (Proxy $proxy) {
             $proxy->__setInitializer(null);
@@ -181,7 +178,7 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
             $proxy->publicField = 'newPublicFieldValue';
         });
 
-        $this->assertSame('newPublicFieldValue', $unserialized->publicField, 'Proxy can still be initialized');
+        self::assertSame('newPublicFieldValue', $unserialized->publicField, 'Proxy can still be initialized');
     }
 
     public function testInheritedMagicIsset()
@@ -194,7 +191,7 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
                 $proxy->__setInitializer(null);
 
                 $proxy->publicField = 'modifiedPublicField';
-                $counter            += 1;
+                $counter           += 1;
 
                 $proxy->__setInitializer($initializer);
 
@@ -206,12 +203,12 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
             );
         });
 
-        $this->assertTrue(isset($proxy->id));
-        $this->assertTrue(isset($proxy->publicField));
-        $this->assertTrue(isset($proxy->test));
-        $this->assertFalse(isset($proxy->nonExisting));
+        self::assertTrue(isset($proxy->id));
+        self::assertTrue(isset($proxy->publicField));
+        self::assertTrue(isset($proxy->test));
+        self::assertFalse(isset($proxy->nonExisting));
 
-        $this->assertSame(3, $counter);
+        self::assertSame(3, $counter);
     }
 
     public function testInheritedMagicClone()
@@ -226,9 +223,9 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
 
         $cloned = clone $proxy;
 
-        $this->assertSame('newClonedValue', $cloned->clonedValue);
-        $this->assertFalse($proxy->cloned);
-        $this->assertTrue($cloned->cloned);
+        self::assertSame('newClonedValue', $cloned->clonedValue);
+        self::assertFalse($proxy->cloned);
+        self::assertTrue($cloned->cloned);
     }
 
     /**
@@ -238,7 +235,7 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
     {
         $proxyClassName = $this->generateProxyClass(SerializedClass::class);
         /* @var $proxy SerializedClass */
-        $proxy          = new $proxyClassName();
+        $proxy = new $proxyClassName();
 
         $proxy->setFoo(1);
         $proxy->setBar(2);
@@ -246,9 +243,9 @@ class ProxyMagicMethodsTest extends PHPUnit_Framework_TestCase
 
         $unserialized = unserialize(serialize($proxy));
 
-        $this->assertSame(1, $unserialized->getFoo());
-        $this->assertSame(2, $unserialized->getBar());
-        $this->assertSame(3, $unserialized->getBaz());
+        self::assertSame(1, $unserialized->getFoo());
+        self::assertSame(2, $unserialized->getBar());
+        self::assertSame(3, $unserialized->getBaz());
     }
 
     /**

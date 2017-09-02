@@ -21,7 +21,6 @@ namespace Doctrine\Tests\Common\Proxy;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Proxy\ProxyGenerator;
-use PHPUnit_Framework_TestCase;
 use stdClass;
 
 /**
@@ -31,7 +30,7 @@ use stdClass;
  * @author Marco Pivetta <ocramius@gmail.com>
  * @author Jan Langer <jan.langer@slevomat.cz>
  */
-class ProxyLogicIdentifierGetterTest extends PHPUnit_Framework_TestCase
+class ProxyLogicIdentifierGetterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider methodsForWhichLazyLoadingShouldBeDisabled
@@ -47,7 +46,7 @@ class ProxyLogicIdentifierGetterTest extends PHPUnit_Framework_TestCase
         $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
         $proxyFileName  = $proxyGenerator->getProxyFileName($className);
 
-        if (! class_exists($proxyClassName, false)) {
+        if ( ! class_exists($proxyClassName, false)) {
             $proxyGenerator->generateProxyClass($metadata, $proxyFileName);
 
             /** @noinspection PhpIncludeInspection */
@@ -68,7 +67,7 @@ class ProxyLogicIdentifierGetterTest extends PHPUnit_Framework_TestCase
         $reflection->setAccessible(true);
         $reflection->setValue($proxy, $expectedReturnedValue);
 
-        $this->assertSame($expectedReturnedValue, $proxy->{'get' . $fieldName}());
+        self::assertSame($expectedReturnedValue, $proxy->{'get' . $fieldName}());
     }
 
     /**
@@ -80,7 +79,7 @@ class ProxyLogicIdentifierGetterTest extends PHPUnit_Framework_TestCase
             [new LazyLoadableObjectClassMetadata(), 'protectedIdentifierField', 'foo'],
         ];
 
-        if (! class_exists(\ReflectionType::class, false)) {
+        if ( ! class_exists(\ReflectionType::class, false)) {
             return $methods;
         }
 

@@ -60,35 +60,33 @@ class LazyLoadableObjectWithTypehints
         return $this->identifierFieldNoReturnTypehint;
     }
 
-    public function getIdentifierFieldReturnTypehintScalar(): string
+    public function getIdentifierFieldReturnTypehintScalar() : string
     {
         return $this->identifierFieldReturnTypehintScalar;
     }
 
-    public function getIdentifierFieldReturnClassFullyQualified(): \Doctrine\Tests\Common\Proxy\LazyLoadableObjectWithTypehints
+    public function getIdentifierFieldReturnClassFullyQualified() : \Doctrine\Tests\Common\Proxy\LazyLoadableObjectWithTypehints
     {
         return $this->identifierFieldReturnClassFullyQualified;
     }
 
-    public function getIdentifierFieldReturnClassPartialUse(): Doctrine\Tests\Common\Proxy\LazyLoadableObjectWithTypehints
+    public function getIdentifierFieldReturnClassPartialUse() : Doctrine\Tests\Common\Proxy\LazyLoadableObjectWithTypehints
     {
         return $this->identifierFieldReturnClassPartialUse;
     }
 
-    public function getIdentifierFieldReturnClassFullUse(): LazyLoadableObjectWithTypehints
+    public function getIdentifierFieldReturnClassFullUse() : LazyLoadableObjectWithTypehints
     {
         return $this->identifierFieldReturnClassFullUse;
     }
 
-    public function getIdentifierFieldReturnClassOneWord(): \stdClass
+    public function getIdentifierFieldReturnClassOneWord() : \stdClass
     {
         return $this->identifierFieldReturnClassOneWord;
     }
 
-    public function getIdentifierFieldReturnClassOneLetter(): A
+    public function getIdentifierFieldReturnClassOneLetter() : A
     {
         return $this->identifierFieldReturnClassOneLetter;
     }
-
-
 }

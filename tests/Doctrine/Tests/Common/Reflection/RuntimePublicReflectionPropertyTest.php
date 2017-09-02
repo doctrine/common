@@ -2,11 +2,10 @@
 
 namespace Doctrine\Tests\Common\Reflection;
 
-use PHPUnit_Framework_TestCase;
-use Doctrine\Common\Reflection\RuntimePublicReflectionProperty;
 use Doctrine\Common\Proxy\Proxy;
+use Doctrine\Common\Reflection\RuntimePublicReflectionProperty;
 
-class RuntimePublicReflectionPropertyTest extends PHPUnit_Framework_TestCase
+class RuntimePublicReflectionPropertyTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetValueOnProxyPublicProperty()
     {
@@ -24,9 +23,9 @@ class RuntimePublicReflectionPropertyTest extends PHPUnit_Framework_TestCase
             'checkedProperty'
         );
 
-        $this->assertSame('testValue', $reflProperty->getValue($mockProxy));
+        self::assertSame('testValue', $reflProperty->getValue($mockProxy));
         unset($mockProxy->checkedProperty);
-        $this->assertNull($reflProperty->getValue($mockProxy));
+        self::assertNull($reflProperty->getValue($mockProxy));
     }
 
     public function testSetValueOnProxyPublicProperty()
@@ -46,11 +45,11 @@ class RuntimePublicReflectionPropertyTest extends PHPUnit_Framework_TestCase
         );
 
         $reflProperty->setValue($mockProxy, 'newValue');
-        $this->assertSame('newValue', $mockProxy->checkedProperty);
+        self::assertSame('newValue', $mockProxy->checkedProperty);
 
         unset($mockProxy->checkedProperty);
         $reflProperty->setValue($mockProxy, 'otherNewValue');
-        $this->assertSame('otherNewValue', $mockProxy->checkedProperty);
+        self::assertSame('otherNewValue', $mockProxy->checkedProperty);
 
         $setCheckMock = $this->getMockBuilder('stdClass')->setMethods(['callSet'])->getMock();
         $setCheckMock->expects($this->once())->method('callSet');
@@ -63,7 +62,7 @@ class RuntimePublicReflectionPropertyTest extends PHPUnit_Framework_TestCase
 
         unset($mockProxy->checkedProperty);
         $reflProperty->setValue($mockProxy, 'againNewValue');
-        $this->assertSame('againNewValue', $mockProxy->checkedProperty);
+        self::assertSame('againNewValue', $mockProxy->checkedProperty);
     }
 }
 
@@ -75,17 +74,17 @@ class RuntimePublicReflectionPropertyTestProxyMock implements Proxy
     /**
      * @var \Closure|null
      */
-    private $initializer     = null;
+    private $initializer = null;
 
     /**
      * @var bool
      */
-    private $initialized     = false;
+    private $initialized = false;
 
     /**
      * @var string
      */
-    public  $checkedProperty = 'testValue';
+    public $checkedProperty = 'testValue';
 
     /**
      * {@inheritDoc}
@@ -164,7 +163,7 @@ class RuntimePublicReflectionPropertyTestProxyMock implements Proxy
     /**
      * @param string $name
      *
-     * @return integer
+     * @return bool
      */
     public function __isset($name)
     {

@@ -32,7 +32,7 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testGetObjectManager()
     {
-        $this->assertSame($this->om, PersistentObject::getObjectManager());
+        self::assertSame($this->om, PersistentObject::getObjectManager());
     }
 
     public function testNonMatchingObjectManager()
@@ -44,18 +44,18 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testGetField()
     {
-        $this->assertEquals('beberlei', $this->object->getName());
+        self::assertEquals('beberlei', $this->object->getName());
     }
 
     public function testSetField()
     {
         $this->object->setName("test");
-        $this->assertEquals("test", $this->object->getName());
+        self::assertEquals("test", $this->object->getName());
     }
 
     public function testGetIdentifier()
     {
-        $this->assertEquals(1, $this->object->getId());
+        self::assertEquals(1, $this->object->getId());
     }
 
     public function testSetIdentifier()
@@ -85,14 +85,14 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testGetToOneAssociation()
     {
-        $this->assertNull($this->object->getParent());
+        self::assertNull($this->object->getParent());
     }
 
     public function testSetToOneAssociation()
     {
         $parent = new TestObject();
         $this->object->setParent($parent);
-        $this->assertSame($parent, $this->object->getParent($parent));
+        self::assertSame($parent, $this->object->getParent($parent));
     }
 
     public function testSetInvalidToOneAssociation()
@@ -108,7 +108,7 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
         $parent = new TestObject();
         $this->object->setParent($parent);
         $this->object->setParent(null);
-        $this->assertNull($this->object->getParent());
+        self::assertNull($this->object->getParent());
     }
 
     public function testAddToManyAssociation()
@@ -116,13 +116,13 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
         $child = new TestObject();
         $this->object->addChildren($child);
 
-        $this->assertSame($this->object, $child->getParent());
-        $this->assertEquals(1, count($this->object->getChildren()));
+        self::assertSame($this->object, $child->getParent());
+        self::assertEquals(1, count($this->object->getChildren()));
 
         $child = new TestObject();
         $this->object->addChildren($child);
 
-        $this->assertEquals(2, count($this->object->getChildren()));
+        self::assertEquals(2, count($this->object->getChildren()));
     }
 
     public function testAddInvalidToManyAssociation()
@@ -155,7 +155,7 @@ class PersistentObjectTest extends \Doctrine\Tests\DoctrineTestCase
 
 class TestObject extends PersistentObject
 {
-    protected $id = 1;
+    protected $id   = 1;
     protected $name = 'beberlei';
     protected $parent;
     protected $children;
@@ -238,21 +238,17 @@ class TestObjectMetadata implements ClassMetadata
 
     public function getIdentifierValues($entity)
     {
-
     }
 
     public function getIdentifierFieldNames()
     {
-
     }
 
     public function initializeReflection(ReflectionService $reflService)
     {
-
     }
 
     public function wakeupReflection(ReflectionService $reflService)
     {
-
     }
 }

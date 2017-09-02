@@ -40,12 +40,12 @@ class ManagerRegistryTest extends DoctrineTestCase
 
     public function testGetManagerForClass()
     {
-        $this->mr->getManagerForClass(TestObject::class);
+        self::assertNull($this->mr->getManagerForClass(TestObject::class));
     }
 
     public function testGetManagerForProxyInterface()
     {
-        $this->assertNull($this->mr->getManagerForClass(ObjectManagerAware::class));
+        self::assertNull($this->mr->getManagerForClass(ObjectManagerAware::class));
     }
 
     public function testGetManagerForInvalidClass()
@@ -58,7 +58,7 @@ class ManagerRegistryTest extends DoctrineTestCase
 
     public function testGetManagerForAliasedClass()
     {
-        $this->mr->getManagerForClass('prefix:TestObject');
+        self::assertNull($this->mr->getManagerForClass('prefix:TestObject'));
     }
 
     public function testGetManagerForInvalidAliasedClass()
@@ -71,18 +71,18 @@ class ManagerRegistryTest extends DoctrineTestCase
 
     public function testResetManager()
     {
-        $manager = $this->mr->getManager();
+        $manager    = $this->mr->getManager();
         $newManager = $this->mr->resetManager();
 
-        $this->assertInstanceOf(ObjectManager::class, $newManager);
-        $this->assertNotSame($manager, $newManager);
+        self::assertInstanceOf(ObjectManager::class, $newManager);
+        self::assertNotSame($manager, $newManager);
     }
 
     private function getManagerFactory()
     {
         return function () {
-            $mock = $this->createMock(ObjectManager::class);
-            $driver = $this->createMock(MappingDriver::class);
+            $mock     = $this->createMock(ObjectManager::class);
+            $driver   = $this->createMock(MappingDriver::class);
             $metadata = $this->createMock(ClassMetadata::class);
             $mock->method('getMetadataFactory')->willReturn(new TestClassMetadataFactory($driver, $metadata));
 
@@ -106,7 +106,7 @@ class TestManagerRegistry extends AbstractManagerRegistry
 
     protected function getService($name)
     {
-        if (!isset($this->services[$name])) {
+        if ( ! isset($this->services[$name])) {
             $this->services[$name] = call_user_func($this->managerFactory);
         }
 
