@@ -1,7 +1,6 @@
 parameters:
     autoload_directories:
         - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/ClassLoaderTest
-        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/generated
     autoload_files:
         - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Persistence/ObjectManagerDecoratorTest.php
         - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Persistence/PersistentObjectTest.php
