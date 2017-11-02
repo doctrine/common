@@ -25,11 +25,6 @@ use ReflectionException;
 class StaticReflectionClass extends ReflectionClass
 {
     /**
-     * \ReflectionClass has a different signature in PHP7.1 and earlier.
-     */
-    use StaticReflectionClassTrait;
-
-    /**
      * The static reflection parser object.
      *
      * @var StaticReflectionParser
@@ -392,6 +387,14 @@ class StaticReflectionClass extends ReflectionClass
      * {@inheritDoc}
      */
     public function isUserDefined()
+    {
+        throw new ReflectionException('Method not implemented');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function newInstance($arg = null, ...$args)
     {
         throw new ReflectionException('Method not implemented');
     }
