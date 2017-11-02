@@ -394,7 +394,7 @@ class StaticReflectionClass extends ReflectionClass
     /**
      * {@inheritDoc}
      */
-    public function newInstance($args)
+    public function newInstance($arg = null, ...$args)
     {
         throw new ReflectionException('Method not implemented');
     }
