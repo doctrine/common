@@ -65,6 +65,26 @@ namespace Doctrine\Tests\Common\Util
             $reflClass = ClassUtils::newReflectionObject($object);
             self::assertEquals($expectedClassName, $reflClass->getName());
         }
+
+        /**
+         * @runInSeparateProcess
+         * @preserveGlobalState disabled
+         */
+        public function testExistingClassNameWithColonIsNotDetectedAsAlias()
+        {
+            class_alias(self::class, 'a:b');
+            self::assertFalse(ClassUtils::isClassNameAliasedClassName('a:b'));
+        }
+
+        public function testNonExistingClassNameWithColonIsDetectedAsAlias()
+        {
+            self::assertTrue(ClassUtils::isClassNameAliasedClassName('a:b'));
+        }
+
+        public function testClassNameWithoutColonIsNotDetectedAsAlias()
+        {
+            self::assertFalse(ClassUtils::isClassNameAliasedClassName('ab'));
+        }
     }
 
     class ChildObject extends \stdClass
