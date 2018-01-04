@@ -66,9 +66,9 @@ interface ManagerRegistry extends ConnectionRegistry
     public function getAliasNamespace($alias);
 
     /**
-     * Gets all connection names.
+     * Gets all object manager names.
      *
-     * @return array An array of connection names.
+     * @return array An array of object manager names.
      */
     public function getManagerNames();
 
