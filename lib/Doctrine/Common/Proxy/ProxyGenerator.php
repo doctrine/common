@@ -251,9 +251,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
         $placeholders       = [];
 
         foreach ($placeholderMatches as $placeholder => $name) {
-            $placeholders[$placeholder] = isset($this->placeholders[$name])
-                ? $this->placeholders[$name]
-                : [$this, 'generate' . $name];
+            $placeholders[$placeholder] = $this->placeholders[$name] ?? [$this, 'generate' . $name];
         }
 
         foreach ($placeholders as & $placeholder) {

@@ -26,7 +26,7 @@ class RuntimePublicReflectionProperty extends ReflectionProperty
         if ($object instanceof Proxy && ! $object->__isInitialized()) {
             $originalInitializer = $object->__getInitializer();
             $object->__setInitializer(null);
-            $val = isset($object->$name) ? $object->$name : null;
+            $val = $object->$name ?? null;
             $object->__setInitializer($originalInitializer);
 
             return $val;

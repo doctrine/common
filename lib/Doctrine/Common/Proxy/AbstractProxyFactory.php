@@ -109,9 +109,7 @@ abstract class AbstractProxyFactory
      */
     public function getProxy($className, array $identifier)
     {
-        $definition = isset($this->definitions[$className])
-            ? $this->definitions[$className]
-            : $this->getProxyDefinition($className);
+        $definition = $this->definitions[$className] ?? $this->getProxyDefinition($className);
         $fqcn       = $definition->proxyClassName;
         $proxy      = new $fqcn($definition->initializer, $definition->cloner);
 
@@ -171,9 +169,7 @@ abstract class AbstractProxyFactory
         }
 
         $className  = ClassUtils::getClass($proxy);
-        $definition = isset($this->definitions[$className])
-            ? $this->definitions[$className]
-            : $this->getProxyDefinition($className);
+        $definition = $this->definitions[$className] ?? $this->getProxyDefinition($className);
 
         $proxy->__setInitializer($definition->initializer);
         $proxy->__setCloner($definition->cloner);
