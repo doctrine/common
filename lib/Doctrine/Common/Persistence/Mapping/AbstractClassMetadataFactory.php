@@ -195,6 +195,16 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
                     $this->loadedMetadata[$realClassName] = $cached;
 
                     $this->wakeupReflection($cached, $this->getReflectionService());
+                    
+                    if ( ! $this->initialized) {
+                        $this->initialize();
+                    }
+                    $parentClasses = $this->getParentClasses($realClassName);
+                    foreach ($parentClasses as $parentClass) {
+                        if ($cached = $this->cacheDriver->fetch($parentClass . $this->cacheSalt)) {
+                            $this->loadedMetadata[$parentClass] = $cached;
+                        }
+                    }                    
                 } else {
                     foreach ($this->loadMetadata($realClassName) as $loadedClassName) {
                         $this->cacheDriver->save(
