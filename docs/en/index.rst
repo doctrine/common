@@ -1,23 +1,10 @@
-.. Doctrine Common documentation master file, created by
-   sphinx-quickstart on Sat Jul  2 23:30:48 2011.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Common Documentation
+====================
 
-Welcome to Doctrine Common's documentation!
-===========================================
-
-Contents:
+Welcome to the Doctrine Common Library documentation.
 
 .. toctree::
-   :maxdepth: 2
-   :numbered:
+   :depth: 2
+   :glob:
 
-   reference/class-loading
-   reference/annotations
-   reference/caching
-
-Indices and tables
-==================
-
-* :ref:`search`
-
+   *
