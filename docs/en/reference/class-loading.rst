@@ -104,7 +104,7 @@ however, these are rarely used/needed:
 
 -  If only the second argument is not supplied, the class loader
    will be responsible for the namespace prefix given in the first
-   argument and it will rely on the PHP include\_path.
+   argument and it will rely on the PHP include_path.
 
 -  If only the first argument is not supplied, the class loader
    will be responsible for *all* classes and it will try to look up
@@ -113,7 +113,7 @@ however, these are rarely used/needed:
 
 -  If both arguments are not supplied, the class loader will be
    responsible for *all* classes and it will rely on the PHP
-   include\_path.
+   include_path.
 
 
 File Extension
@@ -137,7 +137,7 @@ Namespace Separator
 
 By default, a ClassLoader uses the ``\`` namespace separator. You
 can change this behavior, for example to use a ClassLoader to load
-legacy Zend Framework classes that still use the underscore "\_"
+legacy Zend Framework classes that still use the underscore "_"
 separator:
 
 .. code-block :: php
@@ -147,7 +147,7 @@ separator:
     $zend1Loader->setNamespaceSeparator('_');
     $zend1Loader->register();
 
-Failing Silently and class\_exists
+Failing Silently and class_exists
 ----------------------------------
 
 A lot of class/autoloaders these days try to fail silently when a
@@ -155,10 +155,10 @@ class file is not found. For the most part this is necessary in
 order to support using ``class_exists('ClassName', true)`` which is
 supposed to return a boolean value but triggers autoloading. This
 is a bad thing as it basically forces class loaders to fail
-silently, which in turn requires costly file\_exists or fopen calls
+silently, which in turn requires costly file_exists or fopen calls
 for each class being loaded, even though in at least 99% of the
 cases this is not necessary (compare the number of
-class\_exists(..., true) invocations to the total number of classes
+class_exists(..., true) invocations to the total number of classes
 being loaded in a request).
 
 The Doctrine Common ClassLoader does not fail silently, by design.
@@ -166,11 +166,11 @@ It therefore does not need any costly checks for file existence. A
 ClassLoader is always responsible for all classes with a certain
 namespace prefix and if a class is requested to be loaded and can
 not be found this is considered to be a fatal error. This also
-means that using class\_exists(..., true) to check for class
+means that using class_exists(..., true) to check for class
 existence when using a Doctrine Common ClassLoader is not possible
 but this is not a bad thing. What class\_exists(..., true) actually
 means is two things: 1) Check whether the class is already
-defined/exists (i.e. class\_exists(..., false)) and if not 2) check
+defined/exists (i.e. class_exists(..., false)) and if not 2) check
 whether a class file can be loaded for that class. In the Doctrine
 Common ClassLoader the two responsibilities of loading a class and
 checking for its existence are separated, which can be observed by
@@ -184,7 +184,8 @@ true):
 .. code-block :: php
 
     <?php
-    // Equivalent to if (class_exists('Foo', true)) if there is only 1 class loader to check
+    // Equivalent to if (
+    ('Foo', true)) if there is only 1 class loader to check
     if (class_exists('Foo', false) || $classLoader->canLoadClass('Foo')) {
       // ...
     }
@@ -205,12 +206,12 @@ all installed class loaders whether they can load the class:
     }
 
 This static method can basically be used as a drop-in replacement
-for class\_exists(..., true). It iterates over all installed class
+for class_exists(..., true). It iterates over all installed class
 loaders and asks each of them via ``canLoadClass``, returning early
 (with TRUE) as soon as one class loader returns TRUE from
 ``canLoadClass``. If this sounds like it can potentially be rather
 costly then because that is true but it is exactly the same thing
-that class\_exists(..., true) does under the hood, it triggers a
+that class_exists(..., true) does under the hood, it triggers a
 complete interaction of all class/auto loaders. Checking for class
 existence via invoking autoloading was never a cheap thing to do
 but now it is more obvious and more importantly, this check is no
