@@ -26,7 +26,7 @@ final class Debug
     /**
      * Prints a dump of the public, protected and private properties of $var.
      *
-     * @link http://xdebug.org/
+     * @link https://xdebug.org/
      *
      * @param mixed   $var       The variable to dump.
      * @param integer $maxDepth  The maximum nesting level for object properties.
@@ -126,7 +126,7 @@ final class Debug
 
     /**
      * Fill the $return variable with class attributes
-     * Based on obj2array function from {@see http://php.net/manual/en/function.get-object-vars.php#47075}
+     * Based on obj2array function from {@see https://secure.php.net/manual/en/function.get-object-vars.php#47075}
      *
      * @param object   $var
      * @param \stdClass $return
