@@ -34,7 +34,7 @@
     <target name="composer-download" unless="composer.present">
         <exec executable="wget">
             <arg value="-Obuild/composer.phar" />
-            <arg value="http://getcomposer.org/composer.phar" />
+            <arg value="https://getcomposer.org/composer.phar" />
         </exec>
     </target>
 
