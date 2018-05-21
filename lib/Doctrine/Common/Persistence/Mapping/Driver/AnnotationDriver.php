@@ -1,7 +1,7 @@
 <?php
 namespace Doctrine\Common\Persistence\Mapping\Driver;
 
-use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 
 /**
@@ -16,9 +16,9 @@ use Doctrine\Common\Persistence\Mapping\MappingException;
 abstract class AnnotationDriver implements MappingDriver
 {
     /**
-     * The AnnotationReader.
+     * The annotation reader.
      *
-     * @var AnnotationReader
+     * @var Reader
      */
     protected $reader;
 
@@ -61,7 +61,7 @@ abstract class AnnotationDriver implements MappingDriver
      * Initializes a new AnnotationDriver that uses the given AnnotationReader for reading
      * docblock annotations.
      *
-     * @param AnnotationReader  $reader The AnnotationReader to use, duck-typed.
+     * @param Reader            $reader The annotation Reader to use, duck-typed.
      * @param string|array|null $paths  One or multiple paths where mapping classes can be found.
      */
     public function __construct($reader, $paths = null)
@@ -117,7 +117,7 @@ abstract class AnnotationDriver implements MappingDriver
     /**
      * Retrieve the current annotation reader
      *
-     * @return AnnotationReader
+     * @return Reader
      */
     public function getReader()
     {
