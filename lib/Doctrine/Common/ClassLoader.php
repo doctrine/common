@@ -13,7 +13,7 @@ namespace Doctrine\Common;
  * @author Roman Borschel <roman@code-factory.org>
  * @since 2.0
  *
- * @deprecated the ClassLoader is deprecated and will be removed in version 3.0 of doctrine/common.
+ * @deprecated The ClassLoader is deprecated and will be removed in version 3.0 of doctrine/common.
  */
 class ClassLoader
 {

@@ -10,6 +10,8 @@ namespace Doctrine\Common;
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author Jonathan Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
+ *
+ * @deprecated The Version class is deprecated, please refrain from checking the version of doctrine/common.
  */
 class Version
 {

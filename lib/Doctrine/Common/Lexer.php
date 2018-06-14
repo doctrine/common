@@ -13,6 +13,8 @@ use Doctrine\Common\Lexer\AbstractLexer;
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author Jonathan Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
+ *
+ * @deprecated Use Doctrine\Common\Lexer\AbstractLexer from doctrine/lexer package instead.
  */
 abstract class Lexer extends AbstractLexer
 {
