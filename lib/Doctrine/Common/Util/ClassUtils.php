@@ -88,4 +88,20 @@ class ClassUtils
     {
         return rtrim($proxyNamespace, '\\') . '\\' . Proxy::MARKER . '\\' . ltrim($className, '\\');
     }
+
+    /**
+     * Checks whether provided class name is aliased class name or not.
+     *
+     * @param string $className
+     *
+     * @return bool
+     */
+    public static function isClassNameAliasedClassName($className)
+    {
+        if (strpos($className, ':') === false) {
+            return false;
+        }
+
+        return false === class_exists($className);
+    }
 }

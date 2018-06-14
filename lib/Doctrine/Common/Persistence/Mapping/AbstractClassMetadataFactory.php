@@ -173,7 +173,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         }
 
         // Check for namespace alias
-        if (strpos($className, ':') !== false) {
+        if (ClassUtils::isClassNameAliasedClassName($className)) {
             list($namespaceAlias, $simpleClassName) = explode(':', $className, 2);
 
             $realClassName = $this->getFqcnFromAlias($namespaceAlias, $simpleClassName);
@@ -377,7 +377,7 @@ abstract class AbstractClassMetadataFactory implements ClassMetadataFactory
         }
 
         // Check for namespace alias
-        if (strpos($class, ':') !== false) {
+        if (ClassUtils::isClassNameAliasedClassName($class)) {
             list($namespaceAlias, $simpleClassName) = explode(':', $class, 2);
             $class                                  = $this->getFqcnFromAlias($namespaceAlias, $simpleClassName);
         }

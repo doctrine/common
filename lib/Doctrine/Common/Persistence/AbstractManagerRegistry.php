@@ -1,6 +1,8 @@
 <?php
 namespace Doctrine\Common\Persistence;
 
+use Doctrine\Common\Util\ClassUtils;
+
 /**
  * Abstract implementation of the ManagerRegistry contract.
  *
@@ -171,7 +173,7 @@ abstract class AbstractManagerRegistry implements ManagerRegistry
     public function getManagerForClass($class)
     {
         // Check for namespace alias
-        if (strpos($class, ':') !== false) {
+        if (ClassUtils::isClassNameAliasedClassName($class)) {
             list($namespaceAlias, $simpleClassName) = explode(':', $class, 2);
             $class                                  = $this->getAliasNamespace($namespaceAlias) . '\\' . $simpleClassName;
         }
