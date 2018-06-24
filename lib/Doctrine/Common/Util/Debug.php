@@ -13,6 +13,8 @@ use Doctrine\Common\Persistence\Proxy;
  * @author Jonathan Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
  * @author Giorgio Sironi <piccoloprincipeazzurro@gmail.com>
+ *
+ * @deprecated The Debug class is deprecated, please use symfony/var-dumper instead.
  */
 final class Debug
 {

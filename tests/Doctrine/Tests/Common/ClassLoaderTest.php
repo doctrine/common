@@ -4,6 +4,9 @@ namespace Doctrine\Tests\Common;
 
 use Doctrine\Common\ClassLoader;
 
+/**
+ * @group legacy
+ */
 class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
 {
     public function testClassLoader()
