@@ -1,11 +1,6 @@
 <?php
 namespace Doctrine\Common;
 
-use function trigger_error;
-use const E_USER_DEPRECATED;
-
-@trigger_error(ClassLoader::class . ' is deprecated.', E_USER_DEPRECATED);
-
 /**
  * A <tt>ClassLoader</tt> is an autoloader for class files that can be
  * installed on the SPL autoload stack. It is a class loader that either loads only classes
