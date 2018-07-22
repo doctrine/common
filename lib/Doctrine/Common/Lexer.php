@@ -2,10 +2,6 @@
 namespace Doctrine\Common;
 
 use Doctrine\Common\Lexer\AbstractLexer;
-use function trigger_error;
-use const E_USER_DEPRECATED;
-
-@trigger_error(Lexer::class . ' is deprecated.', E_USER_DEPRECATED);
 
 /**
  * Base class for writing simple lexers, i.e. for creating small DSLs.
