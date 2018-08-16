@@ -22,7 +22,7 @@ course, Doctrine.
 
 For example, the following class:
 
-.. code-block :: php
+.. code-block:: php
 
     <?php
     namespace MyProject\Shipping;
@@ -52,7 +52,7 @@ that actually needs to be loaded explicitly via ``require``. All
 other classes will be loaded on demand by the configured class
 loaders.
 
-.. code-block :: php
+.. code-block:: php
 
     <?php
     use Doctrine\Common\ClassLoader;
@@ -79,7 +79,7 @@ sources for each project usually do not reside under a common root
 directory. The following is an example of configuring three class
 loaders, one for each used Doctrine project:
 
-.. code-block :: php
+.. code-block:: php
 
     <?php
     use Doctrine\Common\ClassLoader;
@@ -125,7 +125,7 @@ ClassLoader to load classes from a library that uses the
 ".class.php" convention (but it must nevertheless adhere to the
 directory structure convention!):
 
-.. code-block :: php
+.. code-block:: php
 
     <?php
     $customLoader = new ClassLoader('CustomLib', '/path/to/custom/lib');
@@ -140,7 +140,7 @@ can change this behavior, for example to use a ClassLoader to load
 legacy Zend Framework classes that still use the underscore "_"
 separator:
 
-.. code-block :: php
+.. code-block:: php
 
     <?php
     $zend1Loader = new ClassLoader('Zend', '/path/to/zend/lib');
@@ -181,7 +181,7 @@ use it yourself to check whether a class can be loaded and the
 following code snippet is thus equivalent to class\_exists(...,
 true):
 
-.. code-block :: php
+.. code-block:: php
 
     <?php
     // Equivalent to if (
@@ -197,7 +197,7 @@ alternative exists for the cases in which you really want to ask
 all installed class loaders whether they can load the class:
 ``ClassLoader::classExists($className)``:
 
-.. code-block :: php
+.. code-block:: php
 
     <?php
     // Equivalent to if (class_exists('Foo', true))
