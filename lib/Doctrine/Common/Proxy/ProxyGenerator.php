@@ -844,25 +844,40 @@ EOT;
      */
     private function isShortIdentifierGetter($method, ClassMetadata $class)
     {
-        $identifier = lcfirst(substr($method->getName(), 3));
-        $startLine  = $method->getStartLine();
-        $endLine    = $method->getEndLine();
+        $startLine = $method->getStartLine();
+        $endLine = $method->getEndLine();
+
         $cheapCheck = (
             $method->getNumberOfParameters() == 0
-            && substr($method->getName(), 0, 3) == 'get'
-            && in_array($identifier, $class->getIdentifier(), true)
-            && $class->hasField($identifier)
             && (($endLine - $startLine) <= 4)
+            && substr($method->getName(), 0, 3) == 'get'
         );
 
-        if ($cheapCheck) {
-            $code = file($method->getDeclaringClass()->getFileName());
-            $code = trim(implode(' ', array_slice($code, $startLine - 1, $endLine - $startLine + 1)));
+        if (!$cheapCheck) {
+            return false;
+        }
 
-            $pattern = sprintf(self::PATTERN_MATCH_ID_METHOD, $method->getName(), $identifier);
+        $identifierCandidates = [
+            lcfirst($identifier = substr($method->getName(), 3)),
+            $identifier,
+            strtolower($identifier)
+        ];
 
-            if (preg_match($pattern, $code)) {
-                return true;
+        foreach ($identifierCandidates as $identifierCandidate) {
+            $metadataCheck = (
+                in_array($identifierCandidate, $class->getIdentifier(), true)
+                && $class->hasField($identifierCandidate)
+            );
+
+            if ($metadataCheck) {
+                $code = file($method->getDeclaringClass()->getFileName());
+                $code = trim(implode(' ', array_slice($code, $startLine - 1, $endLine - $startLine + 1)));
+
+                $pattern = sprintf(self::PATTERN_MATCH_ID_METHOD, $method->getName(), $identifierCandidate);
+
+                if (preg_match($pattern, $code)) {
+                    return true;
+                }
             }
         }
 
