@@ -7,7 +7,7 @@
         "common",
         "doctrine"
     ],
-    "homepage": "https://www.doctrine-project.org",
+    "homepage": "https://www.doctrine-project.org/projects/common.html",
     "license": "MIT",
     "authors": [
         {"name": "Guilherme Blanco", "email": "guilhermeblanco@gmail.com"},
