@@ -856,7 +856,7 @@ EOT;
         );
 
         if ($cheapCheck) {
-            $code = file($method->getDeclaringClass()->getFileName());
+            $code = file($method->getFileName());
             $code = trim(implode(' ', array_slice($code, $startLine - 1, $endLine - $startLine + 1)));
 
             $pattern = sprintf(self::PATTERN_MATCH_ID_METHOD, $method->getName(), $identifier);
