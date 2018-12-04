@@ -78,6 +78,13 @@ class ProxyLogicIdentifierGetterTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
+        $methods = array_merge(
+            $methods,
+            [
+                [new LazyLoadableObjectWithTraitClassMetadata(), 'identifierFieldInTrait', 123],
+            ]
+        );
+
         return array_merge(
             $methods,
             [
