@@ -88,7 +88,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
      * @var array properties to be lazy loaded, with keys being the property
      *            names and values being their default values
      *
-     * @see \Doctrine\Common\Persistence\Proxy::__getLazyProperties
+     * @see \Doctrine\Common\Proxy\Proxy::__getLazyProperties
      */
     public static $lazyPropertiesDefaults = [<lazyPropertiesDefaults>];
 
