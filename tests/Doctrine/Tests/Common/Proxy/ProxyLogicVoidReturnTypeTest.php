@@ -15,7 +15,7 @@ use stdClass;
 class ProxyLogicVoidReturnTypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject&stdClass
      */
     protected $proxyLoader;
 
@@ -30,7 +30,7 @@ class ProxyLogicVoidReturnTypeTest extends \PHPUnit\Framework\TestCase
     protected $lazyObject;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Callable
+     * @var \PHPUnit\Framework\MockObject\MockObject&callable
      */
     protected $initializerCallbackMock;
 

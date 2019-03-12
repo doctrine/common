@@ -16,7 +16,7 @@ use stdClass;
 class ProxyLogicTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\stdClass
+     * @var \PHPUnit\Framework\MockObject\MockObject&\stdClass
      */
     protected $proxyLoader;
 
@@ -36,7 +36,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
     ];
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Callable
+     * @var \PHPUnit\Framework\MockObject\MockObject&Callable
      */
     protected $initializerCallbackMock;
 
@@ -580,7 +580,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
     {
         $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\VariadicTypeHintClass';
 
-        /* @var $metadata ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var ClassMetadata&\PHPUnit\Framework\MockObject\MockObject $metadata */
         $metadata = $this->createMock(ClassMetadata::class);
 
         $metadata
@@ -599,7 +599,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             require_once $proxyGenerator->getProxyFileName($metadata->getName());
         }
 
-        /* @var $invocationMock callable|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var callable&\PHPUnit\Framework\MockObject\MockObject $invocationMock */
         $invocationMock = $this->getMockBuilder(stdClass::class)->setMethods(['__invoke'])->getMock();
 
         /* @var $lazyObject VariadicTypeHintClass */
