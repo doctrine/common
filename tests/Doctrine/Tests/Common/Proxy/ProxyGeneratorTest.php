@@ -397,8 +397,8 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param       $className
-     * @param array $ids
+     * @param string $className
+     * @param array  $ids
      *
      * @return \PHPUnit\Framework\MockObject\MockObject&ClassMetadata
      */

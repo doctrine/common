@@ -25,7 +25,7 @@ class ProxyLogicVoidReturnTypeTest extends \PHPUnit\Framework\TestCase
     protected $lazyLoadableObjectMetadata;
 
     /**
-     * @var LazyLoadableObjectWithVoid|Proxy
+     * @var LazyLoadableObjectWithVoid&Proxy
      */
     protected $lazyObject;
 
@@ -102,9 +102,9 @@ class ProxyLogicVoidReturnTypeTest extends \PHPUnit\Framework\TestCase
      *
      * @param int $expectedCallCount the number of invocations to be expected. If a value< 0 is provided, `any` is used
      * @param array $callParamsMatch an ordered array of parameters to be expected
-     * @param callable $callbackClosure a return callback closure
+     * @param \Closure $callbackClosure a return callback closure
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return void
      */
     private function configureInitializerMock(
         $expectedCallCount = 0,

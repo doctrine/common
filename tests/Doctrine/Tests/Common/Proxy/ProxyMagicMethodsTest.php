@@ -231,7 +231,7 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $className
+     * @param string $className
      *
      * @return string
      */
