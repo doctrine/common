@@ -16,7 +16,7 @@ use stdClass;
 class ProxyLogicTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\stdClass
+     * @var \PHPUnit\Framework\MockObject\MockObject&\stdClass
      */
     protected $proxyLoader;
 
@@ -26,7 +26,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
     protected $lazyLoadableObjectMetadata;
 
     /**
-     * @var LazyLoadableObject|Proxy
+     * @var LazyLoadableObject&Proxy
      */
     protected $lazyObject;
 
@@ -36,7 +36,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
     ];
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Callable
+     * @var \PHPUnit\Framework\MockObject\MockObject&Callable
      */
     protected $initializerCallbackMock;
 
@@ -45,7 +45,6 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
      */
     public function setUp()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\stdClass $loader */
         $loader                           = $this->proxyLoader      = $this->getMockBuilder(stdClass::class)->setMethods(['load'])->getMock();
         $this->initializerCallbackMock    = $this->getMockBuilder(stdClass::class)->setMethods(['__invoke'])->getMock();
         $identifier                       = $this->identifier;
@@ -53,7 +52,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
 
         // emulating what should happen in a proxy factory
         $cloner = function (LazyLoadableObject $proxy) use ($loader, $identifier, $metadata) {
-            /* @var $proxy LazyLoadableObject|Proxy */
+            /** @var LazyLoadableObject&Proxy $proxy */
             $proxy = $proxy;
             if ($proxy->__isInitialized()) {
                 return;
@@ -222,7 +221,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('cb')
             ->will($this->returnCallback(function (LazyLoadableObject $proxy) use ($lazyObject, $test) {
-                /* @var $proxy LazyLoadableObject|Proxy */
+                /** @var LazyLoadableObject&Proxy $proxy */
                 $proxy = $proxy;
                 $test->assertNotSame($proxy, $lazyObject);
                 $proxy->__setInitializer(null);
@@ -366,7 +365,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         $this->configureInitializerMock();
 
         $serialized = serialize($this->lazyObject);
-        /* @var $unserialized LazyLoadableObject|Proxy */
+        /** @var LazyLoadableObject&Proxy $unserialized */
         $unserialized = unserialize($serialized);
         $reflClass    = $this->lazyLoadableObjectMetadata->getReflectionClass();
 
@@ -430,7 +429,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
 
         $serialized = serialize($this->lazyObject);
         $reflClass  = $this->lazyLoadableObjectMetadata->getReflectionClass();
-        /* @var $unserialized LazyLoadableObject|Proxy */
+        /** @var LazyLoadableObject&Proxy $unserialized */
         $unserialized = unserialize($serialized);
 
         self::assertTrue($unserialized->__isInitialized(), 'serialization didn\'t cause intialization');
@@ -580,7 +579,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
     {
         $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\VariadicTypeHintClass';
 
-        /* @var $metadata ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
+        /* @var ClassMetadata&\PHPUnit\Framework\MockObject\MockObject $metadata */
         $metadata = $this->createMock(ClassMetadata::class);
 
         $metadata
@@ -599,10 +598,10 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             require_once $proxyGenerator->getProxyFileName($metadata->getName());
         }
 
-        /* @var $invocationMock callable|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var callable&\PHPUnit\Framework\MockObject\MockObject $invocationMock */
         $invocationMock = $this->getMockBuilder(stdClass::class)->setMethods(['__invoke'])->getMock();
 
-        /* @var $lazyObject VariadicTypeHintClass */
+        /** @var VariadicTypeHintClass $lazyObject */
         $lazyObject = new $proxyClassName(
             function ($proxy, $method, $parameters) use ($invocationMock) {
                 $invocationMock($proxy, $method, $parameters);
@@ -647,9 +646,9 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
      *
      * @param int $expectedCallCount the number of invocations to be expected. If a value< 0 is provided, `any` is used
      * @param array $callParamsMatch an ordered array of parameters to be expected
-     * @param callable $callbackClosure a return callback closure
+     * @param \Closure $callbackClosure a return callback closure
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return void
      */
     protected function configureInitializerMock(
         $expectedCallCount = 0,
@@ -704,7 +703,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         $identifier = $this->identifier;
 
         return function (LazyLoadableObject $proxy) use ($loader, $identifier) {
-            /* @var $proxy LazyLoadableObject|Proxy */
+            /** @var LazyLoadableObject&Proxy $proxy */
             $proxy = $proxy;
             $proxy->__setInitializer(null);
             $proxy->__setCloner(null);

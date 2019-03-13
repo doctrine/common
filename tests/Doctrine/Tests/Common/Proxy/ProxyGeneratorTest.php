@@ -397,10 +397,10 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param       $className
-     * @param array $ids
+     * @param string $className
+     * @param array  $ids
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|ClassMetadata
+     * @return \PHPUnit\Framework\MockObject\MockObject&ClassMetadata
      */
     private function createClassMetadata($className, array $ids)
     {

@@ -18,7 +18,7 @@ class MagicGetClass
     public $publicField = 'publicField';
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return string
      * @throws \BadMethodCallException

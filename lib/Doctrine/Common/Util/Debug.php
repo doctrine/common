@@ -103,7 +103,7 @@ final class Debug
             return $var;
         }
 
-        $return = new \stdclass();
+        $return = new \stdClass();
         if ($var instanceof \DateTimeInterface) {
             $return->__CLASS__ = get_class($var);
             $return->date      = $var->format('c');

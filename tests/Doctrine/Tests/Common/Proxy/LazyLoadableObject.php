@@ -89,7 +89,7 @@ class LazyLoadableObject
 
     /**
      * @param mixed $thisIsNotByRef
-     * @param &mixed $thisIsByRef
+     * @param mixed $thisIsByRef
      */
     public function byRefParamMethod($thisIsNotByRef, &$thisIsByRef)
     {

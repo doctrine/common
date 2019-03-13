@@ -40,7 +40,4 @@ jobs:
         - ./vendor/bin/phpcs
 
     - stage: Lint
-      before_script:
-        - travis_retry composer require --dev --prefer-dist --prefer-stable phpstan/phpstan:^0.8
-      script: vendor/bin/phpstan analyse -l 3 -c phpstan.neon lib tests
-
+      script: vendor/bin/phpstan analyse

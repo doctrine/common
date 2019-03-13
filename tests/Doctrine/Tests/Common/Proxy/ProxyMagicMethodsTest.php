@@ -30,7 +30,7 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
     ];
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Callable
+     * @var \PHPUnit\Framework\MockObject\MockObject#Callable
      */
     protected $initializerCallbackMock;
 
@@ -231,7 +231,7 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param $className
+     * @param string $className
      *
      * @return string
      */

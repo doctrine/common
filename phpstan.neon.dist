@@ -1,0 +1,34 @@
+parameters:
+    level: 3
+    paths:
+        - %currentWorkingDirectory%/lib
+        - %currentWorkingDirectory%/tests
+    autoload_directories:
+        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/ClassLoaderTest
+    excludes_analyse:
+        - %currentWorkingDirectory%/lib/vendor/doctrine-build-common
+        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/InvalidReturnTypeClass.php
+        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/InvalidTypeHintClass.php
+        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/SerializedClass.php
+        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/VariadicTypeHintClass.php
+    ignoreErrors:
+        - '#Access to an undefined property Doctrine\\Common\\Proxy\\Proxy::\$publicField#'
+        -
+            message: '#^Result of method Doctrine\\Tests\\Common\\Proxy\\LazyLoadableObjectWithVoid::(adding|incrementing)AndReturningVoid\(\) \(void\) is used\.$#'
+            path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
+        -
+            message: '#^Property Doctrine\\Tests\\Common\\Proxy\\ProxyLogicTest::\$initializerCallbackMock \(callable&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept PHPUnit\\Framework\\MockObject\\MockObject&stdClass\.$#'
+            path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
+        -
+            message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject(&stdClass)?::(load|getName)\(\)\.$#'
+            path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
+        -
+            message: '#^Access to an undefined property Doctrine\\Common\\Proxy\\Proxy&Doctrine\\Tests\\Common\\Proxy\\LazyLoadableObject::\$non_existing_property\.$#'
+            path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
+        -
+            message: '#^Property Doctrine\\Tests\\Common\\Proxy\\ProxyLogicVoidReturnTypeTest::\$initializerCallbackMock \(callable&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept PHPUnit\\Framework\\MockObject\\MockObject&stdClass\.$#'
+            path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
+
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
