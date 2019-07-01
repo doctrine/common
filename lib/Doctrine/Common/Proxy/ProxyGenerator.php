@@ -290,7 +290,11 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
 
         file_put_contents($tmpFileName, $proxyCode);
         @chmod($tmpFileName, 0664);
-        rename($tmpFileName, $fileName);
+
+        if (true !== @rename($tmpFileName, $fileName)) {
+            copy($tmpFileName, $fileName);
+            unlink($tmpFileName);
+        }
     }
 
     /**
