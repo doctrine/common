@@ -37,12 +37,12 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . '\\MagicMethodProxy');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
     }
 
