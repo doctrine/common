@@ -21,7 +21,7 @@ class ProxyGenerator
      * Used to match very simple id methods that don't need
      * to be decorated since the identifier is known.
      */
-    const PATTERN_MATCH_ID_METHOD = '((public\s+)?(function\s+%s\s*\(\)\s*)\s*(?::\s*\??\s*\\\\?[a-z_\x7f-\xff][\w\x7f-\xff]*(?:\\\\[a-z_\x7f-\xff][\w\x7f-\xff]*)*\s*)?{\s*return\s*\$this->%s;\s*})i';
+    const PATTERN_MATCH_ID_METHOD = '((public\s+)?(function\s+%s\s*\(\)\s*)\s*(?::\s*\??((?:\\\\?[\w\x7f-\xff][\w\x7f-\xff]+)+)\s*)?{\s*return\s*(\$this->%2$s|new \g{4}\(\$this->%2$s\)|\g{4}::\w+\(\$this->%2$s\));\s*})';
 
     /**
      * The namespace that contains all proxy classes.
