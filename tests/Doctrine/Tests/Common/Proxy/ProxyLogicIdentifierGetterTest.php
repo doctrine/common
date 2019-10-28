@@ -16,11 +16,12 @@ class ProxyLogicIdentifierGetterTest extends TestCase
 {
     /**
      * @param string $fieldName
-     * @param mixed  $expectedReturnedValue
+     * @param mixed  $value
+     * @param mixed         $expectedReturnedValue
      *
      * @dataProvider methodsForWhichLazyLoadingShouldBeDisabled
      */
-    public function testNoLazyLoadingForIdentifier(ClassMetadata $metadata, $fieldName, $expectedReturnedValue)
+    public function testNoLazyLoadingForIdentifier(ClassMetadata $metadata, $fieldName, $value, $expectedReturnedValue = null)
     {
         $className      = $metadata->getName();
         $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\\' . $className;
@@ -46,9 +47,13 @@ class ProxyLogicIdentifierGetterTest extends TestCase
         $reflection = $metadata->getReflectionClass()->getProperty($fieldName);
 
         $reflection->setAccessible(true);
-        $reflection->setValue($proxy, $expectedReturnedValue);
+        $reflection->setValue($proxy, $value);
 
-        self::assertSame($expectedReturnedValue, $proxy->{'get' . $fieldName}());
+        if ($expectedReturnedValue === null) {
+            self::assertSame($value, $proxy->{'get' . $fieldName}());
+        } else {
+            self::assertEquals($expectedReturnedValue, $proxy->{'get' . $fieldName}());
+        }
     }
 
     /**
@@ -70,6 +75,8 @@ class ProxyLogicIdentifierGetterTest extends TestCase
             [new LazyLoadableObjectWithTraitClassMetadata(), 'identifierFieldInTrait', 123],
             [new LazyLoadableObjectWithNullableTypehintsClassMetadata(), 'identifierFieldReturnClassOneLetterNullable', new stdClass()],
             [new LazyLoadableObjectWithNullableTypehintsClassMetadata(), 'identifierFieldReturnClassOneLetterNullableWithSpace', new stdClass()],
+            [new LazyLoadableObjectWithCustomIdTypeClassMetadata(), 'identifierFieldWithStaticVOConstructor', 'a', ValueId::new('a')],
+            [new LazyLoadableObjectWithCustomIdTypeClassMetadata(), 'identifierFieldWithVOConstructor', 'b', ValueId::new('b')],
         ];
     }
 }
