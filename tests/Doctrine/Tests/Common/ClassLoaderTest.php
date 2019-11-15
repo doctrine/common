@@ -32,9 +32,9 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
             require __DIR__ . '/ClassLoaderTest/ClassD.php';
             return true;
         };
-        spl_autoload_register($badLoader);
+        \spl_autoload_register($badLoader);
         self::assertTrue(ClassLoader::classExists('ClassLoaderTest\ClassD'));
-        spl_autoload_unregister($badLoader);
+        \spl_autoload_unregister($badLoader);
     }
 
     public function testGetClassLoader()
@@ -58,11 +58,11 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
         };
 
         self::assertFalse(ClassLoader::classExists('ClassLoaderTest\ClassE'));
-        spl_autoload_register($silentLoader);
-        spl_autoload_register($additionalLoader);
+        \spl_autoload_register($silentLoader);
+        \spl_autoload_register($additionalLoader);
         self::assertTrue(ClassLoader::classExists('ClassLoaderTest\ClassE'));
-        spl_autoload_unregister($additionalLoader);
-        spl_autoload_unregister($silentLoader);
+        \spl_autoload_unregister($additionalLoader);
+        \spl_autoload_unregister($silentLoader);
     }
 
     public function testClassExistsWhenLoaderIsProtected()
@@ -105,7 +105,7 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
         $classLoader->setNamespaceSeparator('_');
 
         self::assertTrue($classLoader->loadClass('ClassLoaderTest_InterfaceA'));
-        self::assertTrue(interface_exists('ClassLoaderTest_InterfaceA', false));
+        self::assertTrue(\interface_exists('ClassLoaderTest_InterfaceA', false));
     }
 
     public function testSupportsTraitAutoloading()
@@ -116,7 +116,7 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
         $classLoader->setNamespaceSeparator('_');
 
         self::assertTrue($classLoader->loadClass('ClassLoaderTest_TraitA'));
-        self::assertTrue(trait_exists('ClassLoaderTest_TraitA', false));
+        self::assertTrue(\trait_exists('ClassLoaderTest_TraitA', false));
     }
 
     public function testMultipleAutoloadRequestsWillProduceSameResult()

@@ -81,24 +81,24 @@ class DebugTest extends DoctrineTestCase
 
     public function testReturnsOutput()
     {
-        ob_start();
+        \ob_start();
 
         $dump        = Debug::dump('foo');
-        $outputValue = ob_get_contents();
+        $outputValue = \ob_get_contents();
 
-        ob_end_clean();
+        \ob_end_clean();
 
         self::assertSame($outputValue, $dump);
     }
 
     public function testDisablesOutput()
     {
-        ob_start();
+        \ob_start();
 
         $dump        = Debug::dump('foo', 2, true, false);
-        $outputValue = ob_get_contents();
+        $outputValue = \ob_get_contents();
 
-        ob_end_clean();
+        \ob_end_clean();
 
         self::assertEmpty($outputValue);
         self::assertNotSame($outputValue, $dump);
@@ -109,11 +109,11 @@ class DebugTest extends DoctrineTestCase
      */
     public function testExportParentAttributes(TestAsset\ParentClass $class, array $expected)
     {
-        $print_r_class    = print_r($class, true);
-        $print_r_expected = print_r($expected, true);
+        $print_r_class    = \print_r($class, true);
+        $print_r_expected = \print_r($expected, true);
 
-        $print_r_class    = substr($print_r_class, strpos($print_r_class, '('));
-        $print_r_expected = substr($print_r_expected, strpos($print_r_expected, '('));
+        $print_r_class    = \substr($print_r_class, \strpos($print_r_class, '('));
+        $print_r_expected = \substr($print_r_expected, \strpos($print_r_expected, '('));
 
         self::assertSame($print_r_class, $print_r_expected);
 

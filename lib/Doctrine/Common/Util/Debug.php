@@ -39,28 +39,28 @@ final class Debug
      */
     public static function dump($var, $maxDepth = 2, $stripTags = true, $echo = true)
     {
-        $html = ini_get('html_errors');
+        $html = \ini_get('html_errors');
 
         if ($html !== true) {
-            ini_set('html_errors', true);
+            \ini_set('html_errors', true);
         }
 
-        if (extension_loaded('xdebug')) {
-            ini_set('xdebug.var_display_max_depth', $maxDepth);
+        if (\extension_loaded('xdebug')) {
+            \ini_set('xdebug.var_display_max_depth', $maxDepth);
         }
 
         $var = self::export($var, $maxDepth);
 
-        ob_start();
-        var_dump($var);
+        \ob_start();
+        \var_dump($var);
 
-        $dump = ob_get_contents();
+        $dump = \ob_get_contents();
 
-        ob_end_clean();
+        \ob_end_clean();
 
-        $dumpText = ($stripTags ? strip_tags(html_entity_decode($dump)) : $dump);
+        $dumpText = ($stripTags ? \strip_tags(\html_entity_decode($dump)) : $dump);
 
-        ini_set('html_errors', $html);
+        \ini_set('html_errors', $html);
 
         if ($echo) {
             echo $dumpText;
@@ -78,18 +78,18 @@ final class Debug
     public static function export($var, $maxDepth)
     {
         $return = null;
-        $isObj  = is_object($var);
+        $isObj  = \is_object($var);
 
         if ($var instanceof Collection) {
             $var = $var->toArray();
         }
 
         if ( ! $maxDepth) {
-            return is_object($var) ? get_class($var)
-                : (is_array($var) ? 'Array(' . count($var) . ')' : $var);
+            return \is_object($var) ? \get_class($var)
+                : (\is_array($var) ? 'Array(' . \count($var) . ')' : $var);
         }
 
-        if (is_array($var)) {
+        if (\is_array($var)) {
             $return = [];
 
             foreach ($var as $k => $v) {
@@ -105,7 +105,7 @@ final class Debug
 
         $return = new \stdClass();
         if ($var instanceof \DateTimeInterface) {
-            $return->__CLASS__ = get_class($var);
+            $return->__CLASS__ = \get_class($var);
             $return->date      = $var->format('c');
             $return->timezone  = $var->getTimezone()->getName();
 
@@ -140,9 +140,9 @@ final class Debug
     {
         $clone = (array) $var;
 
-        foreach (array_keys($clone) as $key) {
-            $aux  = explode("\0", $key);
-            $name = end($aux);
+        foreach (\array_keys($clone) as $key) {
+            $aux  = \explode("\0", $key);
+            $name = \end($aux);
             if ($aux[0] === '') {
                 $name .= ':' . ($aux[1] === '*' ? 'protected' : $aux[1] . ':private');
             }
@@ -162,6 +162,6 @@ final class Debug
      */
     public static function toString($obj)
     {
-        return method_exists($obj, '__toString') ? (string) $obj : get_class($obj) . '@' . spl_object_hash($obj);
+        return \method_exists($obj, '__toString') ? (string) $obj : \get_class($obj) . '@' . \spl_object_hash($obj);
     }
 }

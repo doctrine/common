@@ -30,16 +30,16 @@ class AutoloaderTest extends \PHPUnit\Framework\TestCase
 
     public function testAutoload()
     {
-        if (file_exists(sys_get_temp_dir() . "/AutoloaderTestClass.php")) {
-            unlink(sys_get_temp_dir() . "/AutoloaderTestClass.php");
+        if (\file_exists(\sys_get_temp_dir() . "/AutoloaderTestClass.php")) {
+            \unlink(\sys_get_temp_dir() . "/AutoloaderTestClass.php");
         }
 
-        $autoloader = Autoloader::register(sys_get_temp_dir(), 'ProxyAutoloaderTest', function ($proxyDir, $proxyNamespace, $className) {
-            file_put_contents(sys_get_temp_dir() . "/AutoloaderTestClass.php", "<?php namespace ProxyAutoloaderTest; class AutoloaderTestClass {} ");
+        $autoloader = Autoloader::register(\sys_get_temp_dir(), 'ProxyAutoloaderTest', function ($proxyDir, $proxyNamespace, $className) {
+            \file_put_contents(\sys_get_temp_dir() . "/AutoloaderTestClass.php", "<?php namespace ProxyAutoloaderTest; class AutoloaderTestClass {} ");
         });
 
-        self::assertTrue(class_exists('ProxyAutoloaderTest\AutoloaderTestClass', true));
-        unlink(sys_get_temp_dir() . "/AutoloaderTestClass.php");
+        self::assertTrue(\class_exists('ProxyAutoloaderTest\AutoloaderTestClass', true));
+        \unlink(\sys_get_temp_dir() . "/AutoloaderTestClass.php");
     }
 
     public function testRegisterWithInvalidCallback()

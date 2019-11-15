@@ -56,7 +56,7 @@ class LazyLoadableObjectClassMetadata implements ClassMetadata
      */
     public function getIdentifier()
     {
-        return array_keys($this->identifier);
+        return \array_keys($this->identifier);
     }
 
     /**
@@ -116,7 +116,7 @@ class LazyLoadableObjectClassMetadata implements ClassMetadata
      */
     public function getFieldNames()
     {
-        return array_keys($this->fields);
+        return \array_keys($this->fields);
     }
 
     /**
@@ -132,7 +132,7 @@ class LazyLoadableObjectClassMetadata implements ClassMetadata
      */
     public function getAssociationNames()
     {
-        return array_keys($this->associations);
+        return \array_keys($this->associations);
     }
 
     /**

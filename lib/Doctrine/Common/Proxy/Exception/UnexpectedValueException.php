@@ -21,7 +21,7 @@ class UnexpectedValueException extends BaseUnexpectedValueException implements P
      */
     public static function proxyDirectoryNotWritable($proxyDirectory)
     {
-        return new self(sprintf('Your proxy directory "%s" must be writable', $proxyDirectory));
+        return new self(\sprintf('Your proxy directory "%s" must be writable', $proxyDirectory));
     }
 
     /**
@@ -39,7 +39,7 @@ class UnexpectedValueException extends BaseUnexpectedValueException implements P
         \Exception $previous = null
     ) {
         return new self(
-            sprintf(
+            \sprintf(
                 'The type hint of parameter "%s" in method "%s" in class "%s" is invalid.',
                 $parameterName,
                 $methodName,
@@ -60,7 +60,7 @@ class UnexpectedValueException extends BaseUnexpectedValueException implements P
     public static function invalidReturnTypeHint($className, $methodName, \Exception $previous = null)
     {
         return new self(
-            sprintf(
+            \sprintf(
                 'The return type of method "%s" in class "%s" is invalid.',
                 $methodName,
                 $className

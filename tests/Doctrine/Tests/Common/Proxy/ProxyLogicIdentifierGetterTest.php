@@ -28,7 +28,7 @@ class ProxyLogicIdentifierGetterTest extends \PHPUnit\Framework\TestCase
         $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
         $proxyFileName  = $proxyGenerator->getProxyFileName($className);
 
-        if ( ! class_exists($proxyClassName, false)) {
+        if ( ! \class_exists($proxyClassName, false)) {
             $proxyGenerator->generateProxyClass($metadata, $proxyFileName);
 
             /** @noinspection PhpIncludeInspection */

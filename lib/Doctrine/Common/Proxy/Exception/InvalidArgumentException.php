@@ -31,7 +31,7 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements P
      */
     public static function notProxyClass($className, $proxyNamespace)
     {
-        return new self(sprintf('The class "%s" is not part of the proxy namespace "%s"', $className, $proxyNamespace));
+        return new self(\sprintf('The class "%s" is not part of the proxy namespace "%s"', $className, $proxyNamespace));
     }
 
     /**
@@ -41,7 +41,7 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements P
      */
     public static function invalidPlaceholder($name)
     {
-        return new self(sprintf('Provided placeholder for "%s" must be either a string or a valid callable', $name));
+        return new self(\sprintf('Provided placeholder for "%s" must be either a string or a valid callable', $name));
     }
 
     /**
@@ -59,7 +59,7 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements P
      */
     public static function unitializedProxyExpected(Proxy $proxy)
     {
-        return new self(sprintf('Provided proxy of type "%s" must not be initialized.', get_class($proxy)));
+        return new self(\sprintf('Provided proxy of type "%s" must not be initialized.', \get_class($proxy)));
     }
 
     /**
@@ -69,9 +69,9 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements P
      */
     public static function invalidClassNotFoundCallback($callback)
     {
-        $type = is_object($callback) ? get_class($callback) : gettype($callback);
+        $type = \is_object($callback) ? \get_class($callback) : \gettype($callback);
 
-        return new self(sprintf('Invalid \$notFoundCallback given: must be a callable, "%s" given', $type));
+        return new self(\sprintf('Invalid \$notFoundCallback given: must be a callable, "%s" given', $type));
     }
 
     /**
@@ -81,7 +81,7 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements P
      */
     public static function classMustNotBeAbstract($className)
     {
-        return new self(sprintf('Unable to create a proxy for an abstract class "%s".', $className));
+        return new self(\sprintf('Unable to create a proxy for an abstract class "%s".', $className));
     }
 
     /**
@@ -91,7 +91,7 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements P
      */
     public static function classMustNotBeFinal($className)
     {
-        return new self(sprintf('Unable to create a proxy for a final class "%s".', $className));
+        return new self(\sprintf('Unable to create a proxy for a final class "%s".', $className));
     }
 
     /**
@@ -101,6 +101,6 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements P
      */
     public static function invalidAutoGenerateMode($value) : self
     {
-        return new self(sprintf('Invalid auto generate mode "%s" given.', $value));
+        return new self(\sprintf('Invalid auto generate mode "%s" given.', $value));
     }
 }

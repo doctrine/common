@@ -84,7 +84,7 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
             ->method('skipClass')
             ->will($this->returnValue(false));
 
-        $generated = $proxyFactory->generateProxyClasses([$metadata], sys_get_temp_dir());
+        $generated = $proxyFactory->generateProxyClasses([$metadata], \sys_get_temp_dir());
 
         self::assertEquals(1, $generated, 'One proxy was generated');
     }
@@ -93,7 +93,7 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
     {
         $metadata        = $this->createMock(ClassMetadata::class);
         $proxy           = $this->createMock(Proxy::class);
-        $definition      = new ProxyDefinition(get_class($proxy), [], [], null, null);
+        $definition      = new ProxyDefinition(\get_class($proxy), [], [], null, null);
         $proxyGenerator  = $this->createMock(ProxyGenerator::class);
         $metadataFactory = $this->createMock(ClassMetadataFactory::class);
 
@@ -115,7 +115,7 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
 
         $generatedProxy = $proxyFactory->getProxy('Class', ['id' => 1]);
 
-        self::assertInstanceOf(get_class($proxy), $generatedProxy);
+        self::assertInstanceOf(\get_class($proxy), $generatedProxy);
     }
 
     public function testResetUnitializedProxy()
@@ -123,7 +123,7 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
         $metadata = $this->createMock(ClassMetadata::class);
         /* @var $proxy \PHPUnit\Framework\MockObject\MockObject&Proxy */
         $proxy           = $this->createMock(Proxy::class);
-        $definition      = new ProxyDefinition(get_class($proxy), [], [], null, null);
+        $definition      = new ProxyDefinition(\get_class($proxy), [], [], null, null);
         $proxyGenerator  = $this->createMock(ProxyGenerator::class);
         $metadataFactory = $this->createMock(ClassMetadataFactory::class);
 
@@ -178,7 +178,7 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
     {
         $metadata        = $this->createMock(ClassMetadata::class);
         $proxy           = $this->createMock(Proxy::class);
-        $definition      = new ProxyDefinition(get_class($proxy), ['missingKey'], [], null, null);
+        $definition      = new ProxyDefinition(\get_class($proxy), ['missingKey'], [], null, null);
         $proxyGenerator  = $this->createMock(ProxyGenerator::class);
         $metadataFactory = $this->createMock(ClassMetadataFactory::class);
 

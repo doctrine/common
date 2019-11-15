@@ -46,7 +46,7 @@ class LazyLoadableObjectWithNullableTypehintsClassMetadata implements ClassMetad
      */
     public function getIdentifier()
     {
-        return array_keys($this->identifier);
+        return \array_keys($this->identifier);
     }
 
     /**
@@ -106,7 +106,7 @@ class LazyLoadableObjectWithNullableTypehintsClassMetadata implements ClassMetad
      */
     public function getFieldNames()
     {
-        return array_keys($this->fields);
+        return \array_keys($this->fields);
     }
 
     /**

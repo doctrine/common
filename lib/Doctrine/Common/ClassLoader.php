@@ -4,7 +4,7 @@ namespace Doctrine\Common;
 use function trigger_error;
 use const E_USER_DEPRECATED;
 
-@trigger_error(ClassLoader::class . ' is deprecated.', E_USER_DEPRECATED);
+@\trigger_error(ClassLoader::class . ' is deprecated.', E_USER_DEPRECATED);
 
 /**
  * A <tt>ClassLoader</tt> is an autoloader for class files that can be
@@ -140,7 +140,7 @@ class ClassLoader
      */
     public function register()
     {
-        spl_autoload_register([$this, 'loadClass']);
+        \spl_autoload_register([$this, 'loadClass']);
     }
 
     /**
@@ -150,7 +150,7 @@ class ClassLoader
      */
     public function unregister()
     {
-        spl_autoload_unregister([$this, 'loadClass']);
+        \spl_autoload_unregister([$this, 'loadClass']);
     }
 
     /**
@@ -171,7 +171,7 @@ class ClassLoader
         }
 
         require($this->includePath !== null ? $this->includePath . DIRECTORY_SEPARATOR : '')
-               . str_replace($this->namespaceSeparator, DIRECTORY_SEPARATOR, $className)
+               . \str_replace($this->namespaceSeparator, DIRECTORY_SEPARATOR, $className)
                . $this->fileExtension;
 
         return self::typeExists($className);
@@ -187,17 +187,17 @@ class ClassLoader
      */
     public function canLoadClass($className)
     {
-        if ($this->namespace !== null && strpos($className, $this->namespace . $this->namespaceSeparator) !== 0) {
+        if ($this->namespace !== null && \strpos($className, $this->namespace . $this->namespaceSeparator) !== 0) {
             return false;
         }
 
-        $file = str_replace($this->namespaceSeparator, DIRECTORY_SEPARATOR, $className) . $this->fileExtension;
+        $file = \str_replace($this->namespaceSeparator, DIRECTORY_SEPARATOR, $className) . $this->fileExtension;
 
         if ($this->includePath !== null) {
-            return is_file($this->includePath . DIRECTORY_SEPARATOR . $file);
+            return \is_file($this->includePath . DIRECTORY_SEPARATOR . $file);
         }
 
-        return (false !== stream_resolve_include_path($file));
+        return (false !== \stream_resolve_include_path($file));
     }
 
     /**
@@ -237,9 +237,9 @@ class ClassLoader
      */
     public static function getClassLoader($className)
     {
-        foreach (spl_autoload_functions() as $loader) {
-            if (is_array($loader)
-               && ($classLoader = reset($loader))
+        foreach (\spl_autoload_functions() as $loader) {
+            if (\is_array($loader)
+               && ($classLoader = \reset($loader))
                && $classLoader instanceof ClassLoader
                && $classLoader->canLoadClass($className)
             ) {
@@ -260,8 +260,8 @@ class ClassLoader
      */
     private static function typeExists($type, $autoload = false)
     {
-        return class_exists($type, $autoload)
-            || interface_exists($type, $autoload)
-            || trait_exists($type, $autoload);
+        return \class_exists($type, $autoload)
+            || \interface_exists($type, $autoload)
+            || \trait_exists($type, $autoload);
     }
 }

@@ -42,7 +42,7 @@ class LazyLoadableObjectWithTraitClassMetadata implements ClassMetadata
      */
     public function getIdentifier()
     {
-        return array_keys($this->identifier);
+        return \array_keys($this->identifier);
     }
 
     /**
@@ -102,7 +102,7 @@ class LazyLoadableObjectWithTraitClassMetadata implements ClassMetadata
      */
     public function getFieldNames()
     {
-        return array_keys($this->fields);
+        return \array_keys($this->fields);
     }
 
     /**

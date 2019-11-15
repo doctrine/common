@@ -79,7 +79,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\LazyLoadableObject';
 
         // creating the proxy class
-        if ( ! class_exists($proxyClassName, false)) {
+        if ( ! \class_exists($proxyClassName, false)) {
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
             $proxyFileName  = $proxyGenerator->getProxyFileName($metadata->getName());
             $proxyGenerator->generateProxyClass($metadata, $proxyFileName);
@@ -190,7 +190,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
     {
         $this->configureInitializerMock(0);
 
-        $class = get_class($this->lazyObject);
+        $class = \get_class($this->lazyObject);
         $this->expectException(Notice::class);
         $this->expectExceptionMessage('Undefined property: ' . $class . '::$non_existing_property');
 
@@ -364,9 +364,9 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
     {
         $this->configureInitializerMock();
 
-        $serialized = serialize($this->lazyObject);
+        $serialized = \serialize($this->lazyObject);
         /** @var LazyLoadableObject&Proxy $unserialized */
-        $unserialized = unserialize($serialized);
+        $unserialized = \unserialize($serialized);
         $reflClass    = $this->lazyLoadableObjectMetadata->getReflectionClass();
 
         self::assertFalse($unserialized->__isInitialized(), 'serialization didn\'t cause intialization');
@@ -427,10 +427,10 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         $this->lazyObject->__setInitializer($this->getSuggestedInitializerImplementation());
         $this->lazyObject->__load();
 
-        $serialized = serialize($this->lazyObject);
+        $serialized = \serialize($this->lazyObject);
         $reflClass  = $this->lazyLoadableObjectMetadata->getReflectionClass();
         /** @var LazyLoadableObject&Proxy $unserialized */
-        $unserialized = unserialize($serialized);
+        $unserialized = \unserialize($serialized);
 
         self::assertTrue($unserialized->__isInitialized(), 'serialization didn\'t cause intialization');
 
@@ -592,7 +592,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
             ->will($this->returnValue(new \ReflectionClass(VariadicTypeHintClass::class)));
 
         // creating the proxy class
-        if ( ! class_exists($proxyClassName, false)) {
+        if ( ! \class_exists($proxyClassName, false)) {
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
             $proxyGenerator->generateProxyClass($metadata);
             require_once $proxyGenerator->getProxyFileName($metadata->getName());
@@ -637,7 +637,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
     public function getClosure($callable)
     {
         return function () use ($callable) {
-            call_user_func_array($callable, func_get_args());
+            \call_user_func_array($callable, \func_get_args());
         };
     }
 
@@ -664,7 +664,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         $invocationMocker = $this->initializerCallbackMock->expects($invocationCountMatcher)->method('__invoke');
 
         if (null !== $callParamsMatch) {
-            call_user_func_array([$invocationMocker, 'with'], $callParamsMatch);
+            \call_user_func_array([$invocationMocker, 'with'], $callParamsMatch);
         }
 
         if ($callbackClosure) {
@@ -723,7 +723,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
 
             $proxy->__setInitialized(true);
 
-            if (method_exists($proxy, '__wakeup')) {
+            if (\method_exists($proxy, '__wakeup')) {
                 $proxy->__wakeup();
             }
 

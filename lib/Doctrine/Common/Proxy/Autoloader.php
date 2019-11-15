@@ -31,15 +31,15 @@ class Autoloader
      */
     public static function resolveFile($proxyDir, $proxyNamespace, $className)
     {
-        if (0 !== strpos($className, $proxyNamespace)) {
+        if (0 !== \strpos($className, $proxyNamespace)) {
             throw InvalidArgumentException::notProxyClass($className, $proxyNamespace);
         }
 
         // remove proxy namespace from class name
-        $classNameRelativeToProxyNamespace = substr($className, strlen($proxyNamespace));
+        $classNameRelativeToProxyNamespace = \substr($className, \strlen($proxyNamespace));
 
         // remove namespace separators from remaining class name
-        $fileName = str_replace('\\', '', $classNameRelativeToProxyNamespace);
+        $fileName = \str_replace('\\', '', $classNameRelativeToProxyNamespace);
 
         return $proxyDir . DIRECTORY_SEPARATOR . $fileName . '.php';
     }
@@ -57,25 +57,25 @@ class Autoloader
      */
     public static function register($proxyDir, $proxyNamespace, $notFoundCallback = null)
     {
-        $proxyNamespace = ltrim($proxyNamespace, '\\');
+        $proxyNamespace = \ltrim($proxyNamespace, '\\');
 
-        if ( ! (null === $notFoundCallback || is_callable($notFoundCallback))) {
+        if ( ! (null === $notFoundCallback || \is_callable($notFoundCallback))) {
             throw InvalidArgumentException::invalidClassNotFoundCallback($notFoundCallback);
         }
 
         $autoloader = function ($className) use ($proxyDir, $proxyNamespace, $notFoundCallback) {
-            if (0 === strpos($className, $proxyNamespace)) {
+            if (0 === \strpos($className, $proxyNamespace)) {
                 $file = Autoloader::resolveFile($proxyDir, $proxyNamespace, $className);
 
-                if ($notFoundCallback && ! file_exists($file)) {
-                    call_user_func($notFoundCallback, $proxyDir, $proxyNamespace, $className);
+                if ($notFoundCallback && ! \file_exists($file)) {
+                    \call_user_func($notFoundCallback, $proxyDir, $proxyNamespace, $className);
                 }
 
                 require $file;
             }
         };
 
-        spl_autoload_register($autoloader);
+        \spl_autoload_register($autoloader);
 
         return $autoloader;
     }

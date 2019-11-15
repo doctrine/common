@@ -51,7 +51,7 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
         $proxyClassName = $this->generateProxyClass(MagicGetClass::class);
         $proxy          = new $proxyClassName(
             function (Proxy $proxy, $method, $params) use (&$counter) {
-                if ( ! in_array($params[0], ['publicField', 'test', 'notDefined'])) {
+                if ( ! \in_array($params[0], ['publicField', 'test', 'notDefined'])) {
                     throw new InvalidArgumentException('Unexpected access to field "' . $params[0] . '"');
                 }
 
@@ -101,7 +101,7 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
         $proxyClassName = $this->generateProxyClass(MagicSetClass::class);
         $proxy          = new $proxyClassName(
             function (Proxy  $proxy, $method, $params) use (&$counter) {
-                if ( ! in_array($params[0], ['publicField', 'test', 'notDefined'])) {
+                if ( ! \in_array($params[0], ['publicField', 'test', 'notDefined'])) {
                     throw new InvalidArgumentException('Unexpected access to field "' . $params[0] . '"');
                 }
 
@@ -136,7 +136,7 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
         $proxy->serializedField    = 'changedValue';
         $proxy->nonSerializedField = 'changedValue';
 
-        $unserialized = unserialize(serialize($proxy));
+        $unserialized = \unserialize(\serialize($proxy));
 
         self::assertSame('changedValue', $unserialized->serializedField);
         self::assertSame('defaultValue', $unserialized->nonSerializedField, 'Field was not returned by "__sleep"');
@@ -150,7 +150,7 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
         self::assertSame('defaultValue', $proxy->wakeupValue);
 
         $proxy->wakeupValue = 'changedValue';
-        $unserialized       = unserialize(serialize($proxy));
+        $unserialized       = \unserialize(\serialize($proxy));
 
         self::assertSame('newWakeupValue', $unserialized->wakeupValue, '"__wakeup" was called');
 
@@ -167,7 +167,7 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
     {
         $proxyClassName = $this->generateProxyClass(MagicIssetClass::class);
         $proxy          = new $proxyClassName(function (Proxy $proxy, $method, $params) use (&$counter) {
-            if (in_array($params[0], ['publicField', 'test', 'nonExisting'])) {
+            if (\in_array($params[0], ['publicField', 'test', 'nonExisting'])) {
                 $initializer = $proxy->__getInitializer();
 
                 $proxy->__setInitializer(null);
@@ -181,7 +181,7 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
             }
 
             throw new InvalidArgumentException(
-                sprintf('Should not be initialized when checking isset("%s")', $params[0])
+                \sprintf('Should not be initialized when checking isset("%s")', $params[0])
             );
         });
 
@@ -223,7 +223,7 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
         $proxy->setBar(2);
         $proxy->setBaz(3);
 
-        $unserialized = unserialize(serialize($proxy));
+        $unserialized = \unserialize(\serialize($proxy));
 
         self::assertSame(1, $unserialized->getFoo());
         self::assertSame(2, $unserialized->getBar());
@@ -239,7 +239,7 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
     {
         $proxyClassName = 'Doctrine\\Tests\\Common\\Proxy\\MagicMethodProxy\\__CG__\\' . $className;
 
-        if (class_exists($proxyClassName, false)) {
+        if (\class_exists($proxyClassName, false)) {
             return $proxyClassName;
         }
 
@@ -271,7 +271,7 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
             ->expects($this->any())
             ->method('hasField')
             ->will($this->returnCallback(function ($fieldName) {
-                return in_array($fieldName, ['id', 'publicField']);
+                return \in_array($fieldName, ['id', 'publicField']);
             }));
 
         $metadata

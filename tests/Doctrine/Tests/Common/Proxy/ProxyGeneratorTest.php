@@ -41,7 +41,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->metadata       = new LazyLoadableObjectClassMetadata();
         $this->proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
 
-        if (class_exists($this->proxyClass, false)) {
+        if (\class_exists($this->proxyClass, false)) {
             return;
         }
 
@@ -53,7 +53,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
         $method = new ReflectionMethod($this->proxyClass, 'publicTypeHintedMethod');
         $params = $method->getParameters();
 
-        self::assertEquals(1, count($params));
+        self::assertEquals(1, \count($params));
         self::assertEquals('stdClass', $params[0]->getClass()->getName());
     }
 
@@ -76,12 +76,12 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
 
     public function testCreatesAssociationProxyAsSubclassOfTheOriginalOne()
     {
-        self::assertTrue(is_subclass_of($this->proxyClass, $this->metadata->getName()));
+        self::assertTrue(\is_subclass_of($this->proxyClass, $this->metadata->getName()));
     }
 
     public function testNonNamespacedProxyGeneration()
     {
-        $classCode = file_get_contents($this->proxyGenerator->getProxyFileName($this->metadata->getName()));
+        $classCode = \file_get_contents($this->proxyGenerator->getProxyFileName($this->metadata->getName()));
 
         self::assertNotContains("class LazyLoadableObject extends \\\\" . $this->metadata->getName(), $classCode);
         self::assertContains("class LazyLoadableObject extends \\" . $this->metadata->getName(), $classCode);
@@ -89,7 +89,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
 
     public function testClassWithSleepProxyGeneration()
     {
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\SleepClass', false)) {
+        if ( ! \class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\SleepClass', false)) {
             $className      = SleepClass::class;
             $metadata       = $this->createClassMetadata($className, ['id']);
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
@@ -97,9 +97,9 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxySleepClass.php');
-        self::assertEquals(1, substr_count($classCode, 'function __sleep'));
-        self::assertEquals(1, substr_count($classCode, 'parent::__sleep()'));
+        $classCode = \file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxySleepClass.php');
+        self::assertEquals(1, \substr_count($classCode, 'function __sleep'));
+        self::assertEquals(1, \substr_count($classCode, 'parent::__sleep()'));
     }
 
     /**
@@ -108,7 +108,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
      */
     public function testClassWithStaticPropertyProxyGeneration()
     {
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\StaticPropertyClass', false)) {
+        if ( ! \class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\StaticPropertyClass', false)) {
             $className      = StaticPropertyClass::class;
             $metadata       = $this->createClassMetadata($className, []);
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
@@ -116,8 +116,8 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyStaticPropertyClass.php');
-        self::assertEquals(1, substr_count($classCode, 'function __sleep'));
+        $classCode = \file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyStaticPropertyClass.php');
+        self::assertEquals(1, \substr_count($classCode, 'function __sleep'));
         self::assertNotContains('protectedStaticProperty', $classCode);
     }
 
@@ -130,7 +130,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
 
     public function testClassWithCallableTypeHintOnProxiedMethod()
     {
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\CallableTypeHintClass', false)) {
+        if ( ! \class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\CallableTypeHintClass', false)) {
             $className = CallableTypeHintClass::class;
             $metadata  = $this->createClassMetadata($className, ['id']);
 
@@ -138,14 +138,14 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyCallableTypeHintClass.php');
+        $classCode = \file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyCallableTypeHintClass.php');
 
-        self::assertEquals(1, substr_count($classCode, 'call(callable $foo)'));
+        self::assertEquals(1, \substr_count($classCode, 'call(callable $foo)'));
     }
 
     public function testClassWithVariadicArgumentOnProxiedMethod()
     {
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\VariadicTypeHintClass', false)) {
+        if ( ! \class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\VariadicTypeHintClass', false)) {
             $className = VariadicTypeHintClass::class;
             $metadata  = $this->createClassMetadata($className, ['id']);
 
@@ -153,16 +153,16 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyVariadicTypeHintClass.php');
+        $classCode = \file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyVariadicTypeHintClass.php');
 
-        self::assertEquals(1, substr_count($classCode, 'function addType(...$types)'));
-        self::assertEquals(1, substr_count($classCode, '__invoke($this, \'addType\', [$types])'));
-        self::assertEquals(1, substr_count($classCode, 'parent::addType(...$types)'));
+        self::assertEquals(1, \substr_count($classCode, 'function addType(...$types)'));
+        self::assertEquals(1, \substr_count($classCode, '__invoke($this, \'addType\', [$types])'));
+        self::assertEquals(1, \substr_count($classCode, 'parent::addType(...$types)'));
     }
 
     public function testClassWithScalarTypeHintsOnProxiedMethods()
     {
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\ScalarTypeHintsClass', false)) {
+        if ( ! \class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\ScalarTypeHintsClass', false)) {
             $className = ScalarTypeHintsClass::class;
             $metadata  = $this->createClassMetadata($className, ['id']);
 
@@ -170,72 +170,72 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyScalarTypeHintsClass.php');
+        $classCode = \file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyScalarTypeHintsClass.php');
 
-        self::assertEquals(1, substr_count($classCode, 'function singleTypeHint(string $param)'));
-        self::assertEquals(1, substr_count($classCode, 'function multipleTypeHints(int $a, float $b, bool $c, string $d)'));
-        self::assertEquals(1, substr_count($classCode, 'function combinationOfTypeHintsAndNormal(\stdClass $a, \Countable $b, $c, int $d)'));
-        self::assertEquals(1, substr_count($classCode, 'function typeHintsWithVariadic(int ...$foo)'));
-        self::assertEquals(1, substr_count($classCode, 'function withDefaultValue(int $foo = 123)'));
-        self::assertEquals(1, substr_count($classCode, 'function withDefaultValueNull(int $foo = NULL)'));
+        self::assertEquals(1, \substr_count($classCode, 'function singleTypeHint(string $param)'));
+        self::assertEquals(1, \substr_count($classCode, 'function multipleTypeHints(int $a, float $b, bool $c, string $d)'));
+        self::assertEquals(1, \substr_count($classCode, 'function combinationOfTypeHintsAndNormal(\stdClass $a, \Countable $b, $c, int $d)'));
+        self::assertEquals(1, \substr_count($classCode, 'function typeHintsWithVariadic(int ...$foo)'));
+        self::assertEquals(1, \substr_count($classCode, 'function withDefaultValue(int $foo = 123)'));
+        self::assertEquals(1, \substr_count($classCode, 'function withDefaultValueNull(int $foo = NULL)'));
     }
 
     public function testClassWithReturnTypesOnProxiedMethods()
     {
         $className = ReturnTypesClass::class;
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\ReturnTypesClass', false)) {
+        if ( ! \class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\ReturnTypesClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyReturnTypesClass.php');
+        $classCode = \file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyReturnTypesClass.php');
 
-        self::assertEquals(1, substr_count($classCode, 'function returnsClass(): \stdClass'));
-        self::assertEquals(1, substr_count($classCode, 'function returnsScalar(): int'));
-        self::assertEquals(1, substr_count($classCode, 'function returnsArray(): array'));
-        self::assertEquals(1, substr_count($classCode, 'function returnsCallable(): callable'));
-        self::assertEquals(1, substr_count($classCode, 'function returnsSelf(): \\' . $className));
-        self::assertEquals(1, substr_count($classCode, 'function returnsParent(): \stdClass'));
-        self::assertEquals(1, substr_count($classCode, 'function returnsInterface(): \Countable'));
+        self::assertEquals(1, \substr_count($classCode, 'function returnsClass(): \stdClass'));
+        self::assertEquals(1, \substr_count($classCode, 'function returnsScalar(): int'));
+        self::assertEquals(1, \substr_count($classCode, 'function returnsArray(): array'));
+        self::assertEquals(1, \substr_count($classCode, 'function returnsCallable(): callable'));
+        self::assertEquals(1, \substr_count($classCode, 'function returnsSelf(): \\' . $className));
+        self::assertEquals(1, \substr_count($classCode, 'function returnsParent(): \stdClass'));
+        self::assertEquals(1, \substr_count($classCode, 'function returnsInterface(): \Countable'));
     }
 
     public function testClassWithNullableTypeHintsOnProxiedMethods()
     {
         $className = NullableTypeHintsClass::class;
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableTypeHintsClass', false)) {
+        if ( ! \class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableTypeHintsClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableTypeHintsClass.php');
+        $classCode = \file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableTypeHintsClass.php');
 
-        self::assertEquals(1, substr_count($classCode, 'function nullableTypeHintInt(?int $param)'));
-        self::assertEquals(1, substr_count($classCode, 'function nullableTypeHintObject(?\stdClass $param)'));
-        self::assertEquals(1, substr_count($classCode, 'function nullableTypeHintSelf(?\\' . $className . ' $param)'));
-        self::assertEquals(1, substr_count($classCode, 'function nullableTypeHintWithDefault(?int $param = 123)'));
-        self::assertEquals(1, substr_count($classCode, 'function nullableTypeHintWithDefaultNull(int $param = NULL)'));
-        self::assertEquals(1, substr_count($classCode, 'function notNullableTypeHintWithDefaultNull(int $param = NULL)'));
+        self::assertEquals(1, \substr_count($classCode, 'function nullableTypeHintInt(?int $param)'));
+        self::assertEquals(1, \substr_count($classCode, 'function nullableTypeHintObject(?\stdClass $param)'));
+        self::assertEquals(1, \substr_count($classCode, 'function nullableTypeHintSelf(?\\' . $className . ' $param)'));
+        self::assertEquals(1, \substr_count($classCode, 'function nullableTypeHintWithDefault(?int $param = 123)'));
+        self::assertEquals(1, \substr_count($classCode, 'function nullableTypeHintWithDefaultNull(int $param = NULL)'));
+        self::assertEquals(1, \substr_count($classCode, 'function notNullableTypeHintWithDefaultNull(int $param = NULL)'));
     }
 
     public function testClassWithNullableReturnTypesOnProxiedMethods()
     {
         $className = NullableTypeHintsClass::class;
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableTypeHintsClass', false)) {
+        if ( ! \class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableTypeHintsClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableTypeHintsClass.php');
+        $classCode = \file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableTypeHintsClass.php');
 
-        self::assertEquals(1, substr_count($classCode, 'function returnsNullableInt(): ?int'));
-        self::assertEquals(1, substr_count($classCode, 'function returnsNullableObject(): ?\stdClass'));
-        self::assertEquals(1, substr_count($classCode, 'function returnsNullableSelf(): ?\\' . $className));
+        self::assertEquals(1, \substr_count($classCode, 'function returnsNullableInt(): ?int'));
+        self::assertEquals(1, \substr_count($classCode, 'function returnsNullableObject(): ?\stdClass'));
+        self::assertEquals(1, \substr_count($classCode, 'function returnsNullableSelf(): ?\\' . $className));
     }
 
     /**
@@ -245,7 +245,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
     {
         $className = NullableNonOptionalHintClass::class;
 
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableNonOptionalHintClass', false)) {
+        if ( ! \class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableNonOptionalHintClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
@@ -254,12 +254,12 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
 
         self::assertContains(
             'public function midSignatureNullableParameter(\stdClass $param = NULL, $secondParam)',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableNonOptionalHintClass.php')
+            \file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableNonOptionalHintClass.php')
         );
 
         self::assertContains(
             'public function midSignatureNotNullableHintedParameter(string $param = \'foo\', $secondParam)',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableNonOptionalHintClass.php')
+            \file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableNonOptionalHintClass.php')
         );
     }
 
@@ -270,7 +270,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
     {
         $className = Php71NullableDefaultedNonOptionalHintClass::class;
 
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\Php71NullableDefaultedNonOptionalHintClass', false)) {
+        if ( ! \class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\Php71NullableDefaultedNonOptionalHintClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
@@ -279,45 +279,45 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
 
         self::assertContains(
             'public function midSignatureNullableParameter(string $param = NULL, $secondParam)',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp71NullableDefaultedNonOptionalHintClass.php'),
+            \file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp71NullableDefaultedNonOptionalHintClass.php'),
             'Signature allows nullable type, although explicit "?" marker isn\'t used in the proxy'
         );
 
         self::assertContains(
             'public function midSignatureNotNullableHintedParameter(?string $param = \'foo\', $secondParam)',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp71NullableDefaultedNonOptionalHintClass.php')
+            \file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp71NullableDefaultedNonOptionalHintClass.php')
         );
     }
 
     public function testClassWithVoidReturnType()
     {
         $className = VoidReturnTypeClass::class;
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\VoidReturnTypeClass', false)) {
+        if ( ! \class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\VoidReturnTypeClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyVoidReturnTypeClass.php');
+        $classCode = \file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyVoidReturnTypeClass.php');
 
-        self::assertEquals(1, substr_count($classCode, 'function returnsVoid(): void'));
+        self::assertEquals(1, \substr_count($classCode, 'function returnsVoid(): void'));
     }
 
     public function testClassWithIterableTypeHint()
     {
         $className = IterableTypeHintClass::class;
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\IterableTypeHintClass', false)) {
+        if ( ! \class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\IterableTypeHintClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyIterableTypeHintClass.php');
+        $classCode = \file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyIterableTypeHintClass.php');
 
-        self::assertEquals(1, substr_count($classCode, 'function parameterType(iterable $param)'));
-        self::assertEquals(1, substr_count($classCode, 'function returnType(): iterable'));
+        self::assertEquals(1, \substr_count($classCode, 'function parameterType(iterable $param)'));
+        self::assertEquals(1, \substr_count($classCode, 'function returnType(): iterable'));
     }
 
     public function testClassWithInvalidTypeHintOnProxiedMethod()
