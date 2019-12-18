@@ -1,7 +1,7 @@
 <?php
 namespace Doctrine\Common\Util;
 
-use Doctrine\Common\Persistence\Proxy;
+use Doctrine\Persistence\Proxy;
 
 /**
  * Class and reflection related functionality for objects that
