@@ -69,24 +69,6 @@ interface Proxy extends BaseProxy
      *
      * @return array Keys are the property names, and values are the default values
      *               for those properties.
-     *
-     * @deprecated Use __getLazyPropertiesNames() and __getLazyPropertiesDefaultValues() instead.
      */
     public function __getLazyProperties();
-
-    /**
-     * Retrieves the list of lazy loaded properties names for a given proxy
-     *
-     * @return array
-     */
-    public function __getLazyPropertiesNames();
-
-    /**
-     * Retrieves the list of default values of lazy loaded properties for a given proxy
-     *
-     * @return array Keys are the property names, and values are the default values
-     *               for those properties.
-     *               Note: typed not nullable properties has no default value.
-     */
-    public function __getLazyPropertiesDefaultValues();
 }

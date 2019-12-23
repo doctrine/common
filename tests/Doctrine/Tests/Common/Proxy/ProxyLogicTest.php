@@ -713,7 +713,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
                 return;
             }
 
-            $properties = $proxy->__getLazyPropertiesDefaultValues();
+            $properties = $proxy->__getLazyProperties();
 
             foreach ($properties as $propertyName => $property) {
                 if ( ! isset($proxy->$propertyName)) {
