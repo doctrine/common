@@ -952,7 +952,7 @@ EOT;
         foreach ($class->getReflectionClass()->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
             $name = $property->getName();
 
-            if (! in_array($name, $lazyLoadedPublicProperties, true)) {
+            if ( ! in_array($name, $lazyLoadedPublicProperties, true)) {
                 continue;
             }
 
