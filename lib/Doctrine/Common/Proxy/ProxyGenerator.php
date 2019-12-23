@@ -85,10 +85,16 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     public $__isInitialized__ = false;
 
     /**
-     * @var array properties to be lazy loaded, with keys being the property
-     *            names and values being their default values
+     * @var array properties to be lazy loaded
      *
-     * @see \Doctrine\Common\Proxy\Proxy::__getLazyProperties
+     * @see \Doctrine\Common\Proxy\Proxy::__getLazyPropertiesNames
+     */
+    public static $lazyProperties = [<lazyProperties>];
+
+    /**
+     * @var array default values of properties to be lazy loaded, with keys being the property names
+     *
+     * @see \Doctrine\Common\Proxy\Proxy::__getLazyPropertiesDefaultValues
      */
     public static $lazyPropertiesDefaults = [<lazyPropertiesDefaults>];
 
@@ -176,6 +182,26 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
      * @static
      */
     public function __getLazyProperties()
+    {
+        return self::$lazyPropertiesDefaults;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @internal generated method: use only when explicitly handling proxy specific loading logic
+     * @static
+     */
+    public function __getLazyPropertiesNames()
+    {
+        return self::$lazyProperties;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @internal generated method: use only when explicitly handling proxy specific loading logic
+     * @static
+     */
+    public function __getLazyPropertiesDefaultValues()
     {
         return self::$lazyPropertiesDefaults;
     }
@@ -358,12 +384,31 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
      *
      * @return string
      */
-    private function generateLazyPropertiesDefaults(ClassMetadata $class)
+    private function generateLazyProperties(ClassMetadata $class)
     {
         $lazyPublicProperties = $this->getLazyLoadedPublicProperties($class);
         $values               = [];
 
-        foreach ($lazyPublicProperties as $key => $value) {
+        foreach ($lazyPublicProperties as $name) {
+            $values[] = var_export($name, true);
+        }
+
+        return implode(', ', $values);
+    }
+
+    /**
+     * Generates the array representation of default values of lazy loaded public properties.
+     *
+     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     *
+     * @return string
+     */
+    private function generateLazyPropertiesDefaults(ClassMetadata $class)
+    {
+        $lazyPublicPropertiesDefaultValues = $this->getLazyLoadedPublicPropertiesDefaultValues($class);
+        $values                            = [];
+
+        foreach ($lazyPublicPropertiesDefaultValues as $key => $value) {
             $values[] = var_export($key, true) . ' => ' . var_export($value, true);
         }
 
@@ -390,7 +435,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
 EOT;
         $toUnset         = [];
 
-        foreach ($this->getLazyLoadedPublicProperties($class) as $lazyPublicProperty => $unused) {
+        foreach ($this->getLazyLoadedPublicProperties($class) as $lazyPublicProperty) {
             $toUnset[] = '$this->' . $lazyPublicProperty;
         }
 
@@ -414,7 +459,7 @@ EOT;
      */
     private function generateMagicGet(ClassMetadata $class)
     {
-        $lazyPublicProperties = array_keys($this->getLazyLoadedPublicProperties($class));
+        $lazyPublicProperties = $this->getLazyLoadedPublicProperties($class);
         $reflectionClass      = $class->getReflectionClass();
         $hasParentGet         = false;
         $returnReference      = '';
@@ -445,7 +490,7 @@ EOT;
 
         if ( ! empty($lazyPublicProperties)) {
             $magicGet .= <<<'EOT'
-        if (array_key_exists($name, $this->__getLazyProperties())) {
+        if (in_array($name, $this->__getLazyPropertiesNames(), true)) {
             $this->__initializer__ && $this->__initializer__->__invoke($this, '__get', [$name]);
 
             return $this->$name;
@@ -504,7 +549,7 @@ EOT;
 
         if ( ! empty($lazyPublicProperties)) {
             $magicSet .= <<<'EOT'
-        if (array_key_exists($name, $this->__getLazyProperties())) {
+        if (in_array($name, $this->__getLazyPropertiesNames(), true)) {
             $this->__initializer__ && $this->__initializer__->__invoke($this, '__set', [$name, $value]);
 
             $this->$name = $value;
@@ -540,7 +585,7 @@ EOT;
      */
     private function generateMagicIsset(ClassMetadata $class)
     {
-        $lazyPublicProperties = array_keys($this->getLazyLoadedPublicProperties($class));
+        $lazyPublicProperties = $this->getLazyLoadedPublicProperties($class);
         $hasParentIsset       = $class->getReflectionClass()->hasMethod('__isset');
 
         if (empty($lazyPublicProperties) && ! $hasParentIsset) {
@@ -561,7 +606,7 @@ EOT;
 
         if ( ! empty($lazyPublicProperties)) {
             $magicIsset .= <<<'EOT'
-        if (array_key_exists($name, $this->__getLazyProperties())) {
+        if (in_array($name, $this->__getLazyPropertiesNames(), true)) {
             $this->__initializer__ && $this->__initializer__->__invoke($this, '__isset', [$name]);
 
             return isset($this->$name);
@@ -611,7 +656,7 @@ EOT;
         $properties = array_merge(['__isInitialized__'], parent::__sleep());
 
         if ($this->__isInitialized__) {
-            $properties = array_diff($properties, array_keys($this->__getLazyProperties()));
+            $properties = array_diff($properties, $this->__getLazyPropertiesNames());
         }
 
         return $properties;
@@ -632,7 +677,7 @@ EOT;
                 : $prop->getName();
         }
 
-        $lazyPublicProperties = array_keys($this->getLazyLoadedPublicProperties($class));
+        $lazyPublicProperties = $this->getLazyLoadedPublicProperties($class);
         $protectedProperties  = array_diff($allProperties, $lazyPublicProperties);
 
         foreach ($allProperties as &$property) {
@@ -668,7 +713,7 @@ EOT;
         $unsetPublicProperties = [];
         $hasWakeup             = $class->getReflectionClass()->hasMethod('__wakeup');
 
-        foreach (array_keys($this->getLazyLoadedPublicProperties($class)) as $lazyPublicProperty) {
+        foreach ($this->getLazyLoadedPublicProperties($class) as $lazyPublicProperty) {
             $unsetPublicProperties[] = '$this->' . $lazyPublicProperty;
         }
 
@@ -687,7 +732,7 @@ EOT;
 
                 \$existingProperties = get_object_vars(\$proxy);
 
-                foreach (\$proxy->__getLazyProperties() as \$property => \$defaultValue) {
+                foreach (\$proxy->__getLazyPropertiesDefaultValues() as \$property => \$defaultValue) {
                     if ( ! array_key_exists(\$property, \$existingProperties)) {
                         \$proxy->\$property = \$defaultValue;
                     }
@@ -870,7 +915,7 @@ EOT;
     }
 
     /**
-     * Generates the list of public properties to be lazy loaded, with their default values.
+     * Generates the list of public properties to be lazy loaded.
      *
      * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
      *
@@ -878,18 +923,50 @@ EOT;
      */
     private function getLazyLoadedPublicProperties(ClassMetadata $class)
     {
-        $defaultProperties = $class->getReflectionClass()->getDefaultProperties();
-        $properties        = [];
+        $properties = [];
 
         foreach ($class->getReflectionClass()->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
             $name = $property->getName();
 
             if (($class->hasField($name) || $class->hasAssociation($name)) && ! $class->isIdentifier($name)) {
-                $properties[$name] = $defaultProperties[$name];
+                $properties[] = $name;
             }
         }
 
         return $properties;
+    }
+
+    /**
+     * Generates the list of default values of public properties.
+     *
+     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     *
+     * @return mixed[]
+     */
+    private function getLazyLoadedPublicPropertiesDefaultValues(ClassMetadata $class)
+    {
+        $defaultProperties          = $class->getReflectionClass()->getDefaultProperties();
+        $lazyLoadedPublicProperties = $this->getLazyLoadedPublicProperties($class);
+        $defaultValues              = [];
+
+        foreach ($class->getReflectionClass()->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
+            $name = $property->getName();
+
+            if (! in_array($name, $lazyLoadedPublicProperties, true)) {
+                continue;
+            }
+
+            if (array_key_exists($name, $defaultProperties)) {
+                $defaultValues[$name] = $defaultProperties[$name];
+            } elseif (\PHP_VERSION_ID >= 70400) {
+                $propertyType = $property->getType();
+                if (null !== $propertyType && $propertyType->allowsNull()) {
+                    $defaultValues[$name] = null;
+                }
+            }
+        }
+
+        return $defaultValues;
     }
 
     /**
