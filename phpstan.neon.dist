@@ -11,6 +11,8 @@ parameters:
         - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/InvalidTypeHintClass.php
         - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/SerializedClass.php
         - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/VariadicTypeHintClass.php
+        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicTypedPropertiesTest.php
+        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/LazyLoadableObjectWithTypedProperties.php
     ignoreErrors:
         - '#Access to an undefined property Doctrine\\Common\\Proxy\\Proxy::\$publicField#'
         -
