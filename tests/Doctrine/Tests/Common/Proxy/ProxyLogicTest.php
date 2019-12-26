@@ -594,7 +594,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         // creating the proxy class
         if ( ! class_exists($proxyClassName, false)) {
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
-            $proxyGenerator->generateProxyClass($metadata);
+            $proxyGenerator->generateProxyClass($metadata, $proxyGenerator->getProxyFileName($metadata->getName()));
             require_once $proxyGenerator->getProxyFileName($metadata->getName());
         }
 
