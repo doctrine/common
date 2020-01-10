@@ -30,9 +30,6 @@ parameters:
         -
             message: '#^Property Doctrine\\Tests\\Common\\Proxy\\ProxyLogicVoidReturnTypeTest::\$initializerCallbackMock \(callable&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept PHPUnit\\Framework\\MockObject\\MockObject&stdClass\.$#'
             path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
-        -
-            message: '#^Call to an undefined method ReflectionProperty::getType\(\)\.$#'
-            path: '%currentWorkingDirectory%/lib/Doctrine/Common/Proxy/ProxyGenerator.php'
 
 includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon
