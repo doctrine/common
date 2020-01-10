@@ -6,6 +6,7 @@ use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\Common\Util\ClassUtils;
 use function array_map;
+use function method_exists;
 
 /**
  * This factory is used to generate proxy classes.
@@ -926,7 +927,7 @@ EOT;
 
             if (array_key_exists($name, $defaultProperties)) {
                 $defaultValues[$name] = $defaultProperties[$name];
-            } elseif (\PHP_VERSION_ID >= 70400) {
+            } elseif (method_exists($property, 'getType')) {
                 $propertyType = $property->getType();
                 if (null !== $propertyType && $propertyType->allowsNull()) {
                     $defaultValues[$name] = null;
