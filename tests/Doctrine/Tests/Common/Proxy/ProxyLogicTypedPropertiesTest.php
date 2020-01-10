@@ -9,11 +9,13 @@ use PHPUnit\Framework\Error\Notice;
 use stdClass;
 
 /**
- * Test the generated proxies behavior. These tests make assumptions about the structure of LazyLoadableObject
+ * Test lazy loading for class with typed public properties.
  *
- * @author Marco Pivetta <ocramius@gmail.com>
+ * @see https://github.com/doctrine/common/issues/881
+ *
+ * @requires PHP >= 7.4
  */
-class ProxyLogicTest extends \PHPUnit\Framework\TestCase
+class ProxyLogicTypedPropertiesTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject&\stdClass
@@ -26,7 +28,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
     protected $lazyLoadableObjectMetadata;
 
     /**
-     * @var LazyLoadableObject&Proxy
+     * @var LazyLoadableObjectWithTypedProperties&Proxy
      */
     protected $lazyObject;
 
@@ -48,11 +50,11 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         $loader                           = $this->proxyLoader      = $this->getMockBuilder(stdClass::class)->setMethods(['load'])->getMock();
         $this->initializerCallbackMock    = $this->getMockBuilder(stdClass::class)->setMethods(['__invoke'])->getMock();
         $identifier                       = $this->identifier;
-        $this->lazyLoadableObjectMetadata = $metadata = new LazyLoadableObjectClassMetadata();
+        $this->lazyLoadableObjectMetadata = $metadata = new LazyLoadableObjectWithTypedPropertiesClassMetadata();
 
         // emulating what should happen in a proxy factory
-        $cloner = function (LazyLoadableObject $proxy) use ($loader, $identifier, $metadata) {
-            /** @var LazyLoadableObject&Proxy $proxy */
+        $cloner = function (LazyLoadableObjectWithTypedProperties $proxy) use ($loader, $identifier, $metadata) {
+            /** @var LazyLoadableObjectWithTypedProperties&Proxy $proxy */
             $proxy = $proxy;
             if ($proxy->__isInitialized()) {
                 return;
@@ -71,12 +73,14 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
 
                 if ($metadata->hasField($propertyName) || $metadata->hasAssociation($propertyName)) {
                     $reflProperty->setAccessible(true);
-                    $reflProperty->setValue($proxy, $reflProperty->getValue($original));
+                    if ($reflProperty->isInitialized($original)) {
+                        $reflProperty->setValue($proxy, $reflProperty->getValue($original));
+                    }
                 }
             }
         };
 
-        $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\LazyLoadableObject';
+        $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\LazyLoadableObjectWithTypedProperties';
 
         // creating the proxy class
         if ( ! class_exists($proxyClassName, false)) {
@@ -220,8 +224,8 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         $cb
             ->expects($this->once())
             ->method('cb')
-            ->will($this->returnCallback(function (LazyLoadableObject $proxy) use ($lazyObject, $test) {
-                /** @var LazyLoadableObject&Proxy $proxy */
+            ->will($this->returnCallback(function (LazyLoadableObjectWithTypedProperties $proxy) use ($lazyObject, $test) {
+                /** @var LazyLoadableObjectWithTypedProperties&Proxy $proxy */
                 $proxy = $proxy;
                 $test->assertNotSame($proxy, $lazyObject);
                 $proxy->__setInitializer(null);
@@ -280,7 +284,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
                 ],
                 $this->lazyObject
             )
-            ->will($this->returnCallback(function ($id, LazyLoadableObject $lazyObject) {
+            ->will($this->returnCallback(function ($id, LazyLoadableObjectWithTypedProperties $lazyObject) {
                 // setting a value to verify that the persister can actually set something in the object
                 $lazyObject->publicAssociation = $id['publicIdentifierField'] . '-test';
                 return true;
@@ -313,7 +317,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
                 'protectedIdentifierField' => 'protectedIdentifierFieldValue',
             ])
             ->will($this->returnCallback(function () {
-                $blueprint                        = new LazyLoadableObject();
+                $blueprint                        = new LazyLoadableObjectWithTypedProperties();
                 $blueprint->publicPersistentField = 'checked-persistent-field';
                 $blueprint->publicAssociation     = 'checked-association-field';
                 $blueprint->publicTransientField  = 'checked-transient-field';
@@ -365,7 +369,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         $this->configureInitializerMock();
 
         $serialized = serialize($this->lazyObject);
-        /** @var LazyLoadableObject&Proxy $unserialized */
+        /** @var LazyLoadableObjectWithTypedProperties&Proxy $unserialized */
         $unserialized = unserialize($serialized);
         $reflClass    = $this->lazyLoadableObjectMetadata->getReflectionClass();
 
@@ -429,7 +433,7 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
 
         $serialized = serialize($this->lazyObject);
         $reflClass  = $this->lazyLoadableObjectMetadata->getReflectionClass();
-        /** @var LazyLoadableObject&Proxy $unserialized */
+        /** @var LazyLoadableObjectWithTypedProperties&Proxy $unserialized */
         $unserialized = unserialize($serialized);
 
         self::assertTrue($unserialized->__isInitialized(), 'serialization didn\'t cause intialization');
@@ -702,8 +706,8 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         $loader     = $this->proxyLoader;
         $identifier = $this->identifier;
 
-        return function (LazyLoadableObject $proxy) use ($loader, $identifier) {
-            /** @var LazyLoadableObject&Proxy $proxy */
+        return function (LazyLoadableObjectWithTypedProperties $proxy) use ($loader, $identifier) {
+            /** @var LazyLoadableObjectWithTypedProperties&Proxy $proxy */
             $proxy = $proxy;
             $proxy->__setInitializer(null);
             $proxy->__setCloner(null);
