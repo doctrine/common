@@ -85,11 +85,9 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     public $__isInitialized__ = false;
 
     /**
-     * @var array properties to be lazy loaded
-     *
-     * @see \Doctrine\Common\Proxy\Proxy::__getLazyPropertiesNames
+     * @var array<string, null> properties to be lazy loaded, indexed by property name
      */
-    public static $lazyPropertiesNames = [<lazyPropertiesNames>];
+    public static $lazyPropertiesNames = <lazyPropertiesNames>;
 
     /**
      * @var array default values of properties to be lazy loaded, with keys being the property names
@@ -184,16 +182,6 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     public function __getLazyProperties()
     {
         return self::$lazyProperties;
-    }
-
-    /**
-     * Retrieves the list of lazy loaded properties names for a given proxy
-     *
-     * @return array
-     */
-    private function __getLazyPropertiesNames()
-    {
-        return self::$lazyPropertiesNames;
     }
 
     <methods>
@@ -380,10 +368,10 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
         $values               = [];
 
         foreach ($lazyPublicProperties as $name) {
-            $values[] = var_export($name, true);
+            $values[$name] = null;
         }
 
-        return implode(', ', $values);
+        return var_export($values, true);
     }
 
     /**
@@ -480,7 +468,7 @@ EOT;
 
         if ( ! empty($lazyPublicProperties)) {
             $magicGet .= <<<'EOT'
-        if (in_array($name, $this->__getLazyPropertiesNames(), true)) {
+        if (\array_key_exists($name, self::$lazyPropertiesNames)) {
             $this->__initializer__ && $this->__initializer__->__invoke($this, '__get', [$name]);
 
             return $this->$name;
@@ -539,7 +527,7 @@ EOT;
 
         if ( ! empty($lazyPublicProperties)) {
             $magicSet .= <<<'EOT'
-        if (in_array($name, $this->__getLazyPropertiesNames(), true)) {
+        if (\array_key_exists($name, self::$lazyPropertiesNames)) {
             $this->__initializer__ && $this->__initializer__->__invoke($this, '__set', [$name, $value]);
 
             $this->$name = $value;
@@ -596,7 +584,7 @@ EOT;
 
         if ( ! empty($lazyPublicProperties)) {
             $magicIsset .= <<<'EOT'
-        if (in_array($name, $this->__getLazyPropertiesNames(), true)) {
+        if (\array_key_exists($name, self::$lazyPropertiesNames)) {
             $this->__initializer__ && $this->__initializer__->__invoke($this, '__isset', [$name]);
 
             return isset($this->$name);
@@ -646,7 +634,7 @@ EOT;
         $properties = array_merge(['__isInitialized__'], parent::__sleep());
 
         if ($this->__isInitialized__) {
-            $properties = array_diff($properties, $this->__getLazyPropertiesNames());
+            $properties = array_diff($properties, array_keys(self::$lazyPropertiesNames));
         }
 
         return $properties;
