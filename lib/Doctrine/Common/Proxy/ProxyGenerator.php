@@ -90,11 +90,11 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     public static $lazyPropertiesNames = <lazyPropertiesNames>;
 
     /**
-     * @var array default values of properties to be lazy loaded, with keys being the property names
+     * @var array<string, mixed> default values of properties to be lazy loaded, with keys being the property names
      *
      * @see \Doctrine\Common\Proxy\Proxy::__getLazyProperties
      */
-    public static $lazyProperties = [<lazyPropertiesDefaults>];
+    public static $lazyPropertiesDefaults = <lazyPropertiesDefaults>;
 
 <additionalProperties>
 
@@ -177,11 +177,12 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     /**
      * {@inheritDoc}
      * @internal generated method: use only when explicitly handling proxy specific loading logic
+     * @deprecated no longer in use - generated code now relies on internal components rather than generated public API
      * @static
      */
     public function __getLazyProperties()
     {
-        return self::$lazyProperties;
+        return self::$lazyPropertiesDefaults;
     }
 
     <methods>
@@ -383,14 +384,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
      */
     private function generateLazyPropertiesDefaults(ClassMetadata $class)
     {
-        $lazyPublicPropertiesDefaultValues = $this->getLazyLoadedPublicProperties($class);
-        $values                            = [];
-
-        foreach ($lazyPublicPropertiesDefaultValues as $key => $value) {
-            $values[] = var_export($key, true) . ' => ' . var_export($value, true);
-        }
-
-        return implode(', ', $values);
+        return var_export($this->getLazyLoadedPublicProperties($class), true);
     }
 
     /**
@@ -710,7 +704,7 @@ EOT;
 
                 \$existingProperties = get_object_vars(\$proxy);
 
-                foreach (\$proxy->__getLazyProperties() as \$property => \$defaultValue) {
+                foreach (\$proxy::\$lazyPropertiesDefaults as \$property => \$defaultValue) {
                     if ( ! array_key_exists(\$property, \$existingProperties)) {
                         \$proxy->\$property = \$defaultValue;
                     }
