@@ -5,6 +5,7 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\Common\Util\ClassUtils;
+use function array_map;
 
 /**
  * This factory is used to generate proxy classes.
@@ -397,21 +398,16 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     private function generateConstructorImpl(ClassMetadata $class)
     {
         $constructorImpl = <<<'EOT'
-    /**
-     * @param \Closure $initializer
-     * @param \Closure $cloner
-     */
-    public function __construct($initializer = null, $cloner = null)
+    public function __construct(?\Closure $initializer = null, ?\Closure $cloner = null)
     {
 
 EOT;
-        $toUnset         = [];
 
-        foreach ($this->getLazyLoadedPublicPropertiesNames($class) as $lazyPublicProperty) {
-            $toUnset[] = '$this->' . $lazyPublicProperty;
-        }
+        $toUnset = array_map(static function (string $name) : string {
+            return '$this->' . $name;
+        }, $this->getLazyLoadedPublicPropertiesNames($class));
 
-        $constructorImpl .= (empty($toUnset) ? '' : '        unset(' . implode(', ', $toUnset) . ");\n")
+        $constructorImpl .= ($toUnset === [] ? '' : '        unset(' . implode(', ', $toUnset) . ");\n")
             . <<<'EOT'
 
         $this->__initializer__ = $initializer;
@@ -891,9 +887,9 @@ EOT;
      *
      * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
      *
-     * @return mixed[]
+     * @return array<int, string>
      */
-    private function getLazyLoadedPublicPropertiesNames(ClassMetadata $class)
+    private function getLazyLoadedPublicPropertiesNames(ClassMetadata $class) : array
     {
         $properties = [];
 
