@@ -2,8 +2,8 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\Common\Persistence\Mapping\ClassMetadataFactory;
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Doctrine\Common\Proxy\Proxy;
@@ -203,3 +203,6 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
         $proxyFactory->getProxy('Class', []);
     }
 }
+
+interface_exists(ClassMetadata::class);
+interface_exists(ClassMetadataFactory::class);

@@ -1,7 +1,7 @@
 <?php
 namespace Doctrine\Common\Proxy;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\Common\Util\ClassUtils;
@@ -82,7 +82,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     /**
      * @var boolean flag indicating if this object was already initialized
      *
-     * @see \Doctrine\Common\Persistence\Proxy::__isInitialized
+     * @see \Doctrine\Persistence\Proxy::__isInitialized
      */
     public $__isInitialized__ = false;
 
@@ -244,8 +244,8 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     /**
      * Generates a proxy class file.
      *
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class    Metadata for the original class.
-     * @param string|bool                                        $fileName Filename (full path) for the generated class. If none is given, eval() is used.
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class    Metadata for the original class.
+     * @param string|bool                                 $fileName Filename (full path) for the generated class. If none is given, eval() is used.
      *
      * @throws InvalidArgumentException
      * @throws UnexpectedValueException
@@ -319,7 +319,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     /**
      * Generates the proxy short class name to be used in the template.
      *
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -334,7 +334,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     /**
      * Generates the proxy namespace.
      *
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -349,7 +349,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     /**
      * Generates the original class name.
      *
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -361,7 +361,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     /**
      * Generates the array representation of lazy loaded public properties and their default values.
      *
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -392,7 +392,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     /**
      * Generates the constructor code (un-setting public lazy loaded properties, setting identifier field values).
      *
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -422,7 +422,7 @@ EOT;
     /**
      * Generates the magic getter invoked when lazy loaded public properties are requested.
      *
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -491,7 +491,7 @@ EOT;
     /**
      * Generates the magic setter (currently unused).
      *
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -548,7 +548,7 @@ EOT;
     /**
      * Generates the magic issetter invoked when lazy loaded public properties are checked against isset().
      *
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -602,7 +602,7 @@ EOT;
     /**
      * Generates implementation for the `__sleep` method of proxies.
      *
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -673,7 +673,7 @@ EOT;
     /**
      * Generates implementation for the `__wakeup` method of proxies.
      *
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -728,7 +728,7 @@ EOT;
     /**
      * Generates implementation for the `__clone` method of proxies.
      *
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -752,7 +752,7 @@ EOT;
     /**
      * Generates decorated methods by picking those available in the parent class.
      *
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -851,8 +851,8 @@ EOT;
      * ID is interesting for the userland code (for example in views that
      * generate links to the entity, but do not display anything else).
      *
-     * @param \ReflectionMethod                                  $method
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     * @param \ReflectionMethod                           $method
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return boolean
      */
@@ -886,7 +886,7 @@ EOT;
     /**
      * Generates the list of public properties to be lazy loaded.
      *
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return array<int, string>
      */
@@ -1106,3 +1106,5 @@ EOT;
         return $name;
     }
 }
+
+interface_exists(ClassMetadata::class);
