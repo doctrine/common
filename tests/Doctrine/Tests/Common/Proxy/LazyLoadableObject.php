@@ -60,6 +60,14 @@ class LazyLoadableObject
     /**
      * @return string
      */
+    public function getProtectedIdentifierFieldWithDifferentName()
+    {
+        return $this->protectedIdentifierField;
+    }
+
+    /**
+     * @return string
+     */
     public function testInitializationTriggeringMethod()
     {
         return 'testInitializationTriggeringMethod';

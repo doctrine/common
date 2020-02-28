@@ -112,6 +112,13 @@ class ProxyLogicTest extends \PHPUnit\Framework\TestCase
         self::assertSame('protectedIdentifierFieldValue', $this->lazyObject->getProtectedIdentifierField());
     }
 
+    public function testFetchingIdentifiersViaPublicGetterWithDifferentNameDoesNotCauseLazyLoading()
+    {
+        $this->configureInitializerMock(0);
+
+        self::assertSame('protectedIdentifierFieldValue', $this->lazyObject->getProtectedIdentifierFieldWithDifferentName());
+    }
+
     public function testCallingMethodCausesLazyLoading()
     {
         $this->configureInitializerMock(
