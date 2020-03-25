@@ -645,7 +645,7 @@ EOT;
         }
 
         $lazyPublicProperties = $this->getLazyLoadedPublicPropertiesNames($class);
-        $lazyTypedProperties = $this->getLazyLoadedTypedPropertiesNames($class);
+        $lazyTypedProperties  = $this->getLazyLoadedTypedPropertiesNames($class);
         $protectedProperties  = array_diff($allProperties, $lazyPublicProperties, $lazyTypedProperties);
 
         foreach ($allProperties as &$property) {
