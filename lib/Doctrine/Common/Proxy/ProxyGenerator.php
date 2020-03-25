@@ -641,13 +641,12 @@ EOT;
                 continue;
             }
 
-            $allProperties[] = $prop->isPrivate()
-                ? "\0" . $prop->getDeclaringClass()->getName() . "\0" . $prop->getName()
-                : $prop->getName();
+            $allProperties[] = $this->getPropertyName($prop);
         }
 
         $lazyPublicProperties = $this->getLazyLoadedPublicPropertiesNames($class);
-        $protectedProperties  = array_diff($allProperties, $lazyPublicProperties);
+        $lazyTypedProperties = $this->getLazyLoadedTypedPropertiesNames($class);
+        $protectedProperties  = array_diff($allProperties, $lazyPublicProperties, $lazyTypedProperties);
 
         foreach ($allProperties as &$property) {
             $property = var_export($property, true);
@@ -903,6 +902,49 @@ EOT;
         }
 
         return $properties;
+    }
+
+    /**
+     * Generates the list of typed properties.
+     *
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
+     *
+     * @return array<int, string>
+     */
+    private function getLazyLoadedTypedPropertiesNames(ClassMetadata $class) : array
+    {
+        $properties = [];
+
+        if (PHP_VERSION_ID < 70400) {
+            return $properties;
+        }
+
+        foreach ($class->getReflectionClass()->getProperties() as $prop) {
+            if ($prop->hasType() === false) {
+                continue;
+            }
+
+            $name = $prop->getName();
+            if (($class->hasField($name) || $class->hasAssociation($name)) && ! $class->isIdentifier($name)) {
+                $properties[] = $this->getPropertyName($prop);
+            }
+        }
+
+        return $properties;
+    }
+
+    /**
+     * @param \ReflectionProperty $property
+     *
+     * @return string
+     */
+    private function getPropertyName(\ReflectionProperty $property) : string
+    {
+        if ($property->isPrivate()) {
+            return "\0" . $property->getDeclaringClass()->getName() . "\0" . $property->getName();
+        }
+
+        return $property->getName();
     }
 
     /**
