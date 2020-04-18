@@ -373,7 +373,7 @@ class ProxyLogicTypedPropertiesTest extends \PHPUnit\Framework\TestCase
         $unserialized = unserialize($serialized);
         $reflClass    = $this->lazyLoadableObjectMetadata->getReflectionClass();
 
-        self::assertFalse($unserialized->__isInitialized(), 'serialization didn\'t cause intialization');
+        self::assertFalse($unserialized->__isInitialized(), 'serialization didn\'t cause initialization');
 
         // Checking identifiers
         self::assertSame('publicIdentifierFieldValue', $unserialized->publicIdentifierField, 'identifiers are kept');
@@ -436,7 +436,7 @@ class ProxyLogicTypedPropertiesTest extends \PHPUnit\Framework\TestCase
         /** @var LazyLoadableObjectWithTypedProperties&Proxy $unserialized */
         $unserialized = unserialize($serialized);
 
-        self::assertTrue($unserialized->__isInitialized(), 'serialization didn\'t cause intialization');
+        self::assertTrue($unserialized->__isInitialized(), 'serialization didn\'t cause initialization');
 
         // Checking transient fields
         self::assertSame(
