@@ -7,12 +7,26 @@
         {
             "name": "master",
             "branchName": "master",
-            "slug": "latest"
+            "slug": "latest",
+            "upcoming": true
+        },
+        {
+            "name": "2.13",
+            "branchName": "2.13.x",
+            "slug": "2.13",
+            "upcoming": true
+        },
+        {
+            "name": "2.12",
+            "branchName": "2.12.x",
+            "slug": "2.12",
+            "current": true
         },
         {
             "name": "2.11",
             "branchName": "2.11",
-            "current": true
+            "slug": "2.11",
+            "maintained": false
         }
     ]
 }

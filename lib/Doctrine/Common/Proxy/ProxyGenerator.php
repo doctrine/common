@@ -380,7 +380,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     /**
      * Generates the array representation of lazy loaded public properties names.
      *
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -908,7 +908,7 @@ EOT;
     /**
      * Generates the list of default values of public properties.
      *
-     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $class
+     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return mixed[]
      */
