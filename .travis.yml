@@ -21,11 +21,19 @@ install:
 script: ./vendor/bin/phpunit
 
 jobs:
+  allow_failures:
+    - php: nightly
+
   include:
     - stage: Test
       php: 7.1
       env:
         COMPOSER_FLAGS="--prefer-lowest"
+
+    -   stage: Test
+        php: nightly
+        before_install:
+            - composer config platform.php 7.4.99
 
     - stage: Coverage
       before_script:
