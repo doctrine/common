@@ -16,12 +16,25 @@ before_install:
   - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || echo "xdebug not available"
 
 install:
-  - travis_retry composer -n --prefer-source install
+  - travis_retry composer update --no-interaction --prefer-dist  ${COMPOSER_FLAGS}
 
 script: ./vendor/bin/phpunit
 
 jobs:
+  allow_failures:
+    - php: nightly
+
   include:
+    - stage: Test
+      php: 7.1
+      env:
+        COMPOSER_FLAGS="--prefer-lowest"
+
+    -   stage: Test
+        php: nightly
+        before_install:
+            - composer config platform.php 7.4.99
+
     - stage: Coverage
       before_script:
         - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{.disabled,}

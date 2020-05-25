@@ -3,6 +3,7 @@ logs/
 reports/
 dist/
 tests/Doctrine/Tests/Common/Proxy/generated/
+composer.lock
 vendor/
 .idea
 doctrine-common-*.tar

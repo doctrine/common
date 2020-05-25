@@ -18,7 +18,7 @@
         {"name": "Marco Pivetta", "email": "ocramius@gmail.com"}
     ],
     "require": {
-        "php": "^7.1",
+        "php": "^7.1 || ^8.0",
         "doctrine/inflector": "^1.0",
         "doctrine/cache": "^1.0",
         "doctrine/collections": "^1.0",
