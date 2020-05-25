@@ -19,8 +19,3 @@ spl_autoload_register(function ($class) {
 });
 
 require_once __DIR__ . "/../../../vendor/autoload.php";
-
-\Doctrine\Common\Annotations\AnnotationRegistry::registerAutoloadNamespace(
-    'Doctrine\Tests\Common\Annotations\Fixtures',
-    __DIR__ . '/../../'
-);
