@@ -37,6 +37,9 @@ parameters:
         -
             message: '#^Property Doctrine\\Tests\\Common\\Proxy\\ProxyLogicVoidReturnTypeTest::\$initializerCallbackMock \(callable&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept PHPUnit\\Framework\\MockObject\\MockObject&stdClass\.$#'
             path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
+        -
+            message: '#^Method Doctrine\\Tests\\Common\\Proxy\\MagicIssetClassWithInteger::__isset\(\) should return bool but returns int\.$#'
+            path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/MagicIssetClassWithInteger.php'
 
 includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon

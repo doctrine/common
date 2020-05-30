@@ -9,8 +9,6 @@ use Doctrine\Persistence\Proxy;
  *
  * @author Benjamin Eberlei <kontakt@beberlei.de>
  * @author Johannes Schmitt <schmittjoh@gmail.com>
- *
- * @deprecated The ClassUtils class is deprecated.
  */
 class ClassUtils
 {

@@ -5,8 +5,6 @@ namespace Doctrine\Common\Proxy;
  * Definition structure how to create a proxy.
  *
  * @author Benjamin Eberlei <kontakt@beberlei.de>
- *
- * @deprecated The Doctrine\Common\Proxy component is deprecated, please use ocramius/proxy-manager instead.
  */
 class ProxyDefinition
 {

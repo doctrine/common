@@ -11,8 +11,6 @@ use Doctrine\Common\Util\ClassUtils;
  * Abstract factory for proxy objects.
  *
  * @author Benjamin Eberlei <kontakt@beberlei.de>
- *
- * @deprecated The Doctrine\Common\Proxy component is deprecated, please use ocramius/proxy-manager instead.
  */
 abstract class AbstractProxyFactory
 {
