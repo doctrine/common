@@ -979,11 +979,11 @@ EOT;
 
     /**
      * @param \ReflectionParameter[] $parameters
-     * @param array<int, string>     $renameParameters
+     * @param list<string>     $renameParameters
      *
      * @return string
      */
-    private function buildParametersString(array $parameters, $renameParameters = [])
+    private function buildParametersString(array $parameters, array $renameParameters = [])
     {
         $parameterDefinitions = [];
 
@@ -1005,7 +1005,7 @@ EOT;
                 $parameterDefinition .= '...';
             }
 
-            $parameterDefinition .= '$' . (isset($renameParameters[$i]) ? $renameParameters[$i] : $param->getName());
+            $parameterDefinition .= '$' . ($renameParameters ? $renameParameters[$i] : $param->getName());
 
             if ($param->isDefaultValueAvailable()) {
                 $parameterDefinition .= ' = ' . var_export($param->getDefaultValue(), true);
