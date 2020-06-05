@@ -447,7 +447,7 @@ EOT;
             $methodParameters = $methodReflection->getParameters();
             $name             = '$' . $methodParameters[0]->getName();
 
-            $parametersString = $this->buildParametersString($methodReflection->getParameters());
+            $parametersString = $this->buildParametersString($methodReflection->getParameters(), ['name']);
             $returnTypeHint   = $this->getMethodReturnType($methodReflection);
         }
 
@@ -458,7 +458,7 @@ EOT;
         $magicGet = <<<EOT
     /**
      * $inheritDoc
-     * @param string $name
+     * @param string \$name
      */
     public function {$returnReference}__get($parametersString)$returnTypeHint
     {
@@ -466,16 +466,15 @@ EOT;
 EOT;
 
         if ( ! empty($lazyPublicProperties)) {
-            $magicGet .= sprintf(<<<'EOT'
-        if (\array_key_exists(%s, self::$lazyPropertiesNames)) {
-            $this->__initializer__ && $this->__initializer__->__invoke($this, '__get', [%s]);
-EOT
-                , $name, $name);
+            $magicGet .= <<<'EOT'
+        if (\array_key_exists($name, self::$lazyPropertiesNames)) {
+            $this->__initializer__ && $this->__initializer__->__invoke($this, '__get', [$name]);
+EOT;
 
             if ($returnTypeHint === ': void') {
                 $magicGet .= "\n            return;";
             } else {
-                $magicGet .= "\n            return \$this->$name;";
+                $magicGet .= "\n            return \$this->\$name;";
             }
 
             $magicGet .= <<<'EOT'
@@ -487,24 +486,21 @@ EOT;
         }
 
         if ($hasParentGet) {
-            $magicGet .= sprintf(<<<'EOT'
-        $this->__initializer__ && $this->__initializer__->__invoke($this, '__get', [%s]);
-EOT
-                , $name);
+            $magicGet .= <<<'EOT'
+        $this->__initializer__ && $this->__initializer__->__invoke($this, '__get', [$name]);
+EOT;
 
             if ($returnTypeHint === ': void') {
-                $magicGet .= sprintf(<<<'EOT'
+                $magicGet .= <<<'EOT'
 
-        parent::__get(%s);
+        parent::__get($name);
         return;
-EOT
-                    , $name);
+EOT;
             } else {
-                $magicGet .= sprintf(<<<'EOT'
+                $magicGet .= <<<'EOT'
 
-        return parent::__get(%s);
-EOT
-                    , $name);
+        return parent::__get($name);
+EOT;
             }
         } else {
             $magicGet .= sprintf(<<<EOT
@@ -533,7 +529,7 @@ EOT
 
         if ($hasParentSet) {
             $methodReflection = $class->getReflectionClass()->getMethod('__set');
-            $parametersString = $this->buildParametersString($methodReflection->getParameters());
+            $parametersString = $this->buildParametersString($methodReflection->getParameters(), ['name', 'value']);
             $returnTypeHint   = $this->getMethodReturnType($methodReflection);
         }
 
@@ -597,7 +593,7 @@ EOT;
 
         if ($hasParentIsset) {
             $methodReflection = $class->getReflectionClass()->getMethod('__isset');
-            $parametersString = $this->buildParametersString($methodReflection->getParameters());
+            $parametersString = $this->buildParametersString($methodReflection->getParameters(), ['name']);
             $returnTypeHint   = $this->getMethodReturnType($methodReflection);
         }
 
@@ -983,15 +979,18 @@ EOT;
 
     /**
      * @param \ReflectionParameter[] $parameters
+     * @param string[]               $renameParameters
      *
      * @return string
      */
-    private function buildParametersString(array $parameters)
+    private function buildParametersString(array $parameters, array $renameParameters = [])
     {
         $parameterDefinitions = [];
 
         /* @var $param \ReflectionParameter */
+        $i = -1;
         foreach ($parameters as $param) {
+            $i++;
             $parameterDefinition = '';
 
             if ($parameterType = $this->getParameterType($param)) {
@@ -1006,7 +1005,7 @@ EOT;
                 $parameterDefinition .= '...';
             }
 
-            $parameterDefinition .= '$' . $param->getName();
+            $parameterDefinition .= '$' . ($renameParameters ? $renameParameters[$i] : $param->getName());
 
             if ($param->isDefaultValueAvailable()) {
                 $parameterDefinition .= ' = ' . var_export($param->getDefaultValue(), true);

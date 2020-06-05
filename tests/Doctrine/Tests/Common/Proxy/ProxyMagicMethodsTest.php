@@ -238,6 +238,35 @@ class ProxyMagicMethodsTest extends \PHPUnit\Framework\TestCase
         self::assertSame(3, $counter);
     }
 
+    public function testInheritedMagicSetWithScalarTypeAndRenamedParameters()
+    {
+        $proxyClassName = $this->generateProxyClass(MagicSetClassWithScalarTypeAndRenamedParameters::class);
+        $proxy          = new $proxyClassName(
+            function (Proxy  $proxy, $method, $params) use (&$counter) {
+                if ( ! in_array($params[0], ['publicField', 'test', 'notDefined'])) {
+                    throw new InvalidArgumentException('Unexpected access to field "' . $params[0] . '"');
+                }
+
+                $counter += 1;
+            }
+        );
+
+        self::assertSame('id', $proxy->id);
+
+        $proxy->publicField = 'publicFieldValue';
+
+        self::assertSame('publicFieldValue', $proxy->publicField);
+
+        $proxy->test = 'testValue';
+
+        self::assertSame('testValue', $proxy->testAttribute);
+
+        $proxy->notDefined = 'not defined';
+
+        self::assertSame('not defined', $proxy->testAttribute);
+        self::assertSame(3, $counter);
+    }
+
     public function testInheritedMagicSleep()
     {
         $proxyClassName = $this->generateProxyClass(MagicSleepClass::class);
