@@ -979,7 +979,7 @@ EOT;
 
     /**
      * @param \ReflectionParameter[] $parameters
-     * @param string[]               $renameParameters
+     * @param array<int, string>     $renameParameters
      *
      * @return string
      */
