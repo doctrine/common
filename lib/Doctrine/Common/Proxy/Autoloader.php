@@ -7,8 +7,6 @@ use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
  * Special Autoloader for Proxy classes, which are not PSR-0 compliant.
  *
  * @author Benjamin Eberlei <kontakt@beberlei.de>
- *
- * @internal
  */
 class Autoloader
 {
