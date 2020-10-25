@@ -12,6 +12,8 @@
     <file>lib</file>
     <file>tests</file>
 
+    <exclude-pattern>*/tests/Doctrine/Tests/Common/Proxy/generated/*</exclude-pattern>
+
     <rule ref="Doctrine">
         <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes"/>
         <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint"/>
