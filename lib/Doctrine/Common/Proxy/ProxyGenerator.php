@@ -995,7 +995,8 @@ EOT;
             $i++;
             $parameterDefinition = '';
 
-            if ($parameterType = $this->getParameterType($param)) {
+            $parameterType = $this->getParameterType($param);
+            if ($parameterType) {
                 $parameterDefinition .= $parameterType . ' ';
             }
 

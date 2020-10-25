@@ -117,17 +117,19 @@ class DebugTest extends DoctrineTestCase
     }
 
     /**
+     * @param array<string, int> $expected
+     *
      * @dataProvider provideAttributesCases
      */
     public function testExportParentAttributes(TestAsset\ParentClass $class, array $expected)
     {
-        $print_r_class    = print_r($class, true);
-        $print_r_expected = print_r($expected, true);
+        $actualRepresentation   = print_r($class, true);
+        $expectedRepresentation = print_r($expected, true);
 
-        $print_r_class    = substr($print_r_class, strpos($print_r_class, '('));
-        $print_r_expected = substr($print_r_expected, strpos($print_r_expected, '('));
+        $actualRepresentation   = substr($actualRepresentation, strpos($actualRepresentation, '('));
+        $expectedRepresentation = substr($expectedRepresentation, strpos($expectedRepresentation, '('));
 
-        self::assertSame($print_r_class, $print_r_expected);
+        self::assertSame($actualRepresentation, $expectedRepresentation);
 
         $var = Debug::export($class, 3);
         $var = (array) $var;

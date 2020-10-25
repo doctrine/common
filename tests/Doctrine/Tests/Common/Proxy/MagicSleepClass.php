@@ -20,7 +20,7 @@ class MagicSleepClass
     public $nonSerializedField = 'defaultValue';
 
     /**
-     * @return array
+     * @return string[]
      */
     public function __sleep()
     {

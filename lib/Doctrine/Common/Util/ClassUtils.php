@@ -26,7 +26,8 @@ class ClassUtils
      */
     public static function getRealClass($class)
     {
-        if (false === $pos = strrpos($class, '\\' . Proxy::MARKER . '\\')) {
+        $pos = strrpos($class, '\\' . Proxy::MARKER . '\\');
+        if ($pos === false) {
             return $class;
         }
 

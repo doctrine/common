@@ -12,7 +12,7 @@ class ProxyDefinition
     /** @var string */
     public $proxyClassName;
 
-    /** @var array */
+    /** @var mixed[] */
     public $identifierFields;
 
     /** @var ReflectionProperty[] */
@@ -26,8 +26,8 @@ class ProxyDefinition
 
     /**
      * @param string   $proxyClassName
-     * @param array    $identifierFields
-     * @param array    $reflectionFields
+     * @param mixed[]  $identifierFields
+     * @param mixed[]  $reflectionFields
      * @param callable $initializer
      * @param callable $cloner
      */

@@ -15,13 +15,13 @@ class LazyLoadableObjectWithNullableTypehintsClassMetadata implements ClassMetad
     /** @var ReflectionClass */
     protected $reflectionClass;
 
-    /** @var array */
+    /** @var array<string,bool> */
     protected $identifier = [
         'identifierFieldReturnClassOneLetterNullable' => true,
         'identifierFieldReturnClassOneLetterNullableWithSpace' => true,
     ];
 
-    /** @var array */
+    /** @var array<string,bool> */
     protected $fields = [
         'identifierFieldReturnClassOneLetterNullable' => true,
         'identifierFieldReturnClassOneLetterNullableWithSpace' => true,

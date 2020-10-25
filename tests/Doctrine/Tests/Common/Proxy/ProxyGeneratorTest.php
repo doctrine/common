@@ -396,8 +396,8 @@ class ProxyGeneratorTest extends TestCase
     }
 
     /**
-     * @param string $className
-     * @param array  $ids
+     * @param string  $className
+     * @param mixed[] $ids
      *
      * @return MockObject&ClassMetadata
      */

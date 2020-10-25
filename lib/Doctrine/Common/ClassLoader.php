@@ -249,8 +249,12 @@ class ClassLoader
     public static function getClassLoader($className)
     {
         foreach (spl_autoload_functions() as $loader) {
-            if (is_array($loader)
-               && ($classLoader = reset($loader))
+            if (! is_array($loader)) {
+                continue;
+            }
+
+            $classLoader = reset($loader);
+            if ($classLoader
                && $classLoader instanceof ClassLoader
                && $classLoader->canLoadClass($className)
             ) {

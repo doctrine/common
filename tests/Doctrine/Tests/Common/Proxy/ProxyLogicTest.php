@@ -35,6 +35,7 @@ class ProxyLogicTest extends TestCase
     /** @var LazyLoadableObject&Proxy */
     protected $lazyObject;
 
+    /** @var array<string,string> */
     protected $identifier = [
         'publicIdentifierField' => 'publicIdentifierFieldValue',
         'protectedIdentifierField' => 'protectedIdentifierFieldValue',
@@ -652,7 +653,7 @@ class ProxyLogicTest extends TestCase
      * Configures the current initializer callback mock with provided matcher params
      *
      * @param int     $expectedCallCount the number of invocations to be expected. If a value< 0 is provided, `any` is used
-     * @param array   $callParamsMatch   an ordered array of parameters to be expected
+     * @param mixed[] $callParamsMatch   an ordered array of parameters to be expected
      * @param Closure $callbackClosure   a return callback closure
      *
      * @return void

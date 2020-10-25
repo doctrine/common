@@ -26,6 +26,7 @@ class ProxyMagicMethodsTest extends TestCase
     /** @var LazyLoadableObject|Proxy */
     protected $lazyObject;
 
+    /** @var array<string,string> */
     protected $identifier = [
         'publicIdentifierField' => 'publicIdentifierFieldValue',
         'protectedIdentifierField' => 'protectedIdentifierFieldValue',

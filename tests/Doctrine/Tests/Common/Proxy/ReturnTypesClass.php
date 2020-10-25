@@ -18,8 +18,12 @@ class ReturnTypesClass extends stdClass
     {
     }
 
+    /**
+     * @return mixed[]
+     */
     public function returnsArray() : array
     {
+        return [];
     }
 
     public function returnsCallable() : callable

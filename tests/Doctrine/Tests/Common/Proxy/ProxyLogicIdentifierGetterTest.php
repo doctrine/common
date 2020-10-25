@@ -52,7 +52,9 @@ class ProxyLogicIdentifierGetterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<mixed[]>
+     *
+     * @psalm-return list<array{ClassMetadata,string,mixed}>
      */
     public function methodsForWhichLazyLoadingShouldBeDisabled()
     {

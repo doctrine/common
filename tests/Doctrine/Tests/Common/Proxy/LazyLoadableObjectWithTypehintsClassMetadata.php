@@ -15,7 +15,7 @@ class LazyLoadableObjectWithTypehintsClassMetadata implements ClassMetadata
     /** @var ReflectionClass */
     protected $reflectionClass;
 
-    /** @var array */
+    /** @var array<string,bool> */
     protected $identifier = [
         'identifierFieldNoReturnTypehint' => true,
         'identifierFieldReturnTypehintScalar' => true,
@@ -26,7 +26,7 @@ class LazyLoadableObjectWithTypehintsClassMetadata implements ClassMetadata
         'identifierFieldReturnClassOneLetter' => true,
     ];
 
-    /** @var array */
+    /** @var array<string,bool> */
     protected $fields = [
         'identifierFieldNoReturnTypehint' => true,
         'identifierFieldReturnTypehintScalar' => true,

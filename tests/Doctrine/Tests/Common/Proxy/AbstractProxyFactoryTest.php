@@ -18,6 +18,11 @@ use function sys_get_temp_dir;
 
 class AbstractProxyFactoryTest extends DoctrineTestCase
 {
+    /**
+     * @return mixed[]
+     *
+     * @psalm-return array{mixed, mixed}
+     */
     public function dataAutoGenerateValues() : array
     {
         return [

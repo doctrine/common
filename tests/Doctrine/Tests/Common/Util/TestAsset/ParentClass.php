@@ -4,7 +4,10 @@ namespace Doctrine\Tests\Common\Util\TestAsset;
 
 abstract class ParentClass
 {
-    public $parentPublicAttribute       = 1;
+    /** @var int */
+    public $parentPublicAttribute = 1;
+    /** @var int */
     protected $parentProtectedAttribute = 2;
-    private $parentPrivateAttribute     = 3;
+    /** @var int */
+    private $parentPrivateAttribute = 3;
 }

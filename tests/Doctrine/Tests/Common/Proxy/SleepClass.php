@@ -7,10 +7,11 @@ namespace Doctrine\Tests\Common\Proxy;
  */
 class SleepClass
 {
+    /** @var mixed */
     public $id;
 
     /**
-     * @return array
+     * @return string[]
      */
     public function __sleep()
     {

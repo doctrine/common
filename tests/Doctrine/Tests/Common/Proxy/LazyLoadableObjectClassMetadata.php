@@ -15,13 +15,13 @@ class LazyLoadableObjectClassMetadata implements ClassMetadata
     /** @var ReflectionClass */
     protected $reflectionClass;
 
-    /** @var array */
+    /** @var array<string,bool> */
     protected $identifier = [
         'publicIdentifierField'    => true,
         'protectedIdentifierField' => true,
     ];
 
-    /** @var array */
+    /** @var array<string,bool> */
     protected $fields = [
         'publicIdentifierField'    => true,
         'protectedIdentifierField' => true,
@@ -29,7 +29,7 @@ class LazyLoadableObjectClassMetadata implements ClassMetadata
         'protectedPersistentField' => true,
     ];
 
-    /** @var array */
+    /** @var array<string,bool> */
     protected $associations = [
         'publicAssociation'        => true,
         'protectedAssociation'     => true,

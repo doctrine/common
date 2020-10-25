@@ -15,10 +15,10 @@ class LazyLoadableObjectWithTraitClassMetadata implements ClassMetadata
     /** @var ReflectionClass */
     protected $reflectionClass;
 
-    /** @var array */
+    /** @var array<string,bool> */
     protected $identifier = ['identifierFieldInTrait' => true];
 
-    /** @var array */
+    /** @var array<string,bool> */
     protected $fields = ['identifierFieldInTrait' => true];
 
     /**

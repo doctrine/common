@@ -2,7 +2,7 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
-trait IdentifierFieldTrait
+trait IdentifierField
 {
     /** @var int */
     private $identifierFieldInTrait;
