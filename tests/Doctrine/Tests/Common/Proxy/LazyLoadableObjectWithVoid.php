@@ -1,10 +1,9 @@
 <?php
+
 namespace Doctrine\Tests\Common\Proxy;
 
 /**
  * Test asset representing a lazy loadable object with void method
- *
- * @since  2.7
  */
 class LazyLoadableObjectWithVoid
 {

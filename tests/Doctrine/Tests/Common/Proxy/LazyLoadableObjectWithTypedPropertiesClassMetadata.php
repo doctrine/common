@@ -1,30 +1,27 @@
 <?php
+
 namespace Doctrine\Tests\Common\Proxy;
 
-use ReflectionClass;
+use BadMethodCallException;
 use Doctrine\Persistence\Mapping\ClassMetadata;
+use ReflectionClass;
+use function array_keys;
 
 /**
  * Class metadata test asset for @see LazyLoadableObjectWithTypedProperties
  */
 class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadata
 {
-    /**
-     * @var ReflectionClass
-     */
+    /** @var ReflectionClass */
     protected $reflectionClass;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $identifier = [
         'publicIdentifierField'    => true,
         'protectedIdentifierField' => true,
     ];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $fields = [
         'publicIdentifierField'    => true,
         'protectedIdentifierField' => true,
@@ -32,9 +29,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
         'protectedPersistentField' => true,
     ];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $associations = [
         'publicAssociation'        => true,
         'protectedAssociation'     => true,
@@ -61,8 +56,8 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
      */
     public function getReflectionClass()
     {
-        if (null === $this->reflectionClass) {
-            $this->reflectionClass = new \ReflectionClass(__NAMESPACE__ . '\LazyLoadableObjectWithTypedProperties');
+        if ($this->reflectionClass === null) {
+            $this->reflectionClass = new ReflectionClass(__NAMESPACE__ . '\LazyLoadableObjectWithTypedProperties');
         }
 
         return $this->reflectionClass;
@@ -97,7 +92,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
      */
     public function isSingleValuedAssociation($fieldName)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 
     /**
@@ -105,7 +100,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
      */
     public function isCollectionValuedAssociation($fieldName)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 
     /**
@@ -145,7 +140,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
      */
     public function getAssociationTargetClass($assocName)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 
     /**
@@ -153,7 +148,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
      */
     public function isAssociationInverseSide($assocName)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 
     /**
@@ -161,7 +156,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
      */
     public function getAssociationMappedByTargetField($assocName)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 
     /**
@@ -169,6 +164,6 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
      */
     public function getIdentifierValues($object)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 }

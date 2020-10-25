@@ -2,5 +2,4 @@
 
 class ClassLoaderTest_ClassB
 {
-
 }

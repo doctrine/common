@@ -12,9 +12,6 @@ class VariadicTypeHintClass
     public $bar;
     public $baz;
 
-    /**
-     * @param ...$types
-     */
     public function addType(...$types)
     {
         $this->types = $types;

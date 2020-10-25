@@ -1,33 +1,27 @@
 <?php
+
 namespace Doctrine\Tests\Common\Proxy;
 
-use ReflectionClass;
+use BadMethodCallException;
 use Doctrine\Persistence\Mapping\ClassMetadata;
+use ReflectionClass;
+use function array_keys;
 
 /**
  * Class metadata test asset for @see LazyLoadableObject
- *
- * @author Marco Pivetta <ocramius@gmail.com>
- * @since  2.4
  */
 class LazyLoadableObjectWithNullableTypehintsClassMetadata implements ClassMetadata
 {
-    /**
-     * @var ReflectionClass
-     */
+    /** @var ReflectionClass */
     protected $reflectionClass;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $identifier = [
         'identifierFieldReturnClassOneLetterNullable' => true,
         'identifierFieldReturnClassOneLetterNullableWithSpace' => true,
     ];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $fields = [
         'identifierFieldReturnClassOneLetterNullable' => true,
         'identifierFieldReturnClassOneLetterNullableWithSpace' => true,
@@ -54,8 +48,8 @@ class LazyLoadableObjectWithNullableTypehintsClassMetadata implements ClassMetad
      */
     public function getReflectionClass()
     {
-        if (null === $this->reflectionClass) {
-            $this->reflectionClass = new \ReflectionClass(__NAMESPACE__ . '\LazyLoadableObjectWithNullableTypehints');
+        if ($this->reflectionClass === null) {
+            $this->reflectionClass = new ReflectionClass(__NAMESPACE__ . '\LazyLoadableObjectWithNullableTypehints');
         }
 
         return $this->reflectionClass;
@@ -90,7 +84,7 @@ class LazyLoadableObjectWithNullableTypehintsClassMetadata implements ClassMetad
      */
     public function isSingleValuedAssociation($fieldName)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 
     /**
@@ -98,7 +92,7 @@ class LazyLoadableObjectWithNullableTypehintsClassMetadata implements ClassMetad
      */
     public function isCollectionValuedAssociation($fieldName)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 
     /**
@@ -138,7 +132,7 @@ class LazyLoadableObjectWithNullableTypehintsClassMetadata implements ClassMetad
      */
     public function getAssociationTargetClass($assocName)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 
     /**
@@ -146,7 +140,7 @@ class LazyLoadableObjectWithNullableTypehintsClassMetadata implements ClassMetad
      */
     public function isAssociationInverseSide($assocName)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 
     /**
@@ -154,7 +148,7 @@ class LazyLoadableObjectWithNullableTypehintsClassMetadata implements ClassMetad
      */
     public function getAssociationMappedByTargetField($assocName)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 
     /**
@@ -162,6 +156,6 @@ class LazyLoadableObjectWithNullableTypehintsClassMetadata implements ClassMetad
      */
     public function getIdentifierValues($object)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 }

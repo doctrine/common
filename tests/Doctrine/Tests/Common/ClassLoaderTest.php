@@ -2,12 +2,18 @@
 
 namespace Doctrine\Tests\Common;
 
+use ClassLoaderTest\ExternalLoader;
 use Doctrine\Common\ClassLoader;
+use Doctrine\Tests\DoctrineTestCase;
+use function interface_exists;
+use function spl_autoload_register;
+use function spl_autoload_unregister;
+use function trait_exists;
 
 /**
  * @group legacy
  */
-class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
+class ClassLoaderTest extends DoctrineTestCase
 {
     public function testClassLoader()
     {
@@ -28,8 +34,9 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
     public function testClassExists()
     {
         self::assertFalse(ClassLoader::classExists('ClassLoaderTest\ClassD'));
-        $badLoader = function ($className) {
+        $badLoader = static function ($className) {
             require __DIR__ . '/ClassLoaderTest/ClassD.php';
+
             return true;
         };
         spl_autoload_register($badLoader);
@@ -41,7 +48,7 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cl = new ClassLoader('ClassLoaderTest', __DIR__);
         $cl->register();
-        self::assertTrue(ClassLoader::getClassLoader('ClassLoaderTest\ClassD') instanceof \Doctrine\Common\ClassLoader);
+        self::assertTrue(ClassLoader::getClassLoader('ClassLoaderTest\ClassD') instanceof ClassLoader);
         self::assertNull(ClassLoader::getClassLoader('This\Class\Does\Not\Exist'));
         $cl->unregister();
     }
@@ -49,11 +56,11 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
     public function testClassExistsWithSilentAutoloader()
     {
         $test             = $this;
-        $silentLoader     = function ($className) use ($test) {
+        $silentLoader     = static function ($className) use ($test) {
             $test->assertSame('ClassLoaderTest\ClassE', $className);
             require __DIR__ . '/ClassLoaderTest/ClassE.php';
         };
-        $additionalLoader = function () use ($test) {
+        $additionalLoader = static function () use ($test) {
             $test->fail('Should not call this loader, class was already loaded');
         };
 
@@ -70,12 +77,12 @@ class ClassLoaderTest extends \Doctrine\Tests\DoctrineTestCase
         require_once __DIR__ . '/ClassLoaderTest/ExternalLoader.php';
 
         // Test static call
-        \ClassLoaderTest\ExternalLoader::registerStatic();
+        ExternalLoader::registerStatic();
         self::assertFalse(ClassLoader::classExists('ClassLoaderTest\Class\That\Does\Not\Exist'));
-        \ClassLoaderTest\ExternalLoader::unregisterStatic();
+        ExternalLoader::unregisterStatic();
 
         // Test object
-        $loader = new \ClassLoaderTest\ExternalLoader();
+        $loader = new ExternalLoader();
         $loader->register();
         self::assertFalse(ClassLoader::classExists('ClassLoaderTest\Class\That\Does\Not\Exist'));
         $loader->unregister();

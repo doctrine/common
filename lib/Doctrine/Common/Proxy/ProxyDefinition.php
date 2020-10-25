@@ -1,36 +1,27 @@
 <?php
+
 namespace Doctrine\Common\Proxy;
+
+use ReflectionProperty;
 
 /**
  * Definition structure how to create a proxy.
- *
- * @author Benjamin Eberlei <kontakt@beberlei.de>
  */
 class ProxyDefinition
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public $proxyClassName;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $identifierFields;
 
-    /**
-     * @var \ReflectionProperty[]
-     */
+    /** @var ReflectionProperty[] */
     public $reflectionFields;
 
-    /**
-     * @var callable
-     */
+    /** @var callable */
     public $initializer;
 
-    /**
-     * @var callable
-     */
+    /** @var callable */
     public $cloner;
 
     /**

@@ -2,32 +2,24 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
+use BadMethodCallException;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use ReflectionClass;
+use function array_keys;
 
 /**
  * Class metadata test asset for @see LazyLoadableObjectWithTrait
  */
 class LazyLoadableObjectWithTraitClassMetadata implements ClassMetadata
 {
-    /**
-     * @var ReflectionClass
-     */
+    /** @var ReflectionClass */
     protected $reflectionClass;
 
-    /**
-     * @var array
-     */
-    protected $identifier = [
-        'identifierFieldInTrait' => true,
-    ];
+    /** @var array */
+    protected $identifier = ['identifierFieldInTrait' => true];
 
-    /**
-     * @var array
-     */
-    protected $fields = [
-        'identifierFieldInTrait' => true,
-    ];
+    /** @var array */
+    protected $fields = ['identifierFieldInTrait' => true];
 
     /**
      * {@inheritDoc}
@@ -50,8 +42,8 @@ class LazyLoadableObjectWithTraitClassMetadata implements ClassMetadata
      */
     public function getReflectionClass()
     {
-        if (null === $this->reflectionClass) {
-            $this->reflectionClass = new \ReflectionClass(__NAMESPACE__ . '\LazyLoadableObjectWithTrait');
+        if ($this->reflectionClass === null) {
+            $this->reflectionClass = new ReflectionClass(__NAMESPACE__ . '\LazyLoadableObjectWithTrait');
         }
 
         return $this->reflectionClass;
@@ -86,7 +78,7 @@ class LazyLoadableObjectWithTraitClassMetadata implements ClassMetadata
      */
     public function isSingleValuedAssociation($fieldName)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 
     /**
@@ -94,7 +86,7 @@ class LazyLoadableObjectWithTraitClassMetadata implements ClassMetadata
      */
     public function isCollectionValuedAssociation($fieldName)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 
     /**
@@ -134,7 +126,7 @@ class LazyLoadableObjectWithTraitClassMetadata implements ClassMetadata
      */
     public function getAssociationTargetClass($assocName)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 
     /**
@@ -142,7 +134,7 @@ class LazyLoadableObjectWithTraitClassMetadata implements ClassMetadata
      */
     public function isAssociationInverseSide($assocName)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 
     /**
@@ -150,7 +142,7 @@ class LazyLoadableObjectWithTraitClassMetadata implements ClassMetadata
      */
     public function getAssociationMappedByTargetField($assocName)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 
     /**
@@ -158,6 +150,6 @@ class LazyLoadableObjectWithTraitClassMetadata implements ClassMetadata
      */
     public function getIdentifierValues($object)
     {
-        throw new \BadMethodCallException('not implemented');
+        throw new BadMethodCallException('not implemented');
     }
 }

@@ -2,19 +2,17 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
+use BadMethodCallException;
+
 /**
  * Magic class asset test with void return type for getter
  */
 class MagicGetClassWithVoid
 {
-
     /**
-     * @param string $name
-     *
-     * @return void
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
-    public function __get(string $name): void
+    public function __get(string $name) : void
     {
         return;
     }

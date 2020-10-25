@@ -1,25 +1,24 @@
 <?php
+
 namespace Doctrine\Tests\Common\Proxy;
 
-use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Proxy\ProxyGenerator;
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use PHPUnit\Framework\TestCase;
 use stdClass;
+use function class_exists;
 
 /**
  * Test that identifier getter does not cause lazy loading.
  * These tests make assumptions about the structure of LazyLoadableObjectWithTypehints
- *
- * @author Marco Pivetta <ocramius@gmail.com>
- * @author Jan Langer <jan.langer@slevomat.cz>
  */
-class ProxyLogicIdentifierGetterTest extends \PHPUnit\Framework\TestCase
+class ProxyLogicIdentifierGetterTest extends TestCase
 {
     /**
-     * @dataProvider methodsForWhichLazyLoadingShouldBeDisabled
+     * @param string $fieldName
+     * @param mixed  $expectedReturnedValue
      *
-     * @param ClassMetadata $metadata
-     * @param string        $fieldName
-     * @param mixed         $expectedReturnedValue
+     * @dataProvider methodsForWhichLazyLoadingShouldBeDisabled
      */
     public function testNoLazyLoadingForIdentifier(ClassMetadata $metadata, $fieldName, $expectedReturnedValue)
     {
@@ -28,7 +27,7 @@ class ProxyLogicIdentifierGetterTest extends \PHPUnit\Framework\TestCase
         $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
         $proxyFileName  = $proxyGenerator->getProxyFileName($className);
 
-        if ( ! class_exists($proxyClassName, false)) {
+        if (! class_exists($proxyClassName, false)) {
             $proxyGenerator->generateProxyClass($metadata, $proxyFileName);
 
             /** @noinspection PhpIncludeInspection */
@@ -36,10 +35,10 @@ class ProxyLogicIdentifierGetterTest extends \PHPUnit\Framework\TestCase
         }
 
         $proxy = new $proxyClassName(
-            function () {
+            static function () {
                 self::fail('Initialization is never supposed to happen');
             },
-            function () {
+            static function () {
                 self::fail('Initialization is never supposed to happen');
             }
         );

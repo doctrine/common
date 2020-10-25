@@ -1,14 +1,19 @@
 <?php
+
 namespace Doctrine\Common\Util;
 
 use Doctrine\Persistence\Proxy;
+use ReflectionClass;
+use function get_class;
+use function get_parent_class;
+use function ltrim;
+use function rtrim;
+use function strrpos;
+use function substr;
 
 /**
  * Class and reflection related functionality for objects that
  * might or not be proxy objects at the moment.
- *
- * @author Benjamin Eberlei <kontakt@beberlei.de>
- * @author Johannes Schmitt <schmittjoh@gmail.com>
  */
 class ClassUtils
 {
@@ -57,11 +62,11 @@ class ClassUtils
      *
      * @param string $class
      *
-     * @return \ReflectionClass
+     * @return ReflectionClass
      */
     public static function newReflectionClass($class)
     {
-        return new \ReflectionClass(self::getRealClass($class));
+        return new ReflectionClass(self::getRealClass($class));
     }
 
     /**
@@ -69,7 +74,7 @@ class ClassUtils
      *
      * @param object $object
      *
-     * @return \ReflectionClass
+     * @return ReflectionClass
      */
     public static function newReflectionObject($object)
     {

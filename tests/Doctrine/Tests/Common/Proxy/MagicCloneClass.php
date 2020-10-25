@@ -7,24 +7,16 @@ namespace Doctrine\Tests\Common\Proxy;
  */
 class MagicCloneClass
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public $id = 'id';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $publicField = 'publicField';
 
-    /**
-     * @var boolean
-     */
+    /** @var bool */
     public $cloned = false;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $clonedValue = 'defaultValue';
 
     /**

@@ -7,24 +7,16 @@ namespace Doctrine\Tests\Common\Proxy;
  */
 class MagicSleepClass
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public $id = 'id';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $publicField = 'publicField';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $serializedField = 'defaultValue';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $nonSerializedField = 'defaultValue';
 
     /**

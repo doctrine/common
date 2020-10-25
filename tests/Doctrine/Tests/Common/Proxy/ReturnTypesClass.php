@@ -2,12 +2,15 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
+use Countable;
+use stdClass;
+
 /**
  * Test PHP 7 return types class.
  */
-class ReturnTypesClass extends \stdClass
+class ReturnTypesClass extends stdClass
 {
-    public function returnsClass() : \stdClass
+    public function returnsClass() : stdClass
     {
     }
 
@@ -31,7 +34,7 @@ class ReturnTypesClass extends \stdClass
     {
     }
 
-    public function returnsInterface() : \Countable
+    public function returnsInterface() : Countable
     {
     }
 }
