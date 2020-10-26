@@ -2,19 +2,31 @@
 
 namespace Doctrine\Tests\Common\Util;
 
-use Doctrine\Tests\DoctrineTestCase;
+use ArrayIterator;
+use ArrayObject;
+use DateTime;
+use DateTimeImmutable;
+use DateTimeZone;
 use Doctrine\Common\Util\Debug;
+use Doctrine\Tests\DoctrineTestCase;
+use stdClass;
+use function ob_end_clean;
+use function ob_get_contents;
+use function ob_start;
+use function print_r;
+use function strpos;
+use function substr;
 
 class DebugTest extends DoctrineTestCase
 {
     public function testExportObject()
     {
-        $obj      = new \stdClass;
-        $obj->foo = "bar";
+        $obj      = new stdClass();
+        $obj->foo = 'bar';
         $obj->bar = 1234;
 
         $var = Debug::export($obj, 2);
-        self::assertEquals("stdClass", $var->__CLASS__);
+        self::assertEquals('stdClass', $var->__CLASS__);
     }
 
     public function testExportObjectWithReference()
@@ -41,7 +53,7 @@ class DebugTest extends DoctrineTestCase
 
     public function testExportDateTime()
     {
-        $obj = new \DateTime('2010-10-10 10:10:10', new \DateTimeZone('UTC'));
+        $obj = new DateTime('2010-10-10 10:10:10', new DateTimeZone('UTC'));
 
         $var = Debug::export($obj, 2);
         self::assertEquals('DateTime', $var->__CLASS__);
@@ -50,7 +62,7 @@ class DebugTest extends DoctrineTestCase
 
     public function testExportDateTimeImmutable()
     {
-        $obj = new \DateTimeImmutable('2010-10-10 10:10:10', new \DateTimeZone('UTC'));
+        $obj = new DateTimeImmutable('2010-10-10 10:10:10', new DateTimeZone('UTC'));
 
         $var = Debug::export($obj, 2);
         self::assertEquals('DateTimeImmutable', $var->__CLASS__);
@@ -59,7 +71,7 @@ class DebugTest extends DoctrineTestCase
 
     public function testExportDateTimeZone()
     {
-        $obj = new \DateTimeImmutable('2010-10-10 12:34:56', new \DateTimeZone('Europe/Rome'));
+        $obj = new DateTimeImmutable('2010-10-10 12:34:56', new DateTimeZone('Europe/Rome'));
 
         $var = Debug::export($obj, 2);
         self::assertEquals('DateTimeImmutable', $var->__CLASS__);
@@ -68,12 +80,12 @@ class DebugTest extends DoctrineTestCase
 
     public function testExportArrayTraversable()
     {
-        $obj = new \ArrayObject(['foobar']);
+        $obj = new ArrayObject(['foobar']);
 
         $var = Debug::export($obj, 2);
         self::assertContains('foobar', $var->__STORAGE__);
 
-        $it = new \ArrayIterator(['foobar']);
+        $it = new ArrayIterator(['foobar']);
 
         $var = Debug::export($it, 5);
         self::assertContains('foobar', $var->__STORAGE__);
@@ -105,17 +117,19 @@ class DebugTest extends DoctrineTestCase
     }
 
     /**
+     * @param array<string, int> $expected
+     *
      * @dataProvider provideAttributesCases
      */
     public function testExportParentAttributes(TestAsset\ParentClass $class, array $expected)
     {
-        $print_r_class    = print_r($class, true);
-        $print_r_expected = print_r($expected, true);
+        $actualRepresentation   = print_r($class, true);
+        $expectedRepresentation = print_r($expected, true);
 
-        $print_r_class    = substr($print_r_class, strpos($print_r_class, '('));
-        $print_r_expected = substr($print_r_expected, strpos($print_r_expected, '('));
+        $actualRepresentation   = substr($actualRepresentation, strpos($actualRepresentation, '('));
+        $expectedRepresentation = substr($expectedRepresentation, strpos($expectedRepresentation, '('));
 
-        self::assertSame($print_r_class, $print_r_expected);
+        self::assertSame($actualRepresentation, $expectedRepresentation);
 
         $var = Debug::export($class, 3);
         $var = (array) $var;
@@ -126,27 +140,27 @@ class DebugTest extends DoctrineTestCase
 
     public function provideAttributesCases()
     {
-        return array(
-            'different-attributes' => array(
+        return [
+            'different-attributes' => [
                 new TestAsset\ChildClass(),
-                array(
+                [
                     'childPublicAttribute' => 4,
                     'childProtectedAttribute:protected' => 5,
                     'childPrivateAttribute:Doctrine\Tests\Common\Util\TestAsset\ChildClass:private' => 6,
                     'parentPublicAttribute' => 1,
                     'parentProtectedAttribute:protected' => 2,
                     'parentPrivateAttribute:Doctrine\Tests\Common\Util\TestAsset\ParentClass:private' => 3,
-                ),
-            ),
-            'same-attributes' => array(
+                ],
+            ],
+            'same-attributes' => [
                 new TestAsset\ChildWithSameAttributesClass(),
-                array(
+                [
                     'parentPublicAttribute' => 4,
                     'parentProtectedAttribute:protected' => 5,
                     'parentPrivateAttribute:Doctrine\Tests\Common\Util\TestAsset\ChildWithSameAttributesClass:private' => 6,
                     'parentPrivateAttribute:Doctrine\Tests\Common\Util\TestAsset\ParentClass:private' => 3,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

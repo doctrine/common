@@ -2,6 +2,8 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
+use stdClass;
+
 /**
  * Test PHP 7.0 compatibility of nullable type hints generation on a non-optional hinted parameter that is nullable
  *
@@ -9,7 +11,7 @@ namespace Doctrine\Tests\Common\Proxy;
  */
 class NullableNonOptionalHintClass
 {
-    public function midSignatureNullableParameter(\stdClass $param = null, $secondParam)
+    public function midSignatureNullableParameter(?stdClass $param = null, $secondParam)
     {
     }
 

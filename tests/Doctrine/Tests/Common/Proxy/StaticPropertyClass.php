@@ -7,5 +7,6 @@ namespace Doctrine\Tests\Common\Proxy;
  */
 class StaticPropertyClass
 {
+    /** @var mixed */
     protected static $protectedStaticProperty;
 }

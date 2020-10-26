@@ -40,6 +40,9 @@ parameters:
         -
             message: '#^Method Doctrine\\Tests\\Common\\Proxy\\MagicIssetClassWithInteger::__isset\(\) should return bool but returns int\.$#'
             path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/MagicIssetClassWithInteger.php'
+        -
+            message: '#^Access to an undefined property Doctrine\\Tests\\Common\\Proxy\\MagicGetByRefClass\:\:\$nonExisting\.$#'
+            path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyMagicMethodsTest.php'
 
 includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon

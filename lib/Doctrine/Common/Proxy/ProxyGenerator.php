@@ -1,19 +1,56 @@
 <?php
+
 namespace Doctrine\Common\Proxy;
 
 use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\Persistence\Mapping\ClassMetadata;
+use ReflectionMethod;
+use ReflectionParameter;
+use ReflectionProperty;
+use ReflectionType;
+use const DIRECTORY_SEPARATOR;
+use function array_combine;
+use function array_diff;
+use function array_key_exists;
 use function array_map;
+use function array_slice;
+use function call_user_func;
+use function chmod;
+use function class_exists;
+use function dirname;
+use function explode;
+use function file;
+use function file_put_contents;
+use function implode;
+use function in_array;
+use function interface_exists;
+use function is_callable;
+use function is_dir;
+use function is_string;
+use function is_writable;
+use function lcfirst;
+use function ltrim;
 use function method_exists;
+use function mkdir;
+use function preg_match;
+use function preg_match_all;
+use function rename;
+use function rtrim;
+use function sprintf;
+use function str_replace;
+use function strrev;
+use function strtolower;
+use function strtr;
+use function substr;
+use function trim;
+use function uniqid;
+use function var_export;
 
 /**
  * This factory is used to generate proxy classes.
  * It builds proxies from given parameters, a template and class metadata.
- *
- * @author Marco Pivetta <ocramius@gmail.com>
- * @since  2.4
  */
 class ProxyGenerator
 {
@@ -21,7 +58,7 @@ class ProxyGenerator
      * Used to match very simple id methods that don't need
      * to be decorated since the identifier is known.
      */
-    const PATTERN_MATCH_ID_METHOD = '((public\s+)?(function\s+%s\s*\(\)\s*)\s*(?::\s*\??\s*\\\\?[a-z_\x7f-\xff][\w\x7f-\xff]*(?:\\\\[a-z_\x7f-\xff][\w\x7f-\xff]*)*\s*)?{\s*return\s*\$this->%s;\s*})i';
+    public const PATTERN_MATCH_ID_METHOD = '((public\s+)?(function\s+%s\s*\(\)\s*)\s*(?::\s*\??\s*\\\\?[a-z_\x7f-\xff][\w\x7f-\xff]*(?:\\\\[a-z_\x7f-\xff][\w\x7f-\xff]*)*\s*)?{\s*return\s*\$this->%s;\s*})i';
 
     /**
      * The namespace that contains all proxy classes.
@@ -200,11 +237,11 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
      */
     public function __construct($proxyDirectory, $proxyNamespace)
     {
-        if ( ! $proxyDirectory) {
+        if (! $proxyDirectory) {
             throw InvalidArgumentException::proxyDirectoryRequired();
         }
 
-        if ( ! $proxyNamespace) {
+        if (! $proxyNamespace) {
             throw InvalidArgumentException::proxyNamespaceRequired();
         }
 
@@ -222,7 +259,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
      */
     public function setPlaceholder($name, $placeholder)
     {
-        if ( ! is_string($placeholder) && ! is_callable($placeholder)) {
+        if (! is_string($placeholder) && ! is_callable($placeholder)) {
             throw InvalidArgumentException::invalidPlaceholder($name);
         }
 
@@ -242,8 +279,8 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     /**
      * Generates a proxy class file.
      *
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class    Metadata for the original class.
-     * @param string|bool                                 $fileName Filename (full path) for the generated class. If none is given, eval() is used.
+     * @param ClassMetadata $class    Metadata for the original class.
+     * @param string|bool   $fileName Filename (full path) for the generated class. If none is given, eval() is used.
      *
      * @throws InvalidArgumentException
      * @throws UnexpectedValueException
@@ -258,23 +295,23 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
         $placeholders       = [];
 
         foreach ($placeholderMatches as $placeholder => $name) {
-            $placeholders[$placeholder] = isset($this->placeholders[$name])
-                ? $this->placeholders[$name]
-                : [$this, 'generate' . $name];
+            $placeholders[$placeholder] = $this->placeholders[$name] ?? [$this, 'generate' . $name];
         }
 
         foreach ($placeholders as & $placeholder) {
-            if (is_callable($placeholder)) {
-                $placeholder = call_user_func($placeholder, $class);
+            if (! is_callable($placeholder)) {
+                continue;
             }
+
+            $placeholder = call_user_func($placeholder, $class);
         }
 
         $proxyCode = strtr($this->proxyClassTemplate, $placeholders);
 
-        if ( ! $fileName) {
+        if (! $fileName) {
             $proxyClassName = $this->generateNamespace($class) . '\\' . $this->generateProxyShortClassName($class);
 
-            if ( ! class_exists($proxyClassName)) {
+            if (! class_exists($proxyClassName)) {
                 eval(substr($proxyCode, 5));
             }
 
@@ -283,11 +320,11 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
 
         $parentDirectory = dirname($fileName);
 
-        if ( ! is_dir($parentDirectory) && (false === @mkdir($parentDirectory, 0775, true))) {
+        if (! is_dir($parentDirectory) && (@mkdir($parentDirectory, 0775, true) === false)) {
             throw UnexpectedValueException::proxyDirectoryNotWritable($this->proxyDirectory);
         }
 
-        if ( ! is_writable($parentDirectory)) {
+        if (! is_writable($parentDirectory)) {
             throw UnexpectedValueException::proxyDirectoryNotWritable($this->proxyDirectory);
         }
 
@@ -299,8 +336,6 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     }
 
     /**
-     * @param ClassMetadata $class
-     *
      * @throws InvalidArgumentException
      */
     private function verifyClassCanBeProxied(ClassMetadata $class)
@@ -317,8 +352,6 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     /**
      * Generates the proxy short class name to be used in the template.
      *
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
-     *
      * @return string
      */
     private function generateProxyShortClassName(ClassMetadata $class)
@@ -331,8 +364,6 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
 
     /**
      * Generates the proxy namespace.
-     *
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -347,8 +378,6 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     /**
      * Generates the original class name.
      *
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
-     *
      * @return string
      */
     private function generateClassName(ClassMetadata $class)
@@ -358,8 +387,6 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
 
     /**
      * Generates the array representation of lazy loaded public properties and their default values.
-     *
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -378,8 +405,6 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     /**
      * Generates the array representation of lazy loaded public properties names.
      *
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
-     *
      * @return string
      */
     private function generateLazyPropertiesDefaults(ClassMetadata $class)
@@ -389,8 +414,6 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
 
     /**
      * Generates the constructor code (un-setting public lazy loaded properties, setting identifier field values).
-     *
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -406,21 +429,17 @@ EOT;
             return '$this->' . $name;
         }, $this->getLazyLoadedPublicPropertiesNames($class));
 
-        $constructorImpl .= ($toUnset === [] ? '' : '        unset(' . implode(', ', $toUnset) . ");\n")
+        return $constructorImpl . ($toUnset === [] ? '' : '        unset(' . implode(', ', $toUnset) . ");\n")
             . <<<'EOT'
 
         $this->__initializer__ = $initializer;
         $this->__cloner__      = $cloner;
     }
 EOT;
-
-        return $constructorImpl;
     }
 
     /**
      * Generates the magic getter invoked when lazy loaded public properties are requested.
-     *
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -465,7 +484,7 @@ EOT;
 
 EOT;
 
-        if ( ! empty($lazyPublicProperties)) {
+        if (! empty($lazyPublicProperties)) {
             $magicGet .= <<<'EOT'
         if (\array_key_exists($name, self::$lazyPropertiesNames)) {
             $this->__initializer__ && $this->__initializer__->__invoke($this, '__get', [$name]);
@@ -516,8 +535,6 @@ EOT
     /**
      * Generates the magic setter (currently unused).
      *
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
-     *
      * @return string
      */
     private function generateMagicSet(ClassMetadata $class)
@@ -550,7 +567,7 @@ EOT
 EOT
             , $inheritDoc, $parametersString, $returnTypeHint);
 
-        if ( ! empty($lazyPublicProperties)) {
+        if (! empty($lazyPublicProperties)) {
             $magicSet .= <<<'EOT'
         if (\array_key_exists($name, self::$lazyPropertiesNames)) {
             $this->__initializer__ && $this->__initializer__->__invoke($this, '__set', [$name, $value]);
@@ -571,7 +588,7 @@ EOT;
         return parent::__set($name, $value);
 EOT;
         } else {
-            $magicSet .= "        \$this->\$name = \$value;";
+            $magicSet .= '        $this->$name = $value;';
         }
 
         return $magicSet . "\n    }";
@@ -579,8 +596,6 @@ EOT;
 
     /**
      * Generates the magic issetter invoked when lazy loaded public properties are checked against isset().
-     *
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -613,7 +628,7 @@ EOT;
 
 EOT;
 
-        if ( ! empty($lazyPublicProperties)) {
+        if (! empty($lazyPublicProperties)) {
             $magicIsset .= <<<'EOT'
         if (\array_key_exists($name, self::$lazyPropertiesNames)) {
             $this->__initializer__ && $this->__initializer__->__invoke($this, '__isset', [$name]);
@@ -632,7 +647,7 @@ EOT;
         return parent::__isset($name);
 EOT;
         } else {
-            $magicIsset .= "        return false;";
+            $magicIsset .= '        return false;';
         }
 
         return $magicIsset . "\n    }";
@@ -640,8 +655,6 @@ EOT;
 
     /**
      * Generates implementation for the `__sleep` method of proxies.
-     *
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -674,7 +687,7 @@ EOT;
 
         $allProperties = ['__isInitialized__'];
 
-        /* @var $prop \ReflectionProperty */
+        /** @var ReflectionProperty $prop */
         foreach ($class->getReflectionClass()->getProperties() as $prop) {
             if ($prop->isStatic()) {
                 continue;
@@ -712,8 +725,6 @@ EOT;
     /**
      * Generates implementation for the `__wakeup` method of proxies.
      *
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
-     *
      * @return string
      */
     private function generateWakeupImpl(ClassMetadata $class)
@@ -749,8 +760,8 @@ EOT;
 
 EOT;
 
-        if ( ! empty($unsetPublicProperties)) {
-            $wakeupImpl .= "\n            unset(" . implode(', ', $unsetPublicProperties) . ");";
+        if (! empty($unsetPublicProperties)) {
+            $wakeupImpl .= "\n            unset(" . implode(', ', $unsetPublicProperties) . ');';
         }
 
         $wakeupImpl .= "\n        }";
@@ -766,8 +777,6 @@ EOT;
 
     /**
      * Generates implementation for the `__clone` method of proxies.
-     *
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return string
      */
@@ -791,15 +800,13 @@ EOT;
     /**
      * Generates decorated methods by picking those available in the parent class.
      *
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
-     *
      * @return string
      */
     private function generateMethods(ClassMetadata $class)
     {
         $methods           = '';
         $methodNames       = [];
-        $reflectionMethods = $class->getReflectionClass()->getMethods(\ReflectionMethod::IS_PUBLIC);
+        $reflectionMethods = $class->getReflectionClass()->getMethods(ReflectionMethod::IS_PUBLIC);
         $skippedMethods    = [
             '__sleep'   => true,
             '__clone'   => true,
@@ -852,11 +859,11 @@ EOT;
             $callParamsString   = implode(', ', $this->getParameterNamesForParentCall($method->getParameters()));
 
             $methods .= "\n        \$this->__initializer__ "
-                . "&& \$this->__initializer__->__invoke(\$this, " . var_export($name, true)
-                . ", [" . $invokeParamsString . "]);"
+                . '&& $this->__initializer__->__invoke($this, ' . var_export($name, true)
+                . ', [' . $invokeParamsString . ']);'
                 . "\n\n        "
                 . ($this->shouldProxiedMethodReturn($method) ? 'return ' : '')
-                . "parent::" . $name . '(' . $callParamsString . ');'
+                . 'parent::' . $name . '(' . $callParamsString . ');'
                 . "\n" . '    }' . "\n";
         }
 
@@ -890,23 +897,20 @@ EOT;
      * ID is interesting for the userland code (for example in views that
      * generate links to the entity, but do not display anything else).
      *
-     * @param \ReflectionMethod                           $method
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
+     * @param ReflectionMethod $method
      *
-     * @return boolean
+     * @return bool
      */
     private function isShortIdentifierGetter($method, ClassMetadata $class)
     {
         $identifier = lcfirst(substr($method->getName(), 3));
         $startLine  = $method->getStartLine();
         $endLine    = $method->getEndLine();
-        $cheapCheck = (
-            $method->getNumberOfParameters() == 0
-            && substr($method->getName(), 0, 3) == 'get'
+        $cheapCheck = $method->getNumberOfParameters() === 0
+            && substr($method->getName(), 0, 3) === 'get'
             && in_array($identifier, $class->getIdentifier(), true)
             && $class->hasField($identifier)
-            && (($endLine - $startLine) <= 4)
-        );
+            && (($endLine - $startLine) <= 4);
 
         if ($cheapCheck) {
             $code = file($method->getFileName());
@@ -925,20 +929,20 @@ EOT;
     /**
      * Generates the list of public properties to be lazy loaded.
      *
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
-     *
      * @return array<int, string>
      */
     private function getLazyLoadedPublicPropertiesNames(ClassMetadata $class) : array
     {
         $properties = [];
 
-        foreach ($class->getReflectionClass()->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
+        foreach ($class->getReflectionClass()->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
             $name = $property->getName();
 
-            if (($class->hasField($name) || $class->hasAssociation($name)) && ! $class->isIdentifier($name)) {
-                $properties[] = $name;
+            if ((! $class->hasField($name) && ! $class->hasAssociation($name)) || $class->isIdentifier($name)) {
+                continue;
             }
+
+            $properties[] = $name;
         }
 
         return $properties;
@@ -946,8 +950,6 @@ EOT;
 
     /**
      * Generates the list of default values of public properties.
-     *
-     * @param \Doctrine\Persistence\Mapping\ClassMetadata $class
      *
      * @return mixed[]
      */
@@ -957,10 +959,10 @@ EOT;
         $lazyLoadedPublicProperties = $this->getLazyLoadedPublicPropertiesNames($class);
         $defaultValues              = [];
 
-        foreach ($class->getReflectionClass()->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
+        foreach ($class->getReflectionClass()->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
             $name = $property->getName();
 
-            if ( ! in_array($name, $lazyLoadedPublicProperties, true)) {
+            if (! in_array($name, $lazyLoadedPublicProperties, true)) {
                 continue;
             }
 
@@ -968,7 +970,7 @@ EOT;
                 $defaultValues[$name] = $defaultProperties[$name];
             } elseif (method_exists($property, 'getType')) {
                 $propertyType = $property->getType();
-                if (null !== $propertyType && $propertyType->allowsNull()) {
+                if ($propertyType !== null && $propertyType->allowsNull()) {
                     $defaultValues[$name] = null;
                 }
             }
@@ -978,8 +980,8 @@ EOT;
     }
 
     /**
-     * @param \ReflectionParameter[] $parameters
-     * @param string[]               $renameParameters
+     * @param ReflectionParameter[] $parameters
+     * @param string[]              $renameParameters
      *
      * @return string
      */
@@ -987,13 +989,14 @@ EOT;
     {
         $parameterDefinitions = [];
 
-        /* @var $param \ReflectionParameter */
+        /** @var ReflectionParameter $param */
         $i = -1;
         foreach ($parameters as $param) {
             $i++;
             $parameterDefinition = '';
 
-            if ($parameterType = $this->getParameterType($param)) {
+            $parameterType = $this->getParameterType($param);
+            if ($parameterType) {
                 $parameterDefinition .= $parameterType . ' ';
             }
 
@@ -1018,13 +1021,11 @@ EOT;
     }
 
     /**
-     * @param \ReflectionParameter $parameter
-     *
      * @return string|null
      */
-    private function getParameterType(\ReflectionParameter $parameter)
+    private function getParameterType(ReflectionParameter $parameter)
     {
-        if ( ! $parameter->hasType()) {
+        if (! $parameter->hasType()) {
             return null;
         }
 
@@ -1032,14 +1033,14 @@ EOT;
     }
 
     /**
-     * @param \ReflectionParameter[] $parameters
+     * @param ReflectionParameter[] $parameters
      *
      * @return string[]
      */
     private function getParameterNamesForInvoke(array $parameters)
     {
         return array_map(
-            function (\ReflectionParameter $parameter) {
+            static function (ReflectionParameter $parameter) {
                 return '$' . $parameter->getName();
             },
             $parameters
@@ -1047,14 +1048,14 @@ EOT;
     }
 
     /**
-     * @param \ReflectionParameter[] $parameters
+     * @param ReflectionParameter[] $parameters
      *
      * @return string[]
      */
     private function getParameterNamesForParentCall(array $parameters)
     {
         return array_map(
-            function (\ReflectionParameter $parameter) {
+            static function (ReflectionParameter $parameter) {
                 $name = '';
 
                 if ($parameter->isVariadic()) {
@@ -1070,13 +1071,11 @@ EOT;
     }
 
     /**
-     * @param \ReflectionMethod $method
-     *
      * @return string
      */
-    private function getMethodReturnType(\ReflectionMethod $method)
+    private function getMethodReturnType(ReflectionMethod $method)
     {
-        if ( ! $method->hasReturnType()) {
+        if (! $method->hasReturnType()) {
             return '';
         }
 
@@ -1084,44 +1083,38 @@ EOT;
     }
 
     /**
-     * @param \ReflectionMethod $method
-     *
      * @return bool
      */
-    private function shouldProxiedMethodReturn(\ReflectionMethod $method)
+    private function shouldProxiedMethodReturn(ReflectionMethod $method)
     {
-        if ( ! $method->hasReturnType()) {
+        if (! $method->hasReturnType()) {
             return true;
         }
 
-        return 'void' !== strtolower($this->formatType($method->getReturnType(), $method));
+        return strtolower($this->formatType($method->getReturnType(), $method)) !== 'void';
     }
 
     /**
-     * @param \ReflectionType $type
-     * @param \ReflectionMethod $method
-     * @param \ReflectionParameter|null $parameter
-     *
      * @return string
      */
     private function formatType(
-        \ReflectionType $type,
-        \ReflectionMethod $method,
-        \ReflectionParameter $parameter = null
+        ReflectionType $type,
+        ReflectionMethod $method,
+        ?ReflectionParameter $parameter = null
     ) {
         $name      = $type->getName();
         $nameLower = strtolower($name);
 
-        if ('self' === $nameLower) {
+        if ($nameLower === 'self') {
             $name = $method->getDeclaringClass()->getName();
         }
 
-        if ('parent' === $nameLower) {
+        if ($nameLower === 'parent') {
             $name = $method->getDeclaringClass()->getParentClass()->getName();
         }
 
-        if ( ! $type->isBuiltin() && ! class_exists($name) && ! interface_exists($name)) {
-            if (null !== $parameter) {
+        if (! $type->isBuiltin() && ! class_exists($name) && ! interface_exists($name)) {
+            if ($parameter !== null) {
                 throw UnexpectedValueException::invalidParameterTypeHint(
                     $method->getDeclaringClass()->getName(),
                     $method->getName(),
@@ -1135,12 +1128,12 @@ EOT;
             );
         }
 
-        if ( ! $type->isBuiltin()) {
+        if (! $type->isBuiltin()) {
             $name = '\\' . $name;
         }
 
         if ($type->allowsNull()
-            && (null === $parameter || ! $parameter->isDefaultValueAvailable() || null !== $parameter->getDefaultValue())
+            && ($parameter === null || ! $parameter->isDefaultValueAvailable() || $parameter->getDefaultValue() !== null)
         ) {
             $name = '?' . $name;
         }

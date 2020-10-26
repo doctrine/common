@@ -7,9 +7,6 @@ namespace Doctrine\Tests\Common\Proxy;
  */
 class CallableTypeHintClass
 {
-    /**
-     * @param callable $foo
-     */
     public function call(callable $foo)
     {
     }

@@ -1,12 +1,22 @@
 <?php
+
 namespace Doctrine\Common\Proxy;
 
+use Closure;
 use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
+use const DIRECTORY_SEPARATOR;
+use function call_user_func;
+use function file_exists;
+use function is_callable;
+use function ltrim;
+use function spl_autoload_register;
+use function str_replace;
+use function strlen;
+use function strpos;
+use function substr;
 
 /**
  * Special Autoloader for Proxy classes, which are not PSR-0 compliant.
- *
- * @author Benjamin Eberlei <kontakt@beberlei.de>
  */
 class Autoloader
 {
@@ -27,7 +37,7 @@ class Autoloader
      */
     public static function resolveFile($proxyDir, $proxyNamespace, $className)
     {
-        if (0 !== strpos($className, $proxyNamespace)) {
+        if (strpos($className, $proxyNamespace) !== 0) {
             throw InvalidArgumentException::notProxyClass($className, $proxyNamespace);
         }
 
@@ -47,7 +57,7 @@ class Autoloader
      * @param string        $proxyNamespace
      * @param callable|null $notFoundCallback Invoked when the proxy file is not found.
      *
-     * @return \Closure
+     * @return Closure
      *
      * @throws InvalidArgumentException
      */
@@ -55,20 +65,26 @@ class Autoloader
     {
         $proxyNamespace = ltrim($proxyNamespace, '\\');
 
-        if ( ! (null === $notFoundCallback || is_callable($notFoundCallback))) {
+        if ($notFoundCallback !== null && ! is_callable($notFoundCallback)) {
             throw InvalidArgumentException::invalidClassNotFoundCallback($notFoundCallback);
         }
 
-        $autoloader = function ($className) use ($proxyDir, $proxyNamespace, $notFoundCallback) {
-            if (0 === strpos($className, $proxyNamespace)) {
-                $file = Autoloader::resolveFile($proxyDir, $proxyNamespace, $className);
-
-                if ($notFoundCallback && ! file_exists($file)) {
-                    call_user_func($notFoundCallback, $proxyDir, $proxyNamespace, $className);
-                }
-
-                require $file;
+        $autoloader = static function ($className) use ($proxyDir, $proxyNamespace, $notFoundCallback) {
+            if ($proxyNamespace === '') {
+                return;
             }
+
+            if (strpos($className, $proxyNamespace) !== 0) {
+                return;
+            }
+
+            $file = Autoloader::resolveFile($proxyDir, $proxyNamespace, $className);
+
+            if ($notFoundCallback && ! file_exists($file)) {
+                call_user_func($notFoundCallback, $proxyDir, $proxyNamespace, $className);
+            }
+
+            require $file;
         };
 
         spl_autoload_register($autoloader);

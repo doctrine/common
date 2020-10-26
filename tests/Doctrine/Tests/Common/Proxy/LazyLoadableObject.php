@@ -1,52 +1,36 @@
 <?php
+
 namespace Doctrine\Tests\Common\Proxy;
+
+use stdClass;
 
 /**
  * Test asset representing a lazy loadable object
- *
- * @author Marco Pivetta <ocramius@gmail.com>
- * @since  2.4
  */
 class LazyLoadableObject
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public $publicIdentifierField;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $protectedIdentifierField;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $publicTransientField = 'publicTransientFieldValue';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $protectedTransientField = 'protectedTransientFieldValue';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $publicPersistentField = 'publicPersistentFieldValue';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $protectedPersistentField = 'protectedPersistentFieldValue';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $publicAssociation = 'publicAssociationValue';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $protectedAssociation = 'protectedAssociationValue';
 
     /**
@@ -73,16 +57,10 @@ class LazyLoadableObject
         return $this->protectedAssociation;
     }
 
-    /**
-     * @param \stdClass $param
-     */
-    public function publicTypeHintedMethod(\stdClass $param)
+    public function publicTypeHintedMethod(stdClass $param)
     {
     }
 
-    /**
-     *
-     */
     public function &byRefMethod()
     {
     }

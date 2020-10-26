@@ -2,31 +2,27 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
+use BadMethodCallException;
+
 /**
  * Test asset class
  */
 class MagicSetClass
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public $id = 'id';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $publicField = 'publicField';
 
-    /**
-     * @var string|null
-     */
+    /** @var string|null */
     public $testAttribute;
 
     /**
      * @param string $name
      * @param mixed  $value
      *
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     public function __set($name, $value)
     {
@@ -35,7 +31,7 @@ class MagicSetClass
         }
 
         if ($name === 'publicField' || $name === 'id') {
-            throw new \BadMethodCallException('Should never be called for "publicField" or "id"');
+            throw new BadMethodCallException('Should never be called for "publicField" or "id"');
         }
 
         $this->testAttribute = $value;
