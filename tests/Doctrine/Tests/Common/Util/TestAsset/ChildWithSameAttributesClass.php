@@ -4,7 +4,10 @@ namespace Doctrine\Tests\Common\Util\TestAsset;
 
 final class ChildWithSameAttributesClass extends ParentClass
 {
-    public $parentPublicAttribute       = 4;
+    /** @var int */
+    public $parentPublicAttribute = 4;
+    /** @var int */
     protected $parentProtectedAttribute = 5;
-    private $parentPrivateAttribute     = 6;
+    /** @var int */
+    private $parentPrivateAttribute = 6;
 }

@@ -1,20 +1,38 @@
 <?php
+
 namespace Doctrine\Common\Util;
 
+use ArrayIterator;
+use ArrayObject;
+use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\Proxy;
+use stdClass;
+use function array_keys;
+use function count;
+use function end;
+use function explode;
+use function extension_loaded;
+use function get_class;
+use function html_entity_decode;
+use function ini_get;
+use function ini_set;
+use function is_array;
+use function is_object;
+use function method_exists;
+use function ob_end_clean;
+use function ob_get_contents;
+use function ob_start;
+use function spl_object_hash;
+use function strip_tags;
+use function var_dump;
 
 /**
  * Static class containing most used debug methods.
  *
- * @link   www.doctrine-project.org
- * @since  2.0
- * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author Jonathan Wage <jonwage@gmail.com>
- * @author Roman Borschel <roman@code-factory.org>
- * @author Giorgio Sironi <piccoloprincipeazzurro@gmail.com>
- *
  * @deprecated The Debug class is deprecated, please use symfony/var-dumper instead.
+ *
+ * @link   www.doctrine-project.org
  */
 final class Debug
 {
@@ -30,10 +48,10 @@ final class Debug
      *
      * @link https://xdebug.org/
      *
-     * @param mixed   $var       The variable to dump.
-     * @param integer $maxDepth  The maximum nesting level for object properties.
-     * @param boolean $stripTags Whether output should strip HTML tags.
-     * @param boolean $echo      Send the dumped value to the output buffer
+     * @param mixed $var       The variable to dump.
+     * @param int   $maxDepth  The maximum nesting level for object properties.
+     * @param bool  $stripTags Whether output should strip HTML tags.
+     * @param bool  $echo      Send the dumped value to the output buffer
      *
      * @return string
      */
@@ -84,7 +102,7 @@ final class Debug
             $var = $var->toArray();
         }
 
-        if ( ! $maxDepth) {
+        if (! $maxDepth) {
             return is_object($var) ? get_class($var)
                 : (is_array($var) ? 'Array(' . count($var) . ')' : $var);
         }
@@ -99,12 +117,12 @@ final class Debug
             return $return;
         }
 
-        if ( ! $isObj) {
+        if (! $isObj) {
             return $var;
         }
 
-        $return = new \stdClass();
-        if ($var instanceof \DateTimeInterface) {
+        $return = new stdClass();
+        if ($var instanceof DateTimeInterface) {
             $return->__CLASS__ = get_class($var);
             $return->date      = $var->format('c');
             $return->timezone  = $var->getTimezone()->getName();
@@ -119,7 +137,7 @@ final class Debug
             $return->__PROXY_INITIALIZED__ = $var->__isInitialized();
         }
 
-        if ($var instanceof \ArrayObject || $var instanceof \ArrayIterator) {
+        if ($var instanceof ArrayObject || $var instanceof ArrayIterator) {
             $return->__STORAGE__ = self::export($var->getArrayCopy(), $maxDepth - 1);
         }
 
@@ -130,13 +148,12 @@ final class Debug
      * Fill the $return variable with class attributes
      * Based on obj2array function from {@see https://secure.php.net/manual/en/function.get-object-vars.php#47075}
      *
-     * @param object   $var
-     * @param \stdClass $return
-     * @param int      $maxDepth
+     * @param object $var
+     * @param int    $maxDepth
      *
      * @return mixed
      */
-    private static function fillReturnWithClassAttributes($var, \stdClass $return, $maxDepth)
+    private static function fillReturnWithClassAttributes($var, stdClass $return, $maxDepth)
     {
         $clone = (array) $var;
 
@@ -147,7 +164,6 @@ final class Debug
                 $name .= ':' . ($aux[1] === '*' ? 'protected' : $aux[1] . ':private');
             }
             $return->$name = self::export($clone[$key], $maxDepth - 1);
-            ;
         }
 
         return $return;

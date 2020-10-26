@@ -7,11 +7,18 @@ namespace Doctrine\Tests\Common\Proxy;
  */
 class IterableTypeHintClass
 {
+    /**
+     * @param iterable<mixed> $param
+     */
     public function parameterType(iterable $param)
     {
     }
 
+    /**
+     * @return iterable<mixed>
+     */
     public function returnType() : iterable
     {
+        return [];
     }
 }

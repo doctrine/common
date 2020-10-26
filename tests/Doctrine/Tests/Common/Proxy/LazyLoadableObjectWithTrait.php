@@ -7,6 +7,5 @@ namespace Doctrine\Tests\Common\Proxy;
  */
 class LazyLoadableObjectWithTrait
 {
-
-    use IdentifierFieldTrait;
+    use IdentifierField;
 }

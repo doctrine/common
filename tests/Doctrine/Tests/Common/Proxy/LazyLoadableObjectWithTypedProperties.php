@@ -1,5 +1,8 @@
 <?php
+
 namespace Doctrine\Tests\Common\Proxy;
+
+use stdClass;
 
 /**
  * Test asset representing a lazy loadable object with typed properties
@@ -46,10 +49,7 @@ class LazyLoadableObjectWithTypedProperties
         return $this->protectedAssociation;
     }
 
-    /**
-     * @param \stdClass $param
-     */
-    public function publicTypeHintedMethod(\stdClass $param)
+    public function publicTypeHintedMethod(stdClass $param)
     {
     }
 

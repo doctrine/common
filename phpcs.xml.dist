@@ -12,7 +12,15 @@
     <file>lib</file>
     <file>tests</file>
 
-    <rule ref="Doctrine"/>
+    <exclude-pattern>*/tests/Doctrine/Tests/Common/Proxy/generated/*</exclude-pattern>
+
+    <rule ref="Doctrine">
+        <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint"/>
+        <exclude name="SlevomatCodingStandard.Classes.SuperfluousAbstractClassNaming"/>
+        <exclude name="SlevomatCodingStandard.Classes.SuperfluousExceptionNaming"/>
+    </rule>
 
     <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
         <exclude-pattern>*/tests/*</exclude-pattern>
@@ -27,5 +35,20 @@
     </rule>
     <rule ref="PEAR.Functions.ValidDefaultValue.NotAtEnd">
         <exclude-pattern>tests/Doctrine/Tests/Common/Proxy/*HintClass.php</exclude-pattern>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedProperty">
+        <exclude-pattern>tests/Doctrine/Tests/Common/Util/TestAsset/ChildClass.php</exclude-pattern>
+        <exclude-pattern>tests/Doctrine/Tests/Common/Util/TestAsset/ChildWithSameAttributesClass.php</exclude-pattern>
+        <exclude-pattern>tests/Doctrine/Tests/Common/Util/TestAsset/ParentClass.php</exclude-pattern>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod">
+        <exclude-pattern>lib/Doctrine/Common/Proxy/ProxyGenerator.php</exclude-pattern>
+    </rule>
+    <rule ref="Squiz.Classes.ClassFileName.NoMatch">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+    <rule ref="Squiz.Commenting.FunctionComment.InvalidNoReturn">
+        <exclude-pattern>tests/Doctrine/Tests/Common/Proxy/InvalidReturnTypeClass.php</exclude-pattern>
     </rule>
 </ruleset>
