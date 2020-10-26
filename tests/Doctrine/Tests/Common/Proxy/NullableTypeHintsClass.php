@@ -35,13 +35,16 @@ class NullableTypeHintsClass
 
     public function returnsNullableInt() : ?int
     {
+        return null;
     }
 
     public function returnsNullableObject() : ?stdClass
     {
+        return null;
     }
 
     public function returnsNullableSelf() : ?self
     {
+        return null;
     }
 }

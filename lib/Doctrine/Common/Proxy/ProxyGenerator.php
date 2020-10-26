@@ -7,9 +7,9 @@ use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use ReflectionMethod;
+use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionProperty;
-use ReflectionType;
 use const DIRECTORY_SEPARATOR;
 use function array_combine;
 use function array_diff;
@@ -989,7 +989,6 @@ EOT;
     {
         $parameterDefinitions = [];
 
-        /** @var ReflectionParameter $param */
         $i = -1;
         foreach ($parameters as $param) {
             $i++;
@@ -1098,7 +1097,7 @@ EOT;
      * @return string
      */
     private function formatType(
-        ReflectionType $type,
+        ReflectionNamedType $type,
         ReflectionMethod $method,
         ?ReflectionParameter $parameter = null
     ) {
