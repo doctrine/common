@@ -17,8 +17,6 @@ use function substr;
 
 /**
  * Special Autoloader for Proxy classes, which are not PSR-0 compliant.
- *
- * @internal
  */
 class Autoloader
 {
