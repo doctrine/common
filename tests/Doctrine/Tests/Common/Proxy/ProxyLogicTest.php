@@ -13,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionProperty;
 use stdClass;
+use function assert;
 use function call_user_func_array;
 use function class_exists;
 use function func_get_args;
@@ -26,7 +27,7 @@ use function unserialize;
  */
 class ProxyLogicTest extends TestCase
 {
-    /** @var MockObject&stdClass */
+    /** @var MockObject&ProxyLoader */
     protected $proxyLoader;
 
     /** @var ClassMetadata */
@@ -49,7 +50,7 @@ class ProxyLogicTest extends TestCase
      */
     public function setUp() : void
     {
-        $loader                           = $this->proxyLoader      = $this->getMockBuilder(stdClass::class)->setMethods(['load'])->getMock();
+        $loader                           = $this->proxyLoader      = $this->createMock(ProxyLoader::class);
         $this->initializerCallbackMock    = $this->getMockBuilder(stdClass::class)->setMethods(['__invoke'])->getMock();
         $identifier                       = $this->identifier;
         $this->lazyLoadableObjectMetadata = $metadata = new LazyLoadableObjectClassMetadata();
@@ -222,23 +223,27 @@ class ProxyLogicTest extends TestCase
     {
         $lazyObject = $this->lazyObject;
         $test       = $this;
-        $cb         = $this->getMockBuilder(stdClass::class)->setMethods(['cb'])->getMock();
+        $callback   = static function (LazyLoadableObject $proxy) use ($lazyObject, $test) {
+            assert($proxy instanceof Proxy);
+            $test->assertNotSame($proxy, $lazyObject);
+            $proxy->__setInitializer(null);
+            $proxy->publicAssociation = 'clonedAssociation';
+        };
+        $cb         = $this->createMock(Cloner::class);
         $cb
             ->expects($this->once())
             ->method('cb')
-            ->will($this->returnCallback(static function (LazyLoadableObject $proxy) use ($lazyObject, $test) {
-                /** @var LazyLoadableObject&Proxy $proxy */
-                $proxy = $proxy;
-                $test->assertNotSame($proxy, $lazyObject);
-                $proxy->__setInitializer(null);
-                $proxy->publicAssociation = 'clonedAssociation';
-            }));
+            ->will($this->returnCallback($callback));
 
         $this->lazyObject->__setCloner($this->getClosure([$cb, 'cb']));
 
         $cloned = clone $this->lazyObject;
         self::assertSame('clonedAssociation', $cloned->publicAssociation);
         self::assertNotSame($cloned, $lazyObject, 'a clone of the lazy object is retrieved');
+    }
+
+    public function cb()
+    {
     }
 
     public function testFetchingTransientPropertiesWillNotTriggerLazyLoading()
@@ -286,12 +291,12 @@ class ProxyLogicTest extends TestCase
                 ],
                 $this->lazyObject
             )
-            ->will($this->returnCallback(static function ($id, LazyLoadableObject $lazyObject) {
-                // setting a value to verify that the persister can actually set something in the object
-                $lazyObject->publicAssociation = $id['publicIdentifierField'] . '-test';
+                ->will($this->returnCallback(static function ($id, LazyLoadableObject $lazyObject) {
+                    // setting a value to verify that the persister can actually set something in the object
+                    $lazyObject->publicAssociation = $id['publicIdentifierField'] . '-test';
 
-                return true;
-            }));
+                    return true;
+                }));
         $this->lazyObject->__setInitializer($this->getSuggestedInitializerImplementation());
 
         $this->lazyObject->__load();
@@ -319,14 +324,14 @@ class ProxyLogicTest extends TestCase
                 'publicIdentifierField'    => 'publicIdentifierFieldValue',
                 'protectedIdentifierField' => 'protectedIdentifierFieldValue',
             ])
-            ->will($this->returnCallback(static function () {
-                $blueprint                        = new LazyLoadableObject();
-                $blueprint->publicPersistentField = 'checked-persistent-field';
-                $blueprint->publicAssociation     = 'checked-association-field';
-                $blueprint->publicTransientField  = 'checked-transient-field';
+                ->will($this->returnCallback(static function () {
+                    $blueprint                        = new LazyLoadableObject();
+                    $blueprint->publicPersistentField = 'checked-persistent-field';
+                    $blueprint->publicAssociation     = 'checked-association-field';
+                    $blueprint->publicTransientField  = 'checked-transient-field';
 
-                return $blueprint;
-            }));
+                    return $blueprint;
+                }));
 
         $firstClone = clone $this->lazyObject;
         self::assertSame(
@@ -743,4 +748,15 @@ class ProxyLogicTest extends TestCase
             }
         };
     }
+}
+
+interface Cloner
+{
+    public function cb() : ?callable;
+}
+
+interface ProxyLoader
+{
+    /** @return mixed */
+    public function load(...$args);
 }

@@ -3,8 +3,6 @@ parameters:
     paths:
         - %currentWorkingDirectory%/lib
         - %currentWorkingDirectory%/tests
-    autoload_directories:
-        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/ClassLoaderTest
     excludes_analyse:
         - %currentWorkingDirectory%/lib/vendor/doctrine-build-common
         - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/InvalidReturnTypeClass.php
@@ -20,10 +18,7 @@ parameters:
             message: '#^Result of method Doctrine\\Tests\\Common\\Proxy\\LazyLoadableObjectWithVoid::(adding|incrementing)AndReturningVoid\(\) \(void\) is used\.$#'
             path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
         -
-            message: '#^Property Doctrine\\Tests\\Common\\Proxy\\ProxyLogicTest::\$initializerCallbackMock \(callable&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept PHPUnit\\Framework\\MockObject\\MockObject&stdClass\.$#'
-            path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
-        -
-            message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject(&stdClass)?::(load|getName)\(\)\.$#'
+            message: '#^Property Doctrine\\Tests\\Common\\Proxy\\ProxyLogicTest::\$initializerCallbackMock \(callable\(\): mixed&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept PHPUnit\\Framework\\MockObject\\MockObject&stdClass\.$#'
             path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
         -
             message: '#^Access to an undefined property Doctrine\\Common\\Proxy\\Proxy&Doctrine\\Tests\\Common\\Proxy\\LazyLoadableObject::\$non_existing_property\.$#'
@@ -35,7 +30,7 @@ parameters:
             message: '#^Instantiated class Doctrine\\Tests\\Common\\ProxyProxy\\__CG__\\Doctrine\\Tests\\Common\\Proxy\\.* not found.$#'
             path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
         -
-            message: '#^Property Doctrine\\Tests\\Common\\Proxy\\ProxyLogicVoidReturnTypeTest::\$initializerCallbackMock \(callable&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept PHPUnit\\Framework\\MockObject\\MockObject&stdClass\.$#'
+            message: '#^Property Doctrine\\Tests\\Common\\Proxy\\ProxyLogicVoidReturnTypeTest::\$initializerCallbackMock \(callable\(\): mixed&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept PHPUnit\\Framework\\MockObject\\MockObject&stdClass\.$#'
             path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
         -
             message: '#^Method Doctrine\\Tests\\Common\\Proxy\\MagicIssetClassWithInteger::__isset\(\) should return bool but returns int\.$#'
