@@ -81,8 +81,8 @@ class ProxyGeneratorTest extends TestCase
     {
         $classCode = file_get_contents($this->proxyGenerator->getProxyFileName($this->metadata->getName()));
 
-        self::assertNotContains('class LazyLoadableObject extends \\\\' . $this->metadata->getName(), $classCode);
-        self::assertContains('class LazyLoadableObject extends \\' . $this->metadata->getName(), $classCode);
+        self::assertStringNotContainsString('class LazyLoadableObject extends \\\\' . $this->metadata->getName(), $classCode);
+        self::assertStringContainsString('class LazyLoadableObject extends \\' . $this->metadata->getName(), $classCode);
     }
 
     public function testClassWithSleepProxyGeneration()
@@ -117,7 +117,7 @@ class ProxyGeneratorTest extends TestCase
 
         $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyStaticPropertyClass.php');
         self::assertEquals(1, substr_count($classCode, 'function __sleep'));
-        self::assertNotContains('protectedStaticProperty', $classCode);
+        self::assertStringNotContainsString('protectedStaticProperty', $classCode);
     }
 
     private function generateAndRequire($proxyGenerator, $metadata)
@@ -251,12 +251,12 @@ class ProxyGeneratorTest extends TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        self::assertContains(
+        self::assertStringContainsString(
             'public function midSignatureNullableParameter(\stdClass $param = NULL, $secondParam)',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableNonOptionalHintClass.php')
         );
 
-        self::assertContains(
+        self::assertStringContainsString(
             'public function midSignatureNotNullableHintedParameter(string $param = \'foo\', $secondParam)',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableNonOptionalHintClass.php')
         );
@@ -276,13 +276,13 @@ class ProxyGeneratorTest extends TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        self::assertContains(
+        self::assertStringContainsString(
             'public function midSignatureNullableParameter(string $param = NULL, $secondParam)',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp71NullableDefaultedNonOptionalHintClass.php'),
             'Signature allows nullable type, although explicit "?" marker isn\'t used in the proxy'
         );
 
-        self::assertContains(
+        self::assertStringContainsString(
             'public function midSignatureNotNullableHintedParameter(?string $param = \'foo\', $secondParam)',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp71NullableDefaultedNonOptionalHintClass.php')
         );
@@ -374,7 +374,7 @@ class ProxyGeneratorTest extends TestCase
 
         $reflClass = new ReflectionClass('Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\EvalBase');
 
-        self::assertContains("eval()'d code", $reflClass->getFileName());
+        self::assertStringContainsString("eval()'d code", $reflClass->getFileName());
     }
 
     public function testAbstractClassThrowsException()

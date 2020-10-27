@@ -2,6 +2,7 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
+use ArrayIterator;
 use Countable;
 use stdClass;
 
@@ -12,10 +13,12 @@ class ReturnTypesClass extends stdClass
 {
     public function returnsClass() : stdClass
     {
+        return new stdClass();
     }
 
     public function returnsScalar() : int
     {
+        return 42;
     }
 
     /**
@@ -28,17 +31,21 @@ class ReturnTypesClass extends stdClass
 
     public function returnsCallable() : callable
     {
+        return 'intval';
     }
 
     public function returnsSelf() : self
     {
+        return $this;
     }
 
     public function returnsParent() : parent
     {
+        return $this;
     }
 
     public function returnsInterface() : Countable
     {
+        return new ArrayIterator([]);
     }
 }

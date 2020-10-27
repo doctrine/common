@@ -12,6 +12,7 @@ use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Doctrine\Tests\DoctrineTestCase;
 use OutOfBoundsException;
 use PHPUnit\Framework\MockObject\MockObject;
+use ReflectionClass;
 use function get_class;
 use function interface_exists;
 use function sys_get_temp_dir;
@@ -52,7 +53,11 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
             [$proxyGenerator, $metadataFactory, $autoGenerate]
         );
 
-        self::assertAttributeSame($expected, 'autoGenerate', $proxyFactory);
+        $class    = new ReflectionClass(AbstractProxyFactory::class);
+        $property = $class->getProperty('autoGenerate');
+        $property->setAccessible(true);
+
+        self::assertSame($expected, $property->getValue($proxyFactory));
     }
 
     public function testInvalidAutoGenerateValueThrowsException() : void
