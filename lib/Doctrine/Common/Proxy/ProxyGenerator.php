@@ -660,14 +660,17 @@ EOT;
      */
     private function generateSleepImpl(ClassMetadata $class)
     {
-        $hasParentSleep = $class->getReflectionClass()->hasMethod('__sleep');
+        $reflectionClass = $class->getReflectionClass();
+
+        $hasParentSleep = $reflectionClass->hasMethod('__sleep');
         $inheritDoc     = $hasParentSleep ? '{@inheritDoc}' : '';
+        $returnTypeHint = $hasParentSleep ? $this->getMethodReturnType($reflectionClass->getMethod('__sleep')) : '';
         $sleepImpl      = <<<EOT
     /**
      * $inheritDoc
      * @return array
      */
-    public function __sleep()
+    public function __sleep()$returnTypeHint
     {
 
 EOT;
@@ -688,7 +691,7 @@ EOT;
         $allProperties = ['__isInitialized__'];
 
         /** @var ReflectionProperty $prop */
-        foreach ($class->getReflectionClass()->getProperties() as $prop) {
+        foreach ($reflectionClass->getProperties() as $prop) {
             if ($prop->isStatic()) {
                 continue;
             }
@@ -729,20 +732,23 @@ EOT;
      */
     private function generateWakeupImpl(ClassMetadata $class)
     {
-        $unsetPublicProperties = [];
-        $hasWakeup             = $class->getReflectionClass()->hasMethod('__wakeup');
+        $reflectionClass = $class->getReflectionClass();
 
+        $hasParentWakeup = $reflectionClass->hasMethod('__wakeup');
+
+        $unsetPublicProperties = [];
         foreach ($this->getLazyLoadedPublicPropertiesNames($class) as $lazyPublicProperty) {
             $unsetPublicProperties[] = '$this->' . $lazyPublicProperty;
         }
 
-        $shortName  = $this->generateProxyShortClassName($class);
-        $inheritDoc = $hasWakeup ? '{@inheritDoc}' : '';
-        $wakeupImpl = <<<EOT
+        $shortName      = $this->generateProxyShortClassName($class);
+        $inheritDoc     = $hasParentWakeup ? '{@inheritDoc}' : '';
+        $returnTypeHint = $hasParentWakeup ? $this->getMethodReturnType($reflectionClass->getMethod('__wakeup')) : '';
+        $wakeupImpl     = <<<EOT
     /**
      * $inheritDoc
      */
-    public function __wakeup()
+    public function __wakeup()$returnTypeHint
     {
         if ( ! \$this->__isInitialized__) {
             \$this->__initializer__ = function ($shortName \$proxy) {
@@ -766,7 +772,7 @@ EOT;
 
         $wakeupImpl .= "\n        }";
 
-        if ($hasWakeup) {
+        if ($hasParentWakeup) {
             $wakeupImpl .= "\n        parent::__wakeup();";
         }
 
