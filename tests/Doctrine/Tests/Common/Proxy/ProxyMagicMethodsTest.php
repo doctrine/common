@@ -9,6 +9,8 @@ use InvalidArgumentException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionNamedType;
+use ReflectionType;
 use function class_exists;
 use function in_array;
 use function serialize;
@@ -295,11 +297,13 @@ class ProxyMagicMethodsTest extends TestCase
         $proxyReflection = new ReflectionClass($proxy);
         self::assertTrue($proxyReflection->hasMethod($sleepMethod), $sleepMethod . 'method doesn\'t exist');
 
-        $methodReflection = $proxyReflection->getMethod($sleepMethod);
+        $methodReflection     = $proxyReflection->getMethod($sleepMethod);
+        $returnTypeReflection = $methodReflection->getReturnType();
+        self::assertInstanceOf(ReflectionType::class, $returnTypeReflection, 'Got unexpected return type reflection');
         self::assertSame(
-            $methodReflection->getReturnType()->getName(),
+            $returnTypeReflection instanceof ReflectionNamedType ? $returnTypeReflection->getName() : (string) $returnTypeReflection,
             'array',
-            $sleepMethod . ' method has lost its return type hint'
+            $sleepMethod . ' method has lost return type hint'
         );
     }
 
@@ -334,9 +338,11 @@ class ProxyMagicMethodsTest extends TestCase
         $proxyReflection = new ReflectionClass($proxy);
         self::assertTrue($proxyReflection->hasMethod($wakeupMethod), $wakeupMethod . 'method doesn\'t exist');
 
-        $methodReflection = $proxyReflection->getMethod($wakeupMethod);
+        $methodReflection     = $proxyReflection->getMethod($wakeupMethod);
+        $returnTypeReflection = $methodReflection->getReturnType();
+        self::assertInstanceOf(ReflectionType::class, $returnTypeReflection, 'Got unexpected return type reflection');
         self::assertSame(
-            $methodReflection->getReturnType()->getName(),
+            $returnTypeReflection instanceof ReflectionNamedType ? $returnTypeReflection->getName() : (string) $returnTypeReflection,
             'void',
             $wakeupMethod . ' method has lost return type hint'
         );
