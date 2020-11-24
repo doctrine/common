@@ -9,6 +9,8 @@ use InvalidArgumentException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionNamedType;
+use ReflectionType;
 use function class_exists;
 use function in_array;
 use function serialize;
@@ -285,6 +287,26 @@ class ProxyMagicMethodsTest extends TestCase
         self::assertSame('defaultValue', $unserialized->nonSerializedField, 'Field was not returned by "__sleep"');
     }
 
+    public function testInheritedMagicSleepTypehinted()
+    {
+        $proxyClassName = $this->generateProxyClass(MagicSleepClassTypehinted::class);
+        $proxy          = new $proxyClassName();
+
+        $sleepMethod = '__sleep';
+
+        $proxyReflection = new ReflectionClass($proxy);
+        self::assertTrue($proxyReflection->hasMethod($sleepMethod), $sleepMethod . 'method doesn\'t exist');
+
+        $methodReflection     = $proxyReflection->getMethod($sleepMethod);
+        $returnTypeReflection = $methodReflection->getReturnType();
+        self::assertInstanceOf(ReflectionType::class, $returnTypeReflection, 'Got unexpected return type reflection');
+        self::assertSame(
+            $returnTypeReflection instanceof ReflectionNamedType ? $returnTypeReflection->getName() : (string) $returnTypeReflection,
+            'array',
+            $sleepMethod . ' method has lost return type hint'
+        );
+    }
+
     public function testInheritedMagicWakeup()
     {
         $proxyClassName = $this->generateProxyClass(MagicWakeupClass::class);
@@ -304,6 +326,26 @@ class ProxyMagicMethodsTest extends TestCase
         });
 
         self::assertSame('newPublicFieldValue', $unserialized->publicField, 'Proxy can still be initialized');
+    }
+
+    public function testInheritedMagicWakeupTypehinted()
+    {
+        $proxyClassName = $this->generateProxyClass(MagicWakeupClassTypehinted::class);
+        $proxy          = new $proxyClassName();
+
+        $wakeupMethod = '__wakeup';
+
+        $proxyReflection = new ReflectionClass($proxy);
+        self::assertTrue($proxyReflection->hasMethod($wakeupMethod), $wakeupMethod . 'method doesn\'t exist');
+
+        $methodReflection     = $proxyReflection->getMethod($wakeupMethod);
+        $returnTypeReflection = $methodReflection->getReturnType();
+        self::assertInstanceOf(ReflectionType::class, $returnTypeReflection, 'Got unexpected return type reflection');
+        self::assertSame(
+            $returnTypeReflection instanceof ReflectionNamedType ? $returnTypeReflection->getName() : (string) $returnTypeReflection,
+            'void',
+            $wakeupMethod . ' method has lost return type hint'
+        );
     }
 
     public function testInheritedMagicIsset()
