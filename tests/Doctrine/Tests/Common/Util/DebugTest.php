@@ -139,6 +139,9 @@ class DebugTest extends DoctrineTestCase
         self::assertSame($expected, $var);
     }
 
+    /**
+     * @psalm-return array<string, array{TestAsset\ParentClass, mixed[]}>
+     */
     public function provideAttributesCases()
     {
         return [
