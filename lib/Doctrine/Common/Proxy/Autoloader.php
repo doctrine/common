@@ -19,6 +19,8 @@ use const DIRECTORY_SEPARATOR;
 
 /**
  * Special Autoloader for Proxy classes, which are not PSR-0 compliant.
+ *
+ * @internal
  */
 class Autoloader
 {

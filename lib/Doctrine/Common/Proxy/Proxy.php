@@ -58,8 +58,8 @@ interface Proxy extends BaseProxy
     /**
      * Retrieves the list of lazy loaded properties for a given proxy
      *
-     * @return array<string,mixed> Keys are the property names, and values are
-     *                             the default values for those properties.
+     * @return array<string, mixed> Keys are the property names, and values are the default values
+     *                              for those properties.
      */
     public function __getLazyProperties();
 }

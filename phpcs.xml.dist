@@ -35,7 +35,6 @@
         </properties>
     </rule>
 
-
     <rule ref="SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod">
         <exclude-pattern>lib/Doctrine/Common/Proxy/ProxyGenerator.php</exclude-pattern>
     </rule>

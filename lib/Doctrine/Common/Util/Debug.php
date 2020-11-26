@@ -61,7 +61,7 @@ final class Debug
         $html = ini_get('html_errors');
 
         if ($html !== true) {
-            ini_set('html_errors', true);
+            ini_set('html_errors', 'on');
         }
 
         if (extension_loaded('xdebug')) {
