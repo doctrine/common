@@ -17,6 +17,8 @@ use function file_get_contents;
 use function is_subclass_of;
 use function substr_count;
 
+use const PHP_VERSION_ID;
+
 /**
  * Test the proxy generator. Its work is generating on-the-fly subclasses of a given model, which implement the Proxy
  * pattern.
@@ -401,6 +403,48 @@ class ProxyGeneratorTest extends TestCase
 
         $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
         $proxyGenerator->generateProxyClass($this->createClassMetadata(FinalClass::class, []));
+    }
+
+    public function testPhp8UnionTypes()
+    {
+        if (PHP_VERSION_ID < 80000) {
+            $this->markTestSkipped('Requires PHP 8.0');
+        }
+
+        $className = Php8UnionTypes::class;
+
+        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\Php8UnionTypes', false)) {
+            $metadata = $this->createClassMetadata($className, ['id']);
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        self::assertStringContainsString(
+            'setValue(\stdClass|array $value): float|bool',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8UnionTypes.php')
+        );
+    }
+
+    public function testPhp8MixedType()
+    {
+        if (PHP_VERSION_ID < 80000) {
+            $this->markTestSkipped('Requires PHP 8.0');
+        }
+
+        $className = Php8MixedType::class;
+
+        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\Php8MixedType', false)) {
+            $metadata = $this->createClassMetadata($className, ['id']);
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        self::assertStringContainsString(
+            'foo(mixed $bar): mixed',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8MixedType.php'),
+        );
     }
 
     /**

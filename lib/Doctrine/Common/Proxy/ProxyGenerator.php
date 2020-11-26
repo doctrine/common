@@ -10,6 +10,8 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionProperty;
+use ReflectionType;
+use ReflectionUnionType;
 
 use function array_combine;
 use function array_diff;
@@ -1112,6 +1114,15 @@ EOT;
         ReflectionMethod $method,
         ?ReflectionParameter $parameter = null
     ) {
+        if ($type instanceof ReflectionUnionType) {
+            return implode('|', array_map(
+                function (ReflectionType $unionedType) use ($method, $parameter) {
+                    return $this->formatType($unionedType, $method, $parameter);
+                },
+                $type->getTypes()
+            ));
+        }
+
         $name      = $type->getName();
         $nameLower = strtolower($name);
 
@@ -1145,6 +1156,7 @@ EOT;
         if (
             $type->allowsNull()
             && ($parameter === null || ! $parameter->isDefaultValueAvailable() || $parameter->getDefaultValue() !== null)
+            && $name !== 'mixed'
         ) {
             $name = '?' . $name;
         }
