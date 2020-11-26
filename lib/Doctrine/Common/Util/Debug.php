@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\Proxy;
 use stdClass;
+
 use function array_keys;
 use function count;
 use function end;
@@ -163,6 +164,7 @@ final class Debug
             if ($aux[0] === '') {
                 $name .= ':' . ($aux[1] === '*' ? 'protected' : $aux[1] . ':private');
             }
+
             $return->$name = self::export($clone[$key], $maxDepth - 1);
         }
 

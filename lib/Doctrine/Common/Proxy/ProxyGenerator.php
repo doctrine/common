@@ -10,12 +10,13 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionProperty;
-use const DIRECTORY_SEPARATOR;
+
 use function array_combine;
 use function array_diff;
 use function array_key_exists;
 use function array_map;
 use function array_slice;
+use function assert;
 use function call_user_func;
 use function chmod;
 use function class_exists;
@@ -47,6 +48,8 @@ use function substr;
 use function trim;
 use function uniqid;
 use function var_export;
+
+use const DIRECTORY_SEPARATOR;
 
 /**
  * This factory is used to generate proxy classes.
@@ -425,7 +428,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
 
 EOT;
 
-        $toUnset = array_map(static function (string $name) : string {
+        $toUnset = array_map(static function (string $name): string {
             return '$this->' . $name;
         }, $this->getLazyLoadedPublicPropertiesNames($class));
 
@@ -690,8 +693,8 @@ EOT;
 
         $allProperties = ['__isInitialized__'];
 
-        /** @var ReflectionProperty $prop */
         foreach ($reflectionClass->getProperties() as $prop) {
+            assert($prop instanceof ReflectionProperty);
             if ($prop->isStatic()) {
                 continue;
             }
@@ -825,7 +828,8 @@ EOT;
         foreach ($reflectionMethods as $method) {
             $name = $method->getName();
 
-            if ($method->isConstructor() ||
+            if (
+                $method->isConstructor() ||
                 isset($skippedMethods[strtolower($name)]) ||
                 isset($methodNames[$name]) ||
                 $method->isFinal() ||
@@ -916,7 +920,7 @@ EOT;
             && substr($method->getName(), 0, 3) === 'get'
             && in_array($identifier, $class->getIdentifier(), true)
             && $class->hasField($identifier)
-            && (($endLine - $startLine) <= 4);
+            && ($endLine - $startLine <= 4);
 
         if ($cheapCheck) {
             $code = file($method->getFileName());
@@ -937,7 +941,7 @@ EOT;
      *
      * @return array<int, string>
      */
-    private function getLazyLoadedPublicPropertiesNames(ClassMetadata $class) : array
+    private function getLazyLoadedPublicPropertiesNames(ClassMetadata $class): array
     {
         $properties = [];
 
@@ -1137,7 +1141,8 @@ EOT;
             $name = '\\' . $name;
         }
 
-        if ($type->allowsNull()
+        if (
+            $type->allowsNull()
             && ($parameter === null || ! $parameter->isDefaultValueAvailable() || $parameter->getDefaultValue() !== null)
         ) {
             $name = '?' . $name;

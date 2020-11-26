@@ -4,6 +4,7 @@ namespace Doctrine\Common\Util;
 
 use Doctrine\Persistence\Proxy;
 use ReflectionClass;
+
 use function get_class;
 use function get_parent_class;
 use function ltrim;

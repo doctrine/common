@@ -4,6 +4,7 @@ namespace Doctrine\Common\Proxy\Exception;
 
 use Throwable;
 use UnexpectedValueException as BaseUnexpectedValueException;
+
 use function sprintf;
 
 /**
