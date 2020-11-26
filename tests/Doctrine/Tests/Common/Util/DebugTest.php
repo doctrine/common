@@ -10,6 +10,7 @@ use DateTimeZone;
 use Doctrine\Common\Util\Debug;
 use Doctrine\Tests\DoctrineTestCase;
 use stdClass;
+
 use function ob_end_clean;
 use function ob_get_contents;
 use function ob_start;

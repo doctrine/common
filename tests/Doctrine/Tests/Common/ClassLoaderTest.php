@@ -5,6 +5,7 @@ namespace Doctrine\Tests\Common;
 use ClassLoaderTest\ExternalLoader;
 use Doctrine\Common\ClassLoader;
 use Doctrine\Tests\DoctrineTestCase;
+
 use function interface_exists;
 use function spl_autoload_register;
 use function spl_autoload_unregister;
