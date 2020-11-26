@@ -7,9 +7,9 @@ use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use ReflectionMethod;
-use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionProperty;
+use ReflectionType;
 
 use function array_combine;
 use function array_diff;
@@ -693,7 +693,7 @@ EOT;
 
         $allProperties = ['__isInitialized__'];
 
-        foreach ($reflectionClass->getProperties() as $prop) {
+        foreach ($class->getReflectionClass()->getProperties() as $prop) {
             assert($prop instanceof ReflectionProperty);
             if ($prop->isStatic()) {
                 continue;
@@ -999,13 +999,14 @@ EOT;
     {
         $parameterDefinitions = [];
 
+        /** @var ReflectionParameter $param */
         $i = -1;
         foreach ($parameters as $param) {
             $i++;
             $parameterDefinition = '';
+            $parameterType       = $this->getParameterType($param);
 
-            $parameterType = $this->getParameterType($param);
-            if ($parameterType) {
+            if ($parameterType !== null) {
                 $parameterDefinition .= $parameterType . ' ';
             }
 
@@ -1107,7 +1108,7 @@ EOT;
      * @return string
      */
     private function formatType(
-        ReflectionNamedType $type,
+        ReflectionType $type,
         ReflectionMethod $method,
         ?ReflectionParameter $parameter = null
     ) {

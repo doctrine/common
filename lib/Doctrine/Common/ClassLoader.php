@@ -255,11 +255,8 @@ class ClassLoader
             }
 
             $classLoader = reset($loader);
-            if (
-                $classLoader
-                && $classLoader instanceof ClassLoader
-                && $classLoader->canLoadClass($className)
-            ) {
+
+            if ($classLoader instanceof ClassLoader && $classLoader->canLoadClass($className)) {
                 return $classLoader;
             }
         }

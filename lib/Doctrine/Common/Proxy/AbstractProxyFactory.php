@@ -86,8 +86,8 @@ abstract class AbstractProxyFactory
      * Gets a reference proxy instance for the entity of the given type and identified by
      * the given identifier.
      *
-     * @param  string  $className
-     * @param  mixed[] $identifier
+     * @param  string       $className
+     * @param  array<mixed> $identifier
      *
      * @return Proxy
      *
