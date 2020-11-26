@@ -20,6 +20,7 @@
         <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint"/>
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousAbstractClassNaming"/>
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousExceptionNaming"/>
+        <exclude name="Squiz.NamingConventions.ValidVariableName.NotCamelCaps"/>
     </rule>
 
     <!-- Disable the rules that will require PHP 7.4 -->
