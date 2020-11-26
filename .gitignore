@@ -11,3 +11,4 @@ doctrine-common-*.tar.gz
 /phpcs.xml
 /.phpcs-cache
 /phpstan.neon
+/.phpunit.result.cache

@@ -1,22 +1,18 @@
 <?php
+
 namespace Doctrine\Tests\Common\Proxy;
 
-use Doctrine;
 use stdClass as A;
 
 /**
  * Test asset representing a lazy loadable object
- *
- * @author Marco Pivetta <ocramius@gmail.com>
- * @since  2.4
  */
 class LazyLoadableObjectWithNullableTypehints
 {
-
-    /** @var \stdClass */
+    /** @var A */
     private $identifierFieldReturnClassOneLetterNullable;
 
-    /** @var \stdClass */
+    /** @var A */
     private $identifierFieldReturnClassOneLetterNullableWithSpace;
 
     public function getIdentifierFieldReturnClassOneLetterNullable() : ?A
@@ -24,7 +20,7 @@ class LazyLoadableObjectWithNullableTypehints
         return $this->identifierFieldReturnClassOneLetterNullable;
     }
 
-    public function getIdentifierFieldReturnClassOneLetterNullableWithSpace() : ? A
+    public function getIdentifierFieldReturnClassOneLetterNullableWithSpace() : ?A
     {
         return $this->identifierFieldReturnClassOneLetterNullableWithSpace;
     }

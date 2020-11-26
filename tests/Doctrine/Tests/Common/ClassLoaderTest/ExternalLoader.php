@@ -2,20 +2,23 @@
 
 namespace ClassLoaderTest;
 
+use function spl_autoload_register;
+use function spl_autoload_unregister;
+
 class ExternalLoader
 {
     public static function registerStatic()
     {
-        spl_autoload_register([ExternalLoader::class, 'load1']);
-        spl_autoload_register([ExternalLoader::class, 'load2']);
-        spl_autoload_register(ExternalLoader::class . '::load3');
+        spl_autoload_register([self::class, 'load1']);
+        spl_autoload_register([self::class, 'load2']);
+        spl_autoload_register(self::class . '::load3');
     }
 
     public static function unregisterStatic()
     {
-        spl_autoload_unregister([ExternalLoader::class, 'load1']);
-        spl_autoload_unregister([ExternalLoader::class, 'load2']);
-        spl_autoload_unregister(ExternalLoader::class . '::load3');
+        spl_autoload_unregister([self::class, 'load1']);
+        spl_autoload_unregister([self::class, 'load2']);
+        spl_autoload_unregister(self::class . '::load3');
     }
 
     public static function load1()

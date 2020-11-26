@@ -1,18 +1,15 @@
 <?php
+
 namespace Doctrine\Tests\Common\Proxy;
 
 use InvalidArgumentException;
 
 /**
  * Test asset class
- *
- * @since 2.4
  */
 class MagicGetByRefClass
 {
-    /**
-     * @var mixed
-     */
+    /** @var mixed */
     public $valueField;
 
     /**
@@ -20,7 +17,7 @@ class MagicGetByRefClass
      *
      * @return mixed
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function & __get($name)
     {

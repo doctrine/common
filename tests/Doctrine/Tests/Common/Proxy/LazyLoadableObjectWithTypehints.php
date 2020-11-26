@@ -1,4 +1,5 @@
 <?php
+
 namespace Doctrine\Tests\Common\Proxy;
 
 use Doctrine;
@@ -6,13 +7,9 @@ use stdClass as A;
 
 /**
  * Test asset representing a lazy loadable object
- *
- * @author Marco Pivetta <ocramius@gmail.com>
- * @since  2.4
  */
 class LazyLoadableObjectWithTypehints
 {
-
     /** @var string */
     private $identifierFieldNoReturnTypehint;
 
@@ -28,10 +25,10 @@ class LazyLoadableObjectWithTypehints
     /** @var LazyLoadableObjectWithTypehints */
     private $identifierFieldReturnClassFullUse;
 
-    /** @var \stdClass */
+    /** @var A */
     private $identifierFieldReturnClassOneWord;
 
-    /** @var \stdClass */
+    /** @var A */
     private $identifierFieldReturnClassOneLetter;
 
     /**
@@ -62,7 +59,7 @@ class LazyLoadableObjectWithTypehints
         return $this->identifierFieldReturnClassFullUse;
     }
 
-    public function getIdentifierFieldReturnClassOneWord() : \stdClass
+    public function getIdentifierFieldReturnClassOneWord() : A
     {
         return $this->identifierFieldReturnClassOneWord;
     }

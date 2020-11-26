@@ -5,7 +5,7 @@ namespace Doctrine\Tests\Common\Proxy;
 /**
  * Test asset class
  */
-class MagicCloneClass
+class MagicWakeupClassTypehinted
 {
     /** @var string */
     public $id = 'id';
@@ -13,17 +13,11 @@ class MagicCloneClass
     /** @var string */
     public $publicField = 'publicField';
 
-    /** @var bool */
-    public $cloned = false;
-
     /** @var string */
-    public $clonedValue = 'defaultValue';
+    public $wakeupValue = 'defaultValue';
 
-    /**
-     * @return void
-     */
-    public function __clone()
+    public function __wakeup() : void
     {
-        $this->clonedValue = 'newClonedValue';
+        $this->wakeupValue = 'newWakeupValue';
     }
 }

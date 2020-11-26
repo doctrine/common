@@ -3,8 +3,9 @@
 namespace Doctrine\Tests\Common\Util
 
 {
-    use Doctrine\Tests\DoctrineTestCase;
+
     use Doctrine\Common\Util\ClassUtils;
+    use Doctrine\Tests\DoctrineTestCase;
 
     class ClassUtilsTest extends DoctrineTestCase
     {
@@ -12,10 +13,10 @@ namespace Doctrine\Tests\Common\Util
         {
             return [
                 [\stdClass::class, \stdClass::class],
-                [\Doctrine\Common\Util\ClassUtils::class, \Doctrine\Common\Util\ClassUtils::class],
+                [ClassUtils::class, ClassUtils::class],
                 [ 'MyProject\Proxies\__CG__\stdClass', \stdClass::class],
                 [ 'MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\stdClass', \stdClass::class],
-                [ 'MyProject\Proxies\__CG__\Doctrine\Tests\Common\Util\ChildObject', ChildObject::class]
+                [ 'MyProject\Proxies\__CG__\Doctrine\Tests\Common\Util\ChildObject', ChildObject::class],
             ];
         }
 
@@ -61,7 +62,7 @@ namespace Doctrine\Tests\Common\Util
          */
         public function testNewReflectionObject($className, $expectedClassName)
         {
-            $object    = new $className;
+            $object    = new $className();
             $reflClass = ClassUtils::newReflectionObject($object);
             self::assertEquals($expectedClassName, $reflClass->getName());
         }

@@ -2,36 +2,30 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
+use BadMethodCallException;
+
 /**
  * Test asset class
- * @author Jan Barasek <jan@barasek.com>
  */
 class MagicGetClassWithScalarTypeAndRenamedParameter
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public $id = 'id';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $publicField = 'publicField';
 
     /**
-     * @param string $n
-     *
-     * @return string
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
-    public function __get(string $n): string
+    public function __get(string $n) : string
     {
         if ($n === 'test') {
             return 'test';
         }
 
         if ($n === 'publicField' || $n === 'id') {
-            throw new \BadMethodCallException('Should never be called for "publicField" or "id"');
+            throw new BadMethodCallException('Should never be called for "publicField" or "id"');
         }
 
         return 'not defined';

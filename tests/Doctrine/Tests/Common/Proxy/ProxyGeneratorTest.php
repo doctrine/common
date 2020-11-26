@@ -2,41 +2,39 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
-use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\Common\Proxy\ProxyGenerator;
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
+use function class_exists;
+use function count;
+use function file_get_contents;
+use function is_subclass_of;
+use function substr_count;
 
 /**
  * Test the proxy generator. Its work is generating on-the-fly subclasses of a given model, which implement the Proxy
  * pattern.
- *
- * @author Giorgio Sironi <piccoloprincipeazzurro@gmail.com>
- * @author Marco Pivetta <ocramius@gmail.com>
  */
-class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
+class ProxyGeneratorTest extends TestCase
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $proxyClass = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\LazyLoadableObject';
 
-    /**
-     * @var LazyLoadableObjectClassMetadata
-     */
+    /** @var LazyLoadableObjectClassMetadata */
     protected $metadata;
 
-    /**
-     * @var ProxyGenerator
-     */
+    /** @var ProxyGenerator */
     protected $proxyGenerator;
 
     /**
      * {@inheritDoc}
      */
-    protected function setUp(): void
+    protected function setUp() : void
     {
         $this->metadata       = new LazyLoadableObjectClassMetadata();
         $this->proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
@@ -83,13 +81,13 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
     {
         $classCode = file_get_contents($this->proxyGenerator->getProxyFileName($this->metadata->getName()));
 
-        self::assertNotContains("class LazyLoadableObject extends \\\\" . $this->metadata->getName(), $classCode);
-        self::assertContains("class LazyLoadableObject extends \\" . $this->metadata->getName(), $classCode);
+        self::assertStringNotContainsString('class LazyLoadableObject extends \\\\' . $this->metadata->getName(), $classCode);
+        self::assertStringContainsString('class LazyLoadableObject extends \\' . $this->metadata->getName(), $classCode);
     }
 
     public function testClassWithSleepProxyGeneration()
     {
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\SleepClass', false)) {
+        if (! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\SleepClass', false)) {
             $className      = SleepClass::class;
             $metadata       = $this->createClassMetadata($className, ['id']);
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
@@ -104,11 +102,12 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Check that the proxy doesn't serialize static properties (in __sleep() method)
+     *
      * @group DCOM-212
      */
     public function testClassWithStaticPropertyProxyGeneration()
     {
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\StaticPropertyClass', false)) {
+        if (! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\StaticPropertyClass', false)) {
             $className      = StaticPropertyClass::class;
             $metadata       = $this->createClassMetadata($className, []);
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
@@ -118,7 +117,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
 
         $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyStaticPropertyClass.php');
         self::assertEquals(1, substr_count($classCode, 'function __sleep'));
-        self::assertNotContains('protectedStaticProperty', $classCode);
+        self::assertStringNotContainsString('protectedStaticProperty', $classCode);
     }
 
     private function generateAndRequire($proxyGenerator, $metadata)
@@ -130,7 +129,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
 
     public function testClassWithCallableTypeHintOnProxiedMethod()
     {
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\CallableTypeHintClass', false)) {
+        if (! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\CallableTypeHintClass', false)) {
             $className = CallableTypeHintClass::class;
             $metadata  = $this->createClassMetadata($className, ['id']);
 
@@ -145,7 +144,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
 
     public function testClassWithVariadicArgumentOnProxiedMethod()
     {
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\VariadicTypeHintClass', false)) {
+        if (! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\VariadicTypeHintClass', false)) {
             $className = VariadicTypeHintClass::class;
             $metadata  = $this->createClassMetadata($className, ['id']);
 
@@ -162,7 +161,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
 
     public function testClassWithScalarTypeHintsOnProxiedMethods()
     {
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\ScalarTypeHintsClass', false)) {
+        if (! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\ScalarTypeHintsClass', false)) {
             $className = ScalarTypeHintsClass::class;
             $metadata  = $this->createClassMetadata($className, ['id']);
 
@@ -183,7 +182,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
     public function testClassWithReturnTypesOnProxiedMethods()
     {
         $className = ReturnTypesClass::class;
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\ReturnTypesClass', false)) {
+        if (! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\ReturnTypesClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
@@ -204,7 +203,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
     public function testClassWithNullableTypeHintsOnProxiedMethods()
     {
         $className = NullableTypeHintsClass::class;
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableTypeHintsClass', false)) {
+        if (! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableTypeHintsClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
@@ -224,7 +223,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
     public function testClassWithNullableReturnTypesOnProxiedMethods()
     {
         $className = NullableTypeHintsClass::class;
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableTypeHintsClass', false)) {
+        if (! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableTypeHintsClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
@@ -245,19 +244,19 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
     {
         $className = NullableNonOptionalHintClass::class;
 
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableNonOptionalHintClass', false)) {
+        if (! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableNonOptionalHintClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        self::assertContains(
+        self::assertStringContainsString(
             'public function midSignatureNullableParameter(\stdClass $param = NULL, $secondParam)',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableNonOptionalHintClass.php')
         );
 
-        self::assertContains(
+        self::assertStringContainsString(
             'public function midSignatureNotNullableHintedParameter(string $param = \'foo\', $secondParam)',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableNonOptionalHintClass.php')
         );
@@ -270,20 +269,20 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
     {
         $className = Php71NullableDefaultedNonOptionalHintClass::class;
 
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\Php71NullableDefaultedNonOptionalHintClass', false)) {
+        if (! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\Php71NullableDefaultedNonOptionalHintClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        self::assertContains(
+        self::assertStringContainsString(
             'public function midSignatureNullableParameter(string $param = NULL, $secondParam)',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp71NullableDefaultedNonOptionalHintClass.php'),
             'Signature allows nullable type, although explicit "?" marker isn\'t used in the proxy'
         );
 
-        self::assertContains(
+        self::assertStringContainsString(
             'public function midSignatureNotNullableHintedParameter(?string $param = \'foo\', $secondParam)',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp71NullableDefaultedNonOptionalHintClass.php')
         );
@@ -292,7 +291,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
     public function testClassWithVoidReturnType()
     {
         $className = VoidReturnTypeClass::class;
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\VoidReturnTypeClass', false)) {
+        if (! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\VoidReturnTypeClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
@@ -307,7 +306,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
     public function testClassWithIterableTypeHint()
     {
         $className = IterableTypeHintClass::class;
-        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\IterableTypeHintClass', false)) {
+        if (! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\IterableTypeHintClass', false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
@@ -375,7 +374,7 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
 
         $reflClass = new ReflectionClass('Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\EvalBase');
 
-        self::assertContains("eval()'d code", $reflClass->getFileName());
+        self::assertStringContainsString("eval()'d code", $reflClass->getFileName());
     }
 
     public function testAbstractClassThrowsException()
@@ -397,10 +396,10 @@ class ProxyGeneratorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $className
-     * @param array  $ids
+     * @param string  $className
+     * @param mixed[] $ids
      *
-     * @return \PHPUnit\Framework\MockObject\MockObject&ClassMetadata
+     * @return MockObject&ClassMetadata
      */
     private function createClassMetadata($className, array $ids)
     {

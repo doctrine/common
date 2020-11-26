@@ -7,19 +7,13 @@ namespace Doctrine\Tests\Common\Proxy;
  */
 class MagicWakeupClass
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public $id = 'id';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $publicField = 'publicField';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $wakeupValue = 'defaultValue';
 
     /**

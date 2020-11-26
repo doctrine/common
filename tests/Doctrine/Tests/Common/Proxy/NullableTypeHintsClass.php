@@ -2,6 +2,8 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
+use stdClass;
+
 /**
  * Test PHP 7.1 nullable type hints / return types class.
  */
@@ -11,7 +13,7 @@ class NullableTypeHintsClass
     {
     }
 
-    public function nullableTypeHintObject(?\stdClass $param)
+    public function nullableTypeHintObject(?stdClass $param)
     {
     }
 
@@ -27,19 +29,22 @@ class NullableTypeHintsClass
     {
     }
 
-    public function notNullableTypeHintWithDefaultNull(int $param = null)
+    public function notNullableTypeHintWithDefaultNull(?int $param = null)
     {
     }
 
     public function returnsNullableInt() : ?int
     {
+        return null;
     }
 
-    public function returnsNullableObject() : ?\stdClass
+    public function returnsNullableObject() : ?stdClass
     {
+        return null;
     }
 
     public function returnsNullableSelf() : ?self
     {
+        return null;
     }
 }

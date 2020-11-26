@@ -2,6 +2,9 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
+use Countable;
+use stdClass;
+
 /**
  * Test PHP 7 scalar type hints class.
  */
@@ -15,7 +18,7 @@ class ScalarTypeHintsClass
     {
     }
 
-    public function combinationOfTypeHintsAndNormal(\stdClass $a, \Countable $b, $c, int $d)
+    public function combinationOfTypeHintsAndNormal(stdClass $a, Countable $b, $c, int $d)
     {
     }
 
@@ -27,7 +30,7 @@ class ScalarTypeHintsClass
     {
     }
 
-    public function withDefaultValueNull(int $foo = null)
+    public function withDefaultValueNull(?int $foo = null)
     {
     }
 }

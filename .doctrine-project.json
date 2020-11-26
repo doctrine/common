@@ -5,9 +5,9 @@
     "docsSlug": "doctrine-common",
     "versions": [
         {
-            "name": "master",
-            "branchName": "master",
-            "slug": "latest",
+            "name": "3.1",
+            "branchName": "3.1.x",
+            "slug": "3.1",
             "upcoming": true
         },
         {

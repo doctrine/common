@@ -2,36 +2,30 @@
 
 namespace Doctrine\Tests\Common\Proxy;
 
+use BadMethodCallException;
+
 /**
  * Test asset class
- * @author Jan Barasek <jan@barasek.com>
  */
 class MagicIssetClassWithInteger
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public $id = 'id';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $publicField = 'publicField';
 
     /**
-     * @param string $name
-     *
-     * @return int
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
-    public function __isset(string $name): int
+    public function __isset(string $name) : int
     {
-        if ('test' === $name) {
+        if ($name === 'test') {
             return 1;
         }
 
-        if ('publicField' === $name || 'id' === $name) {
-            throw new \BadMethodCallException('Should never be called for "publicField" or "id"');
+        if ($name === 'publicField' || $name === 'id') {
+            throw new BadMethodCallException('Should never be called for "publicField" or "id"');
         }
 
         return 0;

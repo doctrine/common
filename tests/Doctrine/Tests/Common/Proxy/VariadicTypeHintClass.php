@@ -7,14 +7,15 @@ namespace Doctrine\Tests\Common\Proxy;
  */
 class VariadicTypeHintClass
 {
+    /** @var mixed */
     public $types;
+    /** @var mixed */
     public $foo;
+    /** @var mixed */
     public $bar;
+    /** @var mixed */
     public $baz;
 
-    /**
-     * @param ...$types
-     */
     public function addType(...$types)
     {
         $this->types = $types;

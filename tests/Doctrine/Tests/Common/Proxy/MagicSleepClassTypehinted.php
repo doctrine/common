@@ -5,7 +5,7 @@ namespace Doctrine\Tests\Common\Proxy;
 /**
  * Test asset class
  */
-class MagicSleepClass
+class MagicSleepClassTypehinted
 {
     /** @var string */
     public $id = 'id';
@@ -22,7 +22,7 @@ class MagicSleepClass
     /**
      * @return string[]
      */
-    public function __sleep()
+    public function __sleep() : array
     {
         return ['serializedField'];
     }
