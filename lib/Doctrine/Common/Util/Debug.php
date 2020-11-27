@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\Proxy;
 use stdClass;
+
 use function array_keys;
 use function count;
 use function end;
@@ -60,7 +61,7 @@ final class Debug
         $html = ini_get('html_errors');
 
         if ($html !== true) {
-            ini_set('html_errors', true);
+            ini_set('html_errors', 'on');
         }
 
         if (extension_loaded('xdebug')) {
@@ -163,6 +164,7 @@ final class Debug
             if ($aux[0] === '') {
                 $name .= ':' . ($aux[1] === '*' ? 'protected' : $aux[1] . ':private');
             }
+
             $return->$name = self::export($clone[$key], $maxDepth - 1);
         }
 

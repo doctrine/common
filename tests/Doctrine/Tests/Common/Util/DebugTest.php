@@ -10,6 +10,7 @@ use DateTimeZone;
 use Doctrine\Common\Util\Debug;
 use Doctrine\Tests\DoctrineTestCase;
 use stdClass;
+
 use function ob_end_clean;
 use function ob_get_contents;
 use function ob_start;
@@ -138,6 +139,9 @@ class DebugTest extends DoctrineTestCase
         self::assertSame($expected, $var);
     }
 
+    /**
+     * @psalm-return array<string, array{TestAsset\ParentClass, mixed[]}>
+     */
     public function provideAttributesCases()
     {
         return [

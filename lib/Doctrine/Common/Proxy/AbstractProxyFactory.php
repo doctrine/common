@@ -7,6 +7,7 @@ use Doctrine\Common\Proxy\Exception\OutOfBoundsException;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\Mapping\ClassMetadataFactory;
+
 use function class_exists;
 use function file_exists;
 use function in_array;
@@ -85,8 +86,8 @@ abstract class AbstractProxyFactory
      * Gets a reference proxy instance for the entity of the given type and identified by
      * the given identifier.
      *
-     * @param  string  $className
-     * @param  mixed[] $identifier
+     * @param  string       $className
+     * @param  array<mixed> $identifier
      *
      * @return Proxy
      *
@@ -188,6 +189,7 @@ abstract class AbstractProxyFactory
                     if (! file_exists($fileName)) {
                         $this->proxyGenerator->generateProxyClass($classMetadata, $fileName);
                     }
+
                     require $fileName;
                     break;
 

@@ -4,6 +4,7 @@ namespace Doctrine\Common\Proxy\Exception;
 
 use Doctrine\Persistence\Proxy;
 use InvalidArgumentException as BaseInvalidArgumentException;
+
 use function get_class;
 use function gettype;
 use function interface_exists;
@@ -97,7 +98,7 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements P
     /**
      * @param mixed $value
      */
-    public static function invalidAutoGenerateMode($value) : self
+    public static function invalidAutoGenerateMode($value): self
     {
         return new self(sprintf('Invalid auto generate mode "%s" given.', $value));
     }

@@ -6,20 +6,42 @@
     <arg name="cache" value=".phpcs-cache"/>
     <arg name="colors" />
 
+    <config name="php_version" value="70100"/>
+
     <!-- Ignore warnings and show progress of the run -->
     <arg value="np"/>
 
     <file>lib</file>
     <file>tests</file>
 
-    <exclude-pattern>*/tests/Doctrine/Tests/Common/Proxy/generated/*</exclude-pattern>
+    <exclude-pattern>tests/Doctrine/Tests/Common/Proxy/*</exclude-pattern>
+    <exclude-pattern>tests/Doctrine/Tests/Common/ClassLoaderTest/*</exclude-pattern>
+    <exclude-pattern>tests/Doctrine/Tests/Common/Util/TestAsset/*</exclude-pattern>
 
     <rule ref="Doctrine">
         <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes"/>
-        <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint"/>
-        <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint"/>
+        <exclude name="SlevomatCodingStandard.Exceptions.ReferenceThrowableOnly.ReferencedGeneralException"/>
+        <exclude name="SlevomatCodingStandard.ControlStructures.EarlyExit"/>
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousAbstractClassNaming"/>
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousExceptionNaming"/>
+        <exclude name="Squiz.NamingConventions.ValidVariableName.NotCamelCaps"/>
+    </rule>
+
+    <!-- Disable the rules that will require PHP 7.4 -->
+    <rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint">
+        <properties>
+            <property name="enableNativeTypeHint" value="false"/>
+        </properties>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod">
+        <exclude-pattern>lib/Doctrine/Common/Proxy/ProxyGenerator.php</exclude-pattern>
+    </rule>
+
+    <rule ref="Squiz.Classes.ClassFileName.NoMatch">
+        <exclude-pattern>*/tests/Doctrine/Tests/Common/Util/ClassUtilsTest.php</exclude-pattern>
     </rule>
 
     <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">

@@ -2,8 +2,6 @@
 
 namespace Doctrine\Common;
 
-use const DIRECTORY_SEPARATOR;
-use const E_USER_DEPRECATED;
 use function class_exists;
 use function interface_exists;
 use function is_array;
@@ -17,6 +15,9 @@ use function stream_resolve_include_path;
 use function strpos;
 use function trait_exists;
 use function trigger_error;
+
+use const DIRECTORY_SEPARATOR;
+use const E_USER_DEPRECATED;
 
 @trigger_error(ClassLoader::class . ' is deprecated.', E_USER_DEPRECATED);
 
@@ -254,10 +255,8 @@ class ClassLoader
             }
 
             $classLoader = reset($loader);
-            if ($classLoader
-               && $classLoader instanceof ClassLoader
-               && $classLoader->canLoadClass($className)
-            ) {
+
+            if ($classLoader instanceof ClassLoader && $classLoader->canLoadClass($className)) {
                 return $classLoader;
             }
         }

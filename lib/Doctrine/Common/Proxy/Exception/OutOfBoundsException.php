@@ -3,6 +3,7 @@
 namespace Doctrine\Common\Proxy\Exception;
 
 use OutOfBoundsException as BaseOutOfBoundsException;
+
 use function sprintf;
 
 /**
