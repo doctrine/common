@@ -7,7 +7,6 @@ use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use ReflectionMethod;
-use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionProperty;
 use ReflectionType;
@@ -1110,7 +1109,7 @@ EOT;
      * @return string
      */
     private function formatType(
-        ReflectionNamedType $type,
+        ReflectionType $type,
         ReflectionMethod $method,
         ?ReflectionParameter $parameter = null
     ) {
