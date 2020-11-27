@@ -443,7 +443,7 @@ class ProxyGeneratorTest extends TestCase
 
         self::assertStringContainsString(
             'foo(mixed $bar): mixed',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8MixedType.php'),
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8MixedType.php')
         );
     }
 
