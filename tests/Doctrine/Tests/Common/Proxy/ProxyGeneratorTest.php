@@ -405,12 +405,11 @@ class ProxyGeneratorTest extends TestCase
         $proxyGenerator->generateProxyClass($this->createClassMetadata(FinalClass::class, []));
     }
 
+    /**
+     * @requires PHP >= 8.0.0
+     */
     public function testPhp8UnionTypes()
     {
-        if (PHP_VERSION_ID < 80000) {
-            $this->markTestSkipped('Requires PHP 8.0');
-        }
-
         $className = Php8UnionTypes::class;
 
         if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\Php8UnionTypes', false)) {
@@ -426,12 +425,11 @@ class ProxyGeneratorTest extends TestCase
         );
     }
 
+    /**
+     * @requires PHP >= 8.0.0
+     */
     public function testPhp8MixedType()
     {
-        if (PHP_VERSION_ID < 80000) {
-            $this->markTestSkipped('Requires PHP 8.0');
-        }
-
         $className = Php8MixedType::class;
 
         if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\Php8MixedType', false)) {
