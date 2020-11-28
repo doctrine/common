@@ -1,4 +1,5 @@
 parameters:
+    phpVersion: 70100
     level: 3
     paths:
         - lib
