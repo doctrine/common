@@ -10,6 +10,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionNamedType;
 use function class_exists;
 use function count;
 use function file_get_contents;
@@ -52,7 +53,8 @@ class ProxyGeneratorTest extends TestCase
         $params = $method->getParameters();
 
         self::assertEquals(1, count($params));
-        self::assertEquals('stdClass', $params[0]->getClass()->getName());
+        self::assertInstanceOf(ReflectionNamedType::class, $params[0]->getType());
+        self::assertEquals('stdClass', $params[0]->getType()->getName());
     }
 
     public function testProxyRespectsMethodsWhichReturnValuesByReference()
