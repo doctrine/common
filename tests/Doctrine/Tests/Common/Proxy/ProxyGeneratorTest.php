@@ -10,6 +10,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionNamedType;
 use function class_exists;
 use function count;
 use function file_get_contents;
@@ -52,7 +53,8 @@ class ProxyGeneratorTest extends TestCase
         $params = $method->getParameters();
 
         self::assertEquals(1, count($params));
-        self::assertEquals('stdClass', $params[0]->getClass()->getName());
+        self::assertInstanceOf(ReflectionNamedType::class, $params[0]->getType());
+        self::assertEquals('stdClass', $params[0]->getType()->getName());
     }
 
     public function testProxyRespectsMethodsWhichReturnValuesByReference()
@@ -242,6 +244,9 @@ class ProxyGeneratorTest extends TestCase
      */
     public function testClassWithNullableOptionalNonLastParameterOnProxiedMethods()
     {
+        if (PHP_VERSION_ID >= 80000) {
+            $this->markTestSkipped('signatures with a required parameter following an optional one trigger a deprecation notice on PHP 8.0+');
+        }
         $className = NullableNonOptionalHintClass::class;
 
         if (! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\NullableNonOptionalHintClass', false)) {
@@ -267,6 +272,9 @@ class ProxyGeneratorTest extends TestCase
      */
     public function testClassWithPhp71NullableOptionalNonLastParameterOnProxiedMethods()
     {
+        if (PHP_VERSION_ID >= 80000) {
+            $this->markTestSkipped('signatures with a required parameter following an optional one trigger a deprecation notice on PHP 8.0+');
+        }
         $className = Php71NullableDefaultedNonOptionalHintClass::class;
 
         if (! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\Php71NullableDefaultedNonOptionalHintClass', false)) {

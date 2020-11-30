@@ -44,6 +44,22 @@
         <exclude-pattern>*/tests/Doctrine/Tests/Common/Util/ClassUtilsTest.php</exclude-pattern>
     </rule>
 
+    <!-- Disable the rules that will require PHP 7.4 -->
+    <rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint">
+        <properties>
+            <property name="enableNativeTypeHint" value="false"/>
+        </properties>
+    </rule>
+
+
+    <rule ref="SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod">
+        <exclude-pattern>lib/Doctrine/Common/Proxy/ProxyGenerator.php</exclude-pattern>
+    </rule>
+
+    <rule ref="Squiz.Classes.ClassFileName.NoMatch">
+        <exclude-pattern>*/tests/Doctrine/Tests/Common/Util/ClassUtilsTest.php</exclude-pattern>
+    </rule>
+
     <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
         <exclude-pattern>*/tests/*</exclude-pattern>
     </rule>

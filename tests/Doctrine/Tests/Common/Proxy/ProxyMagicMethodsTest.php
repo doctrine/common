@@ -410,6 +410,10 @@ class ProxyMagicMethodsTest extends TestCase
 
     public function testInheritedMagicIssetWithInteger()
     {
+        if (PHP_VERSION_ID >= 80000) {
+            $this->markTestSkipped('isset returning a non boolean is not supported on PHP 8.0+ anymore.');
+        }
+
         $proxyClassName = $this->generateProxyClass(MagicIssetClassWithInteger::class);
         $proxy          = new $proxyClassName(static function (Proxy $proxy, $method, $params) use (&$counter) {
             if (in_array($params[0], ['publicField', 'test', 'nonExisting'])) {
