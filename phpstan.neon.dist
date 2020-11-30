@@ -1,43 +1,44 @@
 parameters:
+    phpVersion: 70100
     level: 3
     paths:
-        - %currentWorkingDirectory%/lib
-        - %currentWorkingDirectory%/tests
+        - lib
+        - tests
     excludes_analyse:
-        - %currentWorkingDirectory%/lib/vendor/doctrine-build-common
-        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/InvalidReturnTypeClass.php
-        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/InvalidTypeHintClass.php
-        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/SerializedClass.php
-        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/VariadicTypeHintClass.php
-        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicTypedPropertiesTest.php
-        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/LazyLoadableObjectWithTypedProperties.php
-        - %currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/generated
+        - lib/vendor/doctrine-build-common
+        - tests/Doctrine/Tests/Common/Proxy/InvalidReturnTypeClass.php
+        - tests/Doctrine/Tests/Common/Proxy/InvalidTypeHintClass.php
+        - tests/Doctrine/Tests/Common/Proxy/SerializedClass.php
+        - tests/Doctrine/Tests/Common/Proxy/VariadicTypeHintClass.php
+        - tests/Doctrine/Tests/Common/Proxy/ProxyLogicTypedPropertiesTest.php
+        - tests/Doctrine/Tests/Common/Proxy/LazyLoadableObjectWithTypedProperties.php
+        - tests/Doctrine/Tests/Common/Proxy/generated
     ignoreErrors:
         - '#Access to an undefined property Doctrine\\Common\\Proxy\\Proxy::\$publicField#'
         -
             message: '#^Result of method Doctrine\\Tests\\Common\\Proxy\\LazyLoadableObjectWithVoid::(adding|incrementing)AndReturningVoid\(\) \(void\) is used\.$#'
-            path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
+            path: 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
         -
             message: '#^Property Doctrine\\Tests\\Common\\Proxy\\ProxyLogicTest::\$initializerCallbackMock \(callable\(\): mixed&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept PHPUnit\\Framework\\MockObject\\MockObject&stdClass\.$#'
-            path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
+            path: 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
         -
             message: '#^Access to an undefined property Doctrine\\Common\\Proxy\\Proxy&Doctrine\\Tests\\Common\\Proxy\\LazyLoadableObject::\$non_existing_property\.$#'
-            path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
+            path: 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
         -
             message: '#^Instantiated class Doctrine\\Tests\\Common\\ProxyProxy\\__CG__\\Doctrine\\Tests\\Common\\Proxy\\.* not found.$#'
-            path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
+            path: 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
         -
             message: '#^Instantiated class Doctrine\\Tests\\Common\\ProxyProxy\\__CG__\\Doctrine\\Tests\\Common\\Proxy\\.* not found.$#'
-            path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
+            path: 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
         -
             message: '#^Property Doctrine\\Tests\\Common\\Proxy\\ProxyLogicVoidReturnTypeTest::\$initializerCallbackMock \(callable\(\): mixed&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept PHPUnit\\Framework\\MockObject\\MockObject&stdClass\.$#'
-            path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
+            path: 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
         -
             message: '#^Method Doctrine\\Tests\\Common\\Proxy\\MagicIssetClassWithInteger::__isset\(\) should return bool but returns int\.$#'
-            path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/MagicIssetClassWithInteger.php'
+            path: 'tests/Doctrine/Tests/Common/Proxy/MagicIssetClassWithInteger.php'
         -
             message: '#^Access to an undefined property Doctrine\\Tests\\Common\\Proxy\\MagicGetByRefClass\:\:\$nonExisting\.$#'
-            path: '%currentWorkingDirectory%/tests/Doctrine/Tests/Common/Proxy/ProxyMagicMethodsTest.php'
+            path: 'tests/Doctrine/Tests/Common/Proxy/ProxyMagicMethodsTest.php'
 
 includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon
