@@ -8,10 +8,14 @@ parameters:
         - lib/vendor/doctrine-build-common
         - tests/Doctrine/Tests/Common/Proxy/InvalidReturnTypeClass.php
         - tests/Doctrine/Tests/Common/Proxy/InvalidTypeHintClass.php
+        - tests/Doctrine/Tests/Common/Proxy/LazyLoadableObjectWithTypedProperties.php
+        - tests/Doctrine/Tests/Common/Proxy/MagicIssetClassWithInteger.php
+        - tests/Doctrine/Tests/Common/Proxy/NullableNonOptionalHintClass.php
+        - tests/Doctrine/Tests/Common/Proxy/Php8UnionTypes.php
+        - tests/Doctrine/Tests/Common/Proxy/ProxyGeneratorTest.php
+        - tests/Doctrine/Tests/Common/Proxy/ProxyLogicTypedPropertiesTest.php
         - tests/Doctrine/Tests/Common/Proxy/SerializedClass.php
         - tests/Doctrine/Tests/Common/Proxy/VariadicTypeHintClass.php
-        - tests/Doctrine/Tests/Common/Proxy/ProxyLogicTypedPropertiesTest.php
-        - tests/Doctrine/Tests/Common/Proxy/LazyLoadableObjectWithTypedProperties.php
         - tests/Doctrine/Tests/Common/Proxy/generated
     ignoreErrors:
         - '#Access to an undefined property Doctrine\\Common\\Proxy\\Proxy::\$publicField#'
