@@ -43,3 +43,4 @@ jobs:
 
       - name: "Run a static analysis with phpstan/phpstan"
         run: "vendor/bin/phpstan analyse"
+        continue-on-error: true
