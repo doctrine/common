@@ -423,6 +423,11 @@ class ProxyGeneratorTest extends TestCase
             'setValue(\stdClass|array $value): float|bool',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8UnionTypes.php')
         );
+
+        self::assertStringContainsString(
+            'setNullableValue(\stdClass|array|null $value): float|bool|null',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8UnionTypes.php')
+        );
     }
 
     /**
