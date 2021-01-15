@@ -1113,7 +1113,7 @@ EOT;
         ReflectionType $type,
         ReflectionMethod $method,
         ?ReflectionParameter $parameter = null,
-	    bool $isUnionPart = false
+        bool $isUnionPart = false
     ) {
         if ($type instanceof ReflectionUnionType) {
             return implode('|', array_map(
@@ -1130,7 +1130,7 @@ EOT;
         $nameLower = strtolower($name);
 
         if ($nameLower === 'static') {
-        	$name = 'static';
+            $name = 'static';
         }
 
         if ($nameLower === 'self') {
@@ -1161,7 +1161,7 @@ EOT;
         }
 
         if (
-        	!$isUnionPart
+            ! $isUnionPart
             && $type->allowsNull()
             && ($parameter === null || ! $parameter->isDefaultValueAvailable() || $parameter->getDefaultValue() !== null)
             && $name !== 'mixed'
