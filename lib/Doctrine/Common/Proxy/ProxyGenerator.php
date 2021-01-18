@@ -1112,13 +1112,12 @@ EOT;
     private function formatType(
         ReflectionType $type,
         ReflectionMethod $method,
-        ?ReflectionParameter $parameter = null,
-        bool $isUnionPart = false
+        ?ReflectionParameter $parameter = null
     ) {
         if ($type instanceof ReflectionUnionType) {
             return implode('|', array_map(
                 function (ReflectionType $unionedType) use ($method, $parameter) {
-                    return $this->formatType($unionedType, $method, $parameter, true);
+                    return $this->formatType($unionedType, $method, $parameter);
                 },
                 $type->getTypes()
             ));
@@ -1161,10 +1160,9 @@ EOT;
         }
 
         if (
-            ! $isUnionPart
-            && $type->allowsNull()
+            $type->allowsNull()
+            && ! in_array($name, ['mixed', 'null'], true)
             && ($parameter === null || ! $parameter->isDefaultValueAvailable() || $parameter->getDefaultValue() !== null)
-            && $name !== 'mixed'
         ) {
             $name = '?' . $name;
         }
