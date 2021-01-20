@@ -423,6 +423,11 @@ class ProxyGeneratorTest extends TestCase
             'setValue(\stdClass|array $value): float|bool',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8UnionTypes.php')
         );
+
+        self::assertStringContainsString(
+            'setNullableValue(\stdClass|array|null $value): float|bool|null',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8UnionTypes.php')
+        );
     }
 
     /**
@@ -442,6 +447,31 @@ class ProxyGeneratorTest extends TestCase
         self::assertStringContainsString(
             'foo(mixed $bar): mixed',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8MixedType.php')
+        );
+    }
+
+    /**
+     * @requires PHP >= 8.0.0
+     */
+    public function testPhp8StaticType()
+    {
+        $className = Php8StaticType::class;
+
+        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\Php8StaticType', false)) {
+            $metadata = $this->createClassMetadata($className, ['id']);
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        self::assertStringContainsString(
+            'foo(mixed $bar): static',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8StaticType.php')
+        );
+
+        self::assertStringContainsString(
+            'fooNull(mixed $bar): ?static',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8StaticType.php')
         );
     }
 

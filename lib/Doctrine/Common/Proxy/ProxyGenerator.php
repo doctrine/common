@@ -1128,6 +1128,10 @@ EOT;
         $name      = $type->getName();
         $nameLower = strtolower($name);
 
+        if ($nameLower === 'static') {
+            $name = 'static';
+        }
+
         if ($nameLower === 'self') {
             $name = $method->getDeclaringClass()->getName();
         }
@@ -1136,7 +1140,7 @@ EOT;
             $name = $method->getDeclaringClass()->getParentClass()->getName();
         }
 
-        if (! $type->isBuiltin() && ! class_exists($name) && ! interface_exists($name)) {
+        if (! $type->isBuiltin() && ! class_exists($name) && ! interface_exists($name) && $name !== 'static') {
             if ($parameter !== null) {
                 throw UnexpectedValueException::invalidParameterTypeHint(
                     $method->getDeclaringClass()->getName(),
@@ -1151,14 +1155,14 @@ EOT;
             );
         }
 
-        if (! $type->isBuiltin()) {
+        if (! $type->isBuiltin() && $name !== 'static') {
             $name = '\\' . $name;
         }
 
         if (
             $type->allowsNull()
+            && ! in_array($name, ['mixed', 'null'], true)
             && ($parameter === null || ! $parameter->isDefaultValueAvailable() || $parameter->getDefaultValue() !== null)
-            && $name !== 'mixed'
         ) {
             $name = '?' . $name;
         }
