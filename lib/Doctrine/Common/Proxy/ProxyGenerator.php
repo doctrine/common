@@ -564,7 +564,7 @@ EOT
             return '';
         }
 
-        $magicSet   = <<<EOT
+        $magicSet = <<<EOT
     /**
      * $inheritDoc
      * @param string \$name
