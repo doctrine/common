@@ -61,5 +61,4 @@ jobs:
         uses: "ramsey/composer-install@v1"
 
       - name: "Run a static analysis with vimeo/psalm"
-        run: "vendor/bin/psalm"
-        continue-on-error: true
+        run: "vendor/bin/psalm --show-info=false --stats --output-format=github --threads=$(nproc)"
