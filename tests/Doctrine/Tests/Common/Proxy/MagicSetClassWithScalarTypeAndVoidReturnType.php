@@ -7,7 +7,7 @@ use BadMethodCallException;
 /**
  * Test asset class
  */
-class MagicSetClassWithScalarTypeAndRenamedParameters
+class MagicSetClassWithScalarTypeAndVoidReturnType
 {
     /** @var string */
     public $id = 'id';
@@ -19,21 +19,20 @@ class MagicSetClassWithScalarTypeAndRenamedParameters
     public $testAttribute;
 
     /**
-     * @param string $n
-     * @param mixed  $val
+     * @param mixed  $value
      *
      * @throws BadMethodCallException
      */
-    public function __set(string $n, $val)
+    public function __set(string $name, $value): void
     {
-        if ($n === 'test') {
-            $this->testAttribute = $val;
+        if ($name === 'test') {
+            $this->testAttribute = $value;
         }
 
-        if ($n === 'publicField' || $n === 'id') {
+        if ($name === 'publicField' || $name === 'id') {
             throw new BadMethodCallException('Should never be called for "publicField" or "id"');
         }
 
-        $this->testAttribute = $val;
+        $this->testAttribute = $value;
     }
 }
