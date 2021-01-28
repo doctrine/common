@@ -38,6 +38,8 @@ class Autoloader
      * @return string
      *
      * @throws InvalidArgumentException
+     *
+     * @psalm-param class-string $className
      */
     public static function resolveFile($proxyDir, $proxyNamespace, $className)
     {

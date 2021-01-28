@@ -891,6 +891,8 @@ EOT;
      *                              EntityManager will be used by this factory.
      *
      * @return string
+     *
+     * @psalm-param class-string $className
      */
     public function getProxyFileName($className, $baseDirectory = null)
     {

@@ -21,19 +21,22 @@ class ClassUtils
     /**
      * Gets the real class name of a class name that could be a proxy.
      *
-     * @param string $class
+     * @param string $className
      *
      * @return string
+     *
+     * @psalm-param class-string $className
+     * @psalm-return class-string
      */
-    public static function getRealClass($class)
+    public static function getRealClass($className)
     {
-        $pos = strrpos($class, '\\' . Proxy::MARKER . '\\');
+        $pos = strrpos($className, '\\' . Proxy::MARKER . '\\');
 
         if ($pos === false) {
-            return $class;
+            return $className;
         }
 
-        return substr($class, $pos + Proxy::MARKER_LENGTH + 2);
+        return substr($className, $pos + Proxy::MARKER_LENGTH + 2);
     }
 
     /**
@@ -42,6 +45,8 @@ class ClassUtils
      * @param object $object
      *
      * @return string
+     *
+     * @psalm-return class-string
      */
     public static function getClass($object)
     {
@@ -54,6 +59,9 @@ class ClassUtils
      * @param string $className
      *
      * @return string
+     *
+     * @psalm-param class-string $className
+     * @psalm-return class-string
      */
     public static function getParentClass($className)
     {
@@ -63,13 +71,15 @@ class ClassUtils
     /**
      * Creates a new reflection class.
      *
-     * @param string $class
+     * @param string $className
      *
      * @return ReflectionClass
+     *
+     * @psalm-param class-string $className
      */
-    public static function newReflectionClass($class)
+    public static function newReflectionClass($className)
     {
-        return new ReflectionClass(self::getRealClass($class));
+        return new ReflectionClass(self::getRealClass($className));
     }
 
     /**
@@ -91,6 +101,9 @@ class ClassUtils
      * @param string $proxyNamespace
      *
      * @return string
+     *
+     * @psalm-param class-string $className
+     * @psalm-return class-string
      */
     public static function generateProxyClassName($className, $proxyNamespace)
     {

@@ -31,6 +31,8 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements P
      * @param string $proxyNamespace
      *
      * @return self
+     *
+     * @psalm-param class-string $className
      */
     public static function notProxyClass($className, $proxyNamespace)
     {
@@ -79,6 +81,8 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements P
      * @param string $className
      *
      * @return self
+     *
+     * @psalm-param class-string $className
      */
     public static function classMustNotBeAbstract($className)
     {
@@ -89,6 +93,8 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements P
      * @param string $className
      *
      * @return self
+     *
+     * @psalm-param class-string $className
      */
     public static function classMustNotBeFinal($className)
     {
