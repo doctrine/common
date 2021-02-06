@@ -1057,7 +1057,11 @@ EOT;
             return null;
         }
 
-        return $this->formatType($parameter->getType(), $parameter->getDeclaringFunction(), $parameter);
+        $declaringFunction = $parameter->getDeclaringFunction();
+
+        assert($declaringFunction instanceof ReflectionMethod);
+
+        return $this->formatType($parameter->getType(), $declaringFunction, $parameter);
     }
 
     /**
