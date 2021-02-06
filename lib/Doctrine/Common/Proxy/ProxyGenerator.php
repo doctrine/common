@@ -545,12 +545,17 @@ EOT
     private function generateMagicSet(ClassMetadata $class)
     {
         $lazyPublicProperties = $this->getLazyLoadedPublicPropertiesNames($class);
-        $hasParentSet         = $class->getReflectionClass()->hasMethod('__set');
+        $reflectionClass      = $class->getReflectionClass();
+        $hasParentSet         = false;
+        $inheritDoc           = '';
         $parametersString     = '$name, $value';
         $returnTypeHint       = null;
 
-        if ($hasParentSet) {
-            $methodReflection = $class->getReflectionClass()->getMethod('__set');
+        if ($reflectionClass->hasMethod('__set')) {
+            $hasParentSet     = true;
+            $inheritDoc       = '{@inheritDoc}';
+            $methodReflection = $reflectionClass->getMethod('__set');
+
             $parametersString = $this->buildParametersString($methodReflection->getParameters(), ['name', 'value']);
             $returnTypeHint   = $this->getMethodReturnType($methodReflection);
         }
@@ -559,18 +564,16 @@ EOT
             return '';
         }
 
-        $inheritDoc = $hasParentSet ? '{@inheritDoc}' : '';
-        $magicSet   = sprintf(<<<'EOT'
+        $magicSet = <<<EOT
     /**
-     * %s
-     * @param string $name
-     * @param mixed  $value
+     * $inheritDoc
+     * @param string \$name
+     * @param mixed  \$value
      */
-    public function __set(%s)%s
+    public function __set($parametersString)$returnTypeHint
     {
 
-EOT
-            , $inheritDoc, $parametersString, $returnTypeHint);
+EOT;
 
         if (! empty($lazyPublicProperties)) {
             $magicSet .= <<<'EOT'
@@ -589,9 +592,20 @@ EOT;
         if ($hasParentSet) {
             $magicSet .= <<<'EOT'
         $this->__initializer__ && $this->__initializer__->__invoke($this, '__set', [$name, $value]);
+EOT;
+
+            if ($returnTypeHint === ': void') {
+                $magicSet .= <<<'EOT'
+
+        parent::__set($name, $value);
+        return;
+EOT;
+            } else {
+                $magicSet .= <<<'EOT'
 
         return parent::__set($name, $value);
 EOT;
+            }
         } else {
             $magicSet .= '        $this->$name = $value;';
         }
