@@ -62,7 +62,7 @@ class Autoloader
      * @param string        $proxyDir
      * @param string        $proxyNamespace
      * @param callable|null $notFoundCallback Invoked when the proxy file is not found.
-     * @param bool          $prepend if true prepend the autoloader on the autoload queue instead of appending it
+     * @param bool          $prepend          if true prepend the autoloader on the autoload queue instead of appending it
      *
      * @return Closure
      *
