@@ -7,6 +7,9 @@ use Doctrine\Persistence\Proxy as BaseProxy;
 
 /**
  * Interface for proxy classes.
+ *
+ * @template T of object
+ * @template-extends BaseProxy<T>
  */
 interface Proxy extends BaseProxy
 {
