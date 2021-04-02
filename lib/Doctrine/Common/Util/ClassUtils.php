@@ -25,8 +25,9 @@ class ClassUtils
      *
      * @return string
      *
-     * @psalm-param class-string $className
-     * @psalm-return class-string
+     * @template T of object
+     * @psalm-param class-string<T> $className
+     * @psalm-return class-string<T>
      */
     public static function getRealClass($className)
     {
@@ -46,7 +47,9 @@ class ClassUtils
      *
      * @return string
      *
-     * @psalm-return class-string
+     * @template T of object
+     * @psalm-param T $object
+     * @psalm-return class-string<T>
      */
     public static function getClass($object)
     {
