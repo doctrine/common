@@ -8,5 +8,5 @@ The Doctrine Common project is a library that provides extensions to core PHP fu
 ## More resources:
 
 * [Website](https://www.doctrine-project.org/)
-* [Documentation](https://www.doctrine-project.org/projects/doctrine-common/en/latest/)
+* [Documentation](https://www.doctrine-project.org/projects/doctrine-common/en/current/)
 * [Downloads](https://github.com/doctrine/common/releases)
