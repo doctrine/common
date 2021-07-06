@@ -62,12 +62,13 @@ class Autoloader
      * @param string        $proxyDir
      * @param string        $proxyNamespace
      * @param callable|null $notFoundCallback Invoked when the proxy file is not found.
+     * @param bool          $prepend          if true prepend the autoloader on the autoload queue instead of appending it
      *
      * @return Closure
      *
      * @throws InvalidArgumentException
      */
-    public static function register($proxyDir, $proxyNamespace, $notFoundCallback = null)
+    public static function register($proxyDir, $proxyNamespace, $notFoundCallback = null, $prepend = false)
     {
         $proxyNamespace = ltrim($proxyNamespace, '\\');
 
@@ -93,7 +94,7 @@ class Autoloader
             require $file;
         };
 
-        spl_autoload_register($autoloader);
+        spl_autoload_register($autoloader, true, $prepend);
 
         return $autoloader;
     }
