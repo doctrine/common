@@ -216,6 +216,3 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
         $proxyFactory->getProxy('Class', []);
     }
 }
-
-interface_exists(ClassMetadata::class);
-interface_exists(ClassMetadataFactory::class);

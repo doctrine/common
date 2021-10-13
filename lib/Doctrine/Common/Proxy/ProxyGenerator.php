@@ -1190,5 +1190,3 @@ EOT;
         return $name;
     }
 }
-
-interface_exists(ClassMetadata::class);

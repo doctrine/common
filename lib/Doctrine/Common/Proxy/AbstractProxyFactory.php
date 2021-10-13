@@ -11,7 +11,6 @@ use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use function class_exists;
 use function file_exists;
 use function in_array;
-use function interface_exists;
 
 /**
  * Abstract factory for proxy objects.
@@ -225,6 +224,3 @@ abstract class AbstractProxyFactory
      */
     abstract protected function createProxyDefinition($className);
 }
-
-interface_exists(ClassMetadata::class);
-interface_exists(ClassMetadataFactory::class);
