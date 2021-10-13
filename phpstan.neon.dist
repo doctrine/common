@@ -26,8 +26,14 @@ parameters:
             message: '#^Property Doctrine\\Tests\\Common\\Proxy\\ProxyLogicTest::\$initializerCallbackMock \(callable\(\): mixed&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept PHPUnit\\Framework\\MockObject\\MockObject&stdClass\.$#'
             path: 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
         -
-            message: '#^Access to an undefined property Doctrine\\Common\\Proxy\\Proxy&Doctrine\\Tests\\Common\\Proxy\\LazyLoadableObject::\$non_existing_property\.$#'
-            path: 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
+            message: '#.*ReflectionUnionType.*#'
+            paths:
+               - 'lib/Doctrine/Common/Proxy/ProxyGenerator.php'
+        -
+            message: '#.*LazyLoadableObject.*#'
+            paths:
+               - 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
+               - 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
         -
             message: '#^Instantiated class Doctrine\\Tests\\Common\\ProxyProxy\\__CG__\\Doctrine\\Tests\\Common\\Proxy\\.* not found.$#'
             path: 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
@@ -42,6 +48,9 @@ parameters:
             path: 'tests/Doctrine/Tests/Common/Proxy/MagicIssetClassWithInteger.php'
         -
             message: '#^Access to an undefined property Doctrine\\Tests\\Common\\Proxy\\MagicGetByRefClass\:\:\$nonExisting\.$#'
+            path: 'tests/Doctrine/Tests/Common/Proxy/ProxyMagicMethodsTest.php'
+        -
+            message: '#^Class Doctrine\\Tests\\Common\\Proxy\\MagicIssetClassWithInteger not found\.#'
             path: 'tests/Doctrine/Tests/Common/Proxy/ProxyMagicMethodsTest.php'
 
 includes:
