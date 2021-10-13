@@ -184,8 +184,7 @@ true):
 .. code-block:: php
 
     <?php
-    // Equivalent to if (
-    ('Foo', true)) if there is only 1 class loader to check
+    // Equivalent to if (('Foo', true)) if there is only 1 class loader to check
     if (class_exists('Foo', false) || $classLoader->canLoadClass('Foo')) {
       // ...
     }
