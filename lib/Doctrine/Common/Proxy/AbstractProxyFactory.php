@@ -10,6 +10,7 @@ use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 
 use function class_exists;
 use function file_exists;
+use function filemtime;
 use function in_array;
 use function interface_exists;
 
@@ -34,7 +35,7 @@ abstract class AbstractProxyFactory
     /**
      * Autogenerate the proxy class when the proxy file does not exist.
      *
-     * This strategy causes a file exists call whenever any proxy is used the
+     * This strategy causes a file_exists() call whenever any proxy is used the
      * first time in a request.
      */
     public const AUTOGENERATE_FILE_NOT_EXISTS = 2;
@@ -47,11 +48,22 @@ abstract class AbstractProxyFactory
      */
     public const AUTOGENERATE_EVAL = 3;
 
+    /**
+     * Autogenerate the proxy class when the proxy file does not exist or
+     * when the proxied file changed.
+     *
+     * This strategy causes a file_exists() call whenever any proxy is used the
+     * first time in a request. When the proxied file is changed, the proxy will
+     * be updated.
+     */
+    public const AUTOGENERATE_FILE_NOT_EXISTS_OR_CHANGED = 4;
+
     private const AUTOGENERATE_MODES = [
         self::AUTOGENERATE_NEVER,
         self::AUTOGENERATE_ALWAYS,
         self::AUTOGENERATE_FILE_NOT_EXISTS,
         self::AUTOGENERATE_EVAL,
+        self::AUTOGENERATE_FILE_NOT_EXISTS_OR_CHANGED,
     ];
 
     /** @var ClassMetadataFactory */
@@ -202,6 +214,14 @@ abstract class AbstractProxyFactory
 
                 case self::AUTOGENERATE_EVAL:
                     $this->proxyGenerator->generateProxyClass($classMetadata, false);
+                    break;
+
+                case self::AUTOGENERATE_FILE_NOT_EXISTS_OR_CHANGED:
+                    if (! file_exists($fileName) || filemtime($fileName) < filemtime($classMetadata->getReflectionClass()->getFileName())) {
+                        $this->proxyGenerator->generateProxyClass($classMetadata, $fileName);
+                    }
+
+                    require $fileName;
                     break;
             }
         }
