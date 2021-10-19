@@ -31,6 +31,7 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
             [1, 1],
             [2, 2],
             [3, 3],
+            [4, 4],
             ['2', 2],
             [true, 1],
             [false, 0],
@@ -214,5 +215,166 @@ class AbstractProxyFactoryTest extends DoctrineTestCase
         $this->expectException(OutOfBoundsException::class);
 
         $proxyFactory->getProxy('Class', []);
+    }
+
+    public function testGetProxyFileWhenProxyDoesNotExist() : void
+    {
+        $proxyFile = tempnam(sys_get_temp_dir(), 'proxy');
+        unlink($proxyFile);
+
+        $metadata        = $this->createMock(ClassMetadata::class);
+        $definition      = new ProxyDefinition('MyObject1', [], [], null, null);
+        $proxyGenerator  = $this->createMock(ProxyGenerator::class);
+        $metadataFactory = $this->createMock(ClassMetadataFactory::class);
+
+        $metadataFactory
+            ->expects($this->once())
+            ->method('getMetadataFor')
+            ->willReturn($metadata);
+
+        $metadata
+            ->expects($this->once())
+            ->method('getName')
+            ->willReturn('MyObject1');
+
+        $proxyGenerator
+            ->expects($this->once())
+            ->method('getProxyFileName')
+            ->willReturn($proxyFile);
+
+        $proxyGenerator
+            ->expects($this->once())
+            ->method('generateProxyClass')
+            ->willReturnCallback(function() use ($proxyFile) {
+                file_put_contents($proxyFile, '<?php class MyObject1 {} ');
+            });
+
+        /** @var MockObject&AbstractProxyFactory $proxyFactory */
+        $proxyFactory = $this->getMockForAbstractClass(
+            AbstractProxyFactory::class,
+            [$proxyGenerator, $metadataFactory, AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS_OR_CHANGED]
+        );
+
+        $proxyFactory
+            ->method('createProxyDefinition')
+            ->willReturn($definition);
+
+        $generatedProxy = $proxyFactory->getProxy('Class', ['id' => 1]);
+
+        self::assertInstanceOf('MyObject1', $generatedProxy);
+    }
+
+    public function testGetProxyFileWhenProxyIsOlderThanSource() : void
+    {
+        $proxyFile = tempnam(sys_get_temp_dir(), 'proxy');
+        file_put_contents($proxyFile, '<?php class MyObject2 {} ');
+        sleep(1);
+        $sourceFile = tempnam(sys_get_temp_dir(), 'source');
+
+        $metadata        = $this->createMock(ClassMetadata::class);
+        $definition      = new ProxyDefinition('MyObject2', [], [], null, null);
+        $proxyGenerator  = $this->createMock(ProxyGenerator::class);
+        $metadataFactory = $this->createMock(ClassMetadataFactory::class);
+        $reflection      = $this->createMock(ReflectionClass::class);
+
+        $metadataFactory
+            ->expects($this->once())
+            ->method('getMetadataFor')
+            ->willReturn($metadata);
+
+        $metadata
+            ->expects($this->once())
+            ->method('getName')
+            ->willReturn('MyObject2');
+
+        $metadata
+            ->expects($this->once())
+            ->method('getReflectionClass')
+            ->willReturn($reflection);
+
+        $reflection
+            ->expects($this->once())
+            ->method('getFileName')
+            ->willReturn($sourceFile);
+
+        $proxyGenerator
+            ->expects($this->once())
+            ->method('getProxyFileName')
+            ->willReturn($proxyFile);
+
+        $proxyGenerator
+            ->expects($this->once())
+            ->method('generateProxyClass');
+
+        /** @var MockObject&AbstractProxyFactory $proxyFactory */
+        $proxyFactory = $this->getMockForAbstractClass(
+            AbstractProxyFactory::class,
+            [$proxyGenerator, $metadataFactory, AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS_OR_CHANGED]
+        );
+
+        $proxyFactory
+            ->method('createProxyDefinition')
+            ->willReturn($definition);
+
+        $generatedProxy = $proxyFactory->getProxy('Class', ['id' => 1]);
+
+        self::assertInstanceOf('MyObject2', $generatedProxy);
+    }
+
+    public function testGetProxyFileWhenProxyIsNewerThanSource() : void
+    {
+        $sourceFile = tempnam(sys_get_temp_dir(), 'source');
+        sleep(1);
+        $proxyFile = tempnam(sys_get_temp_dir(), 'proxy');
+        file_put_contents($proxyFile, '<?php class MyObject3 {} ');
+
+        $metadata        = $this->createMock(ClassMetadata::class);
+        $definition      = new ProxyDefinition('MyObject3', [], [], null, null);
+        $proxyGenerator  = $this->createMock(ProxyGenerator::class);
+        $metadataFactory = $this->createMock(ClassMetadataFactory::class);
+        $reflection      = $this->createMock(ReflectionClass::class);
+
+        $metadataFactory
+            ->expects($this->once())
+            ->method('getMetadataFor')
+            ->willReturn($metadata);
+
+        $metadata
+            ->expects($this->once())
+            ->method('getName')
+            ->willReturn('MyObject3');
+
+        $metadata
+            ->expects($this->once())
+            ->method('getReflectionClass')
+            ->willReturn($reflection);
+
+        $reflection
+            ->expects($this->once())
+            ->method('getFileName')
+            ->willReturn($sourceFile);
+
+        $proxyGenerator
+            ->expects($this->once())
+            ->method('getProxyFileName')
+            ->willReturn($proxyFile);
+
+        $proxyGenerator
+            ->expects($this->never())
+            ->method('generateProxyClass');
+
+        /** @var MockObject&AbstractProxyFactory $proxyFactory */
+        $proxyFactory = $this->getMockForAbstractClass(
+            AbstractProxyFactory::class,
+            [$proxyGenerator, $metadataFactory, AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS_OR_CHANGED]
+        );
+
+        $proxyFactory
+            ->method('createProxyDefinition')
+            ->willReturn($definition);
+
+        $generatedProxy = $proxyFactory->getProxy('Class', ['id' => 1]);
+
+        self::assertInstanceOf('MyObject3', $generatedProxy);
     }
 }
