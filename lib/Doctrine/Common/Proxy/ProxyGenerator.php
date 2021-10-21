@@ -941,7 +941,7 @@ EOT;
             && ($endLine - $startLine <= 4);
 
         if ($cheapCheck) {
-            $code = file($method->getFileName());
+            $code = file($method->getFileName() ? $method->getFileName():$method->getDeclaringClass()->getFileName());
             $code = trim(implode(' ', array_slice($code, $startLine - 1, $endLine - $startLine + 1)));
 
             $pattern = sprintf(self::PATTERN_MATCH_ID_METHOD, $method->getName(), $identifier);
