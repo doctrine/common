@@ -36,10 +36,6 @@
         </properties>
     </rule>
 
-    <rule ref="SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod">
-        <exclude-pattern>lib/Doctrine/Common/Proxy/ProxyGenerator.php</exclude-pattern>
-    </rule>
-
     <rule ref="Squiz.Classes.ClassFileName.NoMatch">
         <exclude-pattern>*/tests/Doctrine/Tests/Common/Util/ClassUtilsTest.php</exclude-pattern>
     </rule>
@@ -49,11 +45,6 @@
         <properties>
             <property name="enableNativeTypeHint" value="false"/>
         </properties>
-    </rule>
-
-
-    <rule ref="SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod">
-        <exclude-pattern>lib/Doctrine/Common/Proxy/ProxyGenerator.php</exclude-pattern>
     </rule>
 
     <rule ref="Squiz.Classes.ClassFileName.NoMatch">
@@ -75,14 +66,6 @@
         <exclude-pattern>tests/Doctrine/Tests/Common/Proxy/*HintClass.php</exclude-pattern>
     </rule>
 
-    <rule ref="SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedProperty">
-        <exclude-pattern>tests/Doctrine/Tests/Common/Util/TestAsset/ChildClass.php</exclude-pattern>
-        <exclude-pattern>tests/Doctrine/Tests/Common/Util/TestAsset/ChildWithSameAttributesClass.php</exclude-pattern>
-        <exclude-pattern>tests/Doctrine/Tests/Common/Util/TestAsset/ParentClass.php</exclude-pattern>
-    </rule>
-    <rule ref="SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod">
-        <exclude-pattern>lib/Doctrine/Common/Proxy/ProxyGenerator.php</exclude-pattern>
-    </rule>
     <rule ref="Squiz.Classes.ClassFileName.NoMatch">
         <exclude-pattern>tests/*</exclude-pattern>
     </rule>

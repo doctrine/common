@@ -22,12 +22,12 @@ class ClassUtils
      * Gets the real class name of a class name that could be a proxy.
      *
      * @param string $className
+     * @psalm-param class-string<Proxy<T>>|class-string<T> $className
      *
      * @return string
+     * @psalm-return class-string<T>
      *
      * @template T of object
-     * @psalm-param class-string<Proxy<T>>|class-string<T> $className
-     * @psalm-return class-string<T>
      */
     public static function getRealClass($className)
     {
@@ -45,12 +45,12 @@ class ClassUtils
      * Gets the real class name of an object (even if its a proxy).
      *
      * @param object $object
+     * @psalm-param Proxy<T>|T $object
      *
      * @return string
+     * @psalm-return class-string<T>
      *
      * @template T of object
-     * @psalm-param Proxy<T>|T $object
-     * @psalm-return class-string<T>
      */
     public static function getClass($object)
     {
@@ -61,10 +61,9 @@ class ClassUtils
      * Gets the real parent class name of a class or object.
      *
      * @param string $className
+     * @psalm-param class-string $className
      *
      * @return string
-     *
-     * @psalm-param class-string $className
      * @psalm-return class-string
      */
     public static function getParentClass($className)
@@ -76,10 +75,9 @@ class ClassUtils
      * Creates a new reflection class.
      *
      * @param string $className
+     * @psalm-param class-string $className
      *
      * @return ReflectionClass
-     *
-     * @psalm-param class-string $className
      */
     public static function newReflectionClass($className)
     {
@@ -103,10 +101,9 @@ class ClassUtils
      *
      * @param string $className
      * @param string $proxyNamespace
+     * @psalm-param class-string $className
      *
      * @return string
-     *
-     * @psalm-param class-string $className
      * @psalm-return class-string
      */
     public static function generateProxyClassName($className, $proxyNamespace)

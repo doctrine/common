@@ -5,15 +5,13 @@ on:
   pull_request:
     branches:
       - "*.x"
-      - "master"
   push:
     branches:
       - "*.x"
-      - "master"
 
 jobs:
   coding-standards:
     name: "Coding Standards"
-    uses: "doctrine/.github/.github/workflows/coding-standards.yml@1.1.1"
+    uses: "doctrine/.github/.github/workflows/coding-standards.yml@1.4.0"
     with:
       php-version: "7.4"

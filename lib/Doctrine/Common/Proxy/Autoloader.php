@@ -34,12 +34,11 @@ class Autoloader
      * @param string $proxyDir
      * @param string $proxyNamespace
      * @param string $className
+     * @psalm-param class-string $className
      *
      * @return string
      *
      * @throws InvalidArgumentException
-     *
-     * @psalm-param class-string $className
      */
     public static function resolveFile($proxyDir, $proxyNamespace, $className)
     {
