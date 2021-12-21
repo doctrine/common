@@ -177,10 +177,9 @@ abstract class AbstractProxyFactory
      * Get a proxy definition for the given class name.
      *
      * @param string $className
+     * @psalm-param class-string $className
      *
      * @return ProxyDefinition
-     *
-     * @psalm-param class-string $className
      */
     private function getProxyDefinition($className)
     {
@@ -237,10 +236,9 @@ abstract class AbstractProxyFactory
 
     /**
      * @param string $className
+     * @psalm-param class-string $className
      *
      * @return ProxyDefinition
-     *
-     * @psalm-param class-string $className
      */
     abstract protected function createProxyDefinition($className);
 }

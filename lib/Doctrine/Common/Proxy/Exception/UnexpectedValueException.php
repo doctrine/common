@@ -28,10 +28,9 @@ class UnexpectedValueException extends BaseUnexpectedValueException implements P
      * @param string $className
      * @param string $methodName
      * @param string $parameterName
+     * @psalm-param class-string $className
      *
      * @return self
-     *
-     * @psalm-param class-string $className
      */
     public static function invalidParameterTypeHint(
         $className,
@@ -54,10 +53,9 @@ class UnexpectedValueException extends BaseUnexpectedValueException implements P
     /**
      * @param string $className
      * @param string $methodName
+     * @psalm-param class-string $className
      *
      * @return self
-     *
-     * @psalm-param class-string $className
      */
     public static function invalidReturnTypeHint($className, $methodName, ?Throwable $previous = null)
     {

@@ -903,10 +903,9 @@ EOT;
      * @param string $baseDirectory Optional base directory for proxy file name generation.
      *                              If not specified, the directory configured on the Configuration of the
      *                              EntityManager will be used by this factory.
+     * @psalm-param class-string $className
      *
      * @return string
-     *
-     * @psalm-param class-string $className
      */
     public function getProxyFileName($className, $baseDirectory = null)
     {
