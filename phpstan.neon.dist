@@ -4,7 +4,7 @@ parameters:
     paths:
         - lib
         - tests
-    excludes_analyse:
+    excludePaths:
         - lib/vendor/doctrine-build-common
         - tests/Doctrine/Tests/Common/Proxy/InvalidReturnTypeClass.php
         - tests/Doctrine/Tests/Common/Proxy/InvalidTypeHintClass.php
@@ -12,6 +12,7 @@ parameters:
         - tests/Doctrine/Tests/Common/Proxy/MagicIssetClassWithInteger.php
         - tests/Doctrine/Tests/Common/Proxy/NullableNonOptionalHintClass.php
         - tests/Doctrine/Tests/Common/Proxy/Php8UnionTypes.php
+        - tests/Doctrine/Tests/Common/Proxy/Php8StaticType.php
         - tests/Doctrine/Tests/Common/Proxy/ProxyGeneratorTest.php
         - tests/Doctrine/Tests/Common/Proxy/ProxyLogicTypedPropertiesTest.php
         - tests/Doctrine/Tests/Common/Proxy/SerializedClass.php
@@ -25,10 +26,6 @@ parameters:
         -
             message: '#^Property Doctrine\\Tests\\Common\\Proxy\\ProxyLogicTest::\$initializerCallbackMock \(callable\(\): mixed&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept PHPUnit\\Framework\\MockObject\\MockObject&stdClass\.$#'
             path: 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
-        -
-            message: '#.*ReflectionUnionType.*#'
-            paths:
-               - 'lib/Doctrine/Common/Proxy/ProxyGenerator.php'
         -
             message: '#.*LazyLoadableObject.*#'
             paths:
@@ -48,9 +45,6 @@ parameters:
             path: 'tests/Doctrine/Tests/Common/Proxy/MagicIssetClassWithInteger.php'
         -
             message: '#^Access to an undefined property Doctrine\\Tests\\Common\\Proxy\\MagicGetByRefClass\:\:\$nonExisting\.$#'
-            path: 'tests/Doctrine/Tests/Common/Proxy/ProxyMagicMethodsTest.php'
-        -
-            message: '#^Class Doctrine\\Tests\\Common\\Proxy\\MagicIssetClassWithInteger not found\.#'
             path: 'tests/Doctrine/Tests/Common/Proxy/ProxyMagicMethodsTest.php'
 
 includes:
