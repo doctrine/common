@@ -121,6 +121,8 @@ class DebugTest extends DoctrineTestCase
      * @param array<string, int> $expected
      *
      * @dataProvider provideAttributesCases
+     *
+     * @requires PHP < 8.1.0
      */
     public function testExportParentAttributes(TestAsset\ParentClass $class, array $expected)
     {

@@ -6,6 +6,7 @@ use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\Persistence\Mapping\ClassMetadata;
+use ReflectionIntersectionType;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
@@ -520,6 +521,11 @@ EOT;
         parent::__get($name);
         return;
 EOT;
+            } elseif ($returnTypeHint === ': never') {
+                $magicGet .= <<<'EOT'
+
+        parent::__get($name);
+EOT;
             } else {
                 $magicGet .= <<<'EOT'
 
@@ -599,6 +605,11 @@ EOT;
 
         parent::__set($name, $value);
         return;
+EOT;
+            } elseif ($returnTypeHint === ': never') {
+                $magicSet .= <<<'EOT'
+
+        parent::__set($name, $value);
 EOT;
             } else {
                 $magicSet .= <<<'EOT'
@@ -1123,7 +1134,11 @@ EOT;
             return true;
         }
 
-        return strtolower($this->formatType($method->getReturnType(), $method)) !== 'void';
+        return ! in_array(
+            strtolower($this->formatType($method->getReturnType(), $method)),
+            ['void', 'never'],
+            true
+        );
     }
 
     /**
@@ -1138,6 +1153,15 @@ EOT;
             return implode('|', array_map(
                 function (ReflectionType $unionedType) use ($method, $parameter) {
                     return $this->formatType($unionedType, $method, $parameter);
+                },
+                $type->getTypes()
+            ));
+        }
+
+        if ($type instanceof ReflectionIntersectionType) {
+            return implode('&', array_map(
+                function (ReflectionType $intersectedType) use ($method, $parameter) {
+                    return $this->formatType($intersectedType, $method, $parameter);
                 },
                 $type->getTypes()
             ));

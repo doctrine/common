@@ -476,6 +476,56 @@ class ProxyGeneratorTest extends TestCase
     }
 
     /**
+     * @requires PHP >= 8.1.0
+     */
+    public function testPhp81IntersectionType()
+    {
+        $className = PHP81IntersectionTypes::class;
+
+        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\PHP81IntersectionTypes', false)) {
+            $metadata = $this->createClassMetadata($className, ['id']);
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        self::assertStringContainsString(
+            'setFoo(\Traversable&\Countable $foo): \Traversable&\Countable',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81IntersectionTypes.php')
+        );
+    }
+
+    /**
+     * @requires PHP >= 8.1.0
+     */
+    public function testPhp81NeverType()
+    {
+        $className = PHP81NeverType::class;
+
+        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\PHP81NeverType', false)) {
+            $metadata = $this->createClassMetadata($className, ['id']);
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        self::assertStringContainsString(
+            '__get($name): never',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NeverType.php')
+        );
+
+        self::assertStringContainsString(
+            '__set($name, $value): never',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NeverType.php')
+        );
+
+        self::assertStringContainsString(
+            'finishHim(): never',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NeverType.php')
+        );
+    }
+
+    /**
      * @param string  $className
      * @param mixed[] $ids
      *
