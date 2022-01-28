@@ -526,6 +526,33 @@ class ProxyGeneratorTest extends TestCase
     }
 
     /**
+     * @requires PHP >= 8.1.0
+     */
+    public function testEnumDefaultInPublicProperty() : void
+    {
+        $className = Php81EnumPublicPropertyType::class;
+
+        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\Php81EnumPublicPropertyType', false)) {
+            $metadata = $this->createClassMetadata($className, ['id']);
+
+            $metadata->method('hasField')->will($this->returnValue(true));
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        $this->assertStringContainsString(
+            'use Doctrine;',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp81EnumPublicPropertyType.php')
+        );
+
+        $object = new \Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\Php81EnumPublicPropertyType();
+        $object = unserialize(serialize($object));
+
+        $this->assertSame($object->isEnum, \Doctrine\Tests\Common\Proxy\YesOrNo::YES);
+    }
+
+    /**
      * @param string  $className
      * @param mixed[] $ids
      *
