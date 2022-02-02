@@ -1,5 +1,5 @@
 parameters:
-    phpVersion: 70100
+    phpVersion: 80100
     level: 3
     paths:
         - lib
@@ -19,6 +19,7 @@ parameters:
         - tests/Doctrine/Tests/Common/Proxy/ProxyLogicTypedPropertiesTest.php
         - tests/Doctrine/Tests/Common/Proxy/SerializedClass.php
         - tests/Doctrine/Tests/Common/Proxy/VariadicTypeHintClass.php
+        - tests/Doctrine/Tests/Common/Proxy/Php71NullableDefaultedNonOptionalHintClass.php
         - tests/Doctrine/Tests/Common/Proxy/generated
     ignoreErrors:
         - '#Access to an undefined property Doctrine\\Common\\Proxy\\Proxy::\$publicField#'
@@ -49,6 +50,10 @@ parameters:
             message: '#^Access to an undefined property Doctrine\\Tests\\Common\\Proxy\\MagicGetByRefClass\:\:\$nonExisting\.$#'
             path: 'tests/Doctrine/Tests/Common/Proxy/ProxyMagicMethodsTest.php'
 
+        -
+            message: "#^Class Doctrine\\\\Tests\\\\Common\\\\Proxy\\\\MagicIssetClassWithInteger not found\\.$#"
+            count: 1
+            path: tests/Doctrine/Tests/Common/Proxy/ProxyMagicMethodsTest.php
 includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-phpunit/rules.neon
