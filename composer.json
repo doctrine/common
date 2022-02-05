@@ -19,7 +19,7 @@
     ],
     "require": {
         "php": "^7.1 || ^8.0",
-        "doctrine/persistence": "^2.0"
+        "doctrine/persistence": "^2.0 || ^3.0"
     },
     "require-dev": {
         "phpstan/phpstan": "^1.4.1",
