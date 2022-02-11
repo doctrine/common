@@ -1008,7 +1008,7 @@ EOT;
     /**
      * Generates the list of public properties to be lazy loaded, that are writable.
      *
-     * @return array<int, string>
+     * @return list<string>
      */
     public function getWriteableLazyLoadedPublicPropertiesNames(ClassMetadata $class): array
     {

@@ -528,6 +528,41 @@ class ProxyGeneratorTest extends TestCase
     /**
      * @requires PHP >= 8.1.0
      */
+    public function testPhp81ReadonlyPublicProperties()
+    {
+        $className = Php81ReadonlyPublicPropertyType::class;
+        $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Php81ReadonlyPublicPropertyType';
+
+        if ( ! class_exists($proxyClassName, false)) {
+            $metadata = $this->createClassMetadata($className, ['id']);
+
+            $metadata
+                ->expects($this->any())
+                ->method('hasField')
+                ->will($this->returnCallback(static function ($fieldName) {
+                    return in_array($fieldName, ['id', 'readable', 'writeable']);
+                }));
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        // Readonly properties are removed from unset.
+        self::assertStringContainsString(
+            'unset($this->writeable);',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp81ReadonlyPublicPropertyType.php')
+        );
+
+        // But remain in property listings.
+        self::assertStringContainsString(
+            "'readable' => NULL",
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp81ReadonlyPublicPropertyType.php')
+        );
+    }
+
+    /**
+     * @requires PHP >= 8.1.0
+     */
     public function testEnumDefaultInPublicProperty() : void
     {
         $className = Php81EnumPublicPropertyType::class;
