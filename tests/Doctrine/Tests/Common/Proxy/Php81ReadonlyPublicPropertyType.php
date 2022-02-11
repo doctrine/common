@@ -9,5 +9,8 @@ class Php81ReadonlyPublicPropertyType
 
     public function __construct(
         public readonly string $id,
-    ) {}
+        string $readable = 'readable-default'
+    ) {
+        $this->readable = $readable;
+    }
 }

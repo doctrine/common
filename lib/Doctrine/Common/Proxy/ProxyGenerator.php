@@ -1017,7 +1017,8 @@ EOT;
         foreach ($class->getReflectionClass()->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
             $name = $property->getName();
 
-            if ((! $class->hasField($name) && ! $class->hasAssociation($name))
+            if (
+                (! $class->hasField($name) && ! $class->hasAssociation($name))
                 || $class->isIdentifier($name)
                 || (method_exists($property, 'isReadOnly') && $property->isReadOnly())
             ) {
