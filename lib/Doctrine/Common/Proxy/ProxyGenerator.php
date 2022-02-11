@@ -474,7 +474,7 @@ EOT;
 
         $toUnset = array_map(static function (string $name): string {
             return '$this->' . $name;
-        }, $this->getLazyLoadedPublicPropertiesNames($class));
+        }, $this->getWriteableLazyLoadedPublicPropertiesNames($class));
 
         return $constructorImpl . ($toUnset === [] ? '' : '        unset(' . implode(', ', $toUnset) . ");\n")
             . <<<'EOT'
@@ -591,7 +591,7 @@ EOT
      */
     private function generateMagicSet(ClassMetadata $class)
     {
-        $lazyPublicProperties = $this->getLazyLoadedPublicPropertiesNames($class);
+        $lazyPublicProperties = $this->getWriteableLazyLoadedPublicPropertiesNames($class);
         $reflectionClass      = $class->getReflectionClass();
         $hasParentSet         = false;
         $inheritDoc           = '';
@@ -808,7 +808,7 @@ EOT;
         $hasParentWakeup = $reflectionClass->hasMethod('__wakeup');
 
         $unsetPublicProperties = [];
-        foreach ($this->getLazyLoadedPublicPropertiesNames($class) as $lazyPublicProperty) {
+        foreach ($this->getWriteableLazyLoadedPublicPropertiesNames($class) as $lazyPublicProperty) {
             $unsetPublicProperties[] = '$this->' . $lazyPublicProperty;
         }
 
@@ -1003,6 +1003,31 @@ EOT;
         }
 
         return false;
+    }
+
+    /**
+     * Generates the list of public properties to be lazy loaded, that are writable.
+     *
+     * @return array<int, string>
+     */
+    public function getWriteableLazyLoadedPublicPropertiesNames(ClassMetadata $class): array
+    {
+        $properties = [];
+
+        foreach ($class->getReflectionClass()->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+            $name = $property->getName();
+
+            if ((! $class->hasField($name) && ! $class->hasAssociation($name))
+                || $class->isIdentifier($name)
+                || (method_exists($property, 'isReadOnly') && $property->isReadOnly())
+            ) {
+                continue;
+            }
+
+            $properties[] = $name;
+        }
+
+        return $properties;
     }
 
     /**
