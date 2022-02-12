@@ -4,6 +4,7 @@ namespace Doctrine\Tests\Common\Proxy;
 
 use Doctrine\Common\Proxy\Exception\InvalidArgumentException;
 use Doctrine\Common\Proxy\Exception\UnexpectedValueException;
+use Doctrine\Common\Proxy\Proxy;
 use Doctrine\Common\Proxy\ProxyGenerator;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -531,7 +532,12 @@ class ProxyGeneratorTest extends TestCase
     public function testPhp81ReadonlyPublicProperties()
     {
         $className = Php81ReadonlyPublicPropertyType::class;
-        $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\Php81ReadonlyPublicPropertyType';
+        $proxyClassName = 'Doctrine\Tests\Common\ProxyProxy\__CG__\\' . $className;
+        $initializationData = [
+            'id' => 'c0b5cb93-f01b-43f8-bc66-bc943b1ebcfd',
+            'readable' => 'This field is read-only.',
+            'writeable' => 'This field is writeable.',
+        ];
 
         if ( ! class_exists($proxyClassName, false)) {
             $metadata = $this->createClassMetadata($className, ['id']);
@@ -539,8 +545,8 @@ class ProxyGeneratorTest extends TestCase
             $metadata
                 ->expects($this->any())
                 ->method('hasField')
-                ->will($this->returnCallback(static function ($fieldName) {
-                    return in_array($fieldName, ['id', 'readable', 'writeable']);
+                ->will($this->returnCallback(static function ($fieldName) use ($initializationData) {
+                    return in_array($fieldName, array_keys($initializationData));
                 }));
 
             $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
@@ -553,11 +559,37 @@ class ProxyGeneratorTest extends TestCase
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp81ReadonlyPublicPropertyType.php')
         );
 
-        // But remain in property listings.
-        self::assertStringContainsString(
-            "'readable' => NULL",
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp81ReadonlyPublicPropertyType.php')
-        );
+        $proxy = new $proxyClassName(static function (Proxy $proxy, $method, $params) use (&$counter, $initializationData) {
+            if (!in_array($params[0], array_keys($initializationData))) {
+                throw new InvalidArgumentException(
+                    sprintf('Should not be initialized when checking isset("%s")', $params[0])
+                );
+            }
+            $initializer = $proxy->__getInitializer();
+            $proxy->__setInitializer(null);
+            isset($this->{$params[0]}) || $this->{$params[0]} = $initializationData[$params[0]];
+            $counter += 1;
+            $proxy->__setInitializer($initializer);
+        });
+
+        var_dump($proxy->id);
+
+        self::assertTrue(isset($proxy->id));
+        self::assertTrue(isset($proxy->readable));
+        self::assertTrue(isset($proxy->writeable));
+        self::assertFalse(isset($proxy->nonExisting));
+
+        self::assertSame('This field is writeable.', $proxy->writeable);
+        $proxy->writeable = 'Updated string contents.';
+        self::assertSame('Updated string contents.', $proxy->writeable);
+
+        try {
+            $proxy->readable = 'Invalid';
+            self::fail('Should not be able to update readonly property.');
+        } catch (\Error) {
+        }
+
+        self::assertSame(3, $counter);
     }
 
     /**
