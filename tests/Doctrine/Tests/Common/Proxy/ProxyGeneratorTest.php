@@ -543,9 +543,8 @@ class ProxyGeneratorTest extends TestCase
             $metadata = $this->createClassMetadata($className, ['id']);
 
             $metadata
-                ->expects($this->any())
                 ->method('hasField')
-                ->will($this->returnCallback(static function ($fieldName) use ($initializationData) {
+                ->will($this->returnCallback(static function (string $fieldName) use ($initializationData): bool {
                     return in_array($fieldName, array_keys($initializationData));
                 }));
 
@@ -572,24 +571,20 @@ class ProxyGeneratorTest extends TestCase
             $proxy->__setInitializer($initializer);
         });
 
-        var_dump($proxy->id);
-
         self::assertTrue(isset($proxy->id));
         self::assertTrue(isset($proxy->readable));
         self::assertTrue(isset($proxy->writeable));
         self::assertFalse(isset($proxy->nonExisting));
 
+        self::assertSame('c0b5cb93-f01b-43f8-bc66-bc943b1ebcfd', $proxy->id);
         self::assertSame('This field is writeable.', $proxy->writeable);
         $proxy->writeable = 'Updated string contents.';
         self::assertSame('Updated string contents.', $proxy->writeable);
 
-        try {
-            $proxy->readable = 'Invalid';
-            self::fail('Should not be able to update readonly property.');
-        } catch (\Error) {
-        }
-
         self::assertSame(3, $counter);
+
+        self::expectError();
+        $proxy->readable = 'Invalid';
     }
 
     /**
