@@ -553,6 +553,33 @@ class ProxyGeneratorTest extends TestCase
     }
 
     /**
+     * @requires PHP >= 8.1.0
+     */
+    public function testEnumInMethod() : void
+    {
+        $className = Php81EnumInMethod::class;
+
+        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\Php81EnumInMethod', false)) {
+            $metadata = $this->createClassMetadata($className, ['id']);
+
+            $metadata->method('hasField')->will($this->returnValue(true));
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        $this->assertStringContainsString(
+            'use Doctrine;',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp81EnumInMethod.php')
+        );
+
+        $object = new \Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\Php81EnumInMethod();
+        $object = unserialize(serialize($object));
+
+        $this->assertSame($object->getLetterValue(), \Doctrine\Tests\Common\Proxy\Letter::B);
+    }
+
+    /**
      * @param string  $className
      * @param mixed[] $ids
      *
