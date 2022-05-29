@@ -339,7 +339,6 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
             throw UnexpectedValueException::proxyDirectoryNotWritable($this->proxyDirectory);
         }
 
-        /** @noinspection PhpUnhandledExceptionInspection */
         $tmpFileName = $fileName . '.' . bin2hex(random_bytes(12));
 
         file_put_contents($tmpFileName, $proxyCode);
