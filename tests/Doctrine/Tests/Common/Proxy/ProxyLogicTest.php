@@ -198,8 +198,14 @@ class ProxyLogicTest extends TestCase
         $this->configureInitializerMock(0);
 
         $class = get_class($this->lazyObject);
-        $this->expectException(Notice::class);
-        $this->expectExceptionMessage('Undefined property: ' . $class . '::$non_existing_property');
+        // @todo drop condition when PHPUnit 9.x becomes lowest
+        if (method_exists($this, 'expectNotice')) {
+            $this->expectNotice();
+            $this->expectNoticeMessage('Undefined property: ' . $class . '::$non_existing_property');
+        } else {
+            $this->expectException(Notice::class);
+            $this->expectExceptionMessage('Undefined property: ' . $class . '::$non_existing_property');
+        }
 
         $this->lazyObject->non_existing_property;
     }
@@ -610,8 +616,7 @@ class ProxyLogicTest extends TestCase
             require_once $proxyGenerator->getProxyFileName($metadata->getName());
         }
 
-        /** @var callable&MockObject $invocationMock */
-        $invocationMock = $this->getMockBuilder(stdClass::class)->setMethods(['__invoke'])->getMock();
+        $invocationMock = new InvokationSpy();
 
         /** @var VariadicTypeHintClass $lazyObject */
         $lazyObject = new $proxyClassName(
@@ -622,19 +627,17 @@ class ProxyLogicTest extends TestCase
             }
         );
 
-        $invocationMock
-            ->expects($this->at(0))
-            ->method('__invoke')
-            ->with($lazyObject, 'addType', [['type1', 'type2']]);
-        $invocationMock
-            ->expects($this->at(1))
-            ->method('__invoke')
-            ->with($lazyObject, 'addTypeWithMultipleParameters', ['foo', 'bar', ['baz1', 'baz2']]);
-
         $lazyObject->addType('type1', 'type2');
+        self::assertCount(1, $invocationMock->invokations);
+        self::assertSame([$lazyObject, 'addType', [['type1', 'type2']]], $invocationMock->invokations[0]);
         self::assertSame(['type1', 'type2'], $lazyObject->types);
 
         $lazyObject->addTypeWithMultipleParameters('foo', 'bar', 'baz1', 'baz2');
+        self::assertCount(2, $invocationMock->invokations);
+        self::assertSame(
+            [$lazyObject, 'addTypeWithMultipleParameters', ['foo', 'bar', ['baz1', 'baz2']]],
+            $invocationMock->invokations[1]
+        );
         self::assertSame('foo', $lazyObject->foo);
         self::assertSame('bar', $lazyObject->bar);
         self::assertSame(['baz1', 'baz2'], $lazyObject->baz);
