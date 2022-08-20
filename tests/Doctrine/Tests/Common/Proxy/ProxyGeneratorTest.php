@@ -408,6 +408,26 @@ class ProxyGeneratorTest extends TestCase
     /**
      * @requires PHP >= 8.0.0
      */
+    public function testPhp8CloneWithVoidReturnType()
+    {
+        $className = Php8MagicCloneClass::class;
+
+        if ( ! class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\Php8MagicCloneClass', false)) {
+            $metadata = $this->createClassMetadata($className, ['id']);
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        self::assertStringContainsString(
+            'public function __clone(): void',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8MagicCloneClass.php')
+        );
+    }
+
+    /**
+     * @requires PHP >= 8.0.0
+     */
     public function testPhp8UnionTypes()
     {
         $className = Php8UnionTypes::class;

@@ -860,7 +860,9 @@ EOT;
      */
     private function generateCloneImpl(ClassMetadata $class)
     {
-        $hasParentClone  = $class->getReflectionClass()->hasMethod('__clone');
+        $reflectionClass = $class->getReflectionClass();
+        $hasParentClone  = $reflectionClass->hasMethod('__clone');
+        $returnTypeHint  = $hasParentClone ? $this->getMethodReturnType($reflectionClass->getMethod('__clone')) : '';
         $inheritDoc      = $hasParentClone ? '{@inheritDoc}' : '';
         $callParentClone = $hasParentClone ? "\n        parent::__clone();\n" : '';
 
@@ -868,7 +870,7 @@ EOT;
     /**
      * $inheritDoc
      */
-    public function __clone()
+    public function __clone()$returnTypeHint
     {
         \$this->__cloner__ && \$this->__cloner__->__invoke(\$this, '__clone', []);
 $callParentClone    }
