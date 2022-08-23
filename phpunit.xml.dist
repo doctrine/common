@@ -4,7 +4,6 @@
          colors="true"
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTodoAnnotatedTests="true"
-         bootstrap="./tests/Doctrine/Tests/TestInit.php"
 >
     <testsuites>
         <testsuite name="Doctrine Common Test Suite">
