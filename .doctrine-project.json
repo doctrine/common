@@ -5,10 +5,16 @@
     "docsSlug": "doctrine-common",
     "versions": [
         {
+            "name": "3.4",
+            "branchName": "3.4.x",
+            "slug": "3.4",
+            "current": true
+        },
+        {
             "name": "3.3",
             "branchName": "3.3.x",
             "slug": "3.3",
-            "current": true
+            "maintained": false
         },
         {
             "name": "3.2",
