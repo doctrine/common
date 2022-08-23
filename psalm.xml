@@ -10,10 +10,7 @@
     <projectFiles>
         <directory name="lib/Doctrine/Common" />
         <ignoreFiles>
-            <!-- Remove ProxyGeneratorTest once Psalm supports native intersection https://github.com/vimeo/psalm/issues/6413 -->
             <file name="lib/Doctrine/Common/Proxy/ProxyGenerator.php" />
-            <file name="tests/Doctrine/Tests/Common/Proxy/ProxyGeneratorTest.php" />
-            <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
 </psalm>
