@@ -5,7 +5,6 @@ dist/
 tests/Doctrine/Tests/Common/Proxy/generated/
 composer.lock
 vendor/
-.idea
 doctrine-common-*.tar
 doctrine-common-*.tar.gz
 /phpcs.xml
