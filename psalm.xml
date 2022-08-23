@@ -8,9 +8,9 @@
     phpVersion="8.1"
 >
     <projectFiles>
-        <directory name="lib/Doctrine/Common" />
+        <directory name="src" />
         <ignoreFiles>
-            <file name="lib/Doctrine/Common/Proxy/ProxyGenerator.php" />
+            <file name="src/Proxy/ProxyGenerator.php" />
         </ignoreFiles>
     </projectFiles>
 </psalm>
