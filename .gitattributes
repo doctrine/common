@@ -2,8 +2,6 @@ tests export-ignore
 .gitattributes export-ignore
 .gitignore export-ignore
 .github export-ignore
-build.properties export-ignore
-build.xml export-ignore
 phpunit.xml.dist export-ignore
 /lib/vendor export-ignore
 /phpcs.xml.dist export-ignore
