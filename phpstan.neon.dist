@@ -5,7 +5,6 @@ parameters:
         - lib
         - tests
     excludePaths:
-        - lib/vendor/doctrine-build-common
         - tests/Doctrine/Tests/Common/Proxy/InvalidReturnTypeClass.php
         - tests/Doctrine/Tests/Common/Proxy/InvalidTypeHintClass.php
         - tests/Doctrine/Tests/Common/Proxy/LazyLoadableObjectWithTypedProperties.php
