@@ -3,5 +3,4 @@ tests export-ignore
 .gitignore export-ignore
 .github export-ignore
 phpunit.xml.dist export-ignore
-/lib/vendor export-ignore
 /phpcs.xml.dist export-ignore
