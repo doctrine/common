@@ -573,6 +573,36 @@ class ProxyGeneratorTest extends TestCase
     }
 
     /**
+     * @requires PHP >= 8.1.0
+     */
+    public function testPhp81NewInInitializers()
+    {
+        $className = PHP81NewInInitializers::class;
+
+        if (!class_exists('Doctrine\Tests\Common\ProxyProxy\__CG__\PHP81NewInInitializers', false)) {
+            $metadata = $this->createClassMetadata($className, ['id']);
+
+            $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
+            $this->generateAndRequire($proxyGenerator, $metadata);
+        }
+
+        self::assertStringContainsString(
+            'onlyInitializer($foo = new \stdClass()): void',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NewInInitializers.php')
+        );
+
+        self::assertStringContainsString(
+            'typed(\DateTimeInterface $foo = new \DateTimeImmutable(\'now\')): void',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NewInInitializers.php')
+        );
+
+        self::assertStringContainsString(
+            'arrayInDefault(array $foo = [new \DateTimeImmutable(\'2022-08-22 16:20\', new \DateTimeZone(\'Europe/Warsaw\'))]): void',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NewInInitializers.php')
+        );
+    }
+
+    /**
      * @param string  $className
      * @param mixed[] $ids
      *

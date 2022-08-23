@@ -1091,10 +1091,7 @@ EOT;
             }
 
             $parameterDefinition .= '$' . ($renameParameters ? $renameParameters[$i] : $param->getName());
-
-            if ($param->isDefaultValueAvailable()) {
-                $parameterDefinition .= ' = ' . var_export($param->getDefaultValue(), true);
-            }
+            $parameterDefinition .= $this->getParameterDefaultValue($param);
 
             $parameterDefinitions[] = $parameterDefinition;
         }
@@ -1116,6 +1113,24 @@ EOT;
         assert($declaringFunction instanceof ReflectionMethod);
 
         return $this->formatType($parameter->getType(), $declaringFunction, $parameter);
+    }
+
+    /**
+     * @return string
+     */
+    private function getParameterDefaultValue(ReflectionParameter $parameter)
+    {
+        if (! $parameter->isDefaultValueAvailable()) {
+            return '';
+        }
+
+        if (PHP_VERSION_ID < 80100) {
+            return ' = ' . var_export($parameter->getDefaultValue(), true);
+        }
+
+        $value = rtrim(substr(explode('$' . $parameter->getName() . ' = ', (string) $parameter, 2)[1], 0, -2));
+
+        return ' = ' . $value;
     }
 
     /**
