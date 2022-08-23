@@ -2,57 +2,57 @@ parameters:
     phpVersion: 80100
     level: 3
     paths:
-        - lib
+        - src
         - tests
     excludePaths:
-        - tests/Doctrine/Tests/Common/Proxy/InvalidReturnTypeClass.php
-        - tests/Doctrine/Tests/Common/Proxy/InvalidTypeHintClass.php
-        - tests/Doctrine/Tests/Common/Proxy/LazyLoadableObjectWithTypedProperties.php
-        - tests/Doctrine/Tests/Common/Proxy/MagicIssetClassWithInteger.php
-        - tests/Doctrine/Tests/Common/Proxy/NullableNonOptionalHintClass.php
-        - tests/Doctrine/Tests/Common/Proxy/PHP81NeverType.php
-        - tests/Doctrine/Tests/Common/Proxy/PHP81IntersectionTypes.php
-        - tests/Doctrine/Tests/Common/Proxy/Php8UnionTypes.php
-        - tests/Doctrine/Tests/Common/Proxy/Php8StaticType.php
-        - tests/Doctrine/Tests/Common/Proxy/ProxyGeneratorTest.php
-        - tests/Doctrine/Tests/Common/Proxy/ProxyLogicTypedPropertiesTest.php
-        - tests/Doctrine/Tests/Common/Proxy/SerializedClass.php
-        - tests/Doctrine/Tests/Common/Proxy/VariadicTypeHintClass.php
-        - tests/Doctrine/Tests/Common/Proxy/Php71NullableDefaultedNonOptionalHintClass.php
-        - tests/Doctrine/Tests/Common/Proxy/generated
+        - tests/Common/Proxy/InvalidReturnTypeClass.php
+        - tests/Common/Proxy/InvalidTypeHintClass.php
+        - tests/Common/Proxy/LazyLoadableObjectWithTypedProperties.php
+        - tests/Common/Proxy/MagicIssetClassWithInteger.php
+        - tests/Common/Proxy/NullableNonOptionalHintClass.php
+        - tests/Common/Proxy/PHP81NeverType.php
+        - tests/Common/Proxy/PHP81IntersectionTypes.php
+        - tests/Common/Proxy/Php8UnionTypes.php
+        - tests/Common/Proxy/Php8StaticType.php
+        - tests/Common/Proxy/ProxyGeneratorTest.php
+        - tests/Common/Proxy/ProxyLogicTypedPropertiesTest.php
+        - tests/Common/Proxy/SerializedClass.php
+        - tests/Common/Proxy/VariadicTypeHintClass.php
+        - tests/Common/Proxy/Php71NullableDefaultedNonOptionalHintClass.php
+        - tests/Common/Proxy/generated
     ignoreErrors:
         - '#Access to an undefined property Doctrine\\Common\\Proxy\\Proxy::\$publicField#'
         -
             message: '#^Result of method Doctrine\\Tests\\Common\\Proxy\\LazyLoadableObjectWithVoid::(adding|incrementing)AndReturningVoid\(\) \(void\) is used\.$#'
-            path: 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
+            path: 'tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
         -
             message: '#^Property Doctrine\\Tests\\Common\\Proxy\\ProxyLogicTest::\$initializerCallbackMock \(callable\(\): mixed&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept PHPUnit\\Framework\\MockObject\\MockObject&stdClass\.$#'
-            path: 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
+            path: 'tests/Common/Proxy/ProxyLogicTest.php'
         -
             message: '#.*LazyLoadableObject.*#'
             paths:
-               - 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
-               - 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
+               - 'tests/Common/Proxy/ProxyLogicTest.php'
+               - 'tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
         -
             message: '#^Instantiated class Doctrine\\Tests\\Common\\ProxyProxy\\__CG__\\Doctrine\\Tests\\Common\\Proxy\\.* not found.$#'
-            path: 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicTest.php'
+            path: 'tests/Common/Proxy/ProxyLogicTest.php'
         -
             message: '#^Instantiated class Doctrine\\Tests\\Common\\ProxyProxy\\__CG__\\Doctrine\\Tests\\Common\\Proxy\\.* not found.$#'
-            path: 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
+            path: 'tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
         -
             message: '#^Property Doctrine\\Tests\\Common\\Proxy\\ProxyLogicVoidReturnTypeTest::\$initializerCallbackMock \(callable\(\): mixed&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept PHPUnit\\Framework\\MockObject\\MockObject&stdClass\.$#'
-            path: 'tests/Doctrine/Tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
+            path: 'tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
         -
             message: '#^Method Doctrine\\Tests\\Common\\Proxy\\MagicIssetClassWithInteger::__isset\(\) should return bool but returns int\.$#'
-            path: 'tests/Doctrine/Tests/Common/Proxy/MagicIssetClassWithInteger.php'
+            path: 'tests/Common/Proxy/MagicIssetClassWithInteger.php'
         -
             message: '#^Access to an undefined property Doctrine\\Tests\\Common\\Proxy\\MagicGetByRefClass\:\:\$nonExisting\.$#'
-            path: 'tests/Doctrine/Tests/Common/Proxy/ProxyMagicMethodsTest.php'
+            path: 'tests/Common/Proxy/ProxyMagicMethodsTest.php'
 
         -
             message: "#^Class Doctrine\\\\Tests\\\\Common\\\\Proxy\\\\MagicIssetClassWithInteger not found\\.$#"
             count: 1
-            path: tests/Doctrine/Tests/Common/Proxy/ProxyMagicMethodsTest.php
+            path: tests/Common/Proxy/ProxyMagicMethodsTest.php
 includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-phpunit/rules.neon

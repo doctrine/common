@@ -1,7 +1,7 @@
 logs/
 reports/
 dist/
-tests/Doctrine/Tests/Common/Proxy/generated/
+tests/Common/Proxy/generated/
 composer.lock
 vendor/
 doctrine-common-*.tar
