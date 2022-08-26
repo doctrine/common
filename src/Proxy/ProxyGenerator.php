@@ -346,9 +346,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
         rename($tmpFileName, $fileName);
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
+    /** @throws InvalidArgumentException */
     private function verifyClassCanBeProxied(ClassMetadata $class)
     {
         if ($class->getReflectionClass()->isFinal()) {
@@ -1099,9 +1097,7 @@ EOT;
         return implode(', ', $parameterDefinitions);
     }
 
-    /**
-     * @return string|null
-     */
+    /** @return string|null */
     private function getParameterType(ReflectionParameter $parameter)
     {
         if (! $parameter->hasType()) {
@@ -1115,9 +1111,7 @@ EOT;
         return $this->formatType($parameter->getType(), $declaringFunction, $parameter);
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private function getParameterDefaultValue(ReflectionParameter $parameter)
     {
         if (! $parameter->isDefaultValueAvailable()) {
@@ -1171,9 +1165,7 @@ EOT;
         );
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private function getMethodReturnType(ReflectionMethod $method)
     {
         if (! $method->hasReturnType()) {
@@ -1183,9 +1175,7 @@ EOT;
         return ': ' . $this->formatType($method->getReturnType(), $method);
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     private function shouldProxiedMethodReturn(ReflectionMethod $method)
     {
         if (! $method->hasReturnType()) {
@@ -1199,9 +1189,7 @@ EOT;
         );
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private function formatType(
         ReflectionType $type,
         ReflectionMethod $method,
