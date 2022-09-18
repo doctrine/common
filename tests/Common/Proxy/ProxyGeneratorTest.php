@@ -600,6 +600,11 @@ class ProxyGeneratorTest extends TestCase
             'arrayInDefault(array $foo = [new \DateTimeImmutable(\'2022-08-22 16:20\', new \DateTimeZone(\'Europe/Warsaw\'))]): void',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NewInInitializers.php')
         );
+
+        self::assertStringContainsString(
+            'constInDefault(string $foo = \Doctrine\Tests\Common\Util\TestAsset\ConstProvider::FOO): void',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NewInInitializers.php')
+        );
     }
 
     /**

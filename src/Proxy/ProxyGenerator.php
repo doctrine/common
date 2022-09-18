@@ -44,11 +44,14 @@ use function method_exists;
 use function mkdir;
 use function preg_match;
 use function preg_match_all;
+use function preg_replace;
+use function preg_split;
 use function random_bytes;
 use function rename;
 use function rtrim;
 use function sprintf;
 use function str_replace;
+use function strpos;
 use function strrev;
 use function strtolower;
 use function strtr;
@@ -58,6 +61,7 @@ use function var_export;
 
 use const DIRECTORY_SEPARATOR;
 use const PHP_VERSION_ID;
+use const PREG_SPLIT_DELIM_CAPTURE;
 
 /**
  * This factory is used to generate proxy classes.
@@ -1123,6 +1127,17 @@ EOT;
         }
 
         $value = rtrim(substr(explode('$' . $parameter->getName() . ' = ', (string) $parameter, 2)[1], 0, -2));
+
+        if (strpos($value, '\\') !== false || strpos($value, '::') !== false) {
+            $value = preg_split("/('(?:[^'\\\\]*+(?:\\\\.)*+)*+')/", $value, -1, PREG_SPLIT_DELIM_CAPTURE);
+            foreach ($value as $i => $part) {
+                if ($i % 2 === 0) {
+                    $value[$i] = preg_replace('/(?<![a-zA-Z0-9_\x7f-\xff\\\\])[a-zA-Z0-9_\x7f-\xff]++(?:\\\\[a-zA-Z0-9_\x7f-\xff]++|::)++/', '\\\\\0', $part);
+                }
+            }
+
+            $value = implode('', $value);
+        }
 
         return ' = ' . $value;
     }
