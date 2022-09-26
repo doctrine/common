@@ -44,11 +44,14 @@ use function method_exists;
 use function mkdir;
 use function preg_match;
 use function preg_match_all;
+use function preg_replace;
+use function preg_split;
 use function random_bytes;
 use function rename;
 use function rtrim;
 use function sprintf;
 use function str_replace;
+use function strpos;
 use function strrev;
 use function strtolower;
 use function strtr;
@@ -58,6 +61,7 @@ use function var_export;
 
 use const DIRECTORY_SEPARATOR;
 use const PHP_VERSION_ID;
+use const PREG_SPLIT_DELIM_CAPTURE;
 
 /**
  * This factory is used to generate proxy classes.
@@ -346,9 +350,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
         rename($tmpFileName, $fileName);
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
+    /** @throws InvalidArgumentException */
     private function verifyClassCanBeProxied(ClassMetadata $class)
     {
         if ($class->getReflectionClass()->isFinal()) {
@@ -1099,9 +1101,7 @@ EOT;
         return implode(', ', $parameterDefinitions);
     }
 
-    /**
-     * @return string|null
-     */
+    /** @return string|null */
     private function getParameterType(ReflectionParameter $parameter)
     {
         if (! $parameter->hasType()) {
@@ -1115,9 +1115,7 @@ EOT;
         return $this->formatType($parameter->getType(), $declaringFunction, $parameter);
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private function getParameterDefaultValue(ReflectionParameter $parameter)
     {
         if (! $parameter->isDefaultValueAvailable()) {
@@ -1129,6 +1127,17 @@ EOT;
         }
 
         $value = rtrim(substr(explode('$' . $parameter->getName() . ' = ', (string) $parameter, 2)[1], 0, -2));
+
+        if (strpos($value, '\\') !== false || strpos($value, '::') !== false) {
+            $value = preg_split("/('(?:[^'\\\\]*+(?:\\\\.)*+)*+')/", $value, -1, PREG_SPLIT_DELIM_CAPTURE);
+            foreach ($value as $i => $part) {
+                if ($i % 2 === 0) {
+                    $value[$i] = preg_replace('/(?<![a-zA-Z0-9_\x7f-\xff\\\\])[a-zA-Z0-9_\x7f-\xff]++(?:\\\\[a-zA-Z0-9_\x7f-\xff]++|::)++/', '\\\\\0', $part);
+                }
+            }
+
+            $value = implode('', $value);
+        }
 
         return ' = ' . $value;
     }
@@ -1171,9 +1180,7 @@ EOT;
         );
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private function getMethodReturnType(ReflectionMethod $method)
     {
         if (! $method->hasReturnType()) {
@@ -1183,9 +1190,7 @@ EOT;
         return ': ' . $this->formatType($method->getReturnType(), $method);
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     private function shouldProxiedMethodReturn(ReflectionMethod $method)
     {
         if (! $method->hasReturnType()) {
@@ -1199,9 +1204,7 @@ EOT;
         );
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private function formatType(
         ReflectionType $type,
         ReflectionMethod $method,

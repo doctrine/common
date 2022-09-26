@@ -11,12 +11,12 @@
     <!-- Ignore warnings and show progress of the run -->
     <arg value="np"/>
 
-    <file>lib</file>
+    <file>src</file>
     <file>tests</file>
 
-    <exclude-pattern>tests/Doctrine/Tests/Common/Proxy/*</exclude-pattern>
-    <exclude-pattern>tests/Doctrine/Tests/Common/ClassLoaderTest/*</exclude-pattern>
-    <exclude-pattern>tests/Doctrine/Tests/Common/Util/TestAsset/*</exclude-pattern>
+    <exclude-pattern>tests/Common/Proxy/*</exclude-pattern>
+    <exclude-pattern>tests/Common/ClassLoaderTest/*</exclude-pattern>
+    <exclude-pattern>tests/Common/Util/TestAsset/*</exclude-pattern>
 
     <rule ref="Doctrine">
         <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes"/>
@@ -29,47 +29,38 @@
         <exclude name="Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps"/>
     </rule>
 
-    <!-- Disable the rules that will require PHP 7.4 -->
-    <rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint">
-        <properties>
-            <property name="enableNativeTypeHint" value="false"/>
-        </properties>
+    <rule ref="Squiz.Classes.ClassFileName.NoMatch">
+        <exclude-pattern>tests/Common/Util/ClassUtilsTest.php</exclude-pattern>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.Commenting.RequireOneLineDocComment.MultiLineDocComment">
+        <!-- This sniff produces annotations that PHPUnit 7 does not understand. -->
+        <exclude-pattern>tests</exclude-pattern>
     </rule>
 
     <rule ref="Squiz.Classes.ClassFileName.NoMatch">
-        <exclude-pattern>*/tests/Doctrine/Tests/Common/Util/ClassUtilsTest.php</exclude-pattern>
-    </rule>
-
-    <!-- Disable the rules that will require PHP 7.4 -->
-    <rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint">
-        <properties>
-            <property name="enableNativeTypeHint" value="false"/>
-        </properties>
-    </rule>
-
-    <rule ref="Squiz.Classes.ClassFileName.NoMatch">
-        <exclude-pattern>*/tests/Doctrine/Tests/Common/Util/ClassUtilsTest.php</exclude-pattern>
+        <exclude-pattern>tests/Common/Util/ClassUtilsTest.php</exclude-pattern>
     </rule>
 
     <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
-        <exclude-pattern>*/tests/*</exclude-pattern>
+        <exclude-pattern>tests/*</exclude-pattern>
     </rule>
 
     <rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
-        <exclude-pattern>tests/Doctrine/Tests/Common/ClassLoaderTest/*.class.php</exclude-pattern>
+        <exclude-pattern>tests/Common/ClassLoaderTest/*.class.php</exclude-pattern>
     </rule>
     <rule ref="Squiz.Classes.ValidClassName.NotCamelCaps">
-        <exclude-pattern>tests/Doctrine/Tests/Common/Util/ClassUtilsTest.php</exclude-pattern>
-        <exclude-pattern>tests/Doctrine/Tests/Common/ClassLoaderTest/*.class.php</exclude-pattern>
+        <exclude-pattern>tests/Common/Util/ClassUtilsTest.php</exclude-pattern>
+        <exclude-pattern>tests/Common/ClassLoaderTest/*.class.php</exclude-pattern>
     </rule>
     <rule ref="PEAR.Functions.ValidDefaultValue.NotAtEnd">
-        <exclude-pattern>tests/Doctrine/Tests/Common/Proxy/*HintClass.php</exclude-pattern>
+        <exclude-pattern>tests/Common/Proxy/*HintClass.php</exclude-pattern>
     </rule>
 
     <rule ref="Squiz.Classes.ClassFileName.NoMatch">
         <exclude-pattern>tests/*</exclude-pattern>
     </rule>
     <rule ref="Squiz.Commenting.FunctionComment.InvalidNoReturn">
-        <exclude-pattern>tests/Doctrine/Tests/Common/Proxy/InvalidReturnTypeClass.php</exclude-pattern>
+        <exclude-pattern>tests/Common/Proxy/InvalidReturnTypeClass.php</exclude-pattern>
     </rule>
 </ruleset>

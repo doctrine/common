@@ -26,19 +26,19 @@
         "phpstan/phpstan": "^1.4.1",
         "phpstan/phpstan-phpunit": "^1",
         "phpunit/phpunit": "^7.5.20 || ^8.5 || ^9.0",
-        "doctrine/coding-standard": "^9.0",
+        "doctrine/coding-standard": "^9.0 || ^10.0",
         "squizlabs/php_codesniffer": "^3.0",
-        "symfony/phpunit-bridge": "^4.0.5",
+        "symfony/phpunit-bridge": "^6.1",
         "vimeo/psalm": "^4.4"
     },
     "autoload": {
         "psr-4": {
-            "Doctrine\\Common\\": "lib/Doctrine/Common"
+            "Doctrine\\Common\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Doctrine\\Tests\\": "tests/Doctrine/Tests"
+            "Doctrine\\Tests\\": "tests"
         }
     },
     "config": {
