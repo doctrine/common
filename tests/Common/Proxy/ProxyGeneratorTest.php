@@ -602,7 +602,22 @@ class ProxyGeneratorTest extends TestCase
         );
 
         self::assertStringContainsString(
-            'constInDefault(string $foo = \Doctrine\Tests\Common\Util\TestAsset\ConstProvider::FOO): void',
+            'scalarConstInDefault(string $foo = \'foo\'): void',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NewInInitializers.php')
+        );
+
+        self::assertStringContainsString(
+            'constInDefault(array $foo = \Doctrine\Tests\Common\Util\TestAsset\ConstProvider::FOO): void',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NewInInitializers.php')
+        );
+
+        self::assertStringContainsString(
+            "globalEolInDefault(string \$foo = '\n'): void",
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NewInInitializers.php')
+        );
+
+        self::assertStringContainsString(
+            "specialCharacterInDefault(string \$foo = '\n'): void",
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NewInInitializers.php')
         );
     }
