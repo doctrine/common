@@ -36,6 +36,7 @@ use function in_array;
 use function interface_exists;
 use function is_callable;
 use function is_dir;
+use function is_scalar;
 use function is_string;
 use function is_writable;
 use function lcfirst;
@@ -1122,7 +1123,7 @@ EOT;
             return '';
         }
 
-        if (PHP_VERSION_ID < 80100) {
+        if (PHP_VERSION_ID < 80100 || is_scalar($parameter->getDefaultValue())) {
             return ' = ' . var_export($parameter->getDefaultValue(), true);
         }
 
