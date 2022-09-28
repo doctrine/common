@@ -23,7 +23,22 @@ class PHP81NewInInitializers
 
     }
 
-    public function constInDefault(string $foo = ConstProvider::FOO): void
+    public function scalarConstInDefault(string $foo = ConstProvider::FOO_SCALAR): void
+    {
+
+    }
+
+    public function constInDefault(array $foo = ConstProvider::FOO): void
+    {
+
+    }
+
+    public function globalEolInDefault(string $foo = \PHP_EOL): void
+    {
+
+    }
+
+    public function specialCharacterInDefault(string $foo = "\n"): void
     {
 
     }
