@@ -361,6 +361,10 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
         if ($class->getReflectionClass()->isAbstract()) {
             throw InvalidArgumentException::classMustNotBeAbstract($class->getName());
         }
+
+        if (PHP_VERSION_ID >= 80200 && $class->getReflectionClass()->isReadOnly()) {
+            throw InvalidArgumentException::classMustNotBeReadOnly($class->getName());
+        }
     }
 
     /**
