@@ -226,6 +226,10 @@ class ProxyLogicTypedPropertiesTest extends TestCase
 
     public function testNoErrorWhenSettingNonExistentProperty()
     {
+        if (PHP_VERSION_ID >= 80200) {
+            $this->markTestSkipped('access to a dynamic property trigger a deprecation notice on PHP 8.2+');
+        }
+
         $this->configureInitializerMock(0);
 
         $this->lazyObject->non_existing_property = 'now has a value';
