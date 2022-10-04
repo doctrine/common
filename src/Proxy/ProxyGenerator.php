@@ -1224,6 +1224,10 @@ EOT;
         if ($type instanceof ReflectionUnionType) {
             return implode('|', array_map(
                 function (ReflectionType $unionedType) use ($method, $parameter) {
+                    if ($unionedType instanceof ReflectionIntersectionType) {
+                        return '(' . $this->formatType($unionedType, $method, $parameter) . ')';
+                    }
+
                     return $this->formatType($unionedType, $method, $parameter);
                 },
                 $type->getTypes()
