@@ -74,7 +74,13 @@ class ProxyGenerator
      * Used to match very simple id methods that don't need
      * to be decorated since the identifier is known.
      */
-    public const PATTERN_MATCH_ID_METHOD = '((public\s+)?(function\s+%s\s*\(\)\s*)\s*(?::\s*\??\s*\\\\?[a-z_\x7f-\xff][\w\x7f-\xff]*(?:\\\\[a-z_\x7f-\xff][\w\x7f-\xff]*)*\s*)?{\s*return\s*\$this->%s;\s*})i';
+    public const PATTERN_MATCH_ID_METHOD = <<<'EOT'
+((?(DEFINE)
+  (?<type>\\?[a-z_\x7f-\xff][\w\x7f-\xff]*(?:\\[a-z_\x7f-\xff][\w\x7f-\xff]*)*)
+  (?<intersection_type>(?&type)\s*&\s*(?&type))
+  (?<union_type>(?:(?:\(\s*(?&intersection_type)\s*\))|(?&type))(?:\s*\|\s*(?:(?:\(\s*(?&intersection_type)\s*\))|(?&type)))+)
+)(?:public\s+)?(?:function\s+%s\s*\(\)\s*)\s*(?::\s*(?:(?&union_type)|(?&intersection_type)|(?:\??(?&type)))\s*)?{\s*return\s*\$this->%s;\s*})i
+EOT;
 
     /**
      * The namespace that contains all proxy classes.
@@ -360,6 +366,10 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
 
         if ($class->getReflectionClass()->isAbstract()) {
             throw InvalidArgumentException::classMustNotBeAbstract($class->getName());
+        }
+
+        if (PHP_VERSION_ID >= 80200 && $class->getReflectionClass()->isReadOnly()) {
+            throw InvalidArgumentException::classMustNotBeReadOnly($class->getName());
         }
     }
 
@@ -1214,6 +1224,10 @@ EOT;
         if ($type instanceof ReflectionUnionType) {
             return implode('|', array_map(
                 function (ReflectionType $unionedType) use ($method, $parameter) {
+                    if ($unionedType instanceof ReflectionIntersectionType) {
+                        return '(' . $this->formatType($unionedType, $method, $parameter) . ')';
+                    }
+
                     return $this->formatType($unionedType, $method, $parameter);
                 },
                 $type->getTypes()

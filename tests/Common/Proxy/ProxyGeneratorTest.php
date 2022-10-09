@@ -406,6 +406,18 @@ class ProxyGeneratorTest extends TestCase
     }
 
     /**
+     * @requires PHP >= 8.2.0
+     */
+    public function testReadOnlyClassThrowsException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unable to create a proxy for a readonly class "' . ReadOnlyClass::class . '".');
+
+        $proxyGenerator = new ProxyGenerator(__DIR__ . '/generated', __NAMESPACE__ . 'Proxy');
+        $proxyGenerator->generateProxyClass($this->createClassMetadata(ReadOnlyClass::class, []));
+    }
+
+    /**
      * @requires PHP >= 8.0.0
      */
     public function testPhp8CloneWithVoidReturnType()

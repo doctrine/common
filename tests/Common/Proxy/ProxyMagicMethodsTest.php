@@ -135,6 +135,10 @@ class ProxyMagicMethodsTest extends TestCase
 
     public function testInheritedMagicGetWithVoid()
     {
+        if (PHP_VERSION_ID >= 80200) {
+            $this->markTestSkipped('access to a dynamic property trigger a deprecation notice on PHP 8.2+');
+        }
+
         $proxyClassName = $this->generateProxyClass(MagicGetClassWithVoid::class);
         $proxy          = new $proxyClassName(static function (Proxy $proxy, $method, $params) use (&$counter) {
             if (in_array($params[0], ['publicField', 'test'])) {

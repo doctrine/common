@@ -91,6 +91,17 @@ class InvalidArgumentException extends BaseInvalidArgumentException implements P
         return new self(sprintf('Unable to create a proxy for a final class "%s".', $className));
     }
 
+    /**
+     * @param string $className
+     * @psalm-param class-string $className
+     *
+     * @return self
+     */
+    public static function classMustNotBeReadOnly($className)
+    {
+        return new self(sprintf('Unable to create a proxy for a readonly class "%s".', $className));
+    }
+
     /** @param mixed $value */
     public static function invalidAutoGenerateMode($value): self
     {

@@ -8,6 +8,8 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 use function class_exists;
 
+use const PHP_VERSION_ID;
+
 /**
  * Test that identifier getter does not cause lazy loading.
  * These tests make assumptions about the structure of LazyLoadableObjectWithTypehints
@@ -58,7 +60,7 @@ class ProxyLogicIdentifierGetterTest extends TestCase
      */
     public function methodsForWhichLazyLoadingShouldBeDisabled()
     {
-        return [
+        $data = [
             [new LazyLoadableObjectClassMetadata(), 'protectedIdentifierField', 'foo'],
             [new LazyLoadableObjectWithTypehintsClassMetadata(), 'identifierFieldNoReturnTypehint', 'noTypeHint'],
             [new LazyLoadableObjectWithTypehintsClassMetadata(), 'identifierFieldReturnTypehintScalar', 'scalarValue'],
@@ -71,5 +73,30 @@ class ProxyLogicIdentifierGetterTest extends TestCase
             [new LazyLoadableObjectWithNullableTypehintsClassMetadata(), 'identifierFieldReturnClassOneLetterNullable', new stdClass()],
             [new LazyLoadableObjectWithNullableTypehintsClassMetadata(), 'identifierFieldReturnClassOneLetterNullableWithSpace', new stdClass()],
         ];
+
+        if (PHP_VERSION_ID >= 80000) {
+            $data[] = [new LazyLoadableObjectWithPHP8UnionTypeClassMetadata(), 'identifierFieldUnionType', 123];
+            $data[] = [new LazyLoadableObjectWithPHP8UnionTypeClassMetadata(), 'identifierFieldUnionType', 'string'];
+        }
+
+        if (PHP_VERSION_ID >= 80100) {
+            $data[] = [new LazyLoadableObjectWithPHP81IntersectionTypeClassMetadata(), 'identifierFieldIntersectionType', new class extends \stdClass implements \Stringable {
+                public function __toString(): string
+                {
+                    return '';
+                }
+            }];
+        }
+
+        if (PHP_VERSION_ID >= 80200) {
+            $data[] = [new LazyLoadableObjectWithPHP82UnionAndIntersectionTypeClassMetadata(), 'identifierFieldUnionAndIntersectionType', new class extends \stdClass implements \Stringable {
+                public function __toString(): string
+                {
+                    return '';
+                }
+            }];
+        }
+
+        return $data;
     }
 }
