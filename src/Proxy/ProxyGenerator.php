@@ -940,7 +940,7 @@ EOT;
             if ($this->isShortIdentifierGetter($method, $class)) {
                 $identifier = lcfirst(substr($name, 3));
                 $fieldType  = $class->getTypeOfField($identifier);
-                $cast       = in_array($fieldType, ['integer', 'smallint']) ? '(int) ' : '';
+                $cast       = in_array($fieldType, ['integer', 'smallint'], true) ? '(int) ' : '';
 
                 $methods .= '        if ($this->__isInitialized__ === false) {' . "\n";
                 $methods .= '            ';
