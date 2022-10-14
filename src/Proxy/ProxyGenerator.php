@@ -27,6 +27,7 @@ use function call_user_func;
 use function chmod;
 use function class_exists;
 use function dirname;
+use function enum_exists;
 use function explode;
 use function file;
 use function file_put_contents;
@@ -940,7 +941,12 @@ EOT;
             if ($this->isShortIdentifierGetter($method, $class)) {
                 $identifier = lcfirst(substr($name, 3));
                 $fieldType  = $class->getTypeOfField($identifier);
-                $cast       = in_array($fieldType, ['integer', 'smallint'], true) ? '(int) ' : '';
+
+                if (ClassUtils::containsEnumType($method->getReturnType())) {
+                    $cast = '';
+                } else {
+                    $cast = in_array($fieldType, ['integer', 'smallint'], true) ? '(int) ' : '';
+                }
 
                 $methods .= '        if ($this->__isInitialized__ === false) {' . "\n";
                 $methods .= '            ';
