@@ -646,6 +646,7 @@ class ProxyGeneratorTest extends TestCase
         $reflClass = new ReflectionClass($className);
         $metadata->expects($this->any())->method('getReflectionClass')->will($this->returnValue($reflClass));
         $metadata->expects($this->any())->method('getIdentifierFieldNames')->will($this->returnValue($ids));
+        $metadata->expects($this->any())->method('getIdentifier')->will($this->returnValue($ids));
         $metadata->expects($this->any())->method('getName')->will($this->returnValue($className));
 
         return $metadata;
