@@ -80,6 +80,7 @@ class ProxyLogicIdentifierGetterTest extends TestCase
         }
 
         if (PHP_VERSION_ID >= 80100) {
+            $data[] = [new LazyLoadableObjectWithPHP81EnumIntTypeClassMetadata(), 'identifierFieldEnumIntType', LazyLoadableObjectWithPHP81EnumIntType::getFooIdentifier()];
             $data[] = [new LazyLoadableObjectWithPHP81IntersectionTypeClassMetadata(), 'identifierFieldIntersectionType', new class extends \stdClass implements \Stringable {
                 public function __toString(): string
                 {
