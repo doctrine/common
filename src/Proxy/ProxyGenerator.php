@@ -79,7 +79,7 @@ class ProxyGenerator
   (?<type>\\?[a-z_\x7f-\xff][\w\x7f-\xff]*(?:\\[a-z_\x7f-\xff][\w\x7f-\xff]*)*)
   (?<intersection_type>(?&type)\s*&\s*(?&type))
   (?<union_type>(?:(?:\(\s*(?&intersection_type)\s*\))|(?&type))(?:\s*\|\s*(?:(?:\(\s*(?&intersection_type)\s*\))|(?&type)))+)
-)(?:public\s+)?(?:function\s+%s\s*\(\)\s*)\s*(?::\s*(?:(?&union_type)|(?&intersection_type)|(?:\??(?&type)))\s*)?{\s*return\s*\$this->%s;\s*})i
+)(?:public\s+)?(?:function\s+%1$s\s*\(\)\s*)\s*(?::\s*(?:(?&union_type)|(?&intersection_type)|(?:\??(?&type)))\s*)?{\s*return\s*(\$this->%2$s|new\s+(?&type)\(\$this->%2$s\)|(?&type)::\w+\(\$this->%2$s\));\s*})i
 EOT;
 
     /**
