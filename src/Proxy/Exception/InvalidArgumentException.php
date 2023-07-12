@@ -13,7 +13,7 @@ use function sprintf;
 /**
  * Proxy Invalid Argument Exception.
  *
- * @link   www.doctrine-project.org
+ * @deprecated The InvalidArgumentException class is deprecated since doctrine/common 3.5.
  */
 class InvalidArgumentException extends BaseInvalidArgumentException implements ProxyException
 {

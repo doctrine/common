@@ -26,21 +26,13 @@ parameters:
             message: '#^Result of method Doctrine\\Tests\\Common\\Proxy\\LazyLoadableObjectWithVoid::(adding|incrementing)AndReturningVoid\(\) \(void\) is used\.$#'
             path: 'tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
         -
-            message: '#^Property Doctrine\\Tests\\Common\\Proxy\\ProxyLogicTest::\$initializerCallbackMock \(callable\(\): mixed&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept PHPUnit\\Framework\\MockObject\\MockObject&stdClass\.$#'
-            path: 'tests/Common/Proxy/ProxyLogicTest.php'
-        -
             message: '#.*LazyLoadableObject.*#'
-            paths:
-               - 'tests/Common/Proxy/ProxyLogicTest.php'
-               - 'tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
+            path: 'tests/Common/Proxy/ProxyLogicTest.php'
         -
             message: '#^Instantiated class Doctrine\\Tests\\Common\\ProxyProxy\\__CG__\\Doctrine\\Tests\\Common\\Proxy\\.* not found.$#'
             path: 'tests/Common/Proxy/ProxyLogicTest.php'
         -
             message: '#^Instantiated class Doctrine\\Tests\\Common\\ProxyProxy\\__CG__\\Doctrine\\Tests\\Common\\Proxy\\.* not found.$#'
-            path: 'tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
-        -
-            message: '#^Property Doctrine\\Tests\\Common\\Proxy\\ProxyLogicVoidReturnTypeTest::\$initializerCallbackMock \(callable\(\): mixed&PHPUnit\\Framework\\MockObject\\MockObject\) does not accept PHPUnit\\Framework\\MockObject\\MockObject&stdClass\.$#'
             path: 'tests/Common/Proxy/ProxyLogicVoidReturnTypeTest.php'
         -
             message: '#^Method Doctrine\\Tests\\Common\\Proxy\\MagicIssetClassWithInteger::__isset\(\) should return bool but returns int\.$#'
