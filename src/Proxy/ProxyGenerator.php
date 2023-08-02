@@ -146,7 +146,17 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
     /**
      * @var array<string, null> properties to be lazy loaded, indexed by property name
      */
+    public static $identifier = <identifier>;
+
+    /**
+     * @var array<string, null> properties to be lazy loaded, indexed by property name
+     */
     public static $lazyPropertiesNames = <lazyPropertiesNames>;
+
+    /**
+     * @var array<string, null> readonly public properties
+     */
+    public static $readonlyPropertiesNames = <readonlyPropertiesNames>;
 
     /**
      * @var array<string, mixed> default values of properties to be lazy loaded, with keys being the property names
@@ -409,7 +419,7 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
         }
 
         $defaultProperties          = $class->getReflectionClass()->getDefaultProperties();
-        $lazyLoadedPublicProperties = $this->getLazyLoadedPublicPropertiesNames($class);
+        $lazyLoadedPublicProperties = $this->getWriteableLazyLoadedPublicPropertiesNames($class);
         $enumClasses                = [];
 
         foreach ($class->getReflectionClass()->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
@@ -453,10 +463,44 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
      */
     private function generateLazyPropertiesNames(ClassMetadata $class)
     {
-        $lazyPublicProperties = $this->getLazyLoadedPublicPropertiesNames($class);
+        $lazyPublicProperties = $this->getWriteableLazyLoadedPublicPropertiesNames($class);
         $values               = [];
 
         foreach ($lazyPublicProperties as $name) {
+            $values[$name] = null;
+        }
+
+        return var_export($values, true);
+    }
+
+    /**
+     * Generates the array representation of readonly public properties.
+     *
+     * @return string
+     */
+    private function generateReadonlyPropertiesNames(ClassMetadata $class)
+    {
+        $readonlyPublicProperties = $this->getReadonlyPublicPropertiesNames($class);
+        $values                   = [];
+
+        foreach ($readonlyPublicProperties as $name) {
+            $values[$name] = null;
+        }
+
+        return var_export($values, true);
+    }
+
+    /**
+     * Generates the array representation of readonly public properties.
+     *
+     * @return string
+     */
+    private function generateIdentifier(ClassMetadata $class)
+    {
+        $identifier = $class->getIdentifier();
+        $values     = [];
+
+        foreach ($identifier as $name) {
             $values[$name] = null;
         }
 
@@ -486,9 +530,19 @@ class <proxyShortClassName> extends \<className> implements \<baseProxyInterface
 
 EOT;
 
+        $unsetReadonlyPublicProperties = array_map(static function (string $name): string {
+            return '                        unset($this->' . $name . ');';
+        }, $this->getReadonlyPublicPropertiesNames($class));
+
+        if ($unsetReadonlyPublicProperties !== []) {
+            $constructorImpl .= '        (function () { unset( ' .
+                implode(', ', array_map(static fn ($name) => '$this->' . $name, $this->getReadonlyPublicPropertiesNames($class))) .
+                ' ); } )(...)->bindTo($this, \\' . $class->getName() . '::class)->__invoke();' . "\n";
+        }
+
         $toUnset = array_map(static function (string $name): string {
             return '$this->' . $name;
-        }, $this->getLazyLoadedPublicPropertiesNames($class));
+        }, $this->getWriteableLazyLoadedPublicPropertiesNames($class));
 
         return $constructorImpl . ($toUnset === [] ? '' : '        unset(' . implode(', ', $toUnset) . ");\n")
             . <<<'EOT'
@@ -506,14 +560,15 @@ EOT;
      */
     private function generateMagicGet(ClassMetadata $class)
     {
-        $lazyPublicProperties = $this->getLazyLoadedPublicPropertiesNames($class);
-        $reflectionClass      = $class->getReflectionClass();
-        $hasParentGet         = false;
-        $returnReference      = '';
-        $inheritDoc           = '';
-        $name                 = '$name';
-        $parametersString     = '$name';
-        $returnTypeHint       = null;
+        $lazyPublicProperties     = $this->getWriteableLazyLoadedPublicPropertiesNames($class);
+        $readonlyPublicProperties = $this->getReadonlyPublicPropertiesNames($class);
+        $reflectionClass          = $class->getReflectionClass();
+        $hasParentGet             = false;
+        $returnReference          = '';
+        $inheritDoc               = '';
+        $name                     = '$name';
+        $parametersString         = '$name';
+        $returnTypeHint           = null;
 
         if ($reflectionClass->hasMethod('__get')) {
             $hasParentGet     = true;
@@ -531,7 +586,7 @@ EOT;
             $returnTypeHint   = $this->getMethodReturnType($methodReflection);
         }
 
-        if (empty($lazyPublicProperties) && ! $hasParentGet) {
+        if (empty($readonlyPublicProperties) && empty($lazyPublicProperties) && ! $hasParentGet) {
             return '';
         }
 
@@ -545,9 +600,9 @@ EOT;
 
 EOT;
 
-        if (! empty($lazyPublicProperties)) {
+        if (! empty($lazyPublicProperties) || ! empty($readonlyPublicProperties)) {
             $magicGet .= <<<'EOT'
-        if (\array_key_exists($name, self::$lazyPropertiesNames)) {
+        if (\array_key_exists($name, self::$lazyPropertiesNames) || \array_key_exists($name, self::$readonlyPropertiesNames)) {
             $this->__initializer__ && $this->__initializer__->__invoke($this, '__get', [$name]);
 EOT;
 
@@ -605,12 +660,13 @@ EOT
      */
     private function generateMagicSet(ClassMetadata $class)
     {
-        $lazyPublicProperties = $this->getLazyLoadedPublicPropertiesNames($class);
-        $reflectionClass      = $class->getReflectionClass();
-        $hasParentSet         = false;
-        $inheritDoc           = '';
-        $parametersString     = '$name, $value';
-        $returnTypeHint       = null;
+        $lazyPublicProperties     = $this->getWriteableLazyLoadedPublicPropertiesNames($class);
+        $readonlyPublicProperties = $this->getReadonlyPublicPropertiesNames($class);
+        $reflectionClass          = $class->getReflectionClass();
+        $hasParentSet             = false;
+        $inheritDoc               = '';
+        $parametersString         = '$name, $value';
+        $returnTypeHint           = null;
 
         if ($reflectionClass->hasMethod('__set')) {
             $hasParentSet     = true;
@@ -621,7 +677,7 @@ EOT
             $returnTypeHint   = $this->getMethodReturnType($methodReflection);
         }
 
-        if (empty($lazyPublicProperties) && ! $hasParentSet) {
+        if (empty($readonlyPublicProperties) && empty($lazyPublicProperties) && ! $hasParentSet) {
             return '';
         }
 
@@ -635,6 +691,21 @@ EOT
     {
 
 EOT;
+
+        if (! empty($readonlyPublicProperties)) {
+            $magicSet .= <<<EOT
+
+		if ( array_key_exists( \$name, self::\$readonlyPropertiesNames ) ) {
+			if ( isset( \$this->\$name ) ) {
+                trigger_error(sprintf("Cannot modify readonly property {$class->getName()}::%s", \$name), E_USER_ERROR);
+			}
+
+			(function(string \$name, mixed \$value) { \$this->\$name = \$value; })(...)->bindTo( \$this, \\{$class->getName()}::class)->__invoke(\$name, \$value);
+
+			return;
+		}
+EOT;
+        }
 
         if (! empty($lazyPublicProperties)) {
             $magicSet .= <<<'EOT'
@@ -686,10 +757,12 @@ EOT;
      */
     private function generateMagicIsset(ClassMetadata $class)
     {
-        $lazyPublicProperties = $this->getLazyLoadedPublicPropertiesNames($class);
-        $hasParentIsset       = $class->getReflectionClass()->hasMethod('__isset');
-        $parametersString     = '$name';
-        $returnTypeHint       = null;
+        $lazyPublicProperties     = $this->getWriteableLazyLoadedPublicPropertiesNames($class);
+        $readonlyPublicProperties = $this->getReadonlyPublicPropertiesNames($class);
+        $identifier               = $class->getIdentifier();
+        $hasParentIsset           = $class->getReflectionClass()->hasMethod('__isset');
+        $parametersString         = '$name';
+        $returnTypeHint           = null;
 
         if ($hasParentIsset) {
             $methodReflection = $class->getReflectionClass()->getMethod('__isset');
@@ -697,7 +770,7 @@ EOT;
             $returnTypeHint   = $this->getMethodReturnType($methodReflection);
         }
 
-        if (empty($lazyPublicProperties) && ! $hasParentIsset) {
+        if (empty($readonlyPublicProperties) && empty($lazyPublicProperties) && ! $hasParentIsset) {
             return '';
         }
 
@@ -712,6 +785,17 @@ EOT;
     {
 
 EOT;
+        if (! empty($readonlyPublicProperties)) {
+            $magicIsset .= <<<'EOT'
+        if (\array_key_exists($name, self::$readonlyPropertiesNames) ) {
+            $this->__initializer__ && !\array_key_exists($name, self::$identifier) && $this->__initializer__->__invoke($this, '__isset', [$name]);
+
+            return isset($this->$name);
+        }
+
+
+EOT;
+        }
 
         if (! empty($lazyPublicProperties)) {
             $magicIsset .= <<<'EOT'
@@ -765,7 +849,7 @@ EOT;
         $properties = array_merge(['__isInitialized__'], parent::__sleep());
 
         if ($this->__isInitialized__) {
-            $properties = array_diff($properties, array_keys(self::$lazyPropertiesNames));
+            $properties = array_diff($properties, array_keys(self::$lazyPropertiesNames), array_keys(self::$readonlyPropertiesNames));
         }
 
         return $properties;
@@ -786,7 +870,7 @@ EOT;
                 : $prop->getName();
         }
 
-        $lazyPublicProperties = $this->getLazyLoadedPublicPropertiesNames($class);
+        $lazyPublicProperties = $this->getWriteableLazyLoadedPublicPropertiesNames($class);
         $protectedProperties  = array_diff($allProperties, $lazyPublicProperties);
 
         foreach ($allProperties as &$property) {
@@ -822,7 +906,7 @@ EOT;
         $hasParentWakeup = $reflectionClass->hasMethod('__wakeup');
 
         $unsetPublicProperties = [];
-        foreach ($this->getLazyLoadedPublicPropertiesNames($class) as $lazyPublicProperty) {
+        foreach ($this->getWriteableLazyLoadedPublicPropertiesNames($class) as $lazyPublicProperty) {
             $unsetPublicProperties[] = '$this->' . $lazyPublicProperty;
         }
 
@@ -850,6 +934,14 @@ EOT;
             };
 
 EOT;
+
+        $unsetReadonlyPublicProperties = array_diff($this->getReadonlyPublicPropertiesNames($class), $class->getIdentifier());
+
+        if ($unsetReadonlyPublicProperties !== []) {
+            $wakeupImpl .= '        (function () { unset( ' .
+                implode(', ', array_map(static fn ($name) => '$this->' . $name, $unsetReadonlyPublicProperties)) .
+                ' ); } )(...)->bindTo($this, \\' . $class->getName() . '::class)->__invoke();' . "\n";
+        }
 
         if (! empty($unsetPublicProperties)) {
             $wakeupImpl .= "\n            unset(" . implode(', ', $unsetPublicProperties) . ');';
@@ -879,12 +971,28 @@ EOT;
         $inheritDoc      = $hasParentClone ? '{@inheritDoc}' : '';
         $callParentClone = $hasParentClone ? "\n        parent::__clone();\n" : '';
 
-        return <<<EOT
+        $cloner                        = <<<EOT
     /**
      * $inheritDoc
      */
     public function __clone()$returnTypeHint
     {
+    
+        if ( ! \$this->__isInitialized__) {
+
+EOT;
+        $unsetReadonlyPublicProperties = array_diff($this->getReadonlyPublicPropertiesNames($class), $class->getIdentifier());
+
+        if ($unsetReadonlyPublicProperties !== []) {
+            $cloner .= '            (function () { unset( ' .
+                implode(', ', array_map(static fn ($name) => '$this->' . $name, $unsetReadonlyPublicProperties)) .
+                ' ); } )(...)->bindTo($this, \\' . $class->getName() . '::class)->__invoke();' . "\n";
+        }
+
+        return $cloner . <<<EOT
+
+        }
+        
         \$this->__cloner__ && \$this->__cloner__->__invoke(\$this, '__clone', []);
 $callParentClone    }
 EOT;
@@ -1026,14 +1134,39 @@ EOT;
      *
      * @return array<int, string>
      */
-    private function getLazyLoadedPublicPropertiesNames(ClassMetadata $class): array
+    private function getWriteableLazyLoadedPublicPropertiesNames(ClassMetadata $class): array
     {
         $properties = [];
 
         foreach ($class->getReflectionClass()->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
             $name = $property->getName();
 
-            if ((! $class->hasField($name) && ! $class->hasAssociation($name)) || $class->isIdentifier($name)) {
+            if (
+                (! $class->hasField($name) && ! $class->hasAssociation($name)) || $class->isIdentifier($name)
+                || (method_exists($property, 'isReadonly') && $property->isReadOnly())
+            ) {
+                continue;
+            }
+
+            $properties[] = $name;
+        }
+
+        return $properties;
+    }
+
+    /**
+     * Generates the list of readonly public properties.
+     *
+     * @return array<int, string>
+     */
+    private function getReadonlyPublicPropertiesNames(ClassMetadata $class): array
+    {
+        $properties = [];
+
+        foreach ($class->getReflectionClass()->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+            $name = $property->getName();
+
+            if ((! method_exists($property, 'isReadonly') || ! $property->isReadOnly())) {
                 continue;
             }
 
@@ -1051,7 +1184,7 @@ EOT;
     private function getLazyLoadedPublicProperties(ClassMetadata $class)
     {
         $defaultProperties          = $class->getReflectionClass()->getDefaultProperties();
-        $lazyLoadedPublicProperties = $this->getLazyLoadedPublicPropertiesNames($class);
+        $lazyLoadedPublicProperties = $this->getWriteableLazyLoadedPublicPropertiesNames($class);
         $defaultValues              = [];
 
         foreach ($class->getReflectionClass()->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
