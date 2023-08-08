@@ -28,7 +28,7 @@ class Autoloader
      * Resolves proxy class name to a filename based on the following pattern.
      *
      * 1. Remove Proxy namespace from class name.
-     * 2. Remove namespace separators from remaining class name.
+     * 2. Replace namespace separators with directly separators in remaining class name.
      * 3. Return PHP filename from proxy-dir with the result from 2.
      *
      * @param string $proxyDir
@@ -47,10 +47,10 @@ class Autoloader
         }
 
         // remove proxy namespace from class name
-        $classNameRelativeToProxyNamespace = substr($className, strlen($proxyNamespace));
+        $classNameRelativeToProxyNamespace = substr($className, strlen($proxyNamespace) + 1);
 
-        // remove namespace separators from remaining class name
-        $fileName = str_replace('\\', '', $classNameRelativeToProxyNamespace);
+        // replace namespace separators in remaining class name
+        $fileName = str_replace('\\', DIRECTORY_SEPARATOR, $classNameRelativeToProxyNamespace);
 
         return $proxyDir . DIRECTORY_SEPARATOR . $fileName . '.php';
     }

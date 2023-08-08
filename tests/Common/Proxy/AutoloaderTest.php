@@ -20,11 +20,13 @@ class AutoloaderTest extends TestCase
 {
     public static function dataResolveFile()
     {
+        $sep = DIRECTORY_SEPARATOR;
+
         return [
-            ['/tmp', 'MyProxy', 'MyProxy\RealClass', '/tmp' . DIRECTORY_SEPARATOR . 'RealClass.php'],
-            ['/tmp', 'MyProxy', 'MyProxy\__CG__\RealClass', '/tmp' . DIRECTORY_SEPARATOR . '__CG__RealClass.php'],
-            ['/tmp', 'MyProxy\Subdir', 'MyProxy\Subdir\__CG__\RealClass', '/tmp' . DIRECTORY_SEPARATOR . '__CG__RealClass.php'],
-            ['/tmp', 'MyProxy', 'MyProxy\__CG__\Other\RealClass', '/tmp' . DIRECTORY_SEPARATOR . '__CG__OtherRealClass.php'],
+            ['/tmp', 'MyProxy', 'MyProxy\RealClass', "/tmp{$sep}RealClass.php"],
+            ['/tmp', 'MyProxy', 'MyProxy\__CG__\RealClass', "/tmp{$sep}__CG__{$sep}RealClass.php"],
+            ['/tmp', 'MyProxy\Subdir', 'MyProxy\Subdir\__CG__\RealClass', "/tmp{$sep}__CG__{$sep}RealClass.php"],
+            ['/tmp', 'MyProxy', 'MyProxy\__CG__\Other\RealClass', "/tmp{$sep}__CG__{$sep}Other{$sep}RealClass.php"],
         ];
     }
 
