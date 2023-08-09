@@ -99,7 +99,7 @@ class ProxyGeneratorTest extends TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxySleepClass.php');
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/SleepClass.php');
         self::assertEquals(1, substr_count($classCode, 'function __sleep'));
         self::assertEquals(1, substr_count($classCode, 'parent::__sleep()'));
     }
@@ -119,7 +119,7 @@ class ProxyGeneratorTest extends TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyStaticPropertyClass.php');
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/StaticPropertyClass.php');
         self::assertEquals(1, substr_count($classCode, 'function __sleep'));
         self::assertStringNotContainsString('protectedStaticProperty', $classCode);
     }
@@ -141,7 +141,7 @@ class ProxyGeneratorTest extends TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyCallableTypeHintClass.php');
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/CallableTypeHintClass.php');
 
         self::assertEquals(1, substr_count($classCode, 'call(callable $foo)'));
     }
@@ -156,7 +156,7 @@ class ProxyGeneratorTest extends TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyVariadicTypeHintClass.php');
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/VariadicTypeHintClass.php');
 
         self::assertEquals(1, substr_count($classCode, 'function addType(...$types)'));
         self::assertEquals(1, substr_count($classCode, '__invoke($this, \'addType\', [$types])'));
@@ -173,7 +173,7 @@ class ProxyGeneratorTest extends TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyScalarTypeHintsClass.php');
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/ScalarTypeHintsClass.php');
 
         self::assertEquals(1, substr_count($classCode, 'function singleTypeHint(string $param)'));
         self::assertEquals(1, substr_count($classCode, 'function multipleTypeHints(int $a, float $b, bool $c, string $d)'));
@@ -193,7 +193,7 @@ class ProxyGeneratorTest extends TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyReturnTypesClass.php');
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/ReturnTypesClass.php');
 
         self::assertEquals(1, substr_count($classCode, 'function returnsClass(): \stdClass'));
         self::assertEquals(1, substr_count($classCode, 'function returnsScalar(): int'));
@@ -214,7 +214,7 @@ class ProxyGeneratorTest extends TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableTypeHintsClass.php');
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/NullableTypeHintsClass.php');
 
         self::assertEquals(1, substr_count($classCode, 'function nullableTypeHintInt(?int $param)'));
         self::assertEquals(1, substr_count($classCode, 'function nullableTypeHintObject(?\stdClass $param)'));
@@ -234,7 +234,7 @@ class ProxyGeneratorTest extends TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableTypeHintsClass.php');
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/NullableTypeHintsClass.php');
 
         self::assertEquals(1, substr_count($classCode, 'function returnsNullableInt(): ?int'));
         self::assertEquals(1, substr_count($classCode, 'function returnsNullableObject(): ?\stdClass'));
@@ -260,12 +260,12 @@ class ProxyGeneratorTest extends TestCase
 
         self::assertStringContainsString(
             'public function midSignatureNullableParameter(\stdClass $param = NULL, $secondParam)',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableNonOptionalHintClass.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/NullableNonOptionalHintClass.php')
         );
 
         self::assertStringContainsString(
             'public function midSignatureNotNullableHintedParameter(string $param = \'foo\', $secondParam)',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableNonOptionalHintClass.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/NullableNonOptionalHintClass.php')
         );
     }
 
@@ -288,13 +288,13 @@ class ProxyGeneratorTest extends TestCase
 
         self::assertStringContainsString(
             'public function midSignatureNullableParameter(string $param = NULL, $secondParam)',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp71NullableDefaultedNonOptionalHintClass.php'),
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/Php71NullableDefaultedNonOptionalHintClass.php'),
             'Signature allows nullable type, although explicit "?" marker isn\'t used in the proxy'
         );
 
         self::assertStringContainsString(
             'public function midSignatureNotNullableHintedParameter(?string $param = \'foo\', $secondParam)',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp71NullableDefaultedNonOptionalHintClass.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/Php71NullableDefaultedNonOptionalHintClass.php')
         );
     }
 
@@ -308,7 +308,7 @@ class ProxyGeneratorTest extends TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyVoidReturnTypeClass.php');
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/VoidReturnTypeClass.php');
 
         self::assertEquals(1, substr_count($classCode, 'function returnsVoid(): void'));
     }
@@ -323,7 +323,7 @@ class ProxyGeneratorTest extends TestCase
             $this->generateAndRequire($proxyGenerator, $metadata);
         }
 
-        $classCode = file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyIterableTypeHintClass.php');
+        $classCode = file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/IterableTypeHintClass.php');
 
         self::assertEquals(1, substr_count($classCode, 'function parameterType(iterable $param)'));
         self::assertEquals(1, substr_count($classCode, 'function returnType(): iterable'));
@@ -433,7 +433,7 @@ class ProxyGeneratorTest extends TestCase
 
         self::assertStringContainsString(
             'public function __clone(): void',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8MagicCloneClass.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/Php8MagicCloneClass.php')
         );
     }
 
@@ -453,12 +453,12 @@ class ProxyGeneratorTest extends TestCase
 
         self::assertStringContainsString(
             'setValue(\stdClass|array $value): float|bool',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8UnionTypes.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/Php8UnionTypes.php')
         );
 
         self::assertStringContainsString(
             'setNullableValue(\stdClass|array|null $value): float|bool|null',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8UnionTypes.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/Php8UnionTypes.php')
         );
     }
 
@@ -478,7 +478,7 @@ class ProxyGeneratorTest extends TestCase
 
         self::assertStringContainsString(
             'foo(mixed $bar): mixed',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8MixedType.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/Php8MixedType.php')
         );
     }
 
@@ -498,12 +498,12 @@ class ProxyGeneratorTest extends TestCase
 
         self::assertStringContainsString(
             'foo(mixed $bar): static',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8StaticType.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/Php8StaticType.php')
         );
 
         self::assertStringContainsString(
             'fooNull(mixed $bar): ?static',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8StaticType.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/Php8StaticType.php')
         );
     }
 
@@ -523,7 +523,7 @@ class ProxyGeneratorTest extends TestCase
 
         self::assertStringContainsString(
             'setFoo(\Traversable&\Countable $foo): \Traversable&\Countable',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81IntersectionTypes.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/PHP81IntersectionTypes.php')
         );
     }
 
@@ -543,17 +543,17 @@ class ProxyGeneratorTest extends TestCase
 
         self::assertStringContainsString(
             '__get($name): never',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NeverType.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/PHP81NeverType.php')
         );
 
         self::assertStringContainsString(
             '__set($name, $value): never',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NeverType.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/PHP81NeverType.php')
         );
 
         self::assertStringContainsString(
             'finishHim(): never',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NeverType.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/PHP81NeverType.php')
         );
     }
 
@@ -575,7 +575,7 @@ class ProxyGeneratorTest extends TestCase
 
         $this->assertStringContainsString(
             'use Doctrine;',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp81EnumPublicPropertyType.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/Php81EnumPublicPropertyType.php')
         );
 
         $object = new \Doctrine\Tests\Common\ProxyProxy\__CG__\Doctrine\Tests\Common\Proxy\Php81EnumPublicPropertyType();
@@ -600,37 +600,37 @@ class ProxyGeneratorTest extends TestCase
 
         self::assertStringContainsString(
             'onlyInitializer($foo = new \stdClass()): void',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NewInInitializers.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/PHP81NewInInitializers.php')
         );
 
         self::assertStringContainsString(
             'typed(\DateTimeInterface $foo = new \DateTimeImmutable(\'now\')): void',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NewInInitializers.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/PHP81NewInInitializers.php')
         );
 
         self::assertStringContainsString(
             'arrayInDefault(array $foo = [new \DateTimeImmutable(\'2022-08-22 16:20\', new \DateTimeZone(\'Europe/Warsaw\'))]): void',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NewInInitializers.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/PHP81NewInInitializers.php')
         );
 
         self::assertStringContainsString(
             'scalarConstInDefault(string $foo = \'foo\'): void',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NewInInitializers.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/PHP81NewInInitializers.php')
         );
 
         self::assertStringContainsString(
             'constInDefault(array $foo = \Doctrine\Tests\Common\Util\TestAsset\ConstProvider::FOO): void',
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NewInInitializers.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/PHP81NewInInitializers.php')
         );
 
         self::assertStringContainsString(
             "globalEolInDefault(string \$foo = '\n'): void",
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NewInInitializers.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/PHP81NewInInitializers.php')
         );
 
         self::assertStringContainsString(
             "specialCharacterInDefault(string \$foo = '\n'): void",
-            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPHP81NewInInitializers.php')
+            file_get_contents(__DIR__ . '/generated/__CG__/Doctrine/Tests/Common/Proxy/PHP81NewInInitializers.php')
         );
     }
 
