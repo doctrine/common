@@ -15,6 +15,8 @@ use function in_array;
 
 /**
  * Abstract factory for proxy objects.
+ *
+ * @deprecated The AbstractProxyFactory class is deprecated since doctrine/common 3.5.
  */
 abstract class AbstractProxyFactory
 {

@@ -9,7 +9,7 @@ use function sprintf;
 /**
  * Proxy Invalid Argument Exception.
  *
- * @link   www.doctrine-project.org
+ * @deprecated The OutOfBoundsException class is deprecated since doctrine/common 3.5.
  */
 class OutOfBoundsException extends BaseOutOfBoundsException implements ProxyException
 {

@@ -5,7 +5,7 @@ namespace Doctrine\Common\Proxy\Exception;
 /**
  * Base exception interface for proxy exceptions.
  *
- * @link   www.doctrine-project.org
+ * @deprecated The ProxyException interface is deprecated since doctrine/common 3.5.
  */
 interface ProxyException
 {
