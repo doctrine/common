@@ -4,13 +4,20 @@ namespace Doctrine\Common\Util;
 
 use Doctrine\Persistence\Proxy;
 use ReflectionClass;
+use ReflectionIntersectionType;
+use ReflectionNamedType;
+use ReflectionUnionType;
 
+use function assert;
+use function enum_exists;
 use function get_class;
 use function get_parent_class;
 use function ltrim;
 use function rtrim;
 use function strrpos;
 use function substr;
+
+use const PHP_VERSION_ID;
 
 /**
  * Class and reflection related functionality for objects that
@@ -109,5 +116,32 @@ class ClassUtils
     public static function generateProxyClassName($className, $proxyNamespace)
     {
         return rtrim($proxyNamespace, '\\') . '\\' . Proxy::MARKER . '\\' . ltrim($className, '\\');
+    }
+
+    /**
+     * Check if the type is an enum type or type containing an enum type
+     *
+     * @param ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType|null $type
+     *
+     */
+    public static function containsEnumType($type): bool
+    {
+        if (PHP_VERSION_ID <= 80100 || $type === null) {
+            return false;
+        }
+
+        if ($type instanceof ReflectionUnionType || $type instanceof ReflectionIntersectionType) {
+            foreach ($type->getTypes() as $unionedType) {
+                if (self::containsEnumType($unionedType)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        assert($type instanceof ReflectionNamedType);
+
+        return enum_exists($type->getName());
     }
 }
