@@ -259,7 +259,7 @@ class ProxyGeneratorTest extends TestCase
         }
 
         self::assertStringContainsString(
-            'public function midSignatureNullableParameter(\stdClass $param = NULL, $secondParam)',
+            'public function midSignatureNullableParameter(?\stdClass $param = NULL, $secondParam)',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableNonOptionalHintClass.php')
         );
 
