@@ -287,7 +287,7 @@ class ProxyGeneratorTest extends TestCase
         }
 
         self::assertStringContainsString(
-            'public function midSignatureNullableParameter(string $param = NULL, $secondParam)',
+            'public function midSignatureNullableParameter(?string $param = NULL, $secondParam)',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp71NullableDefaultedNonOptionalHintClass.php'),
             'Signature allows nullable type, although explicit "?" marker isn\'t used in the proxy'
         );
