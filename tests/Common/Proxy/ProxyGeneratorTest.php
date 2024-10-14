@@ -180,7 +180,7 @@ class ProxyGeneratorTest extends TestCase
         self::assertEquals(1, substr_count($classCode, 'function combinationOfTypeHintsAndNormal(\stdClass $a, \Countable $b, $c, int $d)'));
         self::assertEquals(1, substr_count($classCode, 'function typeHintsWithVariadic(int ...$foo)'));
         self::assertEquals(1, substr_count($classCode, 'function withDefaultValue(int $foo = 123)'));
-        self::assertEquals(1, substr_count($classCode, 'function withDefaultValueNull(int $foo = NULL)'));
+        self::assertEquals(1, substr_count($classCode, 'function withDefaultValueNull(?int $foo = NULL)'));
     }
 
     public function testClassWithReturnTypesOnProxiedMethods()
@@ -220,8 +220,8 @@ class ProxyGeneratorTest extends TestCase
         self::assertEquals(1, substr_count($classCode, 'function nullableTypeHintObject(?\stdClass $param)'));
         self::assertEquals(1, substr_count($classCode, 'function nullableTypeHintSelf(?\\' . $className . ' $param)'));
         self::assertEquals(1, substr_count($classCode, 'function nullableTypeHintWithDefault(?int $param = 123)'));
-        self::assertEquals(1, substr_count($classCode, 'function nullableTypeHintWithDefaultNull(int $param = NULL)'));
-        self::assertEquals(1, substr_count($classCode, 'function notNullableTypeHintWithDefaultNull(int $param = NULL)'));
+        self::assertEquals(1, substr_count($classCode, 'function nullableTypeHintWithDefaultNull(?int $param = NULL)'));
+        self::assertEquals(1, substr_count($classCode, 'function notNullableTypeHintWithDefaultNull(?int $param = NULL)'));
     }
 
     public function testClassWithNullableReturnTypesOnProxiedMethods()
@@ -259,7 +259,7 @@ class ProxyGeneratorTest extends TestCase
         }
 
         self::assertStringContainsString(
-            'public function midSignatureNullableParameter(\stdClass $param = NULL, $secondParam)',
+            'public function midSignatureNullableParameter(?\stdClass $param = NULL, $secondParam)',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyNullableNonOptionalHintClass.php')
         );
 
@@ -287,7 +287,7 @@ class ProxyGeneratorTest extends TestCase
         }
 
         self::assertStringContainsString(
-            'public function midSignatureNullableParameter(string $param = NULL, $secondParam)',
+            'public function midSignatureNullableParameter(?string $param = NULL, $secondParam)',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp71NullableDefaultedNonOptionalHintClass.php'),
             'Signature allows nullable type, although explicit "?" marker isn\'t used in the proxy'
         );
@@ -458,6 +458,11 @@ class ProxyGeneratorTest extends TestCase
 
         self::assertStringContainsString(
             'setNullableValue(\stdClass|array|null $value): float|bool|null',
+            file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8UnionTypes.php')
+        );
+
+        self::assertStringContainsString(
+            'setNullableValueDefaultNull(\stdClass|array|null $value = NULL): float|bool|null',
             file_get_contents(__DIR__ . '/generated/__CG__DoctrineTestsCommonProxyPhp8UnionTypes.php')
         );
     }

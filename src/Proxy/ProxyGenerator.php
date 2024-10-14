@@ -1284,7 +1284,6 @@ EOT;
         if (
             $type->allowsNull()
             && ! in_array($name, ['mixed', 'null'], true)
-            && ($parameter === null || ! $parameter->isDefaultValueAvailable() || $parameter->getDefaultValue() !== null)
         ) {
             $name = '?' . $name;
         }
