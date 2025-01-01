@@ -38,7 +38,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->getReflectionClass()->getName();
     }
@@ -46,7 +46,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
     /**
      * {@inheritDoc}
      */
-    public function getIdentifier()
+    public function getIdentifier(): array
     {
         return array_keys($this->identifier);
     }
@@ -54,7 +54,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
     /**
      * {@inheritDoc}
      */
-    public function getReflectionClass()
+    public function getReflectionClass(): ReflectionClass
     {
         if ($this->reflectionClass === null) {
             $this->reflectionClass = new ReflectionClass(__NAMESPACE__ . '\LazyLoadableObjectWithTypedProperties');
@@ -66,7 +66,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
     /**
      * {@inheritDoc}
      */
-    public function isIdentifier($fieldName)
+    public function isIdentifier($fieldName): bool
     {
         return isset($this->identifier[$fieldName]);
     }
@@ -74,7 +74,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
     /**
      * {@inheritDoc}
      */
-    public function hasField($fieldName)
+    public function hasField($fieldName): bool
     {
         return isset($this->fields[$fieldName]);
     }
@@ -82,7 +82,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
     /**
      * {@inheritDoc}
      */
-    public function hasAssociation($fieldName)
+    public function hasAssociation($fieldName): bool
     {
         return isset($this->associations[$fieldName]);
     }
@@ -90,7 +90,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
     /**
      * {@inheritDoc}
      */
-    public function isSingleValuedAssociation($fieldName)
+    public function isSingleValuedAssociation($fieldName): bool
     {
         throw new BadMethodCallException('not implemented');
     }
@@ -98,7 +98,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
     /**
      * {@inheritDoc}
      */
-    public function isCollectionValuedAssociation($fieldName)
+    public function isCollectionValuedAssociation($fieldName): bool
     {
         throw new BadMethodCallException('not implemented');
     }
@@ -106,7 +106,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
     /**
      * {@inheritDoc}
      */
-    public function getFieldNames()
+    public function getFieldNames(): array
     {
         return array_keys($this->fields);
     }
@@ -114,7 +114,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
     /**
      * {@inheritDoc}
      */
-    public function getIdentifierFieldNames()
+    public function getIdentifierFieldNames(): array
     {
         return $this->getIdentifier();
     }
@@ -122,7 +122,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
     /**
      * {@inheritDoc}
      */
-    public function getAssociationNames()
+    public function getAssociationNames(): array
     {
         return array_keys($this->associations);
     }
@@ -130,7 +130,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
     /**
      * {@inheritDoc}
      */
-    public function getTypeOfField($fieldName)
+    public function getTypeOfField($fieldName): ?string
     {
         return 'string';
     }
@@ -138,7 +138,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
     /**
      * {@inheritDoc}
      */
-    public function getAssociationTargetClass($assocName)
+    public function getAssociationTargetClass($assocName): ?string
     {
         throw new BadMethodCallException('not implemented');
     }
@@ -146,7 +146,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
     /**
      * {@inheritDoc}
      */
-    public function isAssociationInverseSide($assocName)
+    public function isAssociationInverseSide($assocName): bool
     {
         throw new BadMethodCallException('not implemented');
     }
@@ -154,7 +154,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
     /**
      * {@inheritDoc}
      */
-    public function getAssociationMappedByTargetField($assocName)
+    public function getAssociationMappedByTargetField($assocName): string
     {
         throw new BadMethodCallException('not implemented');
     }
@@ -162,7 +162,7 @@ class LazyLoadableObjectWithTypedPropertiesClassMetadata implements ClassMetadat
     /**
      * {@inheritDoc}
      */
-    public function getIdentifierValues($object)
+    public function getIdentifierValues($object): array
     {
         throw new BadMethodCallException('not implemented');
     }
