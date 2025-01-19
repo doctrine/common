@@ -940,12 +940,18 @@ EOT;
             if ($this->isShortIdentifierGetter($method, $class)) {
                 $identifier = lcfirst(substr($name, 3));
                 $fieldType  = $class->getTypeOfField($identifier);
-                $cast       = in_array($fieldType, ['integer', 'smallint'], true) ? '(int) ' : '';
+                $castToInt  = in_array($fieldType, ['integer', 'smallint'], true);
 
                 $methods .= '        if ($this->__isInitialized__ === false) {' . "\n";
                 $methods .= '            ';
                 $methods .= $this->shouldProxiedMethodReturn($method) ? 'return ' : '';
-                $methods .= $cast . ' parent::' . $method->getName() . "();\n";
+
+                if ($castToInt) {
+                    $methods .= '! parent::' . $method->getName() . '() instanceof \BackedEnum ';
+                    $methods .= '? (int) parent::' . $method->getName() . '() : ';
+                }
+
+                $methods .= 'parent::' . $method->getName() . "();\n";
                 $methods .= '        }' . "\n\n";
             }
 
