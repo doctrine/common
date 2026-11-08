@@ -12,19 +12,16 @@
         },
         {
             "name": "3.4",
-            "branchName": "3.4.x",
             "slug": "3.4",
             "maintained": false
         },
         {
             "name": "3.3",
-            "branchName": "3.3.x",
             "slug": "3.3",
             "maintained": false
         },
         {
             "name": "2.13",
-            "branchName": "2.13.x",
             "slug": "2.13",
             "maintained": false
         }
