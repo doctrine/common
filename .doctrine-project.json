@@ -8,7 +8,8 @@
             "name": "3.5",
             "branchName": "3.5.x",
             "slug": "3.5",
-            "current": true
+            "current": true,
+            "lifeSupport": true
         },
         {
             "name": "3.4",
